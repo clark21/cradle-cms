@@ -1,0 +1,48 @@
+<tr class="meta-field" data-index="{{@index}}">
+    <td class="meta-action" nowrap="nowrap" valign="middle">
+        <a
+            class="field-edit-trigger"
+            data-toggle="modal"
+            data-target="#field-edit-{{@index}}"
+            href="javascript:void(0)"
+        >
+            <i class="fa fa-edit"></i>
+        </a>
+        <a
+            class="field-move-up-trigger"
+            data-do="move-up"
+            data-on="click"
+            data-level="2"
+            href="javascript:void(0)"
+        >
+            <i class="fa fa-arrow-up"></i>
+        </a>
+        <a
+            class="field-move-down-trigger"
+            data-do="move-down"
+            data-on="click"
+            data-level="2"
+            href="javascript:void(0)"
+        >
+            <i class="fa fa-arrow-down"></i>
+        </a>
+        <a
+            class="field-remove-trigger text-danger"
+            data-do="field-remove"
+            data-on="click"
+            data-level="2"
+            href="javascript:void(0)"
+        >
+            <i class="fa fa-remove"></i>
+        </a>
+        {{> meta_modal}}
+    </td>
+    <td>{{label}}</td>
+    <td>{{field.type}}</td>
+    <td>{{list.format}}</td>
+    <td>{{detail.format}}</td>
+    <td>{{#if default}}{{default}}{{else}}None{{/if}}</td>
+    <td>{{#if searchable}}Yes{{else}}No{{/if}}</td>
+    <td>{{#if filterable}}Yes{{else}}No{{/if}}</td>
+    <td>{{#if sortable}}Yes{{else}}No{{/if}}</td>
+</tr>

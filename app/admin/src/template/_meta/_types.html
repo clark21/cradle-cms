@@ -1,0 +1,201 @@
+<select
+    class="field-type form-control"
+    data-do="field-type"
+    data-on="change"
+    name="meta_fields[{{@index}}][field][type]"
+>
+    <option value="none">No Field</option>
+    <optgroup label="String Fields">
+        <option value="text"
+            {{~#when field.type '===' 'text'}} selected{{/when~}}
+        >Text Field</option>
+        <option value="email"
+            {{~#when field.type '===' 'email'}} selected{{/when~}}
+        >Email Field</option>
+        <option value="password"
+            {{~#when field.type '===' 'password'}} selected{{/when~}}
+        >Password Field</option>
+        <option value="search"
+            {{~#when field.type '===' 'search'}} selected{{/when~}}
+        >Search Field</option>
+        <option value="url"
+            {{~#when field.type '===' 'url'}} selected{{/when~}}
+        >URL Field</option>
+        <option value="color"
+            {{~#when field.type '===' 'color'}} selected{{/when~}}
+        >Color Field</option>
+        <option value="format"
+            {{~#when field.type '===' 'format'}} selected{{/when~}}
+        >Format Field</option>
+        <option value="slug"
+            {{~#when field.type '===' 'slug'}} selected{{/when~}}
+        >Slug Field</option>
+        <option value="textarea"
+            {{~#when field.type '===' 'textarea'}} selected{{/when~}}
+        >Textarea Field</option>
+        <option value="wysiwyg"
+            {{~#when field.type '===' 'wysiwyg'}} selected{{/when~}}
+        >WYSIWYG Field</option>
+    </optgroup>
+    <optgroup label="Number Fields">
+        <option value="number"
+            {{~#when field.type '===' 'number'}} selected{{/when~}}
+        >Number Field</option>
+        <option value="small"
+            {{~#when field.type '===' 'small'}} selected{{/when~}}
+        >Small Number Field</option>
+        <option value="range"
+            {{~#when field.type '===' 'range'}} selected{{/when~}}
+        >Range Field</option>
+        <option value="float"
+            {{~#when field.type '===' 'float'}} selected{{/when~}}
+        >Float Field</option>
+        <option value="price"
+            {{~#when field.type '===' 'price'}} selected{{/when~}}
+        >Price Field</option>
+    </optgroup>
+    <optgroup label="Date Fields">
+        <option value="date"
+            {{~#when field.type '===' 'date'}} selected{{/when~}}
+        >Date Field</option>
+        <option value="time"
+            {{~#when field.type '===' 'time'}} selected{{/when~}}
+        >Time Field</option>
+        <option value="datetime"
+            {{~#when field.type '===' 'datetime'}} selected{{/when~}}
+        >Date Time Field</option>
+        <option value="week"
+            {{~#when field.type '===' 'week'}} selected{{/when~}}
+        >Week Field</option>
+        <option value="month"
+            {{~#when field.type '===' 'month'}} selected{{/when~}}
+        >Month Field</option>
+    </optgroup>
+    <optgroup label="Option Fields">
+        <option value="checkbox"
+            {{~#when field.type '===' 'checkbox'}} selected{{/when~}}
+        >Checkbox Field</option>
+        <option value="switch"
+            {{~#when field.type '===' 'switch'}} selected{{/when~}}
+        >Switch Field</option>
+        <option value="select"
+            {{~#when field.type '===' 'select'}} selected{{/when~}}
+        >Select Field</option>
+        <option value="checkboxes"
+            {{~#when field.type '===' 'checkboxes'}} selected{{/when~}}
+        >Checkboxes Fieldset</option>
+        <option value="radios"
+            {{~#when field.type '===' 'radios'}} selected{{/when~}}
+        >Radios Fieldset</option>
+    </optgroup>
+    <optgroup label="File Fields">
+        <option value="file"
+            {{~#when field.type '===' 'file'}} selected{{/when~}}
+        >File Field</option>
+        <option value="image"
+            {{~#when field.type '===' 'image'}} selected{{/when~}}
+        >Image Field</option>
+        <option value="files"
+            {{~#when field.type '===' 'files'}} selected{{/when~}}
+        >Files Field</option>
+        <option value="images"
+            {{~#when field.type '===' 'images'}} selected{{/when~}}
+        >Images Fieldset</option>
+    </optgroup>
+    <optgroup label="JSON Fields">
+        <option value="tag"
+            {{~#when field.type '===' 'tag'}} selected{{/when~}}
+        >Tag Field</option>
+        <option value="meta"
+            {{~#when field.type '===' 'meta'}} selected{{/when~}}
+        >Meta Field</option>
+        <option value="multirange"
+            {{~#when field.type '===' 'multirange'}} selected{{/when~}}
+        >Multi Range Field</option>
+    </optgroup>
+    <optgroup label="_________">
+        <option value="custom"
+            {{~#when field.type '===' 'custom'}} selected{{/when~}}
+        >Custom Field</option>
+    </optgroup>
+</select>
+
+{{#if field.options}}
+    <div class="input-options">
+        {{#each field.options}}
+            <div class="option-row input-group" data-index="{{@index}}">
+                <input
+                    class="form-control option-value"
+                    name="meta_fields[{{../@index}}][field][options][{{@index}}]"
+                    placeholder="Value"
+                    type="text"
+                    value="{{this}}"
+                />
+                <span class="input-group-btn">
+                    <a
+                        class="btn btn-danger"
+                        data-do="option-remove"
+                        data-on="click"
+                        data-level="2"
+                        href="javascript:void(0)"
+                    >
+                        <i class="fa fa-remove"></i>
+                    </a>
+                </span>
+            </div>
+        {{/each}}
+        <button
+            data-do="option-add"
+            data-name="meta_fields[{{@index}}][field][options][{INDEX}]"
+            data-on="click"
+            class="btn btn-info option-add"
+            type="button"
+        >
+            Add Option
+        </button>
+    </div>
+{{/if}}
+
+{{#if field.attributes}}
+    <div class="input-attributes">
+        {{#each field.attributes}}
+            <div
+                class="attribute-row"
+                data-do="attribute-field"
+                data-name="meta_fields[{{../@index}}][field][attributes][{INDEX}]"
+            >
+                <input
+                    class="form-control attribute-key"
+                    placeholder="Attribute"
+                    type="text"
+                    value="{{@key}}"
+                />
+                <input
+                    class="form-control attribute-value"
+                    name="meta_fields[{{../@index}}][field][attributes][{{@key}}]"
+                    placeholder="Value"
+                    type="text"
+                    value="{{this}}"
+                />
+                <a
+                    class="btn btn-danger"
+                    data-do="remove"
+                    data-on="click"
+                    data-level="1"
+                    href="javascript:void(0)"
+                >
+                    <i class="fa fa-remove"></i>
+                </a>
+            </div>
+        {{/each}}
+        <button
+            data-do="attribute-add"
+            data-name="meta_fields[{{@index}}][field][attributes][{INDEX}]"
+            data-on="click"
+            class="attribute-add btn btn-info"
+            type="button"
+        >
+            Add Attribute
+        </button>
+    </div>
+{{/if}}

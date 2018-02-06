@@ -1,0 +1,131 @@
+{{> meta_styles}}
+
+<div class="panel panel-default clear" >
+    <div class="panel-heading brand">
+        <div class="panel-title">{{title}}</div>
+    </div>
+
+    <div class="panel-body" >
+        <form enctype="multipart/form-data" method="post">
+
+            <div class="form-group{{#if errors.meta_type}} has-error{{/if}}">
+                <label class="control-label">Type</label>
+                <div>
+                    <select name="meta_type" class="form-control">
+                        <option value="meta"{{#when item.meta_type '==' 'post'}} selected{{/when}}>Post</option>
+                        <option value="user"{{#when item.meta_type '==' 'user'}} selected{{/when}}>User</option>
+                    </select>
+
+                    {{#if errors.meta_type}}
+                    <span class="help-text">{{errors.meta_type}}</span>
+                    {{/if}}
+                </div>
+            </div>
+
+            <div class="form-group{{#if errors.meta_singular}} has-error{{/if}}">
+                <label class="control-label">Singular</label>
+                <div>
+                    <input name="meta_singular" value="{{item.meta_singular}}" placeholder="Enter a Singular" type="text" class="form-control" />
+
+                    {{#if errors.meta_singular}}
+                    <span class="help-text">{{errors.meta_singular}}</span>
+                    {{/if}}
+                </div>
+            </div>
+
+            <div class="form-group{{#if errors.meta_plural}} has-error{{/if}}">
+                <label class="control-label">Plural</label>
+                <div>
+                    <input name="meta_plural" value="{{item.meta_plural}}" placeholder="Enter a Plural" type="text" class="form-control" />
+
+                    {{#if errors.meta_plural}}
+                    <span class="help-text">{{errors.meta_plural}}</span>
+                    {{/if}}
+                </div>
+            </div>
+
+            <div class="form-group{{#if errors.meta_slug}} has-error{{/if}}">
+                <label class="control-label">Slug</label>
+                <div>
+                    <input
+                        data-do="slugger"
+                        data-source="input[name=meta_singular]"
+                        data-upper="0"
+                        name="meta_slug"
+                        value="{{item.meta_slug}}"
+                        placeholder="Enter a unique SEO slug"
+                        type="text"
+                        class="form-control" />
+
+                    {{#if errors.meta_slug}}
+                    <span class="help-text">{{errors.meta_slug}}</span>
+                    {{/if}}
+                </div>
+            </div>
+
+            <div class="form-group{{#if errors.meta_detail}} has-error{{/if}}">
+                <label class="control-label">Detail</label>
+                <div>
+                    <textarea name="meta_detail" placeholder="Write about something" class="form-control">{{{item.meta_detail}}}</textarea>
+
+                    {{#if errors.meta_detail}}
+                    <span class="help-text">{{errors.meta_detail}}</span>
+                    {{/if}}
+                </div>
+            </div>
+
+            <div class="form-group{{#if errors.meta_fields}} has-error{{/if}}">
+                <label class="control-label">Fields</label>
+                <div>
+                    <div id="meta-fields" class="meta-fields" data-name="meta_fields">
+                        <div class="table-overflow">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Action</th>
+                                        <th>Label</th>
+                                        <th>Field</th>
+                                        <th>Validation</th>
+                                        <th>List Format</th>
+                                        <th>Detail Format</th>
+                                        <th>Default</th>
+                                        <th>Searchable</th>
+                                        <th>Filterable</th>
+                                        <th>Sortable</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#each item.meta_fields}}
+                                        {{> meta_row}}
+                                    {{/each}}
+                                </tbody>
+                            </table>
+                        </div>
+                        <button
+                            class="field-add btn btn-info"
+                            data-do="field-add"
+                            data-on="click"
+                            data-target="#meta-fields tbody"
+                            type="button"
+                        >
+                            Add Field
+                        </button>
+                    </div>
+
+                    {{#if errors.meta_fields}}
+                    <span class="help-text">{{errors.meta_fields}}</span>
+                    {{/if}}
+                </div>
+            </div>
+
+            <div class="clear form-group">
+                <input type="hidden" name="csrf" value="" />
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{{> meta_templates}}
+
+{{> meta_scripts}}

@@ -1,0 +1,9 @@
+bin
+vendor
+
+config/services.php
+config/settings.php
+config/test.php
+
+public/bower_components
+public/upload

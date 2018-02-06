@@ -1,0 +1,39 @@
+<div class="panel panel-default clear" >
+    <div class="panel-heading brand">
+        <div class="panel-title">{{title}}</div>
+    </div>
+
+    <div class="panel-body" >
+        <form enctype="multipart/form-data" method="post">
+            
+            <div class="form-group{{#if errors.auth_slug}} has-error{{/if}}">
+                <label class="control-label">Email</label>
+                <div>
+                    <input name="auth_slug" value="{{item.auth_slug}}" placeholder="john@doe.com" type="text" class="form-control" />
+
+                    {{#if errors.auth_slug}}
+                    <span class="help-text">{{errors.auth_slug}}</span>
+                    {{/if}}
+                </div>
+            </div>
+            
+            <div class="form-group{{#if errors.auth_password}} has-error{{/if}}">
+                <label class="control-label">Password</label>
+                <div>
+                    <input name="auth_password" value="{{item.auth_password}}" placeholder="Enter a password" type="password" class="form-control" />
+
+                    {{#if errors.auth_password}}
+                    <span class="help-text">{{errors.auth_password}}</span>
+                    {{/if}}
+                </div>
+            </div>
+            
+
+            <div class="clear form-group">
+                <input type="hidden" name="csrf" value="" />
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script type="text/javascript" src="/scripts/cropper.js"></script>

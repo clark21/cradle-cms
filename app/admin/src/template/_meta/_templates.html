@@ -1,0 +1,383 @@
+<script id="field-row-template" type="text/x-template">
+    <tr class="meta-field" data-index="{INDEX}">
+        <td class="meta-action" nowrap="nowrap" valign="middle">
+            <a
+                class="field-move-up"
+                data-do="move-up"
+                data-on="click"
+                data-level="2"
+                href="javascript:void(0)"
+            >
+                <i class="fa fa-arrow-up"></i>
+            </a>
+            <a
+                class="field-move-down"
+                data-do="move-down"
+                data-on="click"
+                data-level="2"
+                href="javascript:void(0)"
+            >
+                <i class="fa fa-arrow-down"></i>
+            </a>
+            <a
+                class="field-remove text-danger"
+                data-do="field-remove"
+                data-on="click"
+                data-level="2"
+                href="javascript:void(0)"
+            >
+                <i class="fa fa-remove"></i>
+            </a>
+        </td>
+        <td>
+            <input
+                class="field-label form-control"
+                placeholder="Field Title"
+                name="meta_fields[{INDEX}][label]"
+                type="text"
+            />
+            <input class="field-name" type="hidden" />
+        </td>
+        <td>
+            <select
+                class="field-type form-control"
+                data-do="field-type"
+                data-on="change"
+                name="meta_fields[{INDEX}][field][type]"
+            >
+                <option value="none">No Field</option>
+                <optgroup label="String Fields">
+                    <option value="text">Text Field</option>
+                    <option value="email">Email Field</option>
+                    <option value="password">Password Field</option>
+                    <option value="search">Search Field</option>
+                    <option value="url">URL Field</option>
+                    <option value="color">Color Field</option>
+                    <option value="format">Format Field</option>
+                    <option value="slug">Slug Field</option>
+                    <option value="textarea">Textarea Field</option>
+                    <option value="wysiwyg">WYSIWYG Field</option>
+                </optgroup>
+                <optgroup label="Number Fields">
+                    <option value="number">Number Field</option>
+                    <option value="small">Small Number Field</option>
+                    <option value="range">Range Field</option>
+                    <option value="float">Float Field</option>
+                    <option value="price">Price Field</option>
+                </optgroup>
+                <optgroup label="Date Fields">
+                    <option value="date">Date Field</option>
+                    <option value="time">Time Field</option>
+                    <option value="datetime">Date Time Field</option>
+                    <option value="week">Week Field</option>
+                    <option value="month">Month Field</option>
+                </optgroup>
+                <optgroup label="Option Fields">
+                    <option value="checkbox">Checkbox Field</option>
+                    <option value="switch">Switch Field</option>
+                    <option value="select">Select Field</option>
+                    <option value="checkboxes">Checkboxes Fieldset</option>
+                    <option value="radios">Radios Fieldset</option>
+                </optgroup>
+                <optgroup label="File Fields">
+                    <option value="file">File Field</option>
+                    <option value="image">Image Field</option>
+                    <option value="files">Files Field</option>
+                    <option value="images">Images Fieldset</option>
+                </optgroup>
+                <optgroup label="JSON Fields">
+                    <option value="tag">Tag Field</option>
+                    <option value="meta">Meta Field</option>
+                    <option value="multirange">Multi Range Field</option>
+                </optgroup>
+                <optgroup label="_________">
+                    <option value="custom">Custom Field</option>
+                </optgroup>
+            </select>
+        </td>
+        <td>
+            <button
+                class="btn btn-info"
+                data-do="validation-add"
+                data-on="click"
+                type="button"
+            >
+                Add Validation
+            </button>
+        </td>
+        <td>
+            <select
+                class="field-list form-control"
+                data-do="field-list"
+                data-on="change"
+                name="meta_fields[{INDEX}][list][format]"
+            >
+                <option value="none">No Filter</option>
+                <optgroup class="filter-group-string" label="String Filters">
+                    <option value="lower">Lower Case</option>
+                    <option value="upper">Upper Case</option>
+                    <option value="capital">Capitalize</option>
+                    <option value="length">Character Length</option>
+                    <option value="words">Word Length</option>
+                </optgroup>
+                <optgroup class="filter-group-number" label="Number Filters">
+                    <option value="number">Comma Format</option>
+                    <option value="price">Price Format</option>
+                    <option value="yes">Yes/No</option>
+                </optgroup>
+                <optgroup class="filter-group-date" label="Date Filters">
+                    <option value="date">Date Format</option>
+                    <option value="relative">Relative Format</option>
+                </optgroup>
+                <optgroup class="filter-group-date" label="HTML Filters">
+                    <option value="link">Link</option>
+                    <option value="image">Image</option>
+                    <option value="email">Email</option>
+                    <option value="phone">Phone</option>
+                </optgroup>
+                <optgroup class="filter-group-json" label="JSON Filters">
+                    <option value="comma">Comma Separated</option>
+                    <option value="space">Space Separated</option>
+                    <option value="tag">Tags</option>
+                </optgroup>
+                <optgroup label="_________">
+                    <option value="hide">Dont Show</option>
+                </optgroup>
+            </select>
+        </td>
+        <td>
+            <select
+                class="field-detail form-control"
+                data-do="field-detail"
+                data-on="change"
+                name="meta_fields[{INDEX}][detail][format]"
+            >
+                <option value="none">No Filter</option>
+                <optgroup class="filter-group-string" label="String Filters">
+                    <option value="lower">Lower Case</option>
+                    <option value="upper">Upper Case</option>
+                    <option value="capital">Capitalize</option>
+                    <option value="length">Character Length</option>
+                    <option value="words">Word Length</option>
+                </optgroup>
+                <optgroup class="filter-group-number" label="Number Filters">
+                    <option value="number">Comma Format</option>
+                    <option value="price">Price Format</option>
+                    <option value="yes">Yes/No</option>
+                </optgroup>
+                <optgroup class="filter-group-date" label="Date Filters">
+                    <option value="date">Date Format</option>
+                    <option value="relative">Relative Format</option>
+                </optgroup>
+                <optgroup class="filter-group-html" label="HTML Filters">
+                    <option value="link">Link</option>
+                    <option value="image">Image</option>
+                    <option value="email">Email</option>
+                    <option value="phone">Phone</option>
+                </optgroup>
+                <optgroup class="filter-group-json" label="JSON Filters">
+                    <option value="comma">Comma Separated</option>
+                    <option value="space">Space Separated</option>
+                    <option value="tag">Tags</option>
+                </optgroup>
+                <optgroup label="_________">
+                    <option value="hide">Dont Show</option>
+                </optgroup>
+            </select>
+        </td>
+        <td>
+            <input
+                class="field-default form-control"
+                placeholder="Default Value"
+                name="meta_fields[{INDEX}][default]"
+                type="text"
+            />
+        </td>
+        <td class="checkbox-cell">
+            <input
+                class="field-searchable"
+                name="meta_fields[{INDEX}][searchable]"
+                type="checkbox"
+                value="1"
+            />
+        </td>
+        <td class="checkbox-cell">
+            <input
+                class="field-filterable"
+                name="meta_fields[{INDEX}][filterable]"
+                type="checkbox"
+                value="1"
+            />
+        </td>
+        <td class="checkbox-cell">
+            <input
+                class="field-sortable"
+                name="meta_fields[{INDEX}][sortable]"
+                type="checkbox"
+                value="1"
+            />
+        </td>
+    </tr>
+</script>
+
+<script id="field-validation-template" type="text/x-template">
+    <div class="validation-row" data-index="{INDEX_2}">
+        <div class="input-group">
+            <select
+                class="form-control"
+                data-do="field-validation"
+                data-on="change"
+                name="meta_fields[{INDEX_1}][validation][{INDEX_2}][method]"
+            >
+                <optgroup label="General Validation">
+                    <option value="required">Required</option>
+                    <option value="empty">Not Empty</option>
+                    <option value="ne">Not Equal</option>
+                    <option value="one">Valid Option</option>
+                    <option value="unique">Unique</option>
+                </optgroup>
+                <optgroup label="String Validation">
+                    <option value="char_lt">Characters Less Than</option>
+                    <option value="char_lte">Characters Less Than Equals</option>
+                    <option value="char_gt">Characters Greater Than</option>
+                    <option value="char_gte">Characters Greater Than Equals</option>
+                    <option value="word_lt">Characters Less Than</option>
+                    <option value="word_lte">Characters Less Than Equals</option>
+                    <option value="word_gt">Characters Greater Than</option>
+                    <option value="word_gte">Characters Greater Than Equals</option>
+                </optgroup>
+                <optgroup label="Number Validation">
+                    <option value="number">Valid Number</option>
+                    <option value="float">Valid Float</option>
+                    <option value="lt">Less Than</option>
+                    <option value="lte">Less Than Equals</option>
+                    <option value="gt">Greater Than</option>
+                    <option value="gte">Greater Than Equals</option>
+                </optgroup>
+                <optgroup label="Type Validation">
+                    <option value="email">Valid Email</option>
+                    <option value="url">Valid URL</option>
+                    <option value="hex">Valid Hex</option>
+                    <option value="cc">Valid Credit Card</option>
+                    <option value="price">Valid Price</option>
+                </optgroup>
+                <optgroup label="_________">
+                    <option value="regex">Valid Expression</option>
+                </optgroup>
+            </select>
+            <span class="input-group-btn">
+                <a
+                    class="btn btn-danger"
+                    data-do="remove"
+                    data-on="click"
+                    data-level="3"
+                >
+                    <i class="fa fa-remove"></i>
+                </a>
+            </span>
+        </div>
+    </div>
+</script>
+
+<script id="field-input-template" type="text/x-template">
+    <div class="input-input">
+        <input
+            name="{NAME}"
+            class="form-control"
+            type="text"
+        />
+    </div>
+</script>
+
+<script id="field-pair-template" type="text/x-template">
+    <div class="input-pair">
+        <input
+            name="{NAME_1}"
+            class="form-control"
+            type="text"
+        />
+        <input
+            name="{NAME_2}"
+            class="form-control"
+            type="text"
+        />
+    </div>
+</script>
+
+<script id="field-attributes-template" type="text/x-template">
+    <div class="input-attributes">
+        <button
+            data-do="attribute-add"
+            data-name="{NAME}"
+            data-on="click"
+            class="attribute-add btn btn-info"
+            type="button"
+        >
+            Add Attribute
+        </button>
+    </div>
+</script>
+
+<script id="field-attribute-row-template" type="text/x-template">
+    <div
+        class="attribute-row"
+        data-do="attribute-field"
+        data-name="{NAME}"
+    >
+        <input
+            class="form-control attribute-key"
+            placeholder="Attribute"
+            type="text"
+        />
+        <input
+            class="form-control attribute-value"
+            placeholder="Value"
+            type="text"
+        />
+        <a
+            class="btn btn-danger"
+            data-do="remove"
+            data-on="click"
+            data-level="1"
+            href="javascript:void(0)"
+        >
+            <i class="fa fa-remove"></i>
+        </a>
+    </div>
+</script>
+
+<script id="field-options-template" type="text/x-template">
+    <div class="input-options">
+        <button
+            data-do="option-add"
+            data-name="{NAME}"
+            data-on="click"
+            class="btn btn-info option-add"
+            type="button"
+        >
+            Add Option
+        </button>
+    </div>
+</script>
+
+<script id="field-option-row-template" type="text/x-template">
+    <div class="option-row input-group" data-index="{INDEX}">
+        <input
+            class="form-control option-value"
+            name="{NAME}"
+            placeholder="Value"
+            type="text"
+        />
+        <span class="input-group-btn">
+            <a
+                class="btn btn-danger"
+                data-do="option-remove"
+                data-on="click"
+                data-level="2"
+                href="javascript:void(0)"
+            >
+                <i class="fa fa-remove"></i>
+            </a>
+        </span>
+    </div>
+</script>
