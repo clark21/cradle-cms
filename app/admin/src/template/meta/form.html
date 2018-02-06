@@ -7,7 +7,7 @@
 
     <div class="panel-body" >
         <form enctype="multipart/form-data" method="post">
-            <div class="form-group{{#if errors.meta_slug}} has-error{{/if}}">
+            <div class="form-group{{#if errors.meta_key}} has-error{{/if}}">
                 <label class="control-label">Keyword</label>
                 <div>
                     <input
@@ -21,8 +21,8 @@
                         type="text"
                         class="form-control" />
 
-                    {{#if errors.meta_slug}}
-                    <span class="help-text">{{errors.meta_slug}}</span>
+                    {{#if errors.meta_key}}
+                    <span class="help-text">{{errors.meta_key}}</span>
                     {{/if}}
                 </div>
             </div>
