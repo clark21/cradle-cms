@@ -66,25 +66,13 @@ $cradle->get('/admin/node/search', function($request, $response) {
 
     //----------------------------//
     // 3. Render Template
-
-    // default title
-    $title = 'Nodes';
-
-    // check meta data
-    if($request->hasStage('meta')) {
-        // set title
-        $title = cradle('global')->translate(
-            $request->getStage('meta', 'meta_plural')
-        );
-    }
-
-    $data['title'] = $title;    
     $class = 'page-admin-node-search page-admin';
+    $data['title'] = cradle('global')->translate('Nodes');
     $body = cradle('/app/admin')->template('node/search', $data);
 
     //set content
     $response
-        ->setPage('title', $data['title'])
+        ->setPage('title', ucwords($data['title']))
         ->setPage('class', $class)
         ->setContent($body);
 
@@ -124,7 +112,7 @@ $cradle->get('/admin/node/create', function($request, $response) {
 
     //set content
     $response
-        ->setPage('title', $data['title'])
+        ->setPage('title', ucwords($data['title']))
         ->setPage('class', $class)
         ->setContent($body);
 
@@ -405,45 +393,61 @@ $cradle->get('/admin/node/restore/:node_id', function($request, $response) {
 });
 
 /**
- * Process dynamic node route
+ * Render dynamic node create
  * 
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/node/:node_type/search', function($request, $response) {
-    // get node type
-    $type = $request->getStage('node_type');
+$cradle->get('/admin/node/:node_type/create', function($request, $response) {
+    //----------------------------//
+    // 1. Route Permissions
+    //only for admin
+    cradle('global')->requireLogin('admin');
 
-    // meta request
-    $metaRequest = \Cradle\Http\Request::i();
-    // meta response
-    $metaResponse = \Cradle\Http\Response::i();
+    // validate meta
+    cradle()->trigger('meta-validate', $request, $response);
 
-    // filter by meta key
-    $metaRequest->setStage('meta_key', $type);
-
-    // get the meta
-    cradle()->trigger('meta-detail', $metaRequest, $metaResponse);
-
-    // get the meta
-    $meta = $metaResponse->getResults();
-
-    // if meta does not exists
-    if(!$meta) {
+    // error?
+    if($response->isError()) {
+        // do nothing
         return;
     }
 
-    // set meta to stage
-    $request->setStage('meta', $meta);
+    // get the meta
+    $meta = $response->getResults();
 
-    // set filter
-    $request->setStage('filter', 'node_type', $type);
+    //----------------------------//
+    // 2. Prepare Data
+    $data = ['item' => $request->getPost()];
 
-    // trigger node search
-    return cradle()->triggerRoute(
-        'get',
-        '/admin/node/search',
-        $request,
-        $response
+    //add CDN
+    $config = $this->package('global')->service('s3-main');
+    $data['cdn_config'] = File::getS3Client($config);
+
+    // error?
+    if ($response->isError()) {
+        $response->setFlash($response->getMessage(), 'danger');
+        $data['errors'] = $response->getValidation();
+    }
+
+    //----------------------------//
+    // 3. Render Template
+
+    $class = sprintf(
+        'page-developer-node-%s-create page-admin',
+        $meta['meta_key']
     );
-});
+
+    $data['title'] = cradle('global')->translate(
+        'Create %s',
+        ucwords($meta['meta_singular'])
+    );
+
+    $body = cradle('/app/admin')->template('node/dynamic/form', $data);
+
+    //set content
+    $response
+        ->setPage('title', $data['title'])
+        ->setPage('class', $class)
+        ->setContent($body);
+}, 'render-admin-page');
