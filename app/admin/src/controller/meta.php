@@ -45,7 +45,7 @@ $cradle->get('/admin/super/meta/search', function($request, $response) {
     //we do this to prevent SQL injections
     if(is_array($request->getStage('filter'))) {
         $filterable = [
-        'meta_active',
+            'meta_active',
             'meta_type'
         ];
 
@@ -185,8 +185,34 @@ $cradle->get('/admin/meta/update/:meta_id', function($request, $response) {
     //----------------------------//
     // 3. Render Template
     $class = 'page-developer-meta-update page-admin';
-    $data['title'] = cradle('global')->translate('Updating Meta');
-    $body = cradle('/app/admin')->template('meta/form', $data);
+    $data['title'] = cradle('global')->translate('Updating Object');
+
+    cradle('global')->handlebars()->registerHelper('is_array', function($value, $option) {
+        if(is_array($value)) {
+            return $option['fn']();
+        }
+
+        return $option['inverse']();
+    });
+
+    $body = cradle('/app/admin')->template(
+        'meta/form',
+        $data,
+        [
+            'meta_styles',
+            'meta_templates',
+            'meta_scripts',
+            'meta_row',
+            'meta_types',
+            'meta_lists',
+            'meta_details',
+            'meta_validation',
+            'meta_update',
+            'meta_type-options',
+            'meta_format-options',
+            'meta_validation-options'
+        ]
+    );
 
     //Set Content
     $response

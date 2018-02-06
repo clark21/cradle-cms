@@ -8,34 +8,39 @@
 </select>
 
 {{#if field.options}}
-    <div class="input-options">
+    <div class="input-keyval">
         {{#each field.options}}
-            <div class="option-row input-group" data-index="{{@index}}">
+            <div class="keyval-row" data-index="{{@index}}">
                 <input
-                    class="form-control option-value"
-                    name="meta_fields[{{../@index}}][field][options][{{@index}}]"
+                    class="form-control keyval-key"
+                    name="meta_fields[{{../@index}}][field][options][{{@index}}][key]"
+                    placeholder="Key"
+                    type="text"
+                    value="{{./key}}"
+                />
+                <input
+                    class="form-control keyval-value"
+                    name="meta_fields[{{../@index}}][field][options][{{@index}}][value]"
                     placeholder="Value"
                     type="text"
-                    value="{{this}}"
+                    value="{{value}}"
                 />
-                <span class="input-group-btn">
-                    <a
-                        class="btn btn-danger"
-                        data-do="option-remove"
-                        data-on="click"
-                        data-level="2"
-                        href="javascript:void(0)"
-                    >
-                        <i class="fa fa-remove"></i>
-                    </a>
-                </span>
+                <a
+                    class="btn btn-danger"
+                    data-do="remove"
+                    data-on="click"
+                    data-level="1"
+                    href="javascript:void(0)"
+                >
+                    <i class="fa fa-remove"></i>
+                </a>
             </div>
         {{/each}}
         <button
-            data-do="option-add"
+            data-do="keyval-add"
             data-name="meta_fields[{{@index}}][field][options][{INDEX}]"
             data-on="click"
-            class="btn btn-info option-add"
+            class="keyval-add btn btn-info"
             type="button"
         >
             Add Option

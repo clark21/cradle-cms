@@ -14,9 +14,18 @@
             return $(template);
         },
         getMetaIndex: function() {
-            return this.parents('tr.meta-field')
+            var index = this
+                .parents('div.modal-body')
                 .eq(0)
                 .attr('data-index');
+
+            if(typeof index === 'undefined') {
+                index = this.parents('tr.meta-field')
+                    .eq(0)
+                    .attr('data-index');
+            }
+
+            return index;
         }
     });
 
@@ -493,6 +502,7 @@
     var reindex = function() {
         var format = {
             label: 'meta_fields[{INDEX}][label]',
+            key: 'meta_fields[{INDEX}][key]',
             type: 'meta_fields[{INDEX}][field][type]',
             list: 'meta_fields[{INDEX}][list][format]',
             detail: 'meta_fields[{INDEX}][detail][format]',
@@ -505,9 +515,16 @@
         $('tr.meta-field').each(function(i) {
             $(this).attr('data-index', i);
 
+            $('div.modal-body', this).attr('data-index', i);
+
             $('input.field-label', this).attr(
                 'name',
                 format.label.replace('{INDEX}', i)
+            );
+
+            $('input.field-keyword', this).attr(
+                'name',
+                format.key.replace('{INDEX}', i)
             );
 
             $('select.field-type', this).each(function() {
@@ -516,17 +533,21 @@
                     format.type.replace('{INDEX}', i)
                 );
 
-                $('div.input-options', $(this).parent()).each(function() {
+                $('div.input-keyval', $(this).parent()).each(function() {
                     var format = 'meta_fields[{INDEX}][field][options][{INDEX}]';
 
                     format = format.replace('{INDEX}', i);
                     $('button.option-add', this).attr('data-name', format);
 
-                    $('div.option-row', this).each(function() {
+                    $('div.keyval-row', this).each(function() {
                         var j = $(this).attr('data-index');
                         $(this)
-                            .find('input.option-value')
-                            .attr('name', format.replace('{INDEX}', j));
+                            .find('input.keyval-key')
+                            .attr('name', format.replace('{INDEX}', j) + '[key]');
+
+                        $(this)
+                            .find('input.keyval-value')
+                            .attr('name', format.replace('{INDEX}', j) + '[value]');
                     });
                 });
 
@@ -620,6 +641,13 @@
                 var j = $(this).attr('data-index');
 
                 $('select', this).attr('name', format
+                    .replace('{INDEX}', i)
+                    .replace('{INDEX}', j)
+                );
+
+                format = 'meta_fields[{INDEX}][validation][{INDEX}][message]';
+
+                $('input.validation-message', this).attr('name', format
                     .replace('{INDEX}', i)
                     .replace('{INDEX}', j)
                 );
