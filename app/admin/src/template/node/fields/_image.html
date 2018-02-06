@@ -1,0 +1,23 @@
+<div class="form-group{{#if error}} has-error{{/if}}">
+    <label class="control-label">{{label}}</label>
+    <div>
+        
+        <div data-do="image-field"
+            data-name="{{@key}}"
+            data-width="{{field.attributes.width}}"
+            data-height="{{field.attributes.height}}"
+            data-alt="Change this Photo"
+            class="image-field">
+                {{#if value}}
+                    <input type="hidden" name="{{@key}}" value="{{value}}" />
+                    <img alt="Change this Photo" width="{{field.attributes.width}}" src="{{value}}" />
+                {{else}}
+                    <img alt="Upload a Photo" width="{{field.attributes.width}}" class="placeholder" src="/images/default-image.png" />
+                {{/if}}
+        </div>
+
+        {{#if error}}
+        <span class="help-text">{{error}}</span>
+        {{/if}}
+    </div>
+</div>

@@ -1,0 +1,18 @@
+<div class="form-group{{#if error}} has-error{{/if}}">
+    <label class="control-label">Tags</label>
+    <div>
+        
+        <div data-do="tag-field" class="tag-field" data-name="{{@key}}">
+            {{#each value}}
+                <div class="tag">
+                    <input type="text" class="tag-input text-field" name="{{@key}}[]" placeholder="{{_ 'Add Tag'}}" value="{{this}}" />
+                    <a class="remove" href="javascript:void(0)"><i class="fa fa-times"></i></a>
+                </div>
+            {{/each}}
+        </div>
+
+        {{#if error}}
+        <span class="help-text">{{error}}</span>
+        {{/if}}
+    </div>
+</div>

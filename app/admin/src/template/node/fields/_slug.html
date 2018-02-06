@@ -1,0 +1,17 @@
+<div class="form-group{{#if error}} has-error{{/if}}">
+    <label class="control-label">{{label}}</label>
+    <div>
+        <input 
+            name="{{@key}}" 
+            value="{{value}}" 
+            placeholder="{{field.attributes.placeholder}}" 
+            type="text" 
+            class="form-control" 
+            {{#if disable}}disabled{{/if}}
+        />
+
+        {{#if error}}
+        <span class="help-text">{{error}}</span>
+        {{/if}}
+    </div>
+</div>

@@ -8,6 +8,7 @@
  */
 
 use Cradle\Module\Utility\File;
+use Cradle\Module\Meta\Fields;
 
 /**
  * Render the Node Search Page
@@ -424,11 +425,27 @@ $cradle->get('/admin/node/:node_type/create', function($request, $response) {
     $config = $this->package('global')->service('s3-main');
     $data['cdn_config'] = File::getS3Client($config);
 
+    // set errors
+    $data['errors'] = [];
+
     // error?
     if ($response->isError()) {
         $response->setFlash($response->getMessage(), 'danger');
         $data['errors'] = $response->getValidation();
     }
+
+    // compile fields
+    $meta['meta_fields'] = (new Fields)
+        ->compile(
+            $meta['meta_fields'],
+            $data['item'],
+            $data['errors']
+        );
+
+    // set meta data
+    $data['meta'] = $meta;
+
+    cradle()->inspect($data['meta']['meta_fields']);
 
     //----------------------------//
     // 3. Render Template
@@ -443,7 +460,19 @@ $cradle->get('/admin/node/:node_type/create', function($request, $response) {
         ucwords($meta['meta_singular'])
     );
 
-    $body = cradle('/app/admin')->template('node/dynamic/form', $data);
+    $body = cradle('/app/admin')->template(
+        'node/dynamic/form', 
+        $data,
+        [
+            'node/fields_date',
+            'node/fields_image',
+            'node/fields_number',
+            'node/fields_slug',
+            'node/fields_text',
+            'node/fields_tag',
+            'node/fields_wysiwyg'
+        ]
+    );
 
     //set content
     $response
