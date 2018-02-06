@@ -1,14 +1,14 @@
 
 {{#when filter.node_active '===' '0'}}
     <h3>
-        {{number total}} Inactive {{title}}
+        {{number total}} Inactive {{#ucwords title}}{{/ucwords}}
         {{#if q.0}}
             matching {{q.0}}
         {{/if}}
     </h3>
 {{else}}
     <h3>
-        {{number total}} {{title}}
+        {{number total}} {{#ucwords title}}{{/ucwords}}
         {{#if q.0}}
             matching {{q.0}}
         {{/if}}
@@ -35,10 +35,17 @@
         </a>
     </div>
     <span>
+        {{#if meta}}
+        <a class="btn btn-success" href="/admin/node/{{meta.meta_key}}/create">
+            <i class="fa fa-plus"></i>
+            Create New {{#ucwords meta.meta_key}}{{/ucwords}}
+        </a>
+        {{else}}
         <a class="btn btn-success" href="/admin/node/create">
             <i class="fa fa-plus"></i>
             Create New Node
         </a>
+        {{/if}}
     </span>
 </div>
 

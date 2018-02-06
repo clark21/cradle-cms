@@ -29,7 +29,7 @@ $cradle->on('render-admin-page', function ($request, $response) {
     $navigation = array_map(function($meta) {
         return [
             'label' => ucwords($meta['meta_plural']),
-            'href'  => sprintf('/admin/%s/search', $meta['meta_slug'])
+            'href'  => sprintf('/admin/node/%s/search', $meta['meta_key'])
         ];
     }, $results);
 
