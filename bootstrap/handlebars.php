@@ -33,6 +33,10 @@ return function ($request, $response) {
         return $value;
     });
 
+    $handlebars->registerHelper('ucwords', function ($value) {
+        return ucwords($value);
+    });
+
     $handlebars->registerHelper('toupper', function ($value) {
         return strtoupper($value);
     });

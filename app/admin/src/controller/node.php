@@ -66,8 +66,20 @@ $cradle->get('/admin/node/search', function($request, $response) {
 
     //----------------------------//
     // 3. Render Template
+
+    // default title
+    $title = 'Nodes';
+
+    // check meta data
+    if($request->hasStage('meta')) {
+        // set title
+        $title = cradle('global')->translate(
+            $request->getStage('meta', 'meta_plural')
+        );
+    }
+
+    $data['title'] = $title;    
     $class = 'page-admin-node-search page-admin';
-    $data['title'] = cradle('global')->translate('Nodes');
     $body = cradle('/app/admin')->template('node/search', $data);
 
     //set content
@@ -398,9 +410,31 @@ $cradle->get('/admin/node/restore/:node_id', function($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/:node_type/search', function($request, $response) {
+$cradle->get('/admin/node/:node_type/search', function($request, $response) {
     // get node type
     $type = $request->getStage('node_type');
+
+    // meta request
+    $metaRequest = \Cradle\Http\Request::i();
+    // meta response
+    $metaResponse = \Cradle\Http\Response::i();
+
+    // filter by meta key
+    $metaRequest->setStage('meta_key', $type);
+
+    // get the meta
+    cradle()->trigger('meta-detail', $metaRequest, $metaResponse);
+
+    // get the meta
+    $meta = $metaResponse->getResults();
+
+    // if meta does not exists
+    if(!$meta) {
+        return;
+    }
+
+    // set meta to stage
+    $request->setStage('meta', $meta);
 
     // set filter
     $request->setStage('filter', 'node_type', $type);

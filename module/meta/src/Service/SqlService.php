@@ -67,10 +67,10 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
     public function get($id)
     {
         $search = $this->resource->search('meta');
-        
+                
         if (is_numeric($id)) {
             $search->filterByMetaId($id);
-        } else if (isset($data['meta_key'])) {
+        } else {            
             $search->filterByMetaKey($id);
         }
 
