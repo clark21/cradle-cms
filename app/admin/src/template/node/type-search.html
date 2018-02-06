@@ -25,36 +25,6 @@
                     data-signature="{{cdn_config.inputs.X-Amz-Signature}}"
                 {{/if}}
             >
-                {{#each meta.meta_fields}}
-                    {{#when field.type '===' 'image'}}
-                        {{> node/fields_image}}
-                    {{/when}}
-
-                    {{#when field.type '===' 'text'}}
-                        {{> node/fields_text}}
-                    {{/when}}
-
-                    {{#when field.type '===' 'tag'}}
-                        {{> node/fields_tag}}
-                    {{/when}}
-
-                    {{#when field.type '===' 'slug'}}
-                        {{> node/fields_slug}}
-                    {{/when}}
-
-                    {{#when field.type '===' 'wysiwyg'}}
-                        {{> node/fields_wysiwyg}}
-                    {{/when}}
-
-                    {{#when field.type '===' 'date'}}
-                        {{> node/fields_date}}
-                    {{/when}}
-
-                    {{#if number_field}}
-                        {{> node/fields_number}}
-                    {{/if}}
-                {{/each}}
-    
                 <div class="clear form-group">
                     <input type="hidden" name="csrf" value="" />
                     <button type="submit" class="btn btn-primary">Submit</button>

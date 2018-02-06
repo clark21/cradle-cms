@@ -1,0 +1,39 @@
+<div class="panel panel-default clear" >
+    <div class="panel-heading brand">
+        <div class="panel-title">{{#ucwords title}}{{/ucwords}}</div>
+    </div>
+
+    <div class="panel-body" >
+        <form 
+            enctype="multipart/form-data"
+            method="post"
+            {{#if cdn_config}}
+                data-do="cdn-upload"
+                data-on="submit"
+                data-progress="We are uploading your files. Please do not refresh page."
+                data-complete="Upload Complete"
+                data-enctype="{{cdn_config.form.enctype}}"
+                data-method="{{cdn_config.form.method}}"
+                data-action="{{cdn_config.form.action}}"
+                data-cdn="{{cdn_config.form.action}}"
+                data-acl="{{cdn_config.inputs.acl}}"
+                data-key="{{cdn_config.inputs.key}}"
+                data-credential="{{cdn_config.inputs.X-Amz-Credential}}"
+                data-algorythm="{{cdn_config.inputs.X-Amz-Algorithm}}"
+                data-date="{{cdn_config.inputs.X-Amz-Date}}"
+                data-policy="{{cdn_config.inputs.Policy}}"
+                data-signature="{{cdn_config.inputs.X-Amz-Signature}}"
+            {{/if}}
+        >
+        
+            {{{fields}}}
+
+            <div class="clear form-group">
+                <input type="hidden" name="csrf" value="" />
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script type="text/javascript" src="/scripts/cropper.js"></script>
+    
