@@ -1,9 +1,9 @@
-<tr class="meta-field" data-index="{{@index}}">
+<tr class="meta-field{{#if disable}} field-disabled{{/if}}" data-index="{{@index}}">
     <td class="meta-action" nowrap="nowrap" valign="middle">
         <a
-            class="field-edit-trigger"
-            data-toggle="modal"
-            data-target="#field-edit-{{@index}}"
+            class="field-edit-trigger text-warning"
+            data-do="modal-open"
+            data-on="click"
             href="javascript:void(0)"
         >
             <i class="fa fa-edit"></i>
@@ -26,23 +26,27 @@
         >
             <i class="fa fa-arrow-down"></i>
         </a>
+        {{#unless disable}}
         <a
             class="field-remove-trigger text-danger"
             data-do="field-remove"
             data-on="click"
             data-level="2"
-            href="javascript:void(0)"
-        >
-            <i class="fa fa-remove"></i>
-        </a>
-        {{> meta_modal}}
+                href="javascript:void(0)"
+            >
+                <i class="fa fa-remove"></i>
+            </a>
+        {{/unless}}
+
+        {{> meta_update}}
     </td>
-    <td>{{label}}</td>
-    <td>{{field.type}}</td>
-    <td>{{list.format}}</td>
-    <td>{{detail.format}}</td>
-    <td>{{#if default}}{{default}}{{else}}None{{/if}}</td>
-    <td>{{#if searchable}}Yes{{else}}No{{/if}}</td>
-    <td>{{#if filterable}}Yes{{else}}No{{/if}}</td>
-    <td>{{#if sortable}}Yes{{else}}No{{/if}}</td>
+    <td class="field-keyword-value">{{./key}}</td>
+    <td class="field-label-value">{{label}}</td>
+    <td class="field-type-value">{{field.type}}</td>
+    <td class="field-list-value">{{list.format}}</td>
+    <td class="field-detail-value">{{detail.format}}</td>
+    <td class="field-default-value">{{#if default}}{{default}}{{else}}--{{/if}}</td>
+    <td class="field-searchable-value">{{#if searchable}}Yes{{else}}No{{/if}}</td>
+    <td class="field-filterable-value">{{#if filterable}}Yes{{else}}No{{/if}}</td>
+    <td class="field-sortable-value">{{#if sortable}}Yes{{else}}No{{/if}}</td>
 </tr>

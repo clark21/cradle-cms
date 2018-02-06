@@ -70,8 +70,8 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
         
         if (is_numeric($id)) {
             $search->filterByMetaId($id);
-        } else if (isset($data['meta_slug'])) {
-            $search->filterByMetaSlug($id);
+        } else if (isset($data['meta_key'])) {
+            $search->filterByMetaKey($id);
         }
 
         $results = $search->getRow();
@@ -229,15 +229,15 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
     /**
      * Checks to see if unique.0 already exists
      *
-     * @param *string $metaSlug
+     * @param *string $metaKey
      *
      * @return bool
      */
-    public function exists($metaSlug)
+    public function exists($metaKey)
     {
         $search = $this->resource
             ->search('meta')
-            ->filterByMetaSlug($metaSlug);
+            ->filterByMetaKey($metaKey);
 
         return !!$search->getRow();
     }

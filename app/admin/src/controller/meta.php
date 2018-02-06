@@ -13,7 +13,7 @@
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/meta/search', function($request, $response) {
+$cradle->get('/admin/super/meta/search', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     //only for admin
@@ -58,17 +58,7 @@ $cradle->get('/admin/meta/search', function($request, $response) {
 
     //trigger job
     cradle()->trigger('meta-search', $request, $response);
-
-    // get results
-    $results = $response->getResults();
-
-    // set default
-    if(!$results) {
-        // empty results
-        $results = [];
-    }
-
-    $data = array_merge($request->getStage(), $results);
+    $data = array_merge($request->getStage(), $response->getResults());
 
     //----------------------------//
     // 3. Render Template
@@ -91,7 +81,7 @@ $cradle->get('/admin/meta/search', function($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/meta/create', function($request, $response) {
+$cradle->get('/admin/meta/create/:type', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     //only for admin
@@ -119,6 +109,16 @@ $cradle->get('/admin/meta/create', function($request, $response) {
         return $option['inverse']();
     });
 
+    if($request->getStage('type') === 'user') {
+        $data['title'] = cradle('global')->translate('Create User Type');
+        $data['item']['meta_type'] = 'user';
+        $data['item']['meta_fields'] = include(__DIR__ . '/../config/user.php');
+    } else {
+        $data['title'] = cradle('global')->translate('Create Node Type');
+        $data['item']['meta_type'] = 'node';
+        $data['item']['meta_fields'] = include(__DIR__ . '/../config/node.php');
+    }
+
     $body = cradle('/app/admin')->template(
         'meta/form',
         $data,
@@ -131,7 +131,10 @@ $cradle->get('/admin/meta/create', function($request, $response) {
             'meta_lists',
             'meta_details',
             'meta_validation',
-            'meta_modal'
+            'meta_update',
+            'meta_type-options',
+            'meta_format-options',
+            'meta_validation-options'
         ]
     );
 
@@ -183,30 +186,7 @@ $cradle->get('/admin/meta/update/:meta_id', function($request, $response) {
     // 3. Render Template
     $class = 'page-developer-meta-update page-admin';
     $data['title'] = cradle('global')->translate('Updating Meta');
-
-    cradle('global')->handlebars()->registerHelper('implode', function($value, $option) {
-        if(is_array($value)) {
-            return $option['fn'](['value' => implode(',', array_values($value))]);
-        }
-
-        return $option['inverse']();
-    });
-
-    $body = cradle('/app/admin')->template(
-        'meta/form', 
-        $data,
-        [
-            'meta_styles',
-            'meta_templates',
-            'meta_scripts',
-            'meta_row',
-            'meta_types',
-            'meta_lists',
-            'meta_details',
-            'meta_validation',
-            'meta_modal'
-        ]
-    );
+    $body = cradle('/app/admin')->template('meta/form', $data);
 
     //Set Content
     $response
@@ -223,7 +203,7 @@ $cradle->get('/admin/meta/update/:meta_id', function($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->post('/admin/meta/create', function($request, $response) {
+$cradle->post('/admin/meta/create/:type', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     //only for admin
@@ -232,10 +212,7 @@ $cradle->post('/admin/meta/create', function($request, $response) {
     //----------------------------//
     // 2. Prepare Data
 
-    //if meta_type has no value use the default value
-    if ($request->hasStage('meta_type') && !$request->getStage('meta_type')) {
-        $request->setStage('meta_type', 'post');
-    }
+    $request->setStage('meta_type', $request->getStage('type'));
 
     //if meta_detail has no value make it null
     if ($request->hasStage('meta_detail') && !$request->getStage('meta_detail')) {

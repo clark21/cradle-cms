@@ -1,0 +1,170 @@
+<div class="modal fade modal-update" tabindex="-1">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button
+                    class="close"
+                    data-do="modal-cancel"
+                    data-on="click"
+                    type="button"
+                >
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">Edit Field</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group form-group-label">
+                    <label class="control-label">Label</label>
+                    <div>
+                        <input
+                            class="field-label form-control"
+                            name="meta_fields[{{@index}}][label]"
+                            placeholder="Field Title"
+                            type="text"
+                            value="{{label}}"
+                        />
+                    </div>
+                </div>
+                <div class="form-group form-group-keyword">
+                    <label class="control-label">Keyword</label>
+                    <div>
+                        {{#if disable}}
+                            <input
+                                class="form-control"
+                                disabled="disabled"
+                                type="text"
+                                value="{{./key}}"
+                            />
+                        {{/if}}
+                        <input
+                            class="field-keyword form-control"
+                            name="meta_fields[{{@index}}][key]"
+                            value="{{./key}}"
+                            {{#if disable}}
+                                type="hidden"
+                            {{else}}
+                                data-do="slugger"
+                                data-source="input[name='meta_fields[{{@index}}][label]']"
+                                data-upper="0"
+                                data-space="_"
+                                placeholder="Enter a unique keyword"
+                                type="text"
+                            {{/if}}
+                        />
+                    </div>
+                </div>
+                <div class="form-group form-group-type">
+                    <label class="control-label">Type</label>
+                    <div>
+                        {{> meta_types}}
+                    </div>
+                </div>
+                <div class="form-group form-group-validation">
+                    <label class="control-label">Validation</label>
+                    <div>
+                        {{#each validation}}
+                            {{> meta_validation}}
+                        {{/each}}
+                        <button
+                            class="btn btn-info"
+                            data-do="validation-add"
+                            data-on="click"
+                            type="button"
+                        >
+                            Add Validation
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group form-group-list">
+                    <label class="control-label">List Format</label>
+                    <div>
+                        {{> meta_lists}}
+                    </div>
+                </div>
+                <div class="form-group form-group-detail">
+                    <label class="control-label">Detail Format</label>
+                    <div>
+                        {{> meta_details}}
+                    </div>
+                </div>
+
+                <div class="form-group form-group-default">
+                    <label class="control-label">Default</label>
+                    <div>
+                        <input
+                            class="field-default form-control"
+                            placeholder="Default Value"
+                            name="meta_fields[{{@index}}][default]"
+                            type="text"
+                            value="{{default}}"
+                        />
+                    </div>
+                </div>
+
+                <div class="form-group form-group-indexes">
+                    <div>
+                        <label>
+                            <input
+                                class="field-searchable"
+                                name="meta_fields[{{@index}}][searchable]"
+                                type="checkbox"
+                                value="1"
+                                {{#if searchable}} checked{{/if}}
+                            />
+                            Searchable
+                        </label>
+                        <br />
+                        <label>
+                            <input
+                                class="field-filterable"
+                                name="meta_fields[{{@index}}][filterable]"
+                                type="checkbox"
+                                value="1"
+                                {{#if filterable}} checked{{/if}}
+                            />
+                            Filterable
+                        </label>
+                        <br />
+                        <label>
+                            <input
+                                class="field-sortable"
+                                name="meta_fields[{{@index}}][sortable]"
+                                type="checkbox"
+                                value="1"
+                                {{#if sortable}} checked{{/if}}
+                            />
+                            Sortable
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                {{#if disable}}
+                    <input
+                        class="field-disabled"
+                        name="meta_fields[{{@index}}][disable]"
+                        type="hidden"
+                        value="1"
+                        {{#if sortable}} checked{{/if}}
+                    />
+                {{/if}}
+                <button
+                    class="btn btn-danger"
+                    data-do="modal-cancel"
+                    data-on="click"
+                    type="button"
+                >
+                    Cancel
+                </button>
+                <button
+                    class="btn btn-primary"
+                    data-do="modal-save"
+                    data-on="click"
+                    type="button"
+                >
+                    Done
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

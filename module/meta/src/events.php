@@ -79,8 +79,8 @@ $cradle->on('meta-detail', function ($request, $response) {
     $id = null;
     if (isset($data['meta_id'])) {
         $id = $data['meta_id'];
-    } else if (isset($data['meta_slug'])) {
-        $id = $data['meta_slug'];
+    } else if (isset($data['meta_key'])) {
+        $id = $data['meta_key'];
     }
 
     //----------------------------//
@@ -175,7 +175,7 @@ $cradle->on('meta-remove', function ($request, $response) {
 
     //invalidate cache
     $metaRedis->removeDetail($data['meta_id']);
-    $metaRedis->removeDetail($data['meta_slug']);
+    $metaRedis->removeDetail($data['meta_key']);
     $metaRedis->removeSearch();
 
     $response->setError(false)->setResults($results);
@@ -340,7 +340,7 @@ $cradle->on('meta-update', function ($request, $response) {
 
     //invalidate cache
     $metaRedis->removeDetail($response->getResults('meta_id'));
-    $metaRedis->removeDetail($data['meta_slug']);
+    $metaRedis->removeDetail($data['meta_key']);
     $metaRedis->removeSearch();
 
     //return response format

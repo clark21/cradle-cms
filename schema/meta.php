@@ -31,9 +31,9 @@ return [
             'validation' => [
                 [
                     'method' => 'one',
-                    'message' => 'Must choose a verification method',
+                    'message' => 'Must choose a valid type',
                     'parameters' => [
-                        'meta',
+                        'node',
                         'user'
                     ]
                 ]
@@ -120,7 +120,7 @@ return [
                 'fail' => 'Foobar'
             ]
         ],
-        'meta_slug' => [
+        'meta_key' => [
             'sql' => [
                 'type' => 'varchar',
                 'length' => 255,
@@ -131,7 +131,7 @@ return [
                 'type' => 'string'
             ],
             'form' => [
-                'label' => 'Slug',
+                'label' => 'Keyword',
                 'type' => 'text',
                 'attributes' => [
                     'placeholder' => 'Enter a unique SEO slug',
@@ -140,16 +140,16 @@ return [
             'validation' => [
                 [
                     'method' => 'required',
-                    'message' => 'Slug is required'
+                    'message' => 'Keyword is required'
                 ],
                 [
                     'method' => 'regexp',
-                    'message' => 'Slug must only have letters, numbers, dashes',
+                    'message' => 'Keyword must only have letters, numbers, dashes',
                     'parameters' => '#^[a-zA-Z0-9\-_]+$#'
                 ],
                 [
                     'method' => 'unique',
-                    'message' => 'Slug must be unique'
+                    'message' => 'Keyword must be unique'
                 ]
             ],
             'test' => [

@@ -40,8 +40,8 @@ class Validator
             $errors['meta_plural'] = 'Plural is required';
         }
                 
-        if(!isset($data['meta_slug']) || empty($data['meta_slug'])) {
-            $errors['meta_slug'] = 'Slug is required';
+        if(!isset($data['meta_key']) || empty($data['meta_key'])) {
+            $errors['meta_key'] = 'Keyword is required';
         }
                 
         return self::getOptionalErrors($data, $errors);
@@ -70,8 +70,8 @@ class Validator
             $errors['meta_plural'] = 'Plural is required';
         }
                 
-        if(isset($data['meta_slug']) && empty($data['meta_slug'])) {
-            $errors['meta_slug'] = 'Slug is required';
+        if(isset($data['meta_key']) && empty($data['meta_key'])) {
+            $errors['meta_key'] = 'Keyword is required';
         }
                 
         return self::getOptionalErrors($data, $errors);
@@ -89,9 +89,9 @@ class Validator
     {
         //validations
         
-        $choices = array('meta', 'user');
+        $choices = array('node', 'user');
         if (isset($data['meta_type']) && !in_array($data['meta_type'], $choices)) {
-            $errors['meta_type'] = 'Must choose a verification method';
+            $errors['meta_type'] = 'Must choose a valid type';
         }
                 
         if(isset($data['meta_singular']) && strlen($data['meta_singular']) <= 3) {
@@ -110,22 +110,22 @@ class Validator
             $errors['meta_plural'] = 'Plural should be less than 255 characters';
         }
                 
-        if (isset($data['meta_slug']) && !preg_match('#^[a-zA-Z0-9\-_]+$#', $data['meta_slug'])) {
-            $errors['meta_slug'] = 'Slug must only have letters, numbers, dashes';
+        if (isset($data['meta_key']) && !preg_match('#^[a-zA-Z0-9\-_]+$#', $data['meta_key'])) {
+            $errors['meta_key'] = 'Keyword must only have letters, numbers, dashes';
         }
                 
-        if(isset($data['meta_slug'])) {
+        if(isset($data['meta_key'])) {
             $search = Service::get('sql')
                 ->getResource()
                 ->search('meta')
-                ->filterByMetaSlug($data['meta_slug']);
+                ->filterByMetaKey($data['meta_key']);
 
             if(isset($data['meta_id'])) {
                 $search->addFilter('meta_id != %s', $data['meta_id']);
             }
 
             if($search->getTotal()) {
-                $errors['meta_slug'] = 'Slug must be unique';
+                $errors['meta_key'] = 'Keyword must be unique';
             }
         }
                 

@@ -20,6 +20,105 @@
         }
     });
 
+    var copy = null;
+    $(window).on('modal-open-click', function(e, trigger) {
+        $(trigger).siblings('div.modal').eq(0).modal({
+            backdrop: 'static',
+            keyboard: false
+        });
+
+        copy = $(trigger)
+            .siblings('div.modal')
+            .eq(0)
+            .find('div.modal-body')
+            .clone();
+    });
+
+    $(window).on('modal-cancel-click', function(e, trigger) {
+        var modal = $(trigger).parents('div.modal').eq(0).modal('hide');
+
+        if(modal.hasClass('modal-update')) {
+            modal
+                .find('div.modal-body')
+                .replaceWith(copy);
+
+            copy.doon();
+            copy = null;
+        } else {
+            modal.modal('hidden.bs.modal', function() {
+                modal.remove();
+            });
+        }
+    });
+
+    $(window).on('modal-save-click', function(e, trigger) {
+        var modal = $(trigger).parents('div.modal').eq(0);
+
+        var error = false;
+
+        if(!$('input.field-label', modal).val().length) {
+            error = true;
+            $.notify('Label cannot be empty.', 'danger');
+        }
+
+        if(!$('input.field-keyword', modal).val().length) {
+            error = true;
+            $.notify('Keyword cannot be empty.', 'danger');
+        }
+
+        if(error) {
+            return;
+        }
+
+        modal.modal('hide');
+
+        if(modal.hasClass('modal-create')) {
+            var target = modal.attr('data-target');
+            var index = $('div.modal-body', modal).attr('data-index');
+
+            $('#field-row-template')
+                .compile({ INDEX: index })
+                .appendTo(target)
+                .doon()
+                .find('td.meta-action')
+                .append(modal
+                    .removeClass('modal-create')
+                    .addClass('modal-update')
+                );
+        }
+
+        var row = $(trigger).parents('tr.meta-field').eq(0);
+
+        var label = $('input.field-keyword', modal).val();
+        $('td.field-keyword-value', row).html(label);
+
+        var keyword = $('input.field-label', modal).val();
+        $('td.field-label-value', row).html(keyword);
+
+        var type = $('select.field-type', modal).val();
+        $('td.field-type-value', row).html(type);
+
+        var list = $('select.field-list', modal).val();
+        $('td.field-list-value', row).html(list);
+
+        var detail = $('select.field-detail', modal).val();
+        $('td.field-detail-value', row).html(detail);
+
+        var value = $('input.field-default', modal).val();
+        $('td.field-default-value', row).html(value.length ? value: '--');
+
+        var searchable = $('input.field-searchable', modal)[0].checked;
+        $('td.field-searchable-value', row).html(searchable ? 'Yes': 'No');
+
+        var filterable = $('input.field-filterable', modal)[0].checked;
+        $('td.field-filterable-value', row).html(filterable ? 'Yes': 'No');
+
+        var sortable = $('input.field-sortable', modal)[0].checked;
+        $('td.field-sortable-value', row).html(sortable ? 'Yes': 'No');
+
+        copy = null;
+    });
+
     $(window).on('remove-click', function(e, trigger) {
         var level = parseInt($(trigger).attr('data-level'));
 
@@ -60,188 +159,84 @@
         var target = $(trigger).attr('data-target');
         var index = $('tr', target).length;
 
-        $('#field-row-template')
+        $('#field-modal-template')
             .compile({ INDEX: index })
-            .appendTo(target)
+            .appendTo(document.body)
+            .modal({
+                backdrop: 'static',
+                keyboard: false
+            })
+            .attr('data-target', target)
             .doon();
-
     });
 
     $(window).on('field-type-change', function(e, trigger) {
         trigger = $(trigger);
 
-        var value = trigger.val()
+        var row = trigger.parents('div.modal-body').eq(0);
+        var option = $('option[value="' + trigger.val() + '"]', trigger);
 
-        switch(value) {
-            case 'none':
-                trigger.parent().find('div.input-attributes').remove();
-                trigger.parent().find('div.input-options').remove();
-                break;
-            case 'text':      case 'email':      case 'password':
-            case 'search':    case 'url':        case 'color':
-            case 'format':    case 'slug':       case 'textarea':
-            case 'wysiwyg':   case 'number':     case 'small':
-            case 'range':     case 'float':      case 'price':
-            case 'date':      case 'time':       case 'datetime':
-            case 'week':      case 'month':      case 'checkbox':
-            case 'switch':    case 'file':       case 'image':
-            case 'files':     case 'images':     case 'tag':
-            case 'meta':      case 'multirange':
-                trigger.parent().find('div.input-options').remove();
-                if(!trigger.parent().find('div.input-attributes').length) {
-                    var template = 'meta_fields[{INDEX}][field][attributes][{INDEX}]';
-                    var attributes = $('#field-attributes-template')
-                        .compile({
-                            NAME: template.replace(
-                                '{INDEX}',
-                                trigger.getMetaIndex()
-                            )
-                        })
-                        .doon();
+        //configuration
+        var fieldset = (option.attr('data-fieldset') || '').split('|');
+        var format = (option.attr('data-format') || '').split('|');
+        var index = (option.attr('data-index') || '').split('|');
 
-                    trigger.after(attributes);
-                }
-                break;
-            case 'select':
-            case 'checkboxes':
-            case 'radios':
-                if(!trigger.parent().find('div.input-attributes').length) {
-                    var template = 'meta_fields[{INDEX}][field][attributes][{INDEX}]';
-                    var attributes = $('#field-attributes-template')
-                        .compile({
-                            NAME: template.replace(
-                                '{INDEX}',
-                                trigger.getMetaIndex()
-                            )
-                        })
-                        .doon();
-
-                    trigger.after(attributes);
-                }
-
-                if(!trigger.parent().find('div.input-options').length) {
-                    var template = 'meta_fields[{INDEX}][field][options][{INDEX}]';
-                    var options = $('#field-options-template')
-                        .compile({
-                            NAME: template.replace(
-                                '{INDEX}',
-                                trigger.getMetaIndex()
-                            )
-                        })
-                        .doon();
-
-                    trigger.after(options);
-                }
-                break;
-            case 'custom':
-                break;
-        }
-
-        var row = $(trigger).parents('tr').eq(0);
+        //reset
         $('select.field-list optgroup', row).show();
         $('select.field-detail optgroup', row).show();
         $('input.field-searchable', row).attr('disabled', false);
         $('input.field-filterable', row).attr('disabled', false);
         $('input.field-sortable', row).attr('disabled', false);
 
-        if(
-            [
-                'text',
-                'email',
-                'password',
-                'search',
-                'url',
-                'color',
-                'format',
-                'slug',
-                'textarea',
-                'wysiwyg',
-                'file',
-                'image'
-            ].indexOf(value) !== -1
-        ) {
-            $('select.field-list optgroup.filter-group-number', row).hide();
-            $('select.field-list optgroup.filter-group-json', row).hide();
-            $('select.field-detail optgroup.filter-group-number', row).hide();
-            $('select.field-detail optgroup.filter-group-json', row).hide();
-        }
+        //determine ui
+        ['attributes', 'options', 'keyval'].forEach(function(ui) {
+            if(fieldset.indexOf(ui) === -1) {
+                trigger.parent().find('div.input-' + ui).remove();
+            } else if(!trigger.parent().find('div.input-' + ui).length) {
+                var name = ui;
+                if(name === 'keyval') {
+                    name = 'options';
+                }
 
-        if(
-            [
-                'number',
-                'small',
-                'range',
-                'float',
-                'price',
-                'date',
-                'time',
-                'datetime',
-                'week',
-                'month'
-            ].indexOf(value) !== -1
-        ) {
-            $('select.field-list optgroup.filter-group-string', row).hide();
-            $('select.field-list optgroup.filter-group-json', row).hide();
-            $('select.field-detail optgroup.filter-group-string', row).hide();
-            $('select.field-detail optgroup.filter-group-json', row).hide();
-        }
+                var template = 'meta_fields[{INDEX}][field][' + name + '][{INDEX}]';
+                var html = $('#field-' + ui + '-template')
+                    .compile({
+                        NAME: template.replace(
+                            '{INDEX}',
+                            trigger.getMetaIndex()
+                        )
+                    })
+                    .doon();
 
-        if(
-            [
-                'checkbox',
-                'switch'
-            ].indexOf(value) !== -1
-        ) {
-            $('select.field-list optgroup.filter-group-string', row).hide();
-            $('select.field-list optgroup.filter-group-date', row).hide();
-            $('select.field-list optgroup.filter-group-json', row).hide();
-            $('select.field-detail optgroup.filter-group-string', row).hide();
-            $('select.field-detail optgroup.filter-group-date', row).hide();
-            $('select.field-detail optgroup.filter-group-json', row).hide();
-        }
+                trigger.after(html);
+            }
+        });
 
-        if(
-            [
-                'checkboxes',
-                'radios',
-                'tag',
-                'meta',
-                'multirange',
-                'files',
-                'images'
-            ].indexOf(value) !== -1
-        ) {
-            $('select.field-list optgroup.filter-group-string', row).hide();
-            $('select.field-list optgroup.filter-group-number', row).hide();
-            $('select.field-list optgroup.filter-group-date', row).hide();
-            $('select.field-list optgroup.filter-group-html', row).hide();
-            $('select.field-detail optgroup.filter-group-string', row).hide();
-            $('select.field-detail optgroup.filter-group-number', row).hide();
-            $('select.field-detail optgroup.filter-group-date', row).hide();
-            $('select.field-detail optgroup.filter-group-html', row).hide();
-        }
+        //determine valid formats
+        ['string', 'number', 'date', 'html', 'json'].forEach(function(type) {
+            if(format.indexOf(type) === -1) {
+                var list = $('select.field-list optgroup.filter-group-' + type, row).hide();
+                if($('option:selected', list).length) {
+                    list.parent().val('none');
+                    $(window).trigger('field-list-change', list.parent());
+                }
 
-        if([
-            'checkboxes',
-            'radios',
-            'tag',
-            'meta',
-            'multirange',
-            'files',
-            'images'
-        ].indexOf(value) !== -1) {
-            $('input.field-searchable', row).attr('disabled', 'disabled');
-            $('input.field-filterable', row).attr('disabled', 'disabled');
-            $('input.field-sortable', row).attr('disabled', 'disabled');
-        }
+                var detail = $('select.field-detail optgroup.filter-group-' + type, row).hide();
+                if($('option:selected', detail).length) {
+                    detail.parent().val('none');
+                    $(window).trigger('field-detail-change', detail.parent());
+                }
+            }
+        });
 
-        if([
-            'textarea',
-            'wysiwyg',
-        ].indexOf(value) !== -1) {
-            $('input.field-filterable', row).attr('disabled', 'disabled');
-            $('input.field-sortable', row).attr('disabled', 'disabled');
-        }
+        //determine index
+        ['searchable', 'filterable', 'sortable'].forEach(function(feature) {
+            if(index.indexOf(feature) === -1) {
+                $('input.field-' + feature, row)
+                    .attr('checked', false)
+                    .attr('disabled', true);
+            }
+        });
     });
 
     $(window).on('attribute-add-click', function(e, trigger) {
@@ -277,6 +272,29 @@
         var row = $('#field-option-row-template')
             .compile({
                 NAME: name,
+                INDEX: index
+            })
+            .doon();
+
+        $(trigger).before(row);
+    });
+
+    $(window).on('keyval-add-click', function(e, trigger) {
+        var last = $(trigger).parent().find('div.keyval-row:last');
+
+        var index = 0;
+        if(last.length) {
+            index = parseInt(last.attr('data-index')) + 1;
+        }
+
+        var name = $(trigger)
+            .attr('data-name')
+            .replace('{INDEX}', index);
+
+        var row = $('#field-keyval-row-template')
+            .compile({
+                NAME_1: name + '[key]',
+                NAME_2: name + '[value]',
                 INDEX: index
             })
             .doon();
@@ -355,82 +373,47 @@
     $(window).on('field-list-change', function(e, trigger) {
         trigger = $(trigger);
 
-        var placeholders = {
-            length: 'How many characters',
-            words: 'How many words',
-            date: 'Date Format',
-            relative: 'Date Format',
-            price: 'Currency',
-            email: 'Label or {value}',
-            phone: 'Label or {value}',
-            link: [
-                'Label or {value}',
-                'ie. /node/{node_id}'
-            ],
-            image: [
-                'Width',
-                'Height'
-            ]
-        };
+        var option = $('option[value="' + trigger.val() + '"]', trigger);
+        var fieldset = option.attr('data-fieldset') || '';
 
         trigger.parent().find('div.input-input').remove();
         trigger.parent().find('div.input-pair').remove();
 
-        switch(trigger.val()) {
-            case 'length':
-            case 'words':
-            case 'date':
-            case 'relative':
-            case 'price':
-            case 'email':
-            case 'phone':
-                if(!trigger.parent().find('div.input-input').length) {
-                    var template = 'meta_fields[{INDEX}][list][parameters]';
-                    var input = $('#field-input-template')
-                        .compile({
-                            NAME: template.replace(
-                                '{INDEX}',
-                                trigger.getMetaIndex()
-                            )
-                        })
-                        .doon();
+        //determine ui
+        switch(fieldset) {
+            case 'input':
+                var placeholder = option.attr('data-placeholder') || '';
+                var template = 'meta_fields[{INDEX}][list][parameters]';
+                var input = $('#field-input-template')
+                    .compile({
+                        NAME: template.replace('{INDEX}', trigger.getMetaIndex())
+                    })
+                    .doon();
 
-                    $('input', input).attr(
-                        'placeholder',
-                        placeholders[trigger.val()]
-                    );
+                $('input', input).attr('placeholder',placeholder);
 
-                    trigger.after(input);
-                }
+                trigger.after(input);
                 break;
-            case 'image':
-            case 'link':
-                if(!trigger.parent().find('div.input-pair').length) {
-                    var name1 = 'meta_fields[{INDEX}][list][parameters][0]';
-                    var name2 = 'meta_fields[{INDEX}][list][parameters][1]';
+            case 'pair':
+                var name1 = 'meta_fields[{INDEX}][list][parameters][0]';
+                var name2 = 'meta_fields[{INDEX}][list][parameters][1]';
+                var placeholder = [
+                    option.attr('data-placeholder-1') || '',
+                    option.attr('data-placeholder-2') || ''
+                ];
 
-                    var input = $('#field-pair-template')
-                        .compile({
-                            NAME_1: name1.replace(
-                                '{INDEX}',
-                                trigger.getMetaIndex()
-                            ),
-                            NAME_2: name2.replace(
-                                '{INDEX}',
-                                trigger.getMetaIndex()
-                            )
-                        })
-                        .doon();
+                var input = $('#field-pair-template')
+                    .compile({
+                        NAME_1: name1.replace('{INDEX}', trigger.getMetaIndex()),
+                        NAME_2: name2.replace('{INDEX}', trigger.getMetaIndex())
+                    })
+                    .doon();
 
-                    $('input', input).each(function(i) {
-                        $(this).attr(
-                            'placeholder',
-                            placeholders[trigger.val()][i]
-                        );
-                    });
+                $('input', input).each(function(i) {
+                    $(this).attr('placeholder', placeholder[i]);
+                });
 
-                    trigger.after(input);
-                }
+                trigger.after(input);
                 break;
         }
     });
@@ -438,82 +421,47 @@
     $(window).on('field-detail-change', function(e, trigger) {
         trigger = $(trigger);
 
-        var placeholders = {
-            length: 'How many characters',
-            words: 'How many words',
-            date: 'Date Format',
-            relative: 'Date Format',
-            price: 'Currency',
-            email: 'Label or {value}',
-            phone: 'Label or {value}',
-            link: [
-                'Label or {value}',
-                'ie. /node/{node_id}'
-            ],
-            image: [
-                'Width',
-                'Height'
-            ]
-        };
+        var option = $('option[value="' + trigger.val() + '"]', trigger);
+        var fieldset = option.attr('data-fieldset') || '';
 
         trigger.parent().find('div.input-input').remove();
         trigger.parent().find('div.input-pair').remove();
 
-        switch(trigger.val()) {
-            case 'length':
-            case 'words':
-            case 'date':
-            case 'relative':
-            case 'price':
-            case 'email':
-            case 'phone':
-                if(!trigger.parent().find('div.input-input').length) {
-                    var template = 'meta_fields[{INDEX}][detail][parameters]';
-                    var input = $('#field-input-template')
-                        .compile({
-                            NAME: template.replace(
-                                '{INDEX}',
-                                trigger.getMetaIndex()
-                            )
-                        })
-                        .doon();
+        //determine ui
+        switch(fieldset) {
+            case 'input':
+                var placeholder = option.attr('data-placeholder') || '';
+                var template = 'meta_fields[{INDEX}][detail][parameters]';
+                var input = $('#field-input-template')
+                    .compile({
+                        NAME: template.replace('{INDEX}', trigger.getMetaIndex())
+                    })
+                    .doon();
 
-                    $('input', input).attr(
-                        'placeholder',
-                        placeholders[trigger.val()]
-                    );
+                $('input', input).attr('placeholder',placeholder);
 
-                    trigger.after(input);
-                }
+                trigger.after(input);
                 break;
-            case 'image':
-            case 'link':
-                if(!trigger.parent().find('div.input-pair').length) {
-                    var name1 = 'meta_fields[{INDEX}][detail][parameters][0]';
-                    var name2 = 'meta_fields[{INDEX}][detail][parameters][1]';
+            case 'pair':
+                var name1 = 'meta_fields[{INDEX}][detail][parameters][0]';
+                var name2 = 'meta_fields[{INDEX}][detail][parameters][1]';
+                var placeholder = [
+                    option.attr('data-placeholder-1') || '',
+                    option.attr('data-placeholder-2') || ''
+                ];
 
-                    var input = $('#field-pair-template')
-                        .compile({
-                            NAME_1: name1.replace(
-                                '{INDEX}',
-                                trigger.getMetaIndex()
-                            ),
-                            NAME_2: name2.replace(
-                                '{INDEX}',
-                                trigger.getMetaIndex()
-                            )
-                        })
-                        .doon();
+                var input = $('#field-pair-template')
+                    .compile({
+                        NAME_1: name1.replace('{INDEX}', trigger.getMetaIndex()),
+                        NAME_2: name2.replace('{INDEX}', trigger.getMetaIndex())
+                    })
+                    .doon();
 
-                    $('input', input).each(function(i) {
-                        $(this).attr(
-                            'placeholder',
-                            placeholders[trigger.val()][i]
-                        );
-                    });
+                $('input', input).each(function(i) {
+                    $(this).attr('placeholder', placeholder[i]);
+                });
 
-                    trigger.after(input);
-                }
+                trigger.after(input);
                 break;
         }
     });
@@ -703,7 +651,5 @@
             });
         });
     };
-
-    window.field_load = load;
 })(jQuery);
 </script>

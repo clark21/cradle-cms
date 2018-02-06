@@ -13,7 +13,7 @@
  * @param Request $request
  * @param Response $response
  */
-$cradle->on('render-admin-page', function ($request, $response) {    
+$cradle->on('render-admin-page', function ($request, $response) {
     // search meta's
     cradle()->trigger('meta-search', $request, $response);
 
@@ -45,8 +45,6 @@ $cradle->on('render-admin-page', function ($request, $response) {
             'foot'
         )
     );
-
-    cradle()->inspect($content);
 
     $response->setContent($content);
 });
