@@ -40,7 +40,7 @@ class Cradle_Module_Meta_Service_SqlServiceTest extends PHPUnit_Framework_TestCa
         $actual = $this->object->create([
             'meta_singular' => 'Foobar Singular',
             'meta_plural' => 'Foobar Plural',
-            'meta_slug' => 'a-Good-slug_1',
+            'meta_key' => 'a-Good-slug_1',
         ]);
 
         $id = $this->object->getResource()->getLastInsertedId();
@@ -80,7 +80,7 @@ class Cradle_Module_Meta_Service_SqlServiceTest extends PHPUnit_Framework_TestCa
             'meta_id' => $id,
             'meta_singular' => 'Foobar Singular',
             'meta_plural' => 'Foobar Plural',
-            'meta_slug' => 'a-Good-slug_1',
+            'meta_key' => 'a-Good-slug_1',
         ]);
 
         $this->assertEquals($id, $actual['meta_id']);

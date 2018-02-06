@@ -8,18 +8,10 @@ KEY `user_slug` (`user_slug`),
 KEY `user_type` (`user_type`), 
 KEY `user_flag` (`user_flag`));
 
-DROP TABLE IF EXISTS `user_comment`;
-
-CREATE TABLE `user_comment` (`user_id` int(10) UNSIGNED NOT NULL, `comment_id` int(10) UNSIGNED NOT NULL, PRIMARY KEY (`user_id`, `comment_id`));
-
-DROP TABLE IF EXISTS `user_address`;
-
-CREATE TABLE `user_address` (`user_id` int(10) UNSIGNED NOT NULL, `address_id` int(10) UNSIGNED NOT NULL, PRIMARY KEY (`user_id`, `address_id`));
-
-DROP TABLE IF EXISTS `user_history`;
-
-CREATE TABLE `user_history` (`user_id` int(10) UNSIGNED NOT NULL, `history_id` int(10) UNSIGNED NOT NULL, PRIMARY KEY (`user_id`, `history_id`));
-
 DROP TABLE IF EXISTS `user_user`;
 
 CREATE TABLE `user_user` (`user_id` int(10) UNSIGNED NOT NULL, PRIMARY KEY (`user_id`, `user_id`));
+
+DROP TABLE IF EXISTS `user_node`;
+
+CREATE TABLE `user_node` (`user_id` int(10) UNSIGNED NOT NULL, `node_id` int(10) UNSIGNED NOT NULL, PRIMARY KEY (`user_id`, `node_id`));

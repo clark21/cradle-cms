@@ -399,8 +399,16 @@ $cradle->get('/admin/node/restore/:node_id', function($request, $response) {
  * @param Response $response
  */
 $cradle->get('/admin/:node_type/search', function($request, $response) {
+    // type filter
+    $reserved = ['auth', 'user', 'node', 'meta'];
+
     // get node type
     $type = $request->getStage('node_type');
+
+    // if type is reserved
+    if(in_array($type, $reserved)) {
+        return;
+    }
 
     // set filter
     $request->setStage('filter', 'node_type', $type);

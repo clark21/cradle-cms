@@ -10,6 +10,8 @@ return function ($request, $response) {
 
     //this happens on an error
     $this->error(function ($request, $response, $error) use ($mode) {
+        cradle()->inspect($error->getMessage());
+
         //if this error has already been handled
         if ($response->hasContent()) {
             return;

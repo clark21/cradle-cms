@@ -35,9 +35,14 @@
         </a>
     </div>
     <span>
-        <a class="btn btn-success" href="/admin/meta/create">
+        <a class="btn btn-success" href="/admin/meta/create/node">
             <i class="fa fa-plus"></i>
-            Create New Meta
+            Create Node Type
+        </a>
+
+        <a class="btn btn-success" href="/admin/meta/create/user">
+            <i class="fa fa-plus"></i>
+            Create User Type
         </a>
     </span>
 </div>
@@ -73,9 +78,8 @@
                                         {{~/sort}}
                                     </a>
                                 </th>
-                                <th>Slug</th>
-                                <th>Singular</th>
-                                <th>Plural</th>
+
+                                <th>Title</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -98,13 +102,7 @@
                                     {{meta_type}}
                                 </td>
                                 <td>
-                                    {{meta_slug}}
-                                </td>
-                                <td>
-                                    {{meta_singular}}
-                                </td>
-                                <td>
-                                    {{meta_plural}}
+                                    <a href="/meta/{{meta_slug}}" target="_blank">{{meta_title}}</a>
                                 </td>
                             </tr>
                             {{/each}}

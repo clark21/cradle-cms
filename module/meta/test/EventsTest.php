@@ -61,13 +61,13 @@ class Cradle_Module_Meta_EventsTest extends PHPUnit_Framework_TestCase
         $this->request->setStage([
             'meta_singular' => 'Foobar Singular',
             'meta_plural' => 'Foobar Plural',
-            'meta_slug' => 'a-Good-slug_1',
+            'meta_key' => 'a-Good-slug_1',
         ]);
 
         cradle()->trigger('meta-create', $this->request, $this->response);
         $this->assertEquals('Foobar Singular', $this->response->getResults('meta_singular'));
         $this->assertEquals('Foobar Plural', $this->response->getResults('meta_plural'));
-        $this->assertEquals('a-Good-slug_1', $this->response->getResults('meta_slug'));
+        $this->assertEquals('a-Good-slug_1', $this->response->getResults('meta_key'));
         self::$id = $this->response->getResults('meta_id');
         $this->assertTrue(is_numeric(self::$id));
     }
@@ -156,13 +156,13 @@ class Cradle_Module_Meta_EventsTest extends PHPUnit_Framework_TestCase
             'meta_id' => self::$id,
             'meta_singular' => 'Foobar Singular',
             'meta_plural' => 'Foobar Plural',
-            'meta_slug' => 'a-Good-slug_1',
+            'meta_key' => 'a-Good-slug_1',
         ]);
 
         cradle()->trigger('meta-update', $this->request, $this->response);
         $this->assertEquals('Foobar Singular', $this->response->getResults('meta_singular'));
         $this->assertEquals('Foobar Plural', $this->response->getResults('meta_plural'));
-        $this->assertEquals('a-Good-slug_1', $this->response->getResults('meta_slug'));
+        $this->assertEquals('a-Good-slug_1', $this->response->getResults('meta_key'));
         $this->assertEquals(self::$id, $this->response->getResults('meta_id'));
     }
 }

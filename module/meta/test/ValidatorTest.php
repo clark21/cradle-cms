@@ -26,7 +26,7 @@ class Cradle_Module_Meta_ValidatorTest extends PHPUnit_Framework_TestCase
         $actual = Validator::getCreateErrors([]);
         $this->assertEquals('Singular is required', $actual['meta_singular']);
         $this->assertEquals('Plural is required', $actual['meta_plural']);
-        $this->assertEquals('Slug is required', $actual['meta_slug']);
+        $this->assertEquals('Keyword is required', $actual['meta_key']);
     }
 
     /**

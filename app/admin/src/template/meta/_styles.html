@@ -1,19 +1,6 @@
 <style>
-.meta-fields .modal-dialog {
-
-}
 .meta-fields .table-overflow {
-    max-height: 600px;
     overflow: auto;
-}
-.meta-fields .table th,
-.meta-fields .table td {
-    min-width: 200px;
-}
-
-.meta-fields .table .checkbox-cell {
-    min-width: auto;
-    text-align: center;
 }
 
 .meta-fields .meta-action > a {
@@ -21,33 +8,53 @@
     margin: 5px 0 0 5px;
 }
 
-.meta-fields .input-attributes,
-.meta-fields .input-options,
-.meta-fields .input-input,
-.meta-fields .input-pair {
+
+.input-pair,
+.input-input,
+.input-keyval,
+.input-options,
+.input-attributes {
     margin-top: 4px;
 }
 
-.meta-fields .validation-row,
-.meta-fields .attribute-row,
-.meta-fields .option-row {
+.input-attributes .attribute-row,
+.input-keyval .keyval-row,
+.input-options .option-row {
     margin-bottom: 4px;
 }
 
-.meta-fields .input-pair input {
+.validation-row {
+    margin-bottom: 20px;
+}
+
+.input-pair input {
     margin-bottom: 4px
 }
 
-.meta-fields .attribute-row {
+.input-attributes .attribute-row,
+.input-keyval .keyval-row {
     display: table;
     width: 100%;
 }
 
-.meta-fields .attribute-row > * {
+.input-attributes .attribute-row > *,
+.input-keyval .keyval-row > * {
     display: table-cell;
 }
 
-.meta-fields .attribute-row input {
-    width: 45%;
+.input-attributes .attribute-row input,
+.input-keyval .keyval-row input {
+    width: 50%;
+}
+
+.input-attributes .attribute-row .btn,
+.input-keyval .keyval-row .btn {
+    width: 37px;
+}
+
+.field-disabled .form-group-validation,
+.field-disabled .form-group-default,
+.field-disabled .form-group-indexes {
+    display: none;
 }
 </style>
