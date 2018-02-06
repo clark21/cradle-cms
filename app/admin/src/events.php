@@ -13,24 +13,25 @@
  * @param Request $request
  * @param Response $response
  */
-$cradle->on('render-admin-page', function ($request, $response) {    
-    // search meta's
-    cradle()->trigger('meta-search', $request, $response);
+$cradle->on('render-admin-page', function ($request, $response) {
+    // create new request
+    $metaRequest = \Cradle\Http\Request::i();
+    // create new response
+    $metaResponse = \Cradle\Http\Response::i();
 
-    // get the results
-    $results = $response->getResults('rows');
+    // trigger meta search
+    cradle()->trigger('meta-search', $metaRequest, $metaResponse);
 
-    // custom navigation
-    $navigation = [];
+    // get results
+    $results = $metaResponse->getResults('rows');
 
-    // iterate on each results
-    foreach($results as $result) {
-        // set the navigation
-        $navigation[] = [
-            'label' => $result['meta_plural'],
-            'href' => sprintf('/admin/%s/search', $result['meta_slug'])
+    // map results
+    $navigation = array_map(function($meta) {
+        return [
+            'label' => ucwords($meta['meta_plural']),
+            'href'  => sprintf('/admin/%s/search', $meta['meta_slug'])
         ];
-    }
+    }, $results);
 
     $content = cradle('/app/admin')->template(
         '_page',
@@ -45,8 +46,6 @@ $cradle->on('render-admin-page', function ($request, $response) {
             'foot'
         )
     );
-
-    cradle()->inspect($content);
 
     $response->setContent($content);
 });
