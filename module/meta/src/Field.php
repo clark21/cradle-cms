@@ -23,7 +23,9 @@ class Field
      * 
      * @var array $dateTypes
      */
-    protected $dateTypes = [];
+    protected $dateTypes = [
+        'date'
+    ];
 
     /**
      * File field types
@@ -42,7 +44,10 @@ class Field
      * 
      * @var array $jsonTypes
      */
-    protected $jsonTypes = [];
+    protected $jsonTypes = [
+        'meta',
+        'tag'
+    ];
 
     /**
      * Number field types
@@ -232,6 +237,9 @@ class Field
                 // get name instead
                 $key = $field['field']['attributes']['name'];
             }
+
+            // set field key
+            $field['field']['key'] = $key;
 
             // if data exists
             if(in_array($key, $data)) {

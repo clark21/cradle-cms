@@ -1,0 +1,15 @@
+<div class="form-group{{#if error}} has-error{{/if}}">
+    <label class="control-label">{{label}}</label>
+    <div>
+        <input 
+            name="{{field.key}}" 
+            value="{{field.value}}" 
+            type="date" 
+            class="form-control" 
+        />
+
+        {{#if error}}
+        <span class="help-text">{{error}}</span>
+        {{/if}}
+    </div>
+</div>
