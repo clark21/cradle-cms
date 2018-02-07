@@ -220,25 +220,6 @@ return [
     ],
     [
         'disable' => true,
-        'label' => 'Type',
-        'key' => 'node_type',
-        'field' => [
-            'type' => 'none'
-        ],
-        'validation' => [],
-        'list' => [
-            'format' => 'lower'
-        ],
-        'detail' => [
-            'format' => 'lower'
-        ],
-        'default' => 'node',
-        'searchable' => 1,
-        'filterable' => 1,
-        'sortable' => 1
-    ],
-    [
-        'disable' => true,
         'label' => 'Flag',
         'key' => 'node_flag',
         'field' => [

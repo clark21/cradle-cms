@@ -621,6 +621,7 @@ jQuery(function($) {
             }
 
             var upper = $(target).attr('data-upper');
+            var space = $(target).attr('data-space') || '-';
 
             $(source).keyup(function() {
                 var slug = $(this)
@@ -641,6 +642,8 @@ jQuery(function($) {
                         }
                     );
                 }
+
+                slug = slug.replace(/\-/g, space);
 
                 $(target).val(slug);
             });

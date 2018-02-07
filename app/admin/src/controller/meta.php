@@ -13,7 +13,7 @@
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/super/meta/search', function($request, $response) {
+$cradle->get('/admin/meta/search', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     //only for admin

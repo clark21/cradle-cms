@@ -386,3 +386,29 @@
         </a>
     </div>
 </script>
+
+<script id="relation-row-template" type="text/x-template">
+    <div class="relation-row" data-index="{INDEX}">
+        <a
+            class="text-danger"
+            data-do="relation-remove"
+            data-level="1"
+            href="javascript:void(0)"
+        >
+            <i class="fa fa-remove"></i>
+        </a>
+        <strong>{SINGULAR}</strong>
+        <i class="fa fa-arrow-right"></i>
+        <select class="form-control relations-many" name="{NAME_1}">
+            <option value="0">1:1</option>
+            <option value="0">1:N</option>
+        </select>
+        <i class="fa fa-arrow-right"></i>
+        <input
+            class="form-control relations-key"
+            name="{NAME_2}"
+            placeholder="Enter Object Keyword"
+            type="text"
+        />
+    </div>
+</script>

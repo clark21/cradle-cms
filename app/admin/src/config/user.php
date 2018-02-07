@@ -52,25 +52,6 @@ return [
     ],
     [
         'disable' => true,
-        'label' => 'Type',
-        'key' => 'user_type',
-        'field' => [
-            'type' => 'none'
-        ],
-        'validation' => [],
-        'list' => [
-            'format' => 'lower'
-        ],
-        'detail' => [
-            'format' => 'lower'
-        ],
-        'default' => 'user',
-        'searchable' => 1,
-        'filterable' => 1,
-        'sortable' => 1
-    ],
-    [
-        'disable' => true,
         'label' => 'Flag',
         'key' => 'user_flag',
         'field' => [
