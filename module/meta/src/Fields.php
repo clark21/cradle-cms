@@ -8,15 +8,17 @@
  */
 namespace Cradle\Module\Meta;
 
+use Cradle\Module\Meta\Validator as MetaValidator;
+
 /**
- * Field layer
+ * Fields layer
  *
  * @vendor   Acme
  * @package  meta
  * @author   John Doe <john@acme.com>
  * @standard PSR-2
  */
-class Field
+class Fields
 {
     /**
      * Date field types
@@ -59,7 +61,7 @@ class Field
         'number',
         'price',
         'range',
-        'small',
+        'small'
     ];
 
     /**
@@ -81,6 +83,27 @@ class Field
         'text',
         'textarea',
         'wysiwyg'
+    ];
+
+    /**
+     * Default node fields
+     * 
+     * @var array $nodeFields
+     */
+    protected $nodeFields = [
+        'node_image',
+        'node_title',
+        'node_slug',
+        'node_detail',
+        'node_tags',
+        'node_meta',
+        'node_files',
+        'node_published',
+        'node_status',
+        'node_type',
+        'node_flag',
+        'node_created',
+        'node_updated'
     ];
 
     /**
@@ -207,6 +230,127 @@ class Field
     }
 
     /**
+     * Returns field validations
+     * 
+     * @return array
+     */
+    public function getValidation()
+    {
+        // get fields
+        $fields = $this->fields;
+        
+        // prepare fields
+        $this->prepare($fields, $this->data, $this->errors);
+
+        // filter the fields
+        $fields = $this->filterFields($fields);
+
+        // validations
+        $validations = [];
+
+        // get the validations
+        array_map(function($field) use (&$validations) {
+            // if key is not set
+            if(!isset($field['key'])) {
+                return false;
+            }
+
+            // get field key
+            $key = $field['key'];
+
+            // if name is set
+            if(isset($field['field']['attributes']['name'])) {
+                // get name instead
+                $key = $field['field']['attributes']['name'];
+            }
+
+            // iterate on each validations
+            foreach($field['validation'] as $validation) {
+                // get validation parameters
+                $params = null;
+
+                // if parameters is set
+                if(isset($validation['parameters'])) {
+                    // get params
+                    $params = $validation['parameters'];
+                }
+
+                // get the error
+                $error = MetaValidator::validateField(
+                    $field['field']['value'],
+                    $validation['method'],
+                    $validation['message'],
+                    $params
+                );
+
+                // if we have error
+                if($error) {
+                    $validations[$key] = $error; 
+                }
+            }
+        }, $fields);
+
+        return $validations;
+    }
+
+    /**
+     * Returns filtered non-default values
+     * 
+     * @return array
+     */
+    public function getValues()
+    {
+        // get filtered fields
+        $fields = $this->filterFields($this->fields);
+
+        // prepare fields
+        $this->prepare($fields, $this->data, $this->errors);
+
+        // pairs
+        $pairs = [];
+
+        // map on each field
+        foreach($fields as $field) {
+            $pairs[$field['key']] = $field['field']['value'];
+        }
+
+        return $pairs;
+    }
+
+    /**
+     * Filter the given fields.
+     * 
+     * @param array $fields
+     * @return array
+     */
+    private function filterFields(array $fields = [])
+    {
+        // return filtered fields
+        return array_filter($fields, function($field) {
+            // if key is not set
+            if(!isset($field['key'])) {
+                return false;
+            }
+
+            // get field key
+            $key = $field['key'];
+
+            // if name is set
+            if(isset($field['field']['attributes']['name'])) {
+                // get name instead
+                $key = $field['field']['attributes']['name'];
+            }
+
+            // default node fields?
+            if(in_array($key, $this->nodeFields)) {
+                return false;
+            }
+
+            return $field;
+        });
+    }
+
+    /**
      * Prepare fields before compilation
      * 
      * @param array $fields
@@ -242,7 +386,7 @@ class Field
             $field['field']['key'] = $key;
 
             // if data exists
-            if(in_array($key, $data)) {
+            if(array_key_exists($key, $data)) {
                 // set data
                 $field['field']['value'] = $data[$key];
             } else {
@@ -251,7 +395,7 @@ class Field
             }
 
             // if error exists
-            if(in_array($key, $errors)) {
+            if(array_key_exists($key, $errors)) {
                 // set error
                 $field['field']['error'] = $errors[$key];
             }

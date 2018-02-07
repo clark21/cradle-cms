@@ -131,4 +131,43 @@ class Validator
                 
         return $errors;
     }
+
+    /**
+     * Validate field value based on validation
+     * 
+     * @param mixed $value
+     * @param string $method
+     * @param string $message
+     * @param mixed $params
+     * @return string|null
+     */
+    public static function validateField(
+        $value, 
+        $method, 
+        $message, 
+        $params = null
+    ) {
+        // switch between methods
+        switch($method) {
+            // required?
+            case 'required':
+                return self::validateRequired($value, $message);
+            
+            // default
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Validate required field.
+     * 
+     * @param mixed $value
+     * @param string $type
+     * @return 
+     */
+    private static function validateRequired($value, $message)
+    {
+        return (!isset($value) || empty($value)) ? $message : null;
+    }
 }

@@ -8,7 +8,7 @@
  */
 
 use Cradle\Module\Utility\File;
-use Cradle\Module\Meta\Field;
+use Cradle\Module\Meta\Fields;
 
 /**
  * Render the Node Search Page
@@ -399,7 +399,7 @@ $cradle->get('/admin/node/restore/:node_id', function($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/node/:node_type/create', function($request, $response) {
+$cradle->get('/admin/node/:node_type/create', function($request, $response) {    
     //----------------------------//
     // 1. Route Permissions
     //only for admin
@@ -409,7 +409,7 @@ $cradle->get('/admin/node/:node_type/create', function($request, $response) {
     cradle()->trigger('meta-validate', $request, $response);
 
     // error?
-    if($response->isError()) {
+    if($response->isError() && $response->getMessage() === 'Not Found') {
         // do nothing
         return;
     }
@@ -421,10 +421,14 @@ $cradle->get('/admin/node/:node_type/create', function($request, $response) {
     // 2. Prepare Data
     $data = ['item' => $request->getPost()];
 
+    //add CSRF
+    cradle()->trigger('csrf-load', $request, $response);
+    $data['csrf'] = $response->getResults('csrf');
+
     //add CDN
     $config = $this->package('global')->service('s3-main');
     $data['cdn_config'] = File::getS3Client($config);
-
+ 
     // set errors
     $data['errors'] = [];
 
@@ -438,7 +442,7 @@ $cradle->get('/admin/node/:node_type/create', function($request, $response) {
     $data['meta'] = $meta;
 
     // set fields template
-    $data['fields'] = (new Field($meta['meta_fields']))
+    $data['fields'] = (new Fields($meta['meta_fields']))
         ->setData($data['item'])
         ->setError($data['errors'])
         ->compile();
@@ -464,3 +468,133 @@ $cradle->get('/admin/node/:node_type/create', function($request, $response) {
         ->setPage('class', $class)
         ->setContent($body);
 }, 'render-admin-page');
+
+/**
+ * Process dynamic node create
+ * 
+ * @param Request $request
+ * @param Response $response
+ */
+$cradle->post('/admin/node/:node_type/create', function($request, $response) {
+    //----------------------------//
+    // 1. Route Permissions
+    //only for admin
+    cradle('global')->requireLogin('admin');
+
+    // validate meta
+    cradle()->trigger('meta-validate', $request, $response);
+
+    // error?
+    if($response->isError()) {
+        // do nothing
+        return;
+    }
+
+    // get the data
+    $data = $request->getStage();
+
+    // get the meta
+    $meta = $response->getResults();
+
+    //----------------------------//
+    // 2. Prepare Data
+    $fields = (new Fields($meta['meta_fields']))
+        ->setData($data);
+
+    // get errors
+    $errors = $fields->getValidation();
+
+    // if we have errors
+    if(!empty($errors)) {
+        $response
+            ->setError(true, 'Invalid Request')
+            ->set('json', 'validation', $errors);
+
+        // trigger route
+        return cradle()
+            ->triggerRoute(
+                'get',
+                sprintf('/admin/node/%s/create', $request->getStage('node_type')),
+                $request,
+                $response
+            );
+    }
+
+    // get field values (non-default)
+    $values = $fields->getValues();
+
+    // values to stage
+    $request->setStage('node_meta', $values);
+
+    //if node_image has no value make it null
+    if ($request->hasStage('node_image') && !$request->getStage('node_image')) {
+        $request->setStage('node_image', null);
+    }
+
+    //if node_detail has no value make it null
+    if ($request->hasStage('node_detail') && !$request->getStage('node_detail')) {
+        $request->setStage('node_detail', null);
+    }
+
+    //if node_tags has no value make it null
+    if ($request->hasStage('node_tags') && !$request->getStage('node_tags')) {
+        $request->setStage('node_tags', null);
+    }
+
+    //if node_meta has no value make it null
+    if ($request->hasStage('node_meta') && !$request->getStage('node_meta')) {
+        $request->setStage('node_meta', null);
+    }
+
+    //if node_files has no value make it null
+    if ($request->hasStage('node_files') && !$request->getStage('node_files')) {
+        $request->setStage('node_files', null);
+    }
+
+    //if node_status has no value use the default value
+    if ($request->hasStage('node_status') && !$request->getStage('node_status')) {
+        $request->setStage('node_status', 'pending');
+    }
+
+    //if node_published has no value make it null
+    if ($request->hasStage('node_published') && !$request->getStage('node_published')) {
+        $request->setStage('node_published', null);
+    }
+
+    //node_type is disallowed
+    $request->removeStage('node_type');
+
+    //if node_flag has no value make it null
+    if ($request->hasStage('node_flag') && !$request->getStage('node_flag')) {
+        $request->setStage('node_flag', null);
+    }
+
+    //----------------------------//
+    // 3. Process Request
+    cradle()->trigger('node-create', $request, $response);
+
+    //----------------------------//
+    // 4. Interpret Results
+    if($response->isError()) {
+        // trigger route
+        return cradle()
+            ->triggerRoute(
+                'get',
+                sprintf('/admin/node/%s/create', $meta['meta_key']),
+                $request,
+                $response
+            );
+    }
+
+    //it was good
+    //add a flash
+    cradle('global')->flash('Node was Created', 'success');
+
+    //redirect
+    return cradle('global')->redirect(
+        sprintf(
+            '/admin/node/%s/search',
+            $meta['meta_key']
+        )
+    );
+});

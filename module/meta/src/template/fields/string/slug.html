@@ -1,4 +1,4 @@
-<div class="form-group{{#if error}} has-error{{/if}}">
+<div class="form-group{{#if field.error}} has-error{{/if}}">
     <label class="control-label">{{label}}</label>
     <div>
         <input 
@@ -10,8 +10,8 @@
             {{#if disable}}disabled{{/if}} 
         />
 
-        {{#if error}}
-        <span class="help-text">{{error}}</span>
+        {{#if field.error}}
+        <span class="help-text text-danger">{{field.error}}</span>
         {{/if}}
     </div>
 </div>

@@ -380,6 +380,6 @@ $cradle->on('meta-validate', function ($request, $response) {
 
     // set results
     $response
-        ->setError(false)
+        ->setError($response->isError())
         ->setResults($meta);
 });
