@@ -399,6 +399,99 @@ $cradle->get('/admin/node/restore/:node_id', function($request, $response) {
  * @param Request $request
  * @param Response $response
  */
+$cradle->get('/admin/node/:node_type/search', function($request, $response) {
+    //----------------------------//
+    // 1. Route Permissions
+    //only for admin
+    cradle('global')->requireLogin('admin');
+
+    // validate meta
+    cradle()->trigger('meta-validate', $request, $response);
+
+    // error?
+    if($response->isError() && $response->getMessage() === 'Not Found') {
+        // do nothing
+        return;
+    }
+
+    // get the meta
+    $meta = $response->getResults();
+
+    // set meta to stage
+    $request->setStage('meta', $meta);
+
+    //----------------------------//
+    // 2. Prepare Data
+    if(!$request->hasStage('range')) {
+        $request->setStage('range', 50);
+    }
+
+    // set filter
+    $request->setStage('filter', 'node_type', $request->getStage('node_type'));
+
+    //filter possible sorting options
+    //we do this to prevent SQL injections
+    if(is_array($request->getStage('order'))) {
+        $sortable = [
+            'node_status',
+            'node_published'
+        ];
+
+        foreach($request->getStage('order') as $key => $direction) {
+            if(!in_array($key, $sortable)) {
+                $request->removeStage('order', $key);
+            } else if ($direction !== 'ASC' && $direction !== 'DESC') {
+                $request->removeStage('order', $key);
+            }
+        }
+    }
+
+    //filter possible filter options
+    //we do this to prevent SQL injections
+    if(is_array($request->getStage('filter'))) {
+        $filterable = [
+            'node_active',
+            'node_status',
+            'node_type'
+        ];
+
+        foreach($request->getStage('filter') as $key => $value) {
+            if(!in_array($key, $filterable)) {
+                $request->removeStage('filter', $key);
+            }
+        }
+    }
+
+    //trigger job
+    cradle()->trigger('node-search', $request, $response);
+    $data = array_merge($request->getStage(), $response->getResults());
+
+    //----------------------------//
+    // 3. Render Template
+
+    $class = sprintf(
+        'page-developer-node-%s-search page-admin',
+        $meta['meta_key']
+    );
+
+    $data['title'] = cradle('global')->translate(ucwords($meta['meta_plural']));
+
+    $body = cradle('/app/admin')->template('node/type-search', $data);
+
+    //set content
+    $response
+        ->setPage('title', $data['title'])
+        ->setPage('class', $class)
+        ->setContent($body);
+
+}, 'render-admin-page');
+
+/**
+ * Render dynamic node create
+ * 
+ * @param Request $request
+ * @param Response $response
+ */
 $cradle->get('/admin/node/:node_type/create', function($request, $response) {    
     //----------------------------//
     // 1. Route Permissions
@@ -570,6 +663,121 @@ $cradle->get('/admin/node/:node_type/update/:node_id', function($request, $respo
         ->setContent($body);
 
 }, 'render-admin-page');
+
+/**
+ * Process the dynamic node remove
+ *
+ * @param Request $request
+ * @param Response $response
+ */
+$cradle->get('/admin/node/:node_type/remove/:node_id', function($request, $response) {
+    //----------------------------//
+    // 1. Route Permissions
+    //only for admin
+    cradle('global')->requireLogin('admin');
+
+    // validate meta
+    cradle()->trigger('meta-validate', $request, $response);
+
+    // error?
+    if($response->isError() && $response->getMessage() === 'Not Found') {
+        // do nothing
+        return;
+    }
+
+    // get the meta
+    $meta = $response->getResults();
+
+    //----------------------------//
+    // 2. Prepare Data
+    // no data to preapre
+    //----------------------------//
+    // 3. Process Request
+    cradle()->trigger('node-remove', $request, $response);
+
+    //----------------------------//
+    // 4. Interpret Results
+    if($response->isError()) {
+        //add a flash
+        cradle('global')->flash($response->getMessage(), 'danger');
+    } else {
+        //add a flash
+        $message = cradle('global')->translate(
+            sprintf(
+                '%s was Removed',
+                ucwords($meta['meta_singular'])
+            )
+        );
+
+        cradle('global')->flash($message, 'success');
+    }
+
+    //redirect
+    return cradle('global')->redirect(
+        sprintf(
+            '/admin/node/%s/search',
+            $request->getStage('node_type')
+        )
+    );
+});
+
+/**
+ * Process the dynamic node restore
+ *
+ * @param Request $request
+ * @param Response $response
+ */
+$cradle->get('/admin/node/:node_type/restore/:node_id', function($request, $response) {
+    //----------------------------//
+    // 1. Route Permissions
+    //only for admin
+    cradle('global')->requireLogin('admin');
+
+    // validate meta
+    cradle()->trigger('meta-validate', $request, $response);
+
+    // error?
+    if($response->isError() && $response->getMessage() === 'Not Found') {
+        // do nothing
+        return;
+    }
+
+    // get the meta
+    $meta = $response->getResults();
+
+    //----------------------------//
+    // 2. Prepare Data
+    // no data to preapre
+    //----------------------------//
+    // 3. Process Request
+    cradle()->trigger('node-restore', $request, $response);
+
+    //----------------------------//
+    // 4. Interpret Results
+    if($response->isError()) {
+        //add a flash
+        cradle('global')->flash($response->getMessage(), 'danger');
+    } else {
+        //add a flash
+        $message = cradle('global')->translate(
+            sprintf(
+                '%s was Restored',
+                ucwords($meta['meta_singular'])
+            )
+        );
+
+        cradle('global')->flash($message, 'success');
+    }
+
+    //redirect
+    return cradle('global')->redirect(
+        sprintf(
+            '/admin/node/%s/search',
+            $request->getStage('node_type')
+        )
+    );
+});
+
 
 /**
  * Process dynamic node create

@@ -1,36 +1,160 @@
-<div class="panel panel-default clear" >
-        <div class="panel-heading brand">
-            <div class="panel-title">{{#ucwords title}}{{/ucwords}}</div>
-        </div>
-    
-        <div class="panel-body" >
-            <form 
-                enctype="multipart/form-data"
-                method="post"
-                {{#if cdn_config}}
-                    data-do="cdn-upload"
-                    data-on="submit"
-                    data-progress="We are uploading your files. Please do not refresh page."
-                    data-complete="Upload Complete"
-                    data-enctype="{{cdn_config.form.enctype}}"
-                    data-method="{{cdn_config.form.method}}"
-                    data-action="{{cdn_config.form.action}}"
-                    data-cdn="{{cdn_config.form.action}}"
-                    data-acl="{{cdn_config.inputs.acl}}"
-                    data-key="{{cdn_config.inputs.key}}"
-                    data-credential="{{cdn_config.inputs.X-Amz-Credential}}"
-                    data-algorythm="{{cdn_config.inputs.X-Amz-Algorithm}}"
-                    data-date="{{cdn_config.inputs.X-Amz-Date}}"
-                    data-policy="{{cdn_config.inputs.Policy}}"
-                    data-signature="{{cdn_config.inputs.X-Amz-Signature}}"
-                {{/if}}
-            >
-                <div class="clear form-group">
-                    <input type="hidden" name="csrf" value="" />
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                </div>
-            </form>
-        </div>
+{{#when filter.node_active '===' '0'}}
+<h3>
+    {{number total}} Inactive {{#ucwords title}}{{/ucwords}}
+    {{#if q.0}}
+        matching {{q.0}}
+    {{/if}}
+</h3>
+{{else}}
+<h3>
+    {{number total}} {{#ucwords title}}{{/ucwords}}
+    {{#if q.0}}
+        matching {{q.0}}
+    {{/if}}
+</h3>
+{{/when}}
+
+<div class="clearfix">
+<!-- START: SEARCH FORM -->
+<form class="pull-right search form-inline" method="get">
+    <div class="form-group">
+        <input name="q[]" placeholder="Search" type="text"
+        value="{{q.0}}" class="form-control" />
     </div>
-    <script type="text/javascript" src="/scripts/cropper.js"></script>
-    
+    <button class="btn"><i class="fa fa-search"></i></button>
+</form>
+<!-- END: SEARCH FORM -->
+
+<div class="btn-group" role="group" aria-label="...">
+    <a class="btn btn-primary" href="?filter[node_active]=1">
+        Active
+    </a>
+    <a class="btn btn-danger" href="?filter[node_active]=0">
+        Inactive
+    </a>
+</div>
+<span>
+    <a class="btn btn-success" href="/admin/node/{{meta.meta_key}}/create">
+        <i class="fa fa-plus"></i>
+        Create New {{#ucwords meta.meta_singular}}{{/ucwords}}
+    </a>
+</span>
+</div>
+
+<!-- START: BULK FORM -->
+<form method="post" class="form-inline bulk-form pad-vertical">
+<div class="panel panel-default clear">
+    <div class="panel-body" >
+        {{#if rows}}
+            <div class="table-overflow">
+                <!-- START: TABLE -->
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Actions</th>
+                            <th>Image</th>
+                            <th>Title</th>
+                            <th>
+                                <a href="?q[]={{q.0}}&{{#sort 'node_status'}}
+                                    {{~#unless value~}}
+                                        order[node_status]=ASC
+                                    {{~/unless}}
+                                    {{~#when value '===' 'ASC'~}}
+                                        order[node_status]=DESC
+                                    {{~/when}}
+                                {{~/sort}}">
+                                    Status
+                                    {{#sort 'node_status'}}
+                                        {{~#when value '===' 'ASC'~}}
+                                            <i class="fa fa-caret-up"></i>
+                                        {{~/when}}
+                                        {{~#when value '===' 'DESC'~}}
+                                            <i class="fa fa-caret-down"></i>
+                                        {{~/when}}
+                                    {{~/sort}}
+                                </a>
+                            </th>
+                                    
+                            <th>
+                                <a href="?q[]={{q.0}}&{{#sort 'node_published'}}
+                                    {{~#unless value~}}
+                                        order[node_published]=ASC
+                                    {{~/unless}}
+                                    {{~#when value '===' 'ASC'~}}
+                                        order[node_published]=DESC
+                                    {{~/when}}
+                                {{~/sort}}">
+                                    Published
+                                    {{#sort 'node_published'}}
+                                        {{~#when value '===' 'ASC'~}}
+                                            <i class="fa fa-caret-up"></i>
+                                        {{~/when}}
+                                        {{~#when value '===' 'DESC'~}}
+                                            <i class="fa fa-caret-down"></i>
+                                        {{~/when}}
+                                    {{~/sort}}
+                                </a>
+                            </th>
+                                    
+                            <th>Type</th>
+                            <th>Flag</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each rows}}
+                        <tr data-id="{{node_id}}">
+                            <td>
+                                {{#when node_active '==' 1}}
+                                <a title="Edit" href="/admin/node/{{../meta.meta_key}}/update/{{node_id}}">
+                                <i class="fa fa-edit"></i></a>
+                                &nbsp;
+                                <a title="Remove" href="/admin/node/{{../meta.meta_key}}/remove/{{node_id}}"
+                                class="text-danger remove"><i class="fa fa-times"></i></a>
+                                {{/when}}
+                                {{#when node_active '==' 0}}
+                                <a title="Restore" href="/admin/node/{{../meta.meta_key}}/restore/{{node_id}}" class="text-success restore">
+                                <i class="fa fa-external-link"></i></a>
+                                {{/when}}
+                            </td>
+                            <td>
+                                {{#if node_image}}
+                                    <img src="{{node_image}}" width="100" />
+                                {{else}}
+                                    <img src="/images/default-avatar.png" width="100" />
+                                {{/if}}
+                            </td>
+                            <td>
+                                <a href="/node/{{node_slug}}" target="_blank">{{node_title}}</a>
+                            </td>
+                            <td>
+                                {{capital node_status}}
+                            </td>
+                            <td>
+                                {{date node_published 'M d'}}
+                            </td>
+                            <td>
+                                {{node_type}}
+                            </td>
+                            <td>
+                                {{node_flag}}
+                            </td>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+                <!-- END: TABLE -->
+            </div>
+        {{else}}
+            <!-- START: NO RESULTS -->
+            <div class="well no-results">No Results Found</div>
+            <!-- END: NO RESULTS -->
+        {{/if}}
+    </div>
+</div>
+
+<ul class="pagination">
+    {{#pager total range}}
+    <li{{#if active}} class="active"{{/if}}><a href="?{{href}}">{{page}}</a></li>
+    {{/pager}}
+</ul>
+</form>
