@@ -346,3 +346,40 @@ $cradle->on('meta-update', function ($request, $response) {
     //return response format
     $response->setError(false)->setResults($results);
 });
+
+/**
+ * Meta Validate Job
+ * 
+ * @param Request $request
+ * @param Response $response
+ */
+$cradle->on('meta-validate', function ($request, $response) {
+    // has node type?
+    if(!$request->hasStage('node_type')) {
+        return $response->setError(true, 'Not Found');
+    }
+
+    // meta request
+    $metaRequest = \Cradle\Http\Request::i();
+    // meta response
+    $metaResponse = \Cradle\Http\Response::i();
+
+    // filter by meta key
+    $metaRequest->setStage('meta_key', $request->getStage('node_type'));
+
+    // get meta detail
+    cradle()->trigger('meta-detail', $metaRequest, $metaResponse);
+
+    // get the meta
+    $meta = $metaResponse->getResults();
+
+    // meta exists?
+    if(!$meta) {
+        return $response->setError(true, 'Not Found');
+    }
+
+    // set results
+    $response
+        ->setError(false)
+        ->setResults($meta);
+});

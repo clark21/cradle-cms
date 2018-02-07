@@ -1,0 +1,14 @@
+<div class="form-group{{#if error}} has-error{{/if}}">
+    <label class="control-label">{{label}}</label>
+    <div>
+        <textarea 
+            name="{{field.key}}" 
+            placeholder="{{field.attributes.placeholder}}"
+            class="form-control"
+        >{{{field.value}}}</textarea>
+
+        {{#if error}}
+        <span class="help-text">{{error}}</span>
+        {{/if}}
+    </div>
+</div>

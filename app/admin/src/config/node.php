@@ -1,7 +1,7 @@
 <?php //-->
 return [
     [
-        'disable' => true,
+        'disable' => false,
         'label' => 'Image',
         'key' => 'node_image',
         'field' => [
@@ -32,7 +32,7 @@ return [
         'sortable' => 0
     ],
     [
-        'disable' => true,
+        'disable' => false,
         'label' => 'Title',
         'key' => 'node_title',
         'field' => [
@@ -70,7 +70,7 @@ return [
         'sortable' => 0
     ],
     [
-        'disable' => true,
+        'disable' => false,
         'label' => 'Slug',
         'key' => 'node_slug',
         'field' => [
@@ -106,7 +106,7 @@ return [
         'sortable' => 0
     ],
     [
-        'disable' => true,
+        'disable' => false,
         'label' => 'Detail',
         'key' => 'node_detail',
         'field' => [
@@ -127,7 +127,7 @@ return [
         'sortable' => 0
     ],
     [
-        'disable' => true,
+        'disable' => false,
         'label' => 'Tags',
         'key' => 'node_tags',
         'field' => [
@@ -159,7 +159,7 @@ return [
         'sortable' => 0
     ],
     [
-        'disable' => true,
+        'disable' => false,
         'label' => 'Files',
         'key' => 'node_files',
         'field' => [
@@ -177,7 +177,7 @@ return [
         'sortable' => 0
     ],
     [
-        'disable' => true,
+        'disable' => false,
         'label' => 'Status',
         'key' => 'node_status',
         'field' => [
@@ -198,7 +198,7 @@ return [
         'sortable' => 1
     ],
     [
-        'disable' => true,
+        'disable' => false,
         'label' => 'Published',
         'key' => 'node_published',
         'field' => [
@@ -248,7 +248,7 @@ return [
         'sortable' => 1
     ],
     [
-        'disable' => true,
+        'disable' => false,
         'label' => 'Created',
         'key' => 'node_created',
         'field' => [
@@ -267,7 +267,7 @@ return [
         'sortable' => 1
     ],
     [
-        'disable' => true,
+        'disable' => false,
         'label' => 'Updated',
         'key' => 'node_updated',
         'field' => [

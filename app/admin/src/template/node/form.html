@@ -1,6 +1,6 @@
 <div class="panel panel-default clear" >
     <div class="panel-heading brand">
-        <div class="panel-title">{{title}}</div>
+        <div class="panel-title">{{#ucwords title}}{{/ucwords}}</div>
     </div>
 
     <div class="panel-body" >
@@ -25,7 +25,7 @@
                 data-signature="{{cdn_config.inputs.X-Amz-Signature}}"
             {{/if}}
         >
-            
+        
             <div class="form-group{{#if errors.node_image}} has-error{{/if}}">
                 <label class="control-label">Image</label>
                 <div>
@@ -43,7 +43,7 @@
                                 <img alt="Upload a Photo" width="200" class="placeholder" src="/images/default-image.png" />
                             {{/if}}
                     </div>
-
+            
                     {{#if errors.node_image}}
                     <span class="help-text">{{errors.node_image}}</span>
                     {{/if}}
@@ -54,7 +54,7 @@
                 <label class="control-label">Title</label>
                 <div>
                     <input name="node_title" value="{{item.node_title}}" placeholder="Enter a Title" type="text" class="form-control" />
-
+            
                     {{#if errors.node_title}}
                     <span class="help-text">{{errors.node_title}}</span>
                     {{/if}}
@@ -65,7 +65,7 @@
                 <label class="control-label">Slug</label>
                 <div>
                     <input name="node_slug" value="{{item.node_slug}}" placeholder="Enter a unique SEO slug" type="text" class="form-control" />
-
+            
                     {{#if errors.node_slug}}
                     <span class="help-text">{{errors.node_slug}}</span>
                     {{/if}}
@@ -76,7 +76,7 @@
                 <label class="control-label">Detail</label>
                 <div>
                     <textarea name="node_detail" placeholder="Write about something" class="form-control">{{{item.node_detail}}}</textarea>
-
+            
                     {{#if errors.node_detail}}
                     <span class="help-text">{{errors.node_detail}}</span>
                     {{/if}}
@@ -95,7 +95,7 @@
                             </div>
                         {{/each}}
                     </div>
-
+            
                     {{#if errors.node_tags}}
                     <span class="help-text">{{errors.node_tags}}</span>
                     {{/if}}
@@ -117,7 +117,7 @@
                             {{/each}}
                     </div>
                     <a class="add-meta" href="javascript:void(0)"><i class="fa fa-plus"></i></a>
-
+            
                     {{#if errors.node_meta}}
                     <span class="help-text">{{errors.node_meta}}</span>
                     {{/if}}
@@ -142,7 +142,7 @@
                             {{/each}}
                         {{/if}}
                     </div>
-
+            
                     {{#if errors.node_files}}
                     <span class="help-text">{{errors.node_files}}</span>
                     {{/if}}
@@ -153,7 +153,7 @@
                 <label class="control-label">Type</label>
                 <div>
                     <input name="node_status" value="{{item.node_status}}" placeholder="pending" type="text" class="form-control" />
-
+            
                     {{#if errors.node_status}}
                     <span class="help-text">{{errors.node_status}}</span>
                     {{/if}}
@@ -164,7 +164,7 @@
                 <label class="control-label">Published Date</label>
                 <div>
                     <input name="node_published" value="{{item.node_published}}" type="date" class="form-control" />
-
+            
                     {{#if errors.node_published}}
                     <span class="help-text">{{errors.node_published}}</span>
                     {{/if}}
@@ -175,13 +175,12 @@
                 <label class="control-label">Flag</label>
                 <div>
                     <input name="node_flag" value="{{item.node_flag}}" step="1" placeholder="0" type="number" class="form-control" />
-
+            
                     {{#if errors.node_flag}}
                     <span class="help-text">{{errors.node_flag}}</span>
                     {{/if}}
                 </div>
             </div>
-            
 
             <div class="clear form-group">
                 <input type="hidden" name="csrf" value="" />

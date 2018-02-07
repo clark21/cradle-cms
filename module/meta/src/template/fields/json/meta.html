@@ -1,0 +1,21 @@
+<div class="form-group{{#if error}} has-error{{/if}}">
+    <label class="control-label">{{label}}</label>
+    <div>
+        
+        <div data-do="meta-field" class="meta-field" data-name="{{field.key}}">
+                {{#each field.value}}
+                    <div class="meta">
+                        <input type="text" class="meta-input key" placeholder="{{_ 'Name'}}" value="{{@key}}" />
+                        <input type="text" class="meta-input value" placeholder="{{_ 'Value'}}" value="{{this}}" />
+                        <input type="hidden" name="node_meta[{{@key}}]" value="{{this}}">
+                        <a class="remove" href="javascript:void(0)"><i class="fa fa-times"></i></a>
+                    </div>
+                {{/each}}
+        </div>
+        <a class="add-meta" href="javascript:void(0)"><i class="fa fa-plus"></i></a>
+
+        {{#if error}}
+        <span class="help-text">{{error}}</span>
+        {{/if}}
+    </div>
+</div>
