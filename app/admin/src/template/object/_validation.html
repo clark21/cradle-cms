@@ -4,9 +4,9 @@
             class="form-control"
             data-do="field-validation"
             data-on="change"
-            name="meta_fields[{{../@index}}][validation][{{@index}}][method]"
+            name="object_fields[{{../@index}}][validation][{{@index}}][method]"
         >
-            {{> meta_validation-options}}
+            {{> object_validation-options}}
         </select>
         <span class="input-group-btn">
             <a
@@ -27,7 +27,7 @@
                     <div class="option-row input-group" data-index="{{@index}}">
                         <input
                             class="form-control option-value"
-                            name="meta_fields[{{../../@index}}][validation][{{../@index}}][parameters][{{@index}}]"
+                            name="object_fields[{{../../@index}}][validation][{{../@index}}][parameters][{{@index}}]"
                             placeholder="Value"
                             type="text"
                             value="{{this}}"
@@ -48,7 +48,7 @@
                 <button
                     class="btn btn-info option-add"
                     data-do="option-add"
-                    data-name="meta_fields[{{../@index}}][validation][{{@index}}][parameters][{INDEX}]"
+                    data-name="object_fields[{{../@index}}][validation][{{@index}}][parameters][{INDEX}]"
                     data-on="click"
                     type="button"
                 >
@@ -59,7 +59,7 @@
             <div class="input-input">
                 <input
                     class="form-control"
-                    name="meta_fields[{{../@index}}][validation][{{@index}}][parameters]"
+                    name="object_fields[{{../@index}}][validation][{{@index}}][parameters]"
                     type="text"
                     value="{{parameters}}"
                 />
@@ -68,7 +68,7 @@
     {{/if}}
 
     <input
-        name="meta_fields[{{../@index}}][validation][{{@index}}][message]"
+        name="object_fields[{{../@index}}][validation][{{@index}}][message]"
         class="form-control validation-message"
         placeholder="Error Message"
         type="text"

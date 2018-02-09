@@ -2,9 +2,10 @@
 
 //include the other routes
 //START: GENERATED CONTROLLERS
+include_once __DIR__ . '/src/controller/object.php';
 include_once __DIR__ . '/src/controller/auth.php';
 include_once __DIR__ . '/src/controller/user.php';
-include_once __DIR__ . '/src/controller/meta.php';
+include_once __DIR__ . '/src/controller/object.php';
 //END: GENERATED CONTROLLERS
 
 //include global events, methods

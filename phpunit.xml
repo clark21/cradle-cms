@@ -121,5 +121,12 @@
 			<file>module/node/test/Service/ElasticServiceTest.php</file>
 			<file>module/node/test/EventTest.php</file>
 		</testsuite>
+		<testsuite name="Object Test Suite">
+			<file>module/object/test/ValidatorTest.php</file>
+			<file>module/object/test/ServiceTest.php</file>
+			<file>module/object/test/Service/SqlServiceTest.php</file>
+			<file>module/object/test/Service/ElasticServiceTest.php</file>
+			<file>module/object/test/EventTest.php</file>
+		</testsuite>
 	</testsuites>
 </phpunit>

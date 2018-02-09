@@ -33,4 +33,5 @@ return cradle()
     ->register('/module/meta')
     ->register('/module/user')
     ->register('/module/node')
+    ->register('/module/object')
     ->register('/module/utility');

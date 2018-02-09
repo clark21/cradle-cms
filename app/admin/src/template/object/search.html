@@ -1,5 +1,5 @@
 
-{{#when filter.meta_active '===' '0'}}
+{{#when filter.object_active '===' '0'}}
     <h3>
         {{number total}} Inactive {{title}}
         {{#if q.0}}
@@ -27,22 +27,17 @@
     <!-- END: SEARCH FORM -->
 
     <div class="btn-group" role="group" aria-label="...">
-        <a class="btn btn-primary" href="?filter[meta_active]=1">
+        <a class="btn btn-primary" href="?filter[object_active]=1">
             Active
         </a>
-        <a class="btn btn-danger" href="?filter[meta_active]=0">
+        <a class="btn btn-danger" href="?filter[object_active]=0">
             Inactive
         </a>
     </div>
     <span>
-        <a class="btn btn-success" href="/admin/meta/create/node">
+        <a class="btn btn-success" href="/admin/object/create">
             <i class="fa fa-plus"></i>
-            Create Node Type
-        </a>
-
-        <a class="btn btn-success" href="/admin/meta/create/user">
-            <i class="fa fa-plus"></i>
-            Create User Type
+            Create Object
         </a>
     </span>
 </div>
@@ -60,16 +55,16 @@
                                 <th>Actions</th>
                                 <th>Object</th>
                                 <th>
-                                    <a href="?q[]={{q.0}}&{{#sort 'meta_type'}}
+                                    <a href="?q[]={{q.0}}&{{#sort 'object_type'}}
                                         {{~#unless value~}}
-                                            order[meta_type]=ASC
+                                            order[object_type]=ASC
                                         {{~/unless}}
                                         {{~#when value '===' 'ASC'~}}
-                                            order[meta_type]=DESC
+                                            order[object_type]=DESC
                                         {{~/when}}
                                     {{~/sort}}">
                                         Type
-                                        {{#sort 'meta_type'}}
+                                        {{#sort 'object_type'}}
                                             {{~#when value '===' 'ASC'~}}
                                                 <i class="fa fa-caret-up"></i>
                                             {{~/when}}
@@ -83,25 +78,25 @@
                         </thead>
                         <tbody>
                             {{#each rows}}
-                                <tr data-id="{{meta_id}}">
+                                <tr data-id="{{object_id}}">
                                     <td>
-                                        {{#when meta_active '==' 1}}
-                                        <a title="Edit" href="/admin/meta/update/{{meta_id}}">
+                                        {{#when object_active '==' 1}}
+                                        <a title="Edit" href="/admin/object/update/{{object_id}}">
                                         <i class="fa fa-edit"></i></a>
                                         &nbsp;
-                                        <a title="Remove" href="/admin/meta/remove/{{meta_id}}"
+                                        <a title="Remove" href="/admin/object/remove/{{object_id}}"
                                         class="text-danger remove"><i class="fa fa-times"></i></a>
                                         {{/when}}
-                                        {{#when meta_active '==' 0}}
-                                        <a title="Restore" href="/admin/meta/restore/{{meta_id}}" class="text-success restore">
+                                        {{#when object_active '==' 0}}
+                                        <a title="Restore" href="/admin/object/restore/{{object_id}}" class="text-success restore">
                                         <i class="fa fa-external-link"></i></a>
                                         {{/when}}
                                     </td>
                                     <td>
-                                        <a href="/{{meta_key}}/search" target="_blank">{{meta_singular}}</a>
-                                        <p>{{meta_detail}}</p>
+                                        <a href="/{{object_key}}/search" target="_blank">{{object_singular}}</a>
+                                        <p>{{object_detail}}</p>
                                     </td>
-                                    <td>{{meta_type}}</td>
+                                    <td>{{object_type}}</td>
                                 </tr>
                             {{/each}}
                         </tbody>

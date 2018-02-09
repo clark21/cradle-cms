@@ -20,7 +20,7 @@
                             <input
                                 class="field-label form-control"
                                 placeholder="Field Title"
-                                name="meta_fields[{INDEX}][label]"
+                                name="object_fields[{INDEX}][label]"
                                 type="text"
                             />
                         </div>
@@ -31,10 +31,10 @@
                             <input
                                 class="field-keyword form-control"
                                 data-do="slugger"
-                                data-source="input[name='meta_fields[{INDEX}][label]']"
+                                data-source="input[name='object_fields[{INDEX}][label]']"
                                 data-upper="0"
                                 data-space="_"
-                                name="meta_fields[{INDEX}][key]"
+                                name="object_fields[{INDEX}][key]"
                                 placeholder="Enter a unique keyword"
                                 type="text"
                             />
@@ -47,9 +47,9 @@
                                 class="field-type form-control"
                                 data-do="field-type"
                                 data-on="change"
-                                name="meta_fields[{INDEX}][field][type]"
+                                name="object_fields[{INDEX}][field][type]"
                             >
-                                {{> meta_type-options}}
+                                {{> object_type-options}}
                             </select>
                         </div>
                     </div>
@@ -73,9 +73,9 @@
                                 class="field-list form-control"
                                 data-do="field-list"
                                 data-on="change"
-                                name="meta_fields[{INDEX}][list][format]"
+                                name="object_fields[{INDEX}][list][format]"
                             >
-                                {{> meta_format-options}}
+                                {{> object_format-options}}
                             </select>
                         </div>
                     </div>
@@ -86,9 +86,9 @@
                                 class="field-detail form-control"
                                 data-do="field-detail"
                                 data-on="change"
-                                name="meta_fields[{INDEX}][detail][format]"
+                                name="object_fields[{INDEX}][detail][format]"
                             >
-                                {{> meta_format-options}}
+                                {{> object_format-options}}
                             </select>
                         </div>
                     </div>
@@ -99,7 +99,7 @@
                             <input
                                 class="field-default form-control"
                                 placeholder="Default Value"
-                                name="meta_fields[{INDEX}][default]"
+                                name="object_fields[{INDEX}][default]"
                                 type="text"
                             />
                         </div>
@@ -110,7 +110,7 @@
                             <label>
                                 <input
                                     class="field-searchable"
-                                    name="meta_fields[{INDEX}][searchable]"
+                                    name="object_fields[{INDEX}][searchable]"
                                     type="checkbox"
                                     value="1"
                                 />
@@ -120,7 +120,7 @@
                             <label>
                                 <input
                                     class="field-filterable"
-                                    name="meta_fields[{INDEX}][filterable]"
+                                    name="object_fields[{INDEX}][filterable]"
                                     type="checkbox"
                                     value="1"
                                 />
@@ -130,7 +130,7 @@
                             <label>
                                 <input
                                     class="field-sortable"
-                                    name="meta_fields[{INDEX}][sortable]"
+                                    name="object_fields[{INDEX}][sortable]"
                                     type="checkbox"
                                     value="1"
                                 />
@@ -163,8 +163,8 @@
 </script>
 
 <script id="field-row-template" type="text/x-template">
-    <tr class="meta-field" data-index="{INDEX}">
-        <td class="meta-action" nowrap="nowrap" valign="middle">
+    <tr class="object-field" data-index="{INDEX}">
+        <td class="object-action" nowrap="nowrap" valign="middle">
             <a
                 class="field-edit-trigger text-warning"
                 data-do="modal-open"
@@ -220,9 +220,9 @@
                 class="form-control"
                 data-do="field-validation"
                 data-on="change"
-                name="meta_fields[{INDEX_1}][validation][{INDEX_2}][method]"
+                name="object_fields[{INDEX_1}][validation][{INDEX_2}][method]"
             >
-                {{> meta_validation-options}}
+                {{> object_validation-options}}
             </select>
             <span class="input-group-btn">
                 <a
@@ -236,7 +236,7 @@
             </span>
         </div>
         <input
-            name="meta_fields[{INDEX_1}][validation][{INDEX_2}][message]"
+            name="object_fields[{INDEX_1}][validation][{INDEX_2}][message]"
             class="form-control validation-message"
             placeholder="Error Message"
             type="text"

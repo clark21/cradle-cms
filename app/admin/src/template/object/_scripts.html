@@ -13,14 +13,14 @@
 
             return $(template);
         },
-        getMetaIndex: function() {
+        getObjectIndex: function() {
             var index = this
                 .parents('div.modal-body')
                 .eq(0)
                 .attr('data-index');
 
             if(typeof index === 'undefined') {
-                index = this.parents('tr.meta-field')
+                index = this.parents('tr.object-field')
                     .eq(0)
                     .attr('data-index');
             }
@@ -171,14 +171,14 @@
                 .compile({ INDEX: index })
                 .appendTo(target)
                 .doon()
-                .find('td.meta-action')
+                .find('td.object-action')
                 .append(modal
                     .removeClass('modal-create')
                     .addClass('modal-update')
                 );
         }
 
-        var row = $(trigger).parents('tr.meta-field').eq(0);
+        var row = $(trigger).parents('tr.object-field').eq(0);
 
         var label = $('input.field-keyword', modal).val();
         $('td.field-keyword-value', row).html(label);
@@ -289,12 +289,12 @@
                     name = 'options';
                 }
 
-                var template = 'meta_fields[{INDEX}][field][' + name + '][{INDEX}]';
+                var template = 'object_fields[{INDEX}][field][' + name + '][{INDEX}]';
                 var html = $('#field-' + ui + '-template')
                     .compile({
                         NAME: template.replace(
                             '{INDEX}',
-                            trigger.getMetaIndex()
+                            trigger.getObjectIndex()
                         )
                     })
                     .doon();
@@ -403,7 +403,7 @@
 
         var group = $('#field-validation-template')
             .compile({
-                INDEX_1: $(trigger).getMetaIndex(),
+                INDEX_1: $(trigger).getObjectIndex(),
                 INDEX_2: index
             })
             .doon();
@@ -431,11 +431,11 @@
             case 'word_gte':  case 'regex':
                 container.find('div.input-options').remove();
                 if(!container.find('div.input-input').length) {
-                    var template = 'meta_fields[{INDEX}][validation][{INDEX}][parameters]';
+                    var template = 'object_fields[{INDEX}][validation][{INDEX}][parameters]';
                     var parameters = $('#field-input-template')
                         .compile({
                             NAME: template
-                                .replace('{INDEX}', trigger.getMetaIndex())
+                                .replace('{INDEX}', trigger.getObjectIndex())
                                 .replace('{INDEX}', container.attr('data-index'))
                         })
                         .doon();
@@ -446,11 +446,11 @@
             case 'one':
                 container.find('div.input-input').remove();
                 if(!container.find('div.input-options').length) {
-                    var template = 'meta_fields[{INDEX}][validation][{INDEX}][parameters][{INDEX}]';
+                    var template = 'object_fields[{INDEX}][validation][{INDEX}][parameters][{INDEX}]';
                     var parameters = $('#field-options-template')
                         .compile({
                             NAME: template
-                                .replace('{INDEX}', trigger.getMetaIndex())
+                                .replace('{INDEX}', trigger.getObjectIndex())
                                 .replace('{INDEX}', container.attr('data-index'))
                         })
                         .doon();
@@ -474,10 +474,10 @@
         switch(fieldset) {
             case 'input':
                 var placeholder = option.attr('data-placeholder') || '';
-                var template = 'meta_fields[{INDEX}][list][parameters]';
+                var template = 'object_fields[{INDEX}][list][parameters]';
                 var input = $('#field-input-template')
                     .compile({
-                        NAME: template.replace('{INDEX}', trigger.getMetaIndex())
+                        NAME: template.replace('{INDEX}', trigger.getObjectIndex())
                     })
                     .doon();
 
@@ -486,8 +486,8 @@
                 trigger.after(input);
                 break;
             case 'pair':
-                var name1 = 'meta_fields[{INDEX}][list][parameters][0]';
-                var name2 = 'meta_fields[{INDEX}][list][parameters][1]';
+                var name1 = 'object_fields[{INDEX}][list][parameters][0]';
+                var name2 = 'object_fields[{INDEX}][list][parameters][1]';
                 var placeholder = [
                     option.attr('data-placeholder-1') || '',
                     option.attr('data-placeholder-2') || ''
@@ -495,8 +495,8 @@
 
                 var input = $('#field-pair-template')
                     .compile({
-                        NAME_1: name1.replace('{INDEX}', trigger.getMetaIndex()),
-                        NAME_2: name2.replace('{INDEX}', trigger.getMetaIndex())
+                        NAME_1: name1.replace('{INDEX}', trigger.getObjectIndex()),
+                        NAME_2: name2.replace('{INDEX}', trigger.getObjectIndex())
                     })
                     .doon();
 
@@ -522,10 +522,10 @@
         switch(fieldset) {
             case 'input':
                 var placeholder = option.attr('data-placeholder') || '';
-                var template = 'meta_fields[{INDEX}][detail][parameters]';
+                var template = 'object_fields[{INDEX}][detail][parameters]';
                 var input = $('#field-input-template')
                     .compile({
-                        NAME: template.replace('{INDEX}', trigger.getMetaIndex())
+                        NAME: template.replace('{INDEX}', trigger.getObjectIndex())
                     })
                     .doon();
 
@@ -534,8 +534,8 @@
                 trigger.after(input);
                 break;
             case 'pair':
-                var name1 = 'meta_fields[{INDEX}][detail][parameters][0]';
-                var name2 = 'meta_fields[{INDEX}][detail][parameters][1]';
+                var name1 = 'object_fields[{INDEX}][detail][parameters][0]';
+                var name2 = 'object_fields[{INDEX}][detail][parameters][1]';
                 var placeholder = [
                     option.attr('data-placeholder-1') || '',
                     option.attr('data-placeholder-2') || ''
@@ -543,8 +543,8 @@
 
                 var input = $('#field-pair-template')
                     .compile({
-                        NAME_1: name1.replace('{INDEX}', trigger.getMetaIndex()),
-                        NAME_2: name2.replace('{INDEX}', trigger.getMetaIndex())
+                        NAME_1: name1.replace('{INDEX}', trigger.getObjectIndex()),
+                        NAME_2: name2.replace('{INDEX}', trigger.getObjectIndex())
                     })
                     .doon();
 
@@ -571,7 +571,7 @@
     $(window).on('move-down-click', function(e, trigger) {
         var row = $(trigger).parent().parent();
 
-        var last = row.parent().find('tr.meta-field').length - 1;
+        var last = row.parent().find('tr.object-field').length - 1;
 
         if(row.attr('data-index') == last) {
             return;
@@ -583,19 +583,19 @@
 
     var reindex = function() {
         var format = {
-            disable: 'meta_fields[{INDEX}][disable]',
-            label: 'meta_fields[{INDEX}][label]',
-            key: 'meta_fields[{INDEX}][key]',
-            type: 'meta_fields[{INDEX}][field][type]',
-            list: 'meta_fields[{INDEX}][list][format]',
-            detail: 'meta_fields[{INDEX}][detail][format]',
-            value: 'meta_fields[{INDEX}][default]',
-            searchable: 'meta_fields[{INDEX}][searchable]',
-            filterable: 'meta_fields[{INDEX}][filterable]',
-            sortable: 'meta_fields[{INDEX}][sortable]'
+            disable: 'object_fields[{INDEX}][disable]',
+            label: 'object_fields[{INDEX}][label]',
+            key: 'object_fields[{INDEX}][key]',
+            type: 'object_fields[{INDEX}][field][type]',
+            list: 'object_fields[{INDEX}][list][format]',
+            detail: 'object_fields[{INDEX}][detail][format]',
+            value: 'object_fields[{INDEX}][default]',
+            searchable: 'object_fields[{INDEX}][searchable]',
+            filterable: 'object_fields[{INDEX}][filterable]',
+            sortable: 'object_fields[{INDEX}][sortable]'
         };
 
-        $('tr.meta-field').each(function(i) {
+        $('tr.object-field').each(function(i) {
             $(this).attr('data-index', i);
 
             $('div.modal-body', this).attr('data-index', i);
@@ -622,7 +622,7 @@
                 );
 
                 $('div.input-keyval', $(this).parent()).each(function() {
-                    var format = 'meta_fields[{INDEX}][field][options][{INDEX}]';
+                    var format = 'object_fields[{INDEX}][field][options][{INDEX}]';
 
                     format = format.replace('{INDEX}', i);
                     $('button.option-add', this).attr('data-name', format);
@@ -640,7 +640,7 @@
                 });
 
                 $('div.input-attributes', $(this).parent()).each(function() {
-                    var format = 'meta_fields[{INDEX}][field][attributes][{INDEX}]';
+                    var format = 'object_fields[{INDEX}][field][attributes][{INDEX}]';
 
                     format = format.replace('{INDEX}', i);
                     $('button.attribute-add', this).attr('data-name', format);
@@ -664,13 +664,13 @@
                     format.list.replace('{INDEX}', i)
                 );
 
-                var name = 'meta_fields[{INDEX}][list][parameters]';
+                var name = 'object_fields[{INDEX}][list][parameters]';
                 $('div.input-input input', $(this).parent()).attr(
                     'name',
                     name.replace('{INDEX}', i)
                 );
 
-                name = 'meta_fields[{INDEX}][list][parameters][{INDEX}]';
+                name = 'object_fields[{INDEX}][list][parameters][{INDEX}]';
                 $('div.input-pair input', $(this).parent()).each(function(j) {
                     $(this).attr(
                         'name',
@@ -687,13 +687,13 @@
                     format.detail.replace('{INDEX}', i)
                 );
 
-                var name = 'meta_fields[{INDEX}][detail][parameters]';
+                var name = 'object_fields[{INDEX}][detail][parameters]';
                 $('div.input-input input', $(this).parent()).attr(
                     'name',
                     name.replace('{INDEX}', i)
                 );
 
-                name = 'meta_fields[{INDEX}][detail][parameters][{INDEX}]';
+                name = 'object_fields[{INDEX}][detail][parameters][{INDEX}]';
                 $('div.input-pair input', $(this).parent()).each(function(j) {
                     $(this).attr(
                         'name',
@@ -725,7 +725,7 @@
             );
 
             $('div.validation-row', this).each(function() {
-                var format = 'meta_fields[{INDEX}][validation][{INDEX}][method]';
+                var format = 'object_fields[{INDEX}][validation][{INDEX}][method]';
                 var j = $(this).attr('data-index');
 
                 $('select', this).attr('name', format
@@ -733,7 +733,7 @@
                     .replace('{INDEX}', j)
                 );
 
-                format = 'meta_fields[{INDEX}][validation][{INDEX}][message]';
+                format = 'object_fields[{INDEX}][validation][{INDEX}][message]';
 
                 $('input.validation-message', this).attr('name', format
                     .replace('{INDEX}', i)
@@ -741,7 +741,7 @@
                 );
 
                 $('div.input-input input', this).each(function() {
-                    var format = 'meta_fields[{INDEX}][validation][{INDEX}][parameters]';
+                    var format = 'object_fields[{INDEX}][validation][{INDEX}][parameters]';
                     $(this).attr('name', format
                         .replace('{INDEX}', i)
                         .replace('{INDEX}', j)
@@ -749,7 +749,7 @@
                 });
 
                 $('div.input-options', this).each(function() {
-                    var format = 'meta_fields[{INDEX}][validation][{INDEX}][parameters][{INDEX}]';
+                    var format = 'object_fields[{INDEX}][validation][{INDEX}][parameters][{INDEX}]';
 
                     format = format.replace('{INDEX}', i);
                     $('button.option-add', this).attr('data-name', format);
@@ -780,7 +780,7 @@
             .attr('data-name')
             .replace('{INDEX}', index);
 
-        var singular = $('input.field-meta-singular').val();
+        var singular = $('input.field-object-singular').val();
 
         var row = $('#relation-row-template')
             .compile({

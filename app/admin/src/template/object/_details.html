@@ -2,9 +2,9 @@
     class="field-detail form-control"
     data-do="field-detail"
     data-on="change"
-    name="meta_fields[{{@index}}][detail][format]"
+    name="object_fields[{{@index}}][detail][format]"
 >
-    {{> meta_format-options}}
+    {{> object_format-options}}
 </select>
 
 {{#if detail.parameters}}
@@ -12,13 +12,13 @@
         <div class="input-options">
             <div class="input-pair">
                 <input
-                    name="meta_fields[{{@index}}][detail][parameters][0]"
+                    name="object_fields[{{@index}}][detail][parameters][0]"
                     class="form-control"
                     type="text"
                     value="{{detail.parameters.0}}"
                 />
                 <input
-                    name="meta_fields[{{@index}}][detail][parameters][1]"
+                    name="object_fields[{{@index}}][detail][parameters][1]"
                     class="form-control"
                     type="text"
                     value="{{detail.parameters.1}}"
@@ -29,7 +29,7 @@
         <div class="input-input">
             <input
                 class="form-control"
-                name="meta_fields[{{@index}}][detail][parameters]"
+                name="object_fields[{{@index}}][detail][parameters]"
                 type="text"
                 value="{{detail.parameters}}"
             />

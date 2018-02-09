@@ -15,21 +15,21 @@
  */
 $cradle->on('render-admin-page', function ($request, $response) {
     // create new request
-    $metaRequest = \Cradle\Http\Request::i();
+    $objectRequest = \Cradle\Http\Request::i();
     // create new response
-    $metaResponse = \Cradle\Http\Response::i();
+    $objectResponse = \Cradle\Http\Response::i();
 
-    // trigger meta search
-    cradle()->trigger('meta-search', $metaRequest, $metaResponse);
+    // trigger object search
+    cradle()->trigger('object-search', $objectRequest, $objectResponse);
 
     // get results
-    $results = $metaResponse->getResults('rows');
+    $results = $objectResponse->getResults('rows');
 
     // map results
-    $navigation = array_map(function($meta) {
+    $navigation = array_map(function($object) {
         return [
-            'label' => ucwords($meta['meta_plural']),
-            'href'  => sprintf('/admin/node/%s/search', $meta['meta_key'])
+            'label' => ucwords($object['object_plural']),
+            'href'  => sprintf('/admin/object/%s/search', $object['object_key'])
         ];
     }, $results);
 

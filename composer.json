@@ -31,6 +31,7 @@
     },
     "autoload": {
         "psr-4": {
+            "Cradle\\Module\\Object\\": "module/object/src/",
             "Cradle\\Module\\Node\\": "module/node/src/",
             "Cradle\\Module\\User\\": "module/user/src/",
             "Cradle\\Module\\Meta\\": "module/meta/src/",

@@ -8,12 +8,12 @@
  */
 
 /**
- * Render the Meta Search Page
+ * Render the Object Search Page
  *
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/meta/search', function($request, $response) {
+$cradle->get('/admin/object/search', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     //only for admin
@@ -29,7 +29,8 @@ $cradle->get('/admin/meta/search', function($request, $response) {
     //we do this to prevent SQL injections
     if(is_array($request->getStage('order'))) {
         $sortable = [
-            'meta_type'
+            'object_singular',
+            'object_plural'
         ];
 
         foreach($request->getStage('order') as $key => $direction) {
@@ -45,8 +46,7 @@ $cradle->get('/admin/meta/search', function($request, $response) {
     //we do this to prevent SQL injections
     if(is_array($request->getStage('filter'))) {
         $filterable = [
-            'meta_active',
-            'meta_type'
+            'object_active'
         ];
 
         foreach($request->getStage('filter') as $key => $value) {
@@ -57,14 +57,14 @@ $cradle->get('/admin/meta/search', function($request, $response) {
     }
 
     //trigger job
-    cradle()->trigger('meta-search', $request, $response);
+    cradle()->trigger('object-search', $request, $response);
     $data = array_merge($request->getStage(), $response->getResults());
 
     //----------------------------//
     // 3. Render Template
-    $class = 'page-admin-meta-search page-admin';
-    $data['title'] = cradle('global')->translate('Meta');
-    $body = cradle('/app/admin')->template('meta/search', $data);
+    $class = 'page-admin-object-search page-admin';
+    $data['title'] = cradle('global')->translate('Objects');
+    $body = cradle('/app/admin')->template('object/search', $data);
 
     //set content
     $response
@@ -76,12 +76,12 @@ $cradle->get('/admin/meta/search', function($request, $response) {
 }, 'render-admin-page');
 
 /**
- * Render the Meta Create Page
+ * Render the Object Create Page
  *
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/meta/create/:type', function($request, $response) {
+$cradle->get('/admin/object/create', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     //only for admin
@@ -98,8 +98,8 @@ $cradle->get('/admin/meta/create/:type', function($request, $response) {
 
     //----------------------------//
     // 3. Render Template
-    $class = 'page-developer-meta-create page-admin';
-    $data['title'] = cradle('global')->translate('Create Meta');
+    $class = 'page-developer-object-create page-admin';
+    $data['title'] = cradle('global')->translate('Create Object');
 
     cradle('global')->handlebars()->registerHelper('is_array', function($value, $option) {
         if(is_array($value)) {
@@ -109,32 +109,22 @@ $cradle->get('/admin/meta/create/:type', function($request, $response) {
         return $option['inverse']();
     });
 
-    if($request->getStage('type') === 'user') {
-        $data['title'] = cradle('global')->translate('Create User Type');
-        $data['item']['meta_type'] = 'user';
-        $data['item']['meta_fields'] = include(__DIR__ . '/../config/user.php');
-    } else {
-        $data['title'] = cradle('global')->translate('Create Node Type');
-        $data['item']['meta_type'] = 'node';
-        $data['item']['meta_fields'] = include(__DIR__ . '/../config/node.php');
-    }
-
     $body = cradle('/app/admin')->template(
-        'meta/form',
+        'object/form',
         $data,
         [
-            'meta_styles',
-            'meta_templates',
-            'meta_scripts',
-            'meta_row',
-            'meta_types',
-            'meta_lists',
-            'meta_details',
-            'meta_validation',
-            'meta_update',
-            'meta_type-options',
-            'meta_format-options',
-            'meta_validation-options'
+            'object_styles',
+            'object_templates',
+            'object_scripts',
+            'object_row',
+            'object_types',
+            'object_lists',
+            'object_details',
+            'object_validation',
+            'object_update',
+            'object_type-options',
+            'object_format-options',
+            'object_validation-options'
         ]
     );
 
@@ -148,12 +138,12 @@ $cradle->get('/admin/meta/create/:type', function($request, $response) {
 }, 'render-admin-page');
 
 /**
- * Render the Meta Update Page
+ * Render the Object Update Page
  *
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/meta/update/:meta_id', function($request, $response) {
+$cradle->get('/admin/object/update/:object_id', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     //only for admin
@@ -165,13 +155,13 @@ $cradle->get('/admin/meta/update/:meta_id', function($request, $response) {
 
     //if no item
     if(empty($data['item'])) {
-        cradle()->trigger('meta-detail', $request, $response);
+        cradle()->trigger('object-detail', $request, $response);
 
         //can we update ?
         if($response->isError()) {
             //add a flash
             cradle('global')->flash($response->getMessage(), 'danger');
-            return cradle('global')->redirect('/admin/meta/search');
+            return cradle('global')->redirect('/admin/object/search');
         }
 
         $data['item'] = $response->getResults();
@@ -184,7 +174,7 @@ $cradle->get('/admin/meta/update/:meta_id', function($request, $response) {
 
     //----------------------------//
     // 3. Render Template
-    $class = 'page-developer-meta-update page-admin';
+    $class = 'page-developer-object-update page-admin';
     $data['title'] = cradle('global')->translate('Updating Object');
 
     cradle('global')->handlebars()->registerHelper('is_array', function($value, $option) {
@@ -199,18 +189,18 @@ $cradle->get('/admin/meta/update/:meta_id', function($request, $response) {
         'meta/form',
         $data,
         [
-            'meta_styles',
-            'meta_templates',
-            'meta_scripts',
-            'meta_row',
-            'meta_types',
-            'meta_lists',
-            'meta_details',
-            'meta_validation',
-            'meta_update',
-            'meta_type-options',
-            'meta_format-options',
-            'meta_validation-options'
+            'object_styles',
+            'object_templates',
+            'object_scripts',
+            'object_row',
+            'object_types',
+            'object_lists',
+            'object_details',
+            'object_validation',
+            'object_update',
+            'object_type-options',
+            'object_format-options',
+            'object_validation-options'
         ]
     );
 
@@ -224,12 +214,12 @@ $cradle->get('/admin/meta/update/:meta_id', function($request, $response) {
 }, 'render-admin-page');
 
 /**
- * Process the Meta Create Page
+ * Process the Object Create Page
  *
  * @param Request $request
  * @param Response $response
  */
-$cradle->post('/admin/meta/create/:type', function($request, $response) {
+$cradle->post('/admin/object/create', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     //only for admin
@@ -238,46 +228,44 @@ $cradle->post('/admin/meta/create/:type', function($request, $response) {
     //----------------------------//
     // 2. Prepare Data
 
-    $request->setStage('meta_type', $request->getStage('type'));
-
-    //if meta_detail has no value make it null
-    if ($request->hasStage('meta_detail') && !$request->getStage('meta_detail')) {
-        $request->setStage('meta_detail', null);
+    //if object_detail has no value make it null
+    if ($request->hasStage('object_detail') && !$request->getStage('object_detail')) {
+        $request->setStage('object_detail', null);
     }
 
-    //if meta_fields has no value make it null
-    if ($request->hasStage('meta_fields') && !$request->getStage('meta_fields')) {
-        $request->setStage('meta_fields', null);
+    //if object_fields has no value make it null
+    if ($request->hasStage('object_fields') && !$request->getStage('object_fields')) {
+        $request->setStage('object_fields', null);
     }
 
-    //meta_flag is disallowed
-    $request->removeStage('meta_flag');
+    //object_flag is disallowed
+    $request->removeStage('object_flag');
 
     //----------------------------//
     // 3. Process Request
-    cradle()->trigger('meta-create', $request, $response);
+    cradle()->trigger('object-create', $request, $response);
 
     //----------------------------//
     // 4. Interpret Results
     if($response->isError()) {
-        return cradle()->triggerRoute('get', '/admin/meta/create', $request, $response);
+        return cradle()->triggerRoute('get', '/admin/object/create', $request, $response);
     }
 
     //it was good
     //add a flash
-    cradle('global')->flash('Meta was Created', 'success');
+    cradle('global')->flash('Object was Created', 'success');
 
     //redirect
-    cradle('global')->redirect('/admin/meta/search');
+    cradle('global')->redirect('/admin/object/search');
 });
 
 /**
- * Process the Meta Update Page
+ * Process the Object Update Page
  *
  * @param Request $request
  * @param Response $response
  */
-$cradle->post('/admin/meta/update/:meta_id', function($request, $response) {
+$cradle->post('/admin/object/update/:object_id', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     //only for admin
@@ -286,50 +274,45 @@ $cradle->post('/admin/meta/update/:meta_id', function($request, $response) {
     //----------------------------//
     // 2. Prepare Data
 
-    //if meta_type has no value use the default value
-    if ($request->hasStage('meta_type') && !$request->getStage('meta_type')) {
-        $request->setStage('meta_type', 'post');
+    //if object_detail has no value make it null
+    if ($request->hasStage('object_detail') && !$request->getStage('object_detail')) {
+        $request->setStage('object_detail', null);
     }
 
-    //if meta_detail has no value make it null
-    if ($request->hasStage('meta_detail') && !$request->getStage('meta_detail')) {
-        $request->setStage('meta_detail', null);
+    //if object_fields has no value make it null
+    if ($request->hasStage('object_fields') && !$request->getStage('object_fields')) {
+        $request->setStage('object_fields', null);
     }
 
-    //if meta_fields has no value make it null
-    if ($request->hasStage('meta_fields') && !$request->getStage('meta_fields')) {
-        $request->setStage('meta_fields', null);
-    }
-
-    //meta_flag is disallowed
-    $request->removeStage('meta_flag');
+    //object_flag is disallowed
+    $request->removeStage('object_flag');
 
     //----------------------------//
     // 3. Process Request
-    cradle()->trigger('meta-update', $request, $response);
+    cradle()->trigger('object-update', $request, $response);
 
     //----------------------------//
     // 4. Interpret Results
     if($response->isError()) {
-        $route = '/admin/meta/update/' . $request->getStage('meta_id');
+        $route = '/admin/object/update/' . $request->getStage('object_id');
         return cradle()->triggerRoute('get', $route, $request, $response);
     }
 
     //it was good
     //add a flash
-    cradle('global')->flash('Meta was Updated', 'success');
+    cradle('global')->flash('Object was Updated', 'success');
 
     //redirect
-    cradle('global')->redirect('/admin/meta/search');
+    cradle('global')->redirect('/admin/object/search');
 });
 
 /**
- * Process the Meta Remove
+ * Process the Object Remove
  *
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/meta/remove/:meta_id', function($request, $response) {
+$cradle->get('/admin/object/remove/:object_id', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     //only for admin
@@ -340,7 +323,7 @@ $cradle->get('/admin/meta/remove/:meta_id', function($request, $response) {
     // no data to preapre
     //----------------------------//
     // 3. Process Request
-    cradle()->trigger('meta-remove', $request, $response);
+    cradle()->trigger('object-remove', $request, $response);
 
     //----------------------------//
     // 4. Interpret Results
@@ -349,20 +332,20 @@ $cradle->get('/admin/meta/remove/:meta_id', function($request, $response) {
         cradle('global')->flash($response->getMessage(), 'danger');
     } else {
         //add a flash
-        $message = cradle('global')->translate('Meta was Removed');
+        $message = cradle('global')->translate('Object was Removed');
         cradle('global')->flash($message, 'success');
     }
 
-    cradle('global')->redirect('/admin/meta/search');
+    cradle('global')->redirect('/admin/object/search');
 });
 
 /**
- * Process the Meta Restore
+ * Process the Object Restore
  *
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/meta/restore/:meta_id', function($request, $response) {
+$cradle->get('/admin/object/restore/:object_id', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     //only for admin
@@ -373,7 +356,7 @@ $cradle->get('/admin/meta/restore/:meta_id', function($request, $response) {
     // no data to preapre
     //----------------------------//
     // 3. Process Request
-    cradle()->trigger('meta-restore', $request, $response);
+    cradle()->trigger('object-restore', $request, $response);
 
     //----------------------------//
     // 4. Interpret Results
@@ -382,9 +365,9 @@ $cradle->get('/admin/meta/restore/:meta_id', function($request, $response) {
         cradle('global')->flash($response->getMessage(), 'danger');
     } else {
         //add a flash
-        $message = cradle('global')->translate('Meta was Restored');
+        $message = cradle('global')->translate('Object was Restored');
         cradle('global')->flash($message, 'success');
     }
 
-    cradle('global')->redirect('/admin/meta/search');
+    cradle('global')->redirect('/admin/object/search');
 });

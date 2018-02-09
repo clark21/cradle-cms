@@ -1,5 +1,5 @@
-<tr class="meta-field{{#if disable}} field-disabled{{/if}}" data-index="{{@index}}">
-    <td class="meta-action" nowrap="nowrap" valign="middle">
+<tr class="object-field{{#if disable}} field-disabled{{/if}}" data-index="{{@index}}">
+    <td class="object-action" nowrap="nowrap" valign="middle">
         <a
             class="field-edit-trigger text-warning"
             data-do="modal-open"
@@ -38,7 +38,7 @@
             </a>
         {{/unless}}
 
-        {{> meta_update}}
+        {{> object_update}}
     </td>
     <td class="field-keyword-value">{{./key}}</td>
     <td class="field-label-value">{{label}}</td>

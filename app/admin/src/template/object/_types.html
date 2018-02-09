@@ -2,9 +2,9 @@
     class="field-type form-control"
     data-do="field-type"
     data-on="change"
-    name="meta_fields[{{@index}}][field][type]"
+    name="object_fields[{{@index}}][field][type]"
 >
-    {{> meta_type-options}}
+    {{> object_type-options}}
 </select>
 
 {{#if field.options}}
@@ -13,14 +13,14 @@
             <div class="keyval-row" data-index="{{@index}}">
                 <input
                     class="form-control keyval-key"
-                    name="meta_fields[{{../@index}}][field][options][{{@index}}][key]"
+                    name="object_fields[{{../@index}}][field][options][{{@index}}][key]"
                     placeholder="Key"
                     type="text"
                     value="{{./key}}"
                 />
                 <input
                     class="form-control keyval-value"
-                    name="meta_fields[{{../@index}}][field][options][{{@index}}][value]"
+                    name="object_fields[{{../@index}}][field][options][{{@index}}][value]"
                     placeholder="Value"
                     type="text"
                     value="{{value}}"
@@ -38,7 +38,7 @@
         {{/each}}
         <button
             data-do="keyval-add"
-            data-name="meta_fields[{{@index}}][field][options][{INDEX}]"
+            data-name="object_fields[{{@index}}][field][options][{INDEX}]"
             data-on="click"
             class="keyval-add btn btn-info"
             type="button"
@@ -54,7 +54,7 @@
             <div
                 class="attribute-row"
                 data-do="attribute-field"
-                data-name="meta_fields[{{../@index}}][field][attributes][{INDEX}]"
+                data-name="object_fields[{{../@index}}][field][attributes][{INDEX}]"
             >
                 <input
                     class="form-control attribute-key"
@@ -64,7 +64,7 @@
                 />
                 <input
                     class="form-control attribute-value"
-                    name="meta_fields[{{../@index}}][field][attributes][{{@key}}]"
+                    name="object_fields[{{../@index}}][field][attributes][{{@key}}]"
                     placeholder="Value"
                     type="text"
                     value="{{this}}"
@@ -82,7 +82,7 @@
         {{/each}}
         <button
             data-do="attribute-add"
-            data-name="meta_fields[{{@index}}][field][attributes][{INDEX}]"
+            data-name="object_fields[{{@index}}][field][attributes][{INDEX}]"
             data-on="click"
             class="attribute-add btn btn-info"
             type="button"

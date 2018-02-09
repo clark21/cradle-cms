@@ -18,7 +18,7 @@
                     <div>
                         <input
                             class="field-label form-control"
-                            name="meta_fields[{{@index}}][label]"
+                            name="object_fields[{{@index}}][label]"
                             placeholder="Field Title"
                             type="text"
                             value="{{label}}"
@@ -38,13 +38,13 @@
                         {{/if}}
                         <input
                             class="field-keyword form-control"
-                            name="meta_fields[{{@index}}][key]"
+                            name="object_fields[{{@index}}][key]"
                             value="{{./key}}"
                             {{#if disable}}
                                 type="hidden"
                             {{else}}
                                 data-do="slugger"
-                                data-source="input[name='meta_fields[{{@index}}][label]']"
+                                data-source="input[name='object_fields[{{@index}}][label]']"
                                 data-upper="0"
                                 data-space="_"
                                 placeholder="Enter a unique keyword"
@@ -56,14 +56,14 @@
                 <div class="form-group form-group-type">
                     <label class="control-label">Type</label>
                     <div>
-                        {{> meta_types}}
+                        {{> object_types}}
                     </div>
                 </div>
                 <div class="form-group form-group-validation">
                     <label class="control-label">Validation</label>
                     <div>
                         {{#each validation}}
-                            {{> meta_validation}}
+                            {{> object_validation}}
                         {{/each}}
                         <button
                             class="btn btn-info"
@@ -78,13 +78,13 @@
                 <div class="form-group form-group-list">
                     <label class="control-label">List Format</label>
                     <div>
-                        {{> meta_lists}}
+                        {{> object_lists}}
                     </div>
                 </div>
                 <div class="form-group form-group-detail">
                     <label class="control-label">Detail Format</label>
                     <div>
-                        {{> meta_details}}
+                        {{> object_details}}
                     </div>
                 </div>
 
@@ -94,7 +94,7 @@
                         <input
                             class="field-default form-control"
                             placeholder="Default Value"
-                            name="meta_fields[{{@index}}][default]"
+                            name="object_fields[{{@index}}][default]"
                             type="text"
                             value="{{default}}"
                         />
@@ -106,7 +106,7 @@
                         <label>
                             <input
                                 class="field-searchable"
-                                name="meta_fields[{{@index}}][searchable]"
+                                name="object_fields[{{@index}}][searchable]"
                                 type="checkbox"
                                 value="1"
                                 {{#if searchable}} checked{{/if}}
@@ -117,7 +117,7 @@
                         <label>
                             <input
                                 class="field-filterable"
-                                name="meta_fields[{{@index}}][filterable]"
+                                name="object_fields[{{@index}}][filterable]"
                                 type="checkbox"
                                 value="1"
                                 {{#if filterable}} checked{{/if}}
@@ -128,7 +128,7 @@
                         <label>
                             <input
                                 class="field-sortable"
-                                name="meta_fields[{{@index}}][sortable]"
+                                name="object_fields[{{@index}}][sortable]"
                                 type="checkbox"
                                 value="1"
                                 {{#if sortable}} checked{{/if}}
@@ -142,7 +142,7 @@
                 {{#if disable}}
                     <input
                         class="field-disabled"
-                        name="meta_fields[{{@index}}][disable]"
+                        name="object_fields[{{@index}}][disable]"
                         type="hidden"
                         value="1"
                         {{#if sortable}} checked{{/if}}
