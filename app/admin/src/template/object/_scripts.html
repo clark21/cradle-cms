@@ -30,6 +30,16 @@
     });
 
     var copy = null;
+
+    $(window).on('copy-to-text-init', function(e, target) {
+        var trigger = $(target).attr('data-trigger');
+        var value = $(target).attr('data-default') || '';
+
+        $(trigger).change(function() {
+            $(target).html($(this).val() || value);
+        });
+    });
+
     $(window).on('modal-open-click', function(e, trigger) {
         $(trigger).siblings('div.modal').eq(0).modal({
             backdrop: 'static',
@@ -243,7 +253,7 @@
 
     $(window).on('field-remove-click', function(e, trigger) {
         $(window).trigger('remove-click', trigger);
-        reindex();
+        reindexFields();
     });
 
     $(window).on('field-add-click', function(e, trigger) {
@@ -565,7 +575,7 @@
         }
 
         row.prev().before(row);
-        reindex();
+        reindexFields();
     });
 
     $(window).on('move-down-click', function(e, trigger) {
@@ -578,10 +588,43 @@
         }
 
         row.next().after(row);
-        reindex();
+        reindexFields();
     });
 
-    var reindex = function() {
+    $(window).on('relation-add-click', function(e, trigger) {
+        var last = $(trigger).parent().find('div.relation-row:last');
+
+        var index = 0;
+        if(last.length) {
+            index = parseInt(last.attr('data-index')) + 1;
+        }
+
+        var name = $(trigger)
+            .attr('data-name')
+            .replace('{INDEX}', index);
+
+        var value = $(trigger).attr('data-default') || '';
+
+        var singular = $('input.object-singular').val() || '??';
+
+        var row = $('#relation-row-template')
+            .compile({
+                SINGULAR: singular,
+                NAME_1: name + '[many]',
+                NAME_2: name + '[object]',
+                INDEX: index
+            })
+            .doon();
+
+        $(trigger).before(row);
+    });
+
+    $(window).on('relation-remove-click', function(e, trigger) {
+        $(window).trigger('remove-click', trigger);
+        reindexRelations();
+    });
+
+    var reindexFields = function() {
         var format = {
             disable: 'object_fields[{INDEX}][disable]',
             label: 'object_fields[{INDEX}][label]',
@@ -768,30 +811,23 @@
         });
     };
 
-    $(window).on('relation-add-click', function(e, trigger) {
-        var last = $(trigger).parent().find('div.relation-row:last');
+    var reindexRelations = function() {
+        var format = $('button.relation-add').attr('data-name');
 
-        var index = 0;
-        if(last.length) {
-            index = parseInt(last.attr('data-index')) + 1;
-        }
+        $('div.relation-row').each(function(i) {
+            $(this).attr('data-index', i);
+            $('select.relation-many', this)
+                .attr(
+                    'name',
+                    format.replace('{INDEX}', i) + '[many]'
+                );
 
-        var name = $(trigger)
-            .attr('data-name')
-            .replace('{INDEX}', index);
-
-        var singular = $('input.field-object-singular').val();
-
-        var row = $('#relation-row-template')
-            .compile({
-                SINGULAR: singular,
-                NAME_1: name + '[key]',
-                NAME_2: name + '[value]',
-                INDEX: index
-            })
-            .doon();
-
-        $(trigger).before(row);
-    });
+            $('input.relation-object', this)
+                .attr(
+                    'name',
+                    format.replace('{INDEX}', i) + '[object]'
+                );
+        });
+    };
 })(jQuery);
 </script>

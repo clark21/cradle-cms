@@ -393,19 +393,27 @@
             class="text-danger"
             data-do="relation-remove"
             data-level="1"
+            data-on="click"
             href="javascript:void(0)"
         >
             <i class="fa fa-remove"></i>
         </a>
-        <strong>{SINGULAR}</strong>
+        <strong
+            class="relation-object"
+            data-default="??"
+            data-do="copy-to-text"
+            data-trigger="input.object-singular"
+        >
+            {SINGULAR}
+        </strong>
         <i class="fa fa-arrow-right"></i>
-        <select class="form-control relations-many" name="{NAME_1}">
+        <select class="form-control relation-many" name="{NAME_1}">
             <option value="0">1:1</option>
             <option value="0">1:N</option>
         </select>
         <i class="fa fa-arrow-right"></i>
         <input
-            class="form-control relations-key"
+            class="form-control relation-object"
             name="{NAME_2}"
             placeholder="Enter Object Keyword"
             type="text"

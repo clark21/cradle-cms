@@ -11,9 +11,9 @@
                 <label class="control-label">Singular</label>
                 <div>
                     <input
-                        class="form-control field-object-singular"
+                        class="form-control object-singular"
                         name="object_singular"
-                        placeholder="Enter the Singular Name" 
+                        placeholder="Enter the Singular Name"
                         value="{{item.object_singular}}"
                         type="text"
                     />
@@ -27,7 +27,13 @@
             <div class="form-group{{#if errors.object_plural}} has-error{{/if}}">
                 <label class="control-label field-object-plural">Plural</label>
                 <div>
-                    <input name="object_plural" value="{{item.object_plural}}" placeholder="Enter the Plural Name" type="text" class="form-control" />
+                    <input
+                        name="object_plural"
+                        value="{{item.object_plural}}"
+                        placeholder="Enter the Plural Name"
+                        type="text"
+                        class="form-control object-plural"
+                    />
 
                     {{#if errors.object_plural}}
                     <span class="help-text">{{errors.object_plural}}</span>
@@ -39,9 +45,9 @@
                 <label class="control-label">Keyword</label>
                 <div>
                     <input
-                        class="form-control field-object-key"
+                        class="form-control object-key"
                         data-do="slugger"
-                        data-source="input[name=object_singular]"
+                        data-source="input.object-singular"
                         data-upper="0"
                         data-space="_"
                         name="object_key"
@@ -60,7 +66,7 @@
                 <label class="control-label">Detail</label>
                 <div>
                     <textarea
-                        class="form-control"
+                        class="form-control object-detail"
                         name="object_detail"
                         placeholder="What does this object do?"
                         rows="10"
@@ -121,6 +127,7 @@
                 <div>
                     <button
                         class="relation-add btn btn-info"
+                        data-default="??"
                         data-do="relation-add"
                         data-name="object_relations[{INDEX}]"
                         data-on="click"
