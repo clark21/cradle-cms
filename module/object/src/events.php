@@ -9,6 +9,7 @@
 
 use Cradle\Module\Object\Service as ObjectService;
 use Cradle\Module\Object\Validator as ObjectValidator;
+use Cradle\Module\Object\Schema as ObjectSchema;
 
 /**
  * Object Create Job
@@ -37,6 +38,9 @@ $cradle->on('object-create', function ($request, $response) {
 
     //----------------------------//
     // 3. Prepare Data
+    if(isset($data['object_relations'])) {
+        $data['object_relations'] = json_encode($data['object_relations']);
+    }
 
     if(isset($data['object_fields'])) {
         $data['object_fields'] = json_encode($data['object_fields']);
@@ -46,17 +50,20 @@ $cradle->on('object-create', function ($request, $response) {
     // 4. Process Data
     //this/these will be used a lot
     $objectSql = ObjectService::get('sql');
-    $objectRedis = ObjectService::get('redis');
-    $objectElastic = ObjectService::get('elastic');
 
     //save object to database
     $results = $objectSql->create($data);
 
-    //index object
-    $objectElastic->create($results['object_id']);
+    //create table
+    if(isset($data['object_relations'])) {
+        $data['object_relations'] = json_decode($data['object_relations'], true);
+    }
 
-    //invalidate cache
-    $objectRedis->removeSearch();
+    if(isset($data['object_fields'])) {
+        $data['object_fields'] = json_decode($data['object_fields'], true);
+    }
+
+    $objectSql->createTable($data);
 
     //return response format
     $response->setError(false)->setResults($results);
@@ -161,8 +168,6 @@ $cradle->on('object-remove', function ($request, $response) {
     // 4. Process Data
     //this/these will be used a lot
     $objectSql = ObjectService::get('sql');
-    $objectRedis = ObjectService::get('redis');
-    $objectElastic = ObjectService::get('elastic');
 
     //save to database
     $results = $objectSql->update([
@@ -170,13 +175,8 @@ $cradle->on('object-remove', function ($request, $response) {
         'object_active' => 0
     ]);
 
-    //remove from index
-    $objectElastic->remove($data['object_id']);
-
-    //invalidate cache
-    $objectRedis->removeDetail($data['object_id']);
-    $objectRedis->removeDetail($data['object_key']);
-    $objectRedis->removeSearch();
+    //remove table
+    $objectSql->removeTable($data);
 
     $response->setError(false)->setResults($results);
 });
@@ -216,11 +216,8 @@ $cradle->on('object-restore', function ($request, $response) {
         'object_active' => 1
     ]);
 
-    //create index
-    $objectElastic->create($data['object_id']);
-
-    //invalidate cache
-    $objectRedis->removeSearch();
+    //remove table
+    $objectSql->restoreTable($data);
 
     $response->setError(false)->setResults($results);
 });
@@ -321,6 +318,10 @@ $cradle->on('object-update', function ($request, $response) {
     //----------------------------//
     // 3. Prepare Data
 
+    if(isset($data['object_relations'])) {
+        $data['object_relations'] = json_encode($data['object_relations']);
+    }
+
     if(isset($data['object_fields'])) {
         $data['object_fields'] = json_encode($data['object_fields']);
     }
@@ -335,13 +336,16 @@ $cradle->on('object-update', function ($request, $response) {
     //save object to database
     $results = $objectSql->update($data);
 
-    //index object
-    $objectElastic->update($response->getResults('object_id'));
+    //create table
+    if(isset($data['object_relations'])) {
+        $data['object_relations'] = json_decode($data['object_relations'], true);
+    }
 
-    //invalidate cache
-    $objectRedis->removeDetail($response->getResults('object_id'));
-    $objectRedis->removeDetail($data['object_key']);
-    $objectRedis->removeSearch();
+    if(isset($data['object_fields'])) {
+        $data['object_fields'] = json_decode($data['object_fields'], true);
+    }
+
+    $objectSql->updateTable($data);
 
     //return response format
     $response->setError(false)->setResults($results);

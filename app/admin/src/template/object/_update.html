@@ -28,28 +28,16 @@
                 <div class="form-group form-group-keyword">
                     <label class="control-label">Keyword</label>
                     <div>
-                        {{#if disable}}
-                            <input
-                                class="form-control"
-                                disabled="disabled"
-                                type="text"
-                                value="{{./key}}"
-                            />
-                        {{/if}}
                         <input
                             class="field-keyword form-control"
+                            data-do="slugger"
+                            data-source="input[name='object_fields[{{@index}}][label]']"
+                            data-upper="0"
+                            data-space="_"
                             name="object_fields[{{@index}}][key]"
+                            placeholder="Enter a unique keyword"
+                            type="text"
                             value="{{./key}}"
-                            {{#if disable}}
-                                type="hidden"
-                            {{else}}
-                                data-do="slugger"
-                                data-source="input[name='object_fields[{{@index}}][label]']"
-                                data-upper="0"
-                                data-space="_"
-                                placeholder="Enter a unique keyword"
-                                type="text"
-                            {{/if}}
                         />
                     </div>
                 </div>
@@ -139,15 +127,6 @@
                 </div>
             </div>
             <div class="modal-footer">
-                {{#if disable}}
-                    <input
-                        class="field-disabled"
-                        name="object_fields[{{@index}}][disable]"
-                        type="hidden"
-                        value="1"
-                        {{#if sortable}} checked{{/if}}
-                    />
-                {{/if}}
                 <button
                     class="btn btn-danger"
                     data-do="modal-cancel"

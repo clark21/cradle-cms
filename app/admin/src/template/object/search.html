@@ -54,26 +54,6 @@
                             <tr>
                                 <th>Actions</th>
                                 <th>Object</th>
-                                <th>
-                                    <a href="?q[]={{q.0}}&{{#sort 'object_type'}}
-                                        {{~#unless value~}}
-                                            order[object_type]=ASC
-                                        {{~/unless}}
-                                        {{~#when value '===' 'ASC'~}}
-                                            order[object_type]=DESC
-                                        {{~/when}}
-                                    {{~/sort}}">
-                                        Type
-                                        {{#sort 'object_type'}}
-                                            {{~#when value '===' 'ASC'~}}
-                                                <i class="fa fa-caret-up"></i>
-                                            {{~/when}}
-                                            {{~#when value '===' 'DESC'~}}
-                                                <i class="fa fa-caret-down"></i>
-                                            {{~/when}}
-                                        {{~/sort}}
-                                    </a>
-                                </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -93,10 +73,9 @@
                                         {{/when}}
                                     </td>
                                     <td>
-                                        <a href="/{{object_key}}/search" target="_blank">{{object_singular}}</a>
+                                        <a href="/admin/object/{{object_key}}/search">{{object_singular}}</a>
                                         <p>{{object_detail}}</p>
                                     </td>
-                                    <td>{{object_type}}</td>
                                 </tr>
                             {{/each}}
                         </tbody>

@@ -125,6 +125,58 @@
             <div class="form-group{{#if errors.object_fields}} has-error{{/if}}">
                 <label class="control-label">Relations</label>
                 <div>
+                    {{#each item.object_relations}}
+                        <div class="relation-row" data-index="{{@index}}">
+                            <a
+                                class="text-danger"
+                                data-do="relation-remove"
+                                data-level="1"
+                                data-on="click"
+                                href="javascript:void(0)"
+                            >
+                                <i class="fa fa-remove"></i>
+                            </a>
+                            <strong
+                                class="relation-object"
+                                data-default="??"
+                                data-do="copy-to-text"
+                                data-trigger="input.object-singular"
+                            >
+                                {{../item.object_singular}}
+                            </strong>
+                            <i class="fa fa-arrow-right"></i>
+                            <select
+                                class="form-control relation-many"
+                                name="object_relations[{{@index}}][many]">
+                                <option
+                                    value="0"
+                                    {{#when many '==' 0}}selected{{/when}}
+                                >
+                                    1:0
+                                </option>
+                                <option
+                                    value="1"
+                                    {{#when many '==' 1}}selected{{/when}}
+                                >
+                                    1:1
+                                </option>
+                                <option
+                                    value="2"
+                                    {{#when many '==' 2}}selected{{/when}}
+                                >
+                                    1:N
+                                </option>
+                            </select>
+                            <i class="fa fa-arrow-right"></i>
+                            <input
+                                class="form-control relation-object"
+                                name="object_relations[{{@index}}][object]"
+                                placeholder="Enter Object Keyword"
+                                type="text"
+                                value="{{object}}"
+                            />
+                        </div>
+                    {{/each}}
                     <button
                         class="relation-add btn btn-info"
                         data-default="??"

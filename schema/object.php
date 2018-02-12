@@ -144,7 +144,7 @@ return [
                 ]
             ]
         ],
-        'object_fields' => [
+        'object_relations' => [
             'sql' => [
                 'type' => 'json'
             ],
@@ -159,16 +159,20 @@ return [
                 ]
             ],
         ],
-        'object_flag' => [
+        'object_fields' => [
             'sql' => [
-                'type' => 'int',
-                'length' => 1,
-                'default' => 0,
-                'attribute' => 'unsigned'
+                'type' => 'json'
             ],
             'elastic' => [
-                'type' => 'integer'
-            ]
+                'type' => 'object'
+            ],
+            'form' => [
+                'label' => 'Fields',
+                'type' => 'meta-field',
+                'attributes' => [
+                    'data-do' => 'meta-field',
+                ]
+            ],
         ]
     ],
     'fixtures' => []

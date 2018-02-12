@@ -86,12 +86,34 @@
                 .after('<div class="error-message">Label cannot be empty</div>');
         }
 
+        var type = $('select.field-type', modal).val();
         var keyword = $('input.field-keyword', modal);
+
         if(!keyword.val().length) {
             error = true;
             keyword
                 .addClass('is-error')
                 .after('<div class="error-message">Keyword cannot be empty.</div>');
+        } else if(keyword.val() === 'id') {
+            error = true;
+            keyword
+                .addClass('is-error')
+                .after('<div class="error-message">Keyword is using a reserved word.</div>');
+        } else if(keyword.val() === 'active' && type !== 'active') {
+            error = true;
+            keyword
+                .addClass('is-error')
+                .after('<div class="error-message">Keyword is using a reserved word.</div>');
+        } else if(keyword.val() === 'created' && type !== 'created') {
+            error = true;
+            keyword
+                .addClass('is-error')
+                .after('<div class="error-message">Keyword is using a reserved word.</div>');
+        } else if(keyword.val() === 'updated' && type !== 'updated') {
+            error = true;
+            keyword
+                .addClass('is-error')
+                .after('<div class="error-message">Keyword is using a reserved word.</div>');
         } else {
             var value = keyword.val();
 
@@ -271,7 +293,15 @@
             .doon();
     });
 
+    $(window).on('field-type-init', function(e, trigger) {
+        $(window).trigger('field-type-change', trigger);
+    });
+
     $(window).on('field-type-change', function(e, trigger) {
+        if(trigger.tagName === 'OPTION') {
+            trigger = $(trigger).parent();
+        }
+
         trigger = $(trigger);
 
         var row = trigger.parents('div.modal-body').eq(0);
@@ -281,6 +311,15 @@
         var fieldset = (option.attr('data-fieldset') || '').split('|');
         var format = (option.attr('data-format') || '').split('|');
         var index = (option.attr('data-index') || '').split('|');
+
+        var value = option.attr('data-default');
+        var label = option.attr('data-label');
+        var keyword = option.attr('data-keyword');
+        var searchable = option.attr('data-searchable');
+        var filterable = option.attr('data-filterable');
+        var sortable = option.attr('data-sortable');
+
+        var validation = option.attr('data-validation');
 
         //reset
         $('select.field-list optgroup', row).show();
@@ -338,6 +377,80 @@
                     .attr('disabled', true);
             }
         });
+
+        //determine label
+        if(label && label.length) {
+            $('input.field-label', row).val(label);
+            $('div.form-group-label', row).hide();
+        } else {
+            $('div.form-group-label', row).show();
+        }
+
+        //determine keyword
+        if(keyword && keyword.length) {
+            $('input.field-keyword', row).val(keyword);
+            $('div.form-group-keyword', row).hide();
+        } else {
+            $('div.form-group-keyword', row).show();
+        }
+
+        //determine validation
+        if(parseInt(validation) === 0) {
+            $('div.validation-row', row).remove();
+            $('div.form-group-validation', row).hide();
+        } else if(validation && validation.length) {
+            $('div.form-group-validation', row).show();
+        }
+
+        //determine default
+        if(value && value.length) {
+            $('input.field-default', row).val(value);
+            $('div.form-group-default', row).hide();
+        } else {
+            $('div.form-group-default', row).show();
+        }
+
+        //determine searchable
+        if(searchable && searchable.length) {
+            if(searchable == 1) {
+                $('input.field-searchable', row).prop('checked', true);
+            } else {
+                $('input.field-searchable', row).prop('checked', false);
+            }
+
+            $('input.field-searchable', row).parent().hide();
+        } else {
+            $('input.field-searchable', row).prop('checked', false);
+            $('input.field-searchable', row).parent().show();
+        }
+
+        //determine filterable
+        if(filterable && filterable.length) {
+            if(filterable == 1) {
+                $('input.field-filterable', row).prop('checked', true);
+            } else {
+                $('input.field-filterable', row).prop('checked', false);
+            }
+
+            $('input.field-filterable', row).parent().hide();
+        } else {
+            $('input.field-filterable', row).prop('checked', false);
+            $('input.field-filterable', row).parent().show();
+        }
+
+        //determine sortable
+        if(sortable && sortable.length) {
+            if(sortable == 1) {
+                $('input.field-sortable', row).prop('checked', true);
+            } else {
+                $('input.field-sortable', row).prop('checked', false);
+            }
+
+            $('input.field-sortable', row).parent().hide();
+        } else {
+            $('input.field-sortable', row).prop('checked', false);
+            $('input.field-sortable', row).parent().show();
+        }
     });
 
     $(window).on('attribute-add-click', function(e, trigger) {

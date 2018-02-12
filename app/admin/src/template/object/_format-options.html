@@ -77,6 +77,14 @@
 </optgroup>
 <optgroup class="filter-group-html" label="HTML Filters">
     <option
+        data-fieldset="input"
+        data-placeholder="Allowed Tags ie: <a><b><i>..."
+        value="strip"
+        {{#when list.format '===' 'strip'}}selected{{/when}}
+    >
+        Strip HTML
+    </option>
+    <option
         data-fieldset="pair"
         data-placeholder-1="Label or {value}"
         data-placeholder-2="ie. /node/{node_id}"

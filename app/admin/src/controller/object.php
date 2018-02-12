@@ -186,7 +186,7 @@ $cradle->get('/admin/object/update/:object_id', function($request, $response) {
     });
 
     $body = cradle('/app/admin')->template(
-        'meta/form',
+        'object/form',
         $data,
         [
             'object_styles',

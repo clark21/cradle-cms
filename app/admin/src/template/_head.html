@@ -19,11 +19,10 @@
         <div id="main-nav" class="collapse navbar-collapse{{#session 'me'}} loggedin{{/session}}">
             {{#session 'me'}}
             <ul class="nav navbar-nav">
+                <li><a href="/admin/object/search">Objects</a></li>
                 <li><a href="/admin/auth/search">Auth</a></li>
                 <!-- START: GENERATED MENU -->
-                <li><a href="/admin/auth/search">Authentications</a></li>
                 <li><a href="/admin/user/search">Users</a></li>
-                <li><a href="/admin/object/search">Objects</a></li>
                 <!-- END: GENERATED MENU -->
 
                 {{#each ../navigation}}
