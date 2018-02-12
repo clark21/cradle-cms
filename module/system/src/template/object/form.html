@@ -1,0 +1,61 @@
+<div class="panel panel-default clear" >
+    <div class="panel-heading brand">
+        <div class="panel-title">{{title}}</div>
+    </div>
+
+    <div class="panel-body" >
+        <form enctype="multipart/form-data" method="post">
+            
+            <div class="form-group{{#if errors.user_name}} has-error{{/if}}">
+                <label class="control-label">Name</label>
+                <div>
+                    <input name="user_name" value="{{item.user_name}}" placeholder="John Doe" type="text" class="form-control" />
+
+                    {{#if errors.user_name}}
+                    <span class="help-text">{{errors.user_name}}</span>
+                    {{/if}}
+                </div>
+            </div>
+            
+            <div class="form-group{{#if errors.user_meta}} has-error{{/if}}">
+                <label class="control-label">Meta Data</label>
+                <div>
+                    
+                    <div data-do="meta-field" class="meta-field" data-name="user_meta">
+                            {{#each item.user_meta}}
+                                <div class="meta">
+                                    <input type="text" class="meta-input key" placeholder="{{_ 'Name'}}" value="{{@key}}" />
+                                    <input type="text" class="meta-input value" placeholder="{{_ 'Value'}}" value="{{this}}" />
+                                    <input type="hidden" name="user_meta[{{@key}}]" value="{{this}}">
+                                    <a class="remove" href="javascript:void(0)"><i class="fa fa-times"></i></a>
+                                </div>
+                            {{/each}}
+                    </div>
+                    <a class="add-meta" href="javascript:void(0)"><i class="fa fa-plus"></i></a>
+
+                    {{#if errors.user_meta}}
+                    <span class="help-text">{{errors.user_meta}}</span>
+                    {{/if}}
+                </div>
+            </div>
+            
+            <div class="form-group{{#if errors.user_files}} has-error{{/if}}">
+                <label class="control-label">Files</label>
+                <div>
+                    <input name="user_files" value="{{item.user_files}}" multiple="multiple" type="file" class="form-control" />
+
+                    {{#if errors.user_files}}
+                    <span class="help-text">{{errors.user_files}}</span>
+                    {{/if}}
+                </div>
+            </div>
+            
+
+            <div class="clear form-group">
+                <input type="hidden" name="csrf" value="" />
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script type="text/javascript" src="/scripts/cropper.js"></script>

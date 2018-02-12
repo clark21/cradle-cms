@@ -1,0 +1,198 @@
+{{> styles}}
+
+<div class="panel panel-default clear" >
+    <div class="panel-heading brand">
+        <div class="panel-title">{{title}}</div>
+    </div>
+
+    <div class="panel-body" >
+        <form enctype="multipart/form-data" method="post">
+            <div class="form-group{{#if errors.singular}} has-error{{/if}}">
+                <label class="control-label">Singular</label>
+                <div>
+                    <input
+                        class="form-control schema-singular"
+                        name="singular"
+                        placeholder="Enter the Singular Name"
+                        value="{{item.singular}}"
+                        type="text"
+                    />
+
+                    {{#if errors.singular}}
+                    <span class="help-text">{{errors.singular}}</span>
+                    {{/if}}
+                </div>
+            </div>
+
+            <div class="form-group{{#if errors.plural}} has-error{{/if}}">
+                <label class="control-label">Plural</label>
+                <div>
+                    <input
+                        class="form-control schema-plural"
+                        name="plural"
+                        value="{{item.plural}}"
+                        placeholder="Enter the Plural Name"
+                        type="text"
+                    />
+
+                    {{#if errors.plural}}
+                    <span class="help-text">{{errors.plural}}</span>
+                    {{/if}}
+                </div>
+            </div>
+
+            <div class="form-group{{#if errors.name}} has-error{{/if}}">
+                <label class="control-label">Keyword</label>
+                <div>
+                    <input
+                        class="form-control schema-name"
+                        data-do="slugger"
+                        data-source="input.schema-singular"
+                        data-upper="0"
+                        data-space="_"
+                        name="name"
+                        value="{{item.name}}"
+                        placeholder="Enter a unique keyword"
+                        type="text"
+                    />
+
+                    {{#if errors.name}}
+                    <span class="help-text">{{errors.name}}</span>
+                    {{/if}}
+                </div>
+            </div>
+
+            <div class="form-group{{#if errors.detail}} has-error{{/if}}">
+                <label class="control-label">Detail</label>
+                <div>
+                    <textarea
+                        class="form-control schema-detail"
+                        name="detail"
+                        placeholder="What does this schema do?"
+                        rows="10"
+                    >{{{item.detail}}}</textarea>
+
+                    {{#if errors.detail}}
+                    <span class="help-text">{{errors.detail}}</span>
+                    {{/if}}
+                </div>
+            </div>
+
+            <div class="form-group{{#if errors.fields}} has-error{{/if}}">
+                <label class="control-label">Fields</label>
+                <div>
+                    <div id="schema-fields" class="schema-fields" data-name="fields">
+                        <div class="table-overflow">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Action</th>
+                                        <th>Keyword</th>
+                                        <th>Label</th>
+                                        <th>Field</th>
+                                        <th>List Format</th>
+                                        <th>Detail Format</th>
+                                        <th>Default</th>
+                                        <th>Searchable</th>
+                                        <th>Filterable</th>
+                                        <th>Sortable</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#each item.fields}}
+                                        {{> row}}
+                                    {{/each}}
+                                </tbody>
+                            </table>
+                        </div>
+                        <button
+                            class="field-add btn btn-info"
+                            data-do="field-add"
+                            data-on="click"
+                            data-target="#schema-fields tbody"
+                            type="button"
+                        >
+                            Add Field
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group{{#if errors.fields}} has-error{{/if}}">
+                <label class="control-label">Relations</label>
+                <div>
+                    {{#each item.relations}}
+                        <div class="relation-row" data-index="{{@index}}">
+                            <a
+                                class="text-danger"
+                                data-do="relation-remove"
+                                data-level="1"
+                                data-on="click"
+                                href="javascript:void(0)"
+                            >
+                                <i class="fa fa-remove"></i>
+                            </a>
+                            <strong
+                                class="relation-singular"
+                                data-default="??"
+                                data-do="copy-to-text"
+                                data-trigger="input.schema-singular"
+                            >
+                                {{../item.singular}}
+                            </strong>
+                            <i class="fa fa-arrow-right"></i>
+                            <select
+                                class="form-control relation-many"
+                                name="relations[{{@index}}][many]">
+                                <option
+                                    value="0"
+                                    {{#when many '==' 0}}selected{{/when}}
+                                >
+                                    1:0
+                                </option>
+                                <option
+                                    value="1"
+                                    {{#when many '==' 1}}selected{{/when}}
+                                >
+                                    1:1
+                                </option>
+                                <option
+                                    value="2"
+                                    {{#when many '==' 2}}selected{{/when}}
+                                >
+                                    1:N
+                                </option>
+                            </select>
+                            <i class="fa fa-arrow-right"></i>
+                            <input
+                                class="form-control relation-name"
+                                name="relations[{{@index}}][name]"
+                                placeholder="Enter Schema Keyword"
+                                type="text"
+                                value="{{name}}"
+                            />
+                        </div>
+                    {{/each}}
+                    <button
+                        class="relation-add btn btn-info"
+                        data-default="??"
+                        data-do="relation-add"
+                        data-name="relations[{INDEX}]"
+                        data-on="click"
+                        type="button"
+                    >
+                        Add Relation
+                    </button>
+                </div>
+            </div>
+
+            <div class="clear form-group">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{{> templates}}
+
+{{> scripts}}

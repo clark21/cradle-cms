@@ -1,0 +1,71 @@
+{{#if filter.active}}
+    <h3>
+        {{number total}} {{title}}
+    </h3>
+{{else}}
+    <h3>
+        {{number total}} Inactive {{title}}
+    </h3>
+{{/if}}
+
+<div class="clearfix">
+    <div class="btn-group" role="group" aria-label="...">
+        <a class="btn btn-primary" href="?filter[active]=1">
+            Active
+        </a>
+        <a class="btn btn-danger" href="?filter[active]=0">
+            Inactive
+        </a>
+    </div>
+    <span>
+        <a class="btn btn-success" href="/admin/system/schema/create">
+            <i class="fa fa-plus"></i>
+            Create Schema
+        </a>
+    </span>
+</div>
+
+<div class="panel panel-default clear">
+    <div class="panel-body" >
+        {{#if rows}}
+            <div class="table-overflow">
+                <!-- START: TABLE -->
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Actions</th>
+                            <th>Schema</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each rows}}
+                            <tr data-id="{{name}}">
+                                <td>
+                                    {{#if ../filter.active}}
+                                        <a title="Edit" href="/admin/system/schema/update/{{name}}">
+                                        <i class="fa fa-edit"></i></a>
+                                        &nbsp;
+                                        <a title="Remove" href="/admin/system/schema/remove/{{name}}"
+                                        class="text-danger remove"><i class="fa fa-times"></i></a>
+                                    {{else}}
+                                        <a title="Restore" href="/admin/system/schema/restore/{{name}}" class="text-success restore">
+                                        <i class="fa fa-external-link"></i></a>
+                                    {{/if}}
+                                </td>
+                                <td>
+                                    <a href="/admin/system/object/{{name}}/search">{{singular}}</a>
+                                    <p>{{detail}}</p>
+                                </td>
+                            </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+                <!-- END: TABLE -->
+            </div>
+        {{else}}
+            <!-- START: NO RESULTS -->
+            <div class="well no-results">No Results Found</div>
+            <!-- END: NO RESULTS -->
+        {{/if}}
+    </div>
+</div>
