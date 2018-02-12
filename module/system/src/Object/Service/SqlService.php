@@ -230,7 +230,7 @@ class SqlService
         }
 
         $search = $this->resource
-            ->search('object')
+            ->search($this->schema->getTableName())
             ->setStart($start)
             ->setRange($range);
 
