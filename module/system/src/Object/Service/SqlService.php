@@ -26,8 +26,13 @@ use Cradle\Module\System\Exception as SystemException;
  * @author   John Doe <john@acme.com>
  * @standard PSR-2
  */
-class SqlService extends AbstractSqlService implements SqlServiceInterface
+class SqlService
 {
+    /**
+     * @var AbstractSql|null $resource
+     */
+    protected $resource = null;
+
     /**
      * @var SystemSchema|null $schema
      */
@@ -149,6 +154,16 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
         }
 
         return $results;
+    }
+
+    /**
+     * Returns the SQL resource
+     *
+     * @return Resource
+     */
+    public function getResource()
+    {
+        return $this->resource;
     }
 
     /**

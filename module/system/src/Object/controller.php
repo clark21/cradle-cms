@@ -15,7 +15,7 @@ use Cradle\Module\System\Schema as SystemSchema;
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/system/object/:name/search', function($request, $response) {
+$cradle->get('/admin/system/object/:schema/search', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     //only for admin
@@ -62,7 +62,10 @@ $cradle->get('/admin/system/object/:name/search', function($request, $response) 
         'name' => $schema->getTableName(),
         'singular' => $schema->getSingular(),
         'plural' => $schema->getPlural(),
+        'primary' => $schema->getPrimary(),
         'active' => $schema->getActive(),
+        'listable' => $schema->getListable(),
+        'fields' => $schema->getFields(),
     ];
 
     //----------------------------//
@@ -86,7 +89,7 @@ $cradle->get('/admin/system/object/:name/search', function($request, $response) 
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/system/object/:name/create', function($request, $response) {
+$cradle->get('/admin/system/object/:schema/create', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     //only for admin
@@ -122,7 +125,7 @@ $cradle->get('/admin/system/object/:name/create', function($request, $response) 
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/system/object/:name/update/:id', function($request, $response) {
+$cradle->get('/admin/system/object/:schema/update/:id', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     //only for admin
@@ -172,7 +175,7 @@ $cradle->get('/admin/system/object/:name/update/:id', function($request, $respon
  * @param Request $request
  * @param Response $response
  */
-$cradle->post('/admin/system/object/:name/create', function($request, $response) {
+$cradle->post('/admin/system/object/:schema/create', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     //only for admin
@@ -224,7 +227,7 @@ $cradle->post('/admin/system/object/:name/create', function($request, $response)
  * @param Request $request
  * @param Response $response
  */
-$cradle->post('/admin/system/object/:name/update/:id', function($request, $response) {
+$cradle->post('/admin/system/object/:schema/update/:id', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     //only for admin
@@ -277,7 +280,7 @@ $cradle->post('/admin/system/object/:name/update/:id', function($request, $respo
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/system/object/:name/remove/:id', function($request, $response) {
+$cradle->get('/admin/system/object/:schema/remove/:id', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     //only for admin
@@ -310,7 +313,7 @@ $cradle->get('/admin/system/object/:name/remove/:id', function($request, $respon
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/system/object/:name/restore/:id', function($request, $response) {
+$cradle->get('/admin/system/object/:schema/restore/:id', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     //only for admin

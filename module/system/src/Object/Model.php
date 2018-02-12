@@ -10,6 +10,8 @@ namespace Cradle\Module\System\Object;
 
 use Cradle\Module\System\Schema as SystemSchema;
 
+use Cradle\Module\Utility\Service\NoopService;
+
 use Cradle\Helper\InstanceTrait;
 
 /**
@@ -50,7 +52,13 @@ class Model
      */
     public function service($name, $key = 'main')
     {
-        return Service::get($name, $key)->setSchema($this);
+        $service = Service::get($name, $key);
+
+        if($service instanceof NoopService) {
+            return $service;
+        }
+
+        return $service->setSchema($this->schema);
     }
 
     /**
@@ -60,7 +68,7 @@ class Model
      */
     public function formatter()
     {
-        return Formatter::i($this);
+        return Formatter::i($this->schema);
     }
 
     /**
@@ -70,6 +78,6 @@ class Model
      */
     public function validator()
     {
-        return Validator::i($this);
+        return Validator::i($this->schema);
     }
 }

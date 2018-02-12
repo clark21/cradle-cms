@@ -10,6 +10,7 @@
 namespace Cradle\Module\System\Object\Service;
 
 use Cradle\Module\System\Object\Service;
+use Cradle\Module\System\Schema as SystemSchema;
 
 use Elasticsearch\Client as Resource;
 
@@ -32,6 +33,11 @@ class ElasticService extends AbstractElasticService implements ElasticServiceInt
      * @const INDEX_NAME Index name
      */
     const INDEX_NAME = 'object';
+
+    /**
+     * @var SystemSchema|null $schema
+     */
+    protected $schema = null;
 
     /**
      * Registers the resource for use
@@ -140,5 +146,18 @@ class ElasticService extends AbstractElasticService implements ElasticServiceInt
             'rows' => $rows,
             'total' => $results['hits']['total']
         ];
+    }
+
+    /**
+     * Adds System Schema
+     *
+     * @param SystemSchema $schema
+     *
+     * @return SqlService
+     */
+    public function setSchema(SystemSchema $schema)
+    {
+        $this->schema = $schema;
+        return $this;
     }
 }

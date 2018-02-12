@@ -74,10 +74,10 @@ class Schema
             return false;
         }
 
-        $table = $this->data['key'];
+        $table = $this->data['name'];
         foreach($this->data['fields'] as $field) {
-            if($field['key'] === 'active') {
-                return $table . '_' . $field['key'];
+            if($field['name'] === 'active') {
+                return $table . '_' . $field['name'];
             }
         }
 
@@ -95,10 +95,10 @@ class Schema
             return false;
         }
 
-        $table = $this->data['key'];
+        $table = $this->data['name'];
         foreach($this->data['fields'] as $field) {
-            if($field['key'] === 'created') {
-                return $table . '_' . $field['key'];
+            if($field['name'] === 'created') {
+                return $table . '_' . $field['name'];
             }
         }
 
@@ -117,9 +117,9 @@ class Schema
             return $results;
         }
 
-        $table = $this->data['key'];
+        $table = $this->data['name'];
         foreach($this->data['fields'] as $field) {
-            $name = $table . '_' . $field['key'];
+            $name = $table . '_' . $field['name'];
             if(isset($field['filterable']) && $field['filterable']) {
                 $results[] = $name;
             }
@@ -156,9 +156,9 @@ class Schema
             return $results;
         }
 
-        $table = $this->data['key'];
+        $table = $this->data['name'];
         foreach($this->data['fields'] as $field) {
-            $name = $table . '_' . $field['key'];
+            $name = $table . '_' . $field['name'];
 
             if(
                 in_array(
@@ -172,6 +172,32 @@ class Schema
                         'multirange'
                     ]
                 )
+            ) {
+                $results[] = $name;
+            }
+        }
+
+        return $results;
+    }
+
+    /**
+     * Returns listable fields
+     *
+     * @return string
+     */
+    public function getListable()
+    {
+        $results = [];
+        if(!isset($this->data['fields']) || empty($this->data['fields'])) {
+            return $results;
+        }
+
+        $table = $this->data['name'];
+        foreach($this->data['fields'] as $field) {
+            $name = $table . '_' . $field['name'];
+
+            if(isset($field['list']['format'])
+                && $field['list']['format'] !== 'hide'
             ) {
                 $results[] = $name;
             }
@@ -213,7 +239,7 @@ class Schema
             $relation = [
                 'name' => $table . '_' . $relation['name'],
                 'primary1' => $primary,
-                'primary2' => $relation['schema'] . '_id',
+                'primary2' => $relation['name'] . '_id',
                 'many' => $relation['many']
             ];
 
@@ -238,9 +264,9 @@ class Schema
             return $results;
         }
 
-        $table = $this->data['key'];
+        $table = $this->data['name'];
         foreach($this->data['fields'] as $field) {
-            $name = $table . '_' . $field['key'];
+            $name = $table . '_' . $field['name'];
             if(isset($field['searchable']) && $field['searchable']) {
                 $results[] = $name;
             }
@@ -267,9 +293,9 @@ class Schema
             return $results;
         }
 
-        $table = $this->data['key'];
+        $table = $this->data['name'];
         foreach($this->data['fields'] as $field) {
-            $name = $table . '_' . $field['key'];
+            $name = $table . '_' . $field['name'];
             if($field['type'] === 'slug') {
                 $results[] = $name;
             }
@@ -290,9 +316,9 @@ class Schema
             return $results;
         }
 
-        $table = $this->data['key'];
+        $table = $this->data['name'];
         foreach($this->data['fields'] as $field) {
-            $name = $table . '_' . $field['key'];
+            $name = $table . '_' . $field['name'];
             if(isset($field['sortable']) && $field['sortable']) {
                 $results[] = $name;
             }
@@ -342,10 +368,10 @@ class Schema
             return false;
         }
 
-        $table = $this->data['key'];
+        $table = $this->data['name'];
         foreach($this->data['fields'] as $field) {
-            if($field['key'] === 'updated') {
-                return $table . '_' . $field['key'];
+            if($field['name'] === 'updated') {
+                return $table . '_' . $field['name'];
             }
         }
 
@@ -373,7 +399,13 @@ class Schema
      */
     public function service($name, $key = 'main')
     {
-        return Service::get($name, $key)->setSchema($this);
+        $service = Service::get($name, $key);
+
+        if($service instanceof NoopService) {
+            return $service;
+        }
+
+        return $service->setSchema($this);
     }
 
     /**
@@ -395,7 +427,7 @@ class Schema
                 continue;
             }
 
-            $name = $data['name'] . '_' . $field['key'];
+            $name = $data['name'] . '_' . $field['name'];
             $format = self::$fieldTypes[$field['field']['type']];
 
             if (

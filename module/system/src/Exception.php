@@ -9,7 +9,7 @@
 
 namespace Cradle\Module\System;
 
-use BaseException;
+use Exception as BaseException;
 
 /**
  * Resolver exceptions

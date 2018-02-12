@@ -75,14 +75,20 @@ $cradle->on('system-schema-detail', function ($request, $response) {
         $data = $request->getStage();
     }
 
-    $id = $data['name'];
-    if(isset($data['config'])) {
-        $id = $data['config'];
+    $id = null;
+    if(isset($data['schema'])) {
+        $id = $data['schema'];
+    } else if(isset($data['name'])) {
+        $id = $data['name'];
     }
 
     //----------------------------//
     // 2. Validate Data
-    //no preparation needed
+    //we need an id
+    if (!$id) {
+        return $response->setError(true, 'Invalid ID');
+    }
+
     //----------------------------//
     // 3. Prepare Data
     //no preparation needed

@@ -10,6 +10,7 @@
 namespace Cradle\Module\System\Service;
 
 use Cradle\Module\System\Service;
+use Cradle\Module\System\Schema as SystemSchema;
 
 use Predis\Client as Resource;
 
@@ -37,6 +38,11 @@ class RedisService extends AbstractRedisService implements RedisServiceInterface
     const CACHE_DETAIL = 'core-object-detail';
 
     /**
+     * @var SystemSchema|null $schema
+     */
+    protected $schema = null;
+
+    /**
      * Registers the resource for use
      *
      * @param Resource $resource
@@ -46,5 +52,18 @@ class RedisService extends AbstractRedisService implements RedisServiceInterface
         $this->resource = $resource;
         $this->sql = Service::get('sql');
         $this->elastic = Service::get('elastic');
+    }
+
+    /**
+     * Adds System Schema
+     *
+     * @param SystemSchema $schema
+     *
+     * @return SqlService
+     */
+    public function setSchema(SystemSchema $schema)
+    {
+        $this->schema = $schema;
+        return $this;
     }
 }
