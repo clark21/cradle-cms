@@ -130,7 +130,7 @@ $cradle->on('system-schema-remove', function ($request, $response) {
     $schema = SystemSchema::i($data);
     $table = $schema->getTableName();
     //this/these will be used a lot
-    $systemSql = $schema->get('sql');
+    $systemSql = $schema->service('sql');
     //remove table
     $systemSql->remove($data);
 
@@ -160,6 +160,7 @@ $cradle->on('system-schema-remove', function ($request, $response) {
 $cradle->on('system-schema-restore', function ($request, $response) {
     //----------------------------//
     // 1. Get Data
+    $request->setStage('name', '_' . $request->getStage('name'));
     //get the system detail
     $this->trigger('system-schema-detail', $request, $response);
 
@@ -178,9 +179,9 @@ $cradle->on('system-schema-restore', function ($request, $response) {
     $schema = SystemSchema::i($data);
     $table = $schema->getTableName();
     //this/these will be used a lot
-    $systemSql = $schema->get('sql');
+    $systemSql = $schema->service('sql');
     //remove table
-    $systemSql->restoreTable($data);
+    $systemSql->restore($data);
 
     $path = $this->package('global')->path('config')
         . '/schema/_'

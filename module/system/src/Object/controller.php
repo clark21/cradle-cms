@@ -204,7 +204,7 @@ $cradle->get('/admin/system/object/:schema/create', function($request, $response
     // 3. Render Template
     $class = 'page-developer-user-create page-admin';
     $data['title'] = cradle('global')->translate('Create System Object');
-    $body = cradle('/app/admin')->template('user/form', $data);
+    $body = cradle('/module/system')->template('object/form', $data);
 
     //set content
     $response

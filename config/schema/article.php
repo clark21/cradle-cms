@@ -3,7 +3,7 @@
   'singular' => 'Article',
   'plural' => 'Articles',
   'name' => 'article',
-  'detail' => 'This is for Articles',
+  'detail' => 'This is for Articles na',
   'fields' => 
   array (
     0 => 
@@ -140,12 +140,49 @@
       ),
       'detail' => 
       array (
-        'format' => 'relative',
+        'format' => 'date',
         'parameters' => 'F d, Y',
       ),
       'default' => 'NOW()',
+      'sortable' => '1',
     ),
     4 => 
+    array (
+      'label' => 'Author',
+      'name' => 'author',
+      'field' => 
+      array (
+        'type' => 'text',
+        'attributes' => 
+        array (
+          'data-do' => 'capital',
+          'data-on' => 'change',
+        ),
+      ),
+      'validation' => 
+      array (
+        0 => 
+        array (
+          'method' => 'required',
+          'message' => 'Author is required',
+        ),
+        1 => 
+        array (
+          'method' => 'empty',
+          'message' => 'Cannot be empty',
+        ),
+      ),
+      'list' => 
+      array (
+        'format' => 'hide',
+      ),
+      'detail' => 
+      array (
+        'format' => 'hide',
+      ),
+      'default' => '',
+    ),
+    5 => 
     array (
       'label' => 'Active',
       'name' => 'active',
@@ -165,7 +202,7 @@
       'filterable' => '1',
       'sortable' => '1',
     ),
-    5 => 
+    6 => 
     array (
       'label' => 'Created',
       'name' => 'created',
@@ -185,7 +222,7 @@
       'default' => 'NOW()',
       'sortable' => '1',
     ),
-    6 => 
+    7 => 
     array (
       'label' => 'Updated',
       'name' => 'updated',
