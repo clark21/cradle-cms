@@ -55,7 +55,7 @@ class Formatter
         $table = $this->schema->getTableName();
 
         foreach($fields as $field) {
-            $name = $table . '_' . $field['key'];
+            $name = $table . '_' . $field['name'];
             //if there's no data
             if(!isset($data[$name])) {
                 //no need to format

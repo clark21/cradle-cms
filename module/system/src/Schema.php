@@ -135,13 +135,20 @@ class Schema
      */
     public function getFields()
     {
+        $results = [];
         if(!isset($this->data['fields'])
             || empty($this->data['fields'])
         ) {
-            return [];
+            return $results;
         }
 
-        return $this->data['fields'];
+        $table = $this->data['name'];
+        foreach($this->data['fields'] as $field) {
+            $name = $table . '_' . $field['name'];
+            $results[$name] = $field;
+        }
+
+        return $results;
     }
 
     /**

@@ -1,9 +1,18 @@
-<h3>
-    {{number total}} {{title}}
-    {{#if q.0}}
-        matching {{q.0}}
-    {{/if}}
-</h3>
+{{#when filter schema.active '===' '0'}}
+    <h3>
+        {{number total}} Inactive {{title}}
+        {{#if q.0}}
+            matching {{q.0}}
+        {{/if}}
+    </h3>
+{{else}}
+    <h3>
+        {{number total}} {{title}}
+        {{#if q.0}}
+            matching {{q.0}}
+        {{/if}}
+    </h3>
+{{/when}}
 
 <div class="clearfix">
     <!-- START: SEARCH FORM -->
@@ -35,7 +44,7 @@
 <!-- START: BULK FORM -->
 <form method="post" class="form-inline bulk-form pad-vertical">
     <div class="panel panel-default clear">
-        <div class="panel-body" >
+        <div class="panel-body">
             {{#if rows}}
                 <div class="table-overflow">
                     <!-- START: TABLE -->
@@ -44,67 +53,114 @@
                             <tr>
                                 <th>Actions</th>
                                 {{#each schema.fields}}
-                                    {{#in name ../schema.listable}}
-                                        <th>{{label}}</th>
+                                    {{#in @key ../schema.listable}}
+                                        {{#in @key ../schema.sortable}}
+                                            <th>
+                                                <a href="?{{sorturl @key}}">
+                                                    {{label}}
+                                                    {{sortcaret @key}}
+                                                </a>
+                                            </th>
+                                        {{else}}
+                                            <th>{{label}}</th>
+                                        {{/in}}
                                     {{/in}}
                                 {{/each}}
-
                             </tr>
                         </thead>
                         <tbody>
                             {{#each rows}}
-                            <tr data-id="{{key schema.primary this}}">
-                                <td>
-                                    {{#if schema.active}}
-                                        {{#each this}}
-                                            {{#when @key '===' ../../schema.active}}
-                                                {{#when @key '==' 1}}
-                                                    <a
-                                                        title="Edit"
-                                                        href="/admin/user/update/{{key ../../schema.primary ../this}}"
-                                                    >
-                                                        <i class="fa fa-edit"></i>
-                                                    </a>
-                                                    &nbsp;
-                                                    <a
-                                                        title="Remove"
-                                                        href="/admin/user/remove/{{key ../../schema.primary ../this}}"
-                                                        class="text-danger remove"
-                                                    >
-                                                        <i class="fa fa-times"></i>
-                                                    </a>
-                                                {{else}}
-                                                    <a
-                                                        title="Restore"
-                                                        href="/admin/user/restore/{{key ../../schema.primary ../this}}"
-                                                        class="text-success restore"
-                                                    >
-                                                        <i class="fa fa-external-link"></i>
-                                                    </a>
-                                                {{/when}}
-                                            {{/when}}
-                                        {{/each}}
-                                    {{else}}
-                                        <a
-                                            title="Edit"
-                                            href="/admin/user/update/{{key ../schema.primary this}}"
-                                        >
-                                            <i class="fa fa-edit"></i>
-                                        </a>
-                                        &nbsp;
-                                        <a
-                                            title="Remove"
-                                            href="/admin/user/remove/{{key ../schema.primary this}}"
-                                            class="text-danger remove"
-                                        >
-                                            <i class="fa fa-times"></i>
-                                        </a>
-                                    {{/if}}
-                                </td>
-                                <td>
-                                    {{user_name}}
-                                </td>
-                            </tr>
+                                <tr data-id="{{key schema.primary this}}">
+                                    <td>
+                                        {{#is_active this schema}}
+                                            <a
+                                                title="Edit"
+                                                href="/admin/user/update/{{key ../../schema.primary ../this}}"
+                                            >
+                                                <i class="fa fa-edit"></i>
+                                            </a>
+                                            &nbsp;
+                                            <a
+                                                title="Remove"
+                                                href="/admin/user/remove/{{key ../../schema.primary ../this}}"
+                                                class="text-danger remove"
+                                            >
+                                                <i class="fa fa-times"></i>
+                                            </a>
+                                        {{else}}
+                                            <a
+                                                title="Restore"
+                                                href="/admin/user/restore/{{key ../../schema.primary ../this}}"
+                                                class="text-success restore"
+                                            >
+                                                <i class="fa fa-external-link"></i>
+                                            </a>
+                                        {{/is_active}}
+                                    </td>
+                                    {{#get_format this schema}}
+                                        {{#when format '===' 'none'}}
+                                            <td>{{value}}</td>
+                                        {{/when}}
+                                        {{#when format '===' 'lower'}}
+                                            <td>{{date value parameters}}</td>
+                                        {{/when}}
+                                        {{#when format '===' 'upper'}}
+                                            <td>{{date value parameters}}</td>
+                                        {{/when}}
+                                        {{#when format '===' 'capital'}}
+                                            <td>{{date value parameters}}</td>
+                                        {{/when}}
+                                        {{#when format '===' 'length'}}
+                                            <td>{{char_length value parameters}}</td>
+                                        {{/when}}
+                                        {{#when format '===' 'words'}}
+                                            <td>{{word_length value parameters}}</td>
+                                        {{/when}}
+                                        {{#when format '===' 'number'}}
+                                            <td>{{number value}}</td>
+                                        {{/when}}
+                                        {{#when format '===' 'price'}}
+                                            <td>{{parameters}}{{price value}}</td>
+                                        {{/when}}
+                                        {{#when format '===' 'yes'}}
+                                            <td>{{#if value}}Yes{{else}}No{{/if}}</td>
+                                        {{/when}}
+                                        {{#when format '===' 'date'}}
+                                            <td>{{date value parameters}}</td>
+                                        {{/when}}
+                                        {{#when format '===' 'relative'}}
+                                            <td>{{relative value parameters}}</td>
+                                        {{/when}}
+                                        {{#when format '===' 'strip'}}
+                                            <td>{{strip value parameters}}</td>
+                                        {{/when}}
+                                        {{#when format '===' 'link'}}
+                                            <td><a href="{{parameters.0}}">{{parameters.1}}</a></td>
+                                        {{/when}}
+                                        {{#when format '===' 'image'}}
+                                            <td><img src="{{value}}" width="{{parameters.0}}" height="{{parameters.1}}" /></td>
+                                        {{/when}}
+                                        {{#when format '===' 'email'}}
+                                            <td><a href="mailto:{{value}}">{{parameters}}</a></td>
+                                        {{/when}}
+                                        {{#when format '===' 'phone'}}
+                                            <td><a href="tel:{{value}}">{{parameters}}</a></td>
+                                        {{/when}}
+                                        {{#when format '===' 'comma'}}
+                                            <td>{{implode value ','}}</td>
+                                        {{/when}}
+                                        {{#when format '===' 'space'}}
+                                            <td>{{implode value ' '}}</td>
+                                        {{/when}}
+                                        {{#when format '===' 'tag'}}
+                                            <td>
+                                                {{#each value}}
+                                                    <div class="tag">{{this}}</div>
+                                                {{/each}}
+                                            </td>
+                                        {{/when}}
+                                    {{/get_format}}
+                                </tr>
                             {{/each}}
                         </tbody>
                     </table>

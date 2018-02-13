@@ -45,12 +45,12 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
 
     //filter possible sort options
     //we do this to prevent SQL injections
-    if(is_array($request->getStage('sort'))) {
+    if(is_array($request->getStage('order'))) {
         $sortable = $schema->getSortable();
 
-        foreach($request->getStage('sort') as $key => $value) {
+        foreach($request->getStage('order') as $key => $value) {
             if(!in_array($key, $sortable)) {
-                $request->removeStage('sort', $key);
+                $request->removeStage('order', $key);
             }
         }
     }
@@ -66,12 +66,108 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
         'active' => $schema->getActive(),
         'listable' => $schema->getListable(),
         'fields' => $schema->getFields(),
+        'sortable' => $schema->getSortable(),
     ];
 
     //----------------------------//
     // 3. Render Template
     $class = 'page-admin-system-object-search page-admin';
     $data['title'] = cradle('global')->translate($schema->getPlural());
+
+    //I need a better when
+    cradle('global')
+        ->handlebars()
+        ->registerHelper('when', function(...$args) {
+            //$value1, $operator, $value2, $options
+            $options = array_pop($args);
+            $value2 = array_pop($args);
+            $operator = array_pop($args);
+
+            $value1 = array_shift($args);
+
+            foreach($args as $arg) {
+                $value1 = $value1[$arg];
+            }
+
+            $valid = false;
+
+            switch (true) {
+                case $operator == '=='   && $value1 == $value2:
+                case $operator == '==='  && $value1 === $value2:
+                case $operator == '!='   && $value1 != $value2:
+                case $operator == '!=='  && $value1 !== $value2:
+                case $operator == '<'    && $value1 < $value2:
+                case $operator == '<='   && $value1 <= $value2:
+                case $operator == '>'    && $value1 > $value2:
+                case $operator == '>='   && $value1 >= $value2:
+                case $operator == '&&'   && ($value1 && $value2):
+                case $operator == '||'   && ($value1 || $value2):
+                    $valid = true;
+                    break;
+            }
+
+            if($valid) {
+                return $options['fn']();
+            }
+
+            return $options['inverse']();
+        })
+        ->registerHelper('sorturl', function($key) {
+            $query = $_GET;
+            $value = null;
+            if(isset($query['order'][$key])) {
+                $value = $query['order'][$key];
+            }
+
+            if(is_null($value)) {
+                $query['order'][$key] = 'ASC';
+            } else if($value === 'ASC') {
+                $query['order'][$key] = 'DESC';
+            } else if($value === 'DESC') {
+                unset($query['order'][$key]);
+            }
+
+            return http_build_query($query);
+        })
+        ->registerHelper('sortcaret', function($key) {
+            $caret = null;
+            if(isset($_GET['order'][$key])
+                && $_GET['order'][$key] === 'ASC'
+            ) {
+                $caret = '<i class="fa fa-caret-up"></i>';
+            } else if(isset($_GET['order'][$key])
+                && $_GET['order'][$key] === 'DESC'
+            ) {
+                $caret = '<i class="fa fa-caret-down"></i>';
+            }
+
+            return $caret;
+        })
+        ->registerHelper('is_active', function($row, $schema, $options) {
+            if(!$schema['active'] || $row[$schema['active']]) {
+                return $options['fn']();
+            }
+
+            return $options['inverse']();
+        })
+        ->registerHelper('get_format', function($row, $schema, $options) {
+            $columns = [];
+            foreach($schema['fields'] as $name => $field) {
+                if(!in_array($name, $schema['listable'])) {
+                    continue;
+                }
+
+                $field['list']['value'] = $row[$name];
+                $columns[] = $options['fn']($field['list']);
+            }
+
+
+            return implode('', $columns);
+        })
+        ;
+
+
+
     $body = cradle('/module/system')->template('object/search', $data);
 
     //set content
