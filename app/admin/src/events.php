@@ -7,6 +7,9 @@
  * distributed with this package.
 */
 
+use Cradle\Http\Request;
+use Cradle\Http\Response;
+
 /**
  * Render admin page
  *
@@ -14,12 +17,23 @@
  * @param Response $response
  */
 $cradle->on('render-admin-page', function ($request, $response) {
+    $navigationRequest = (new Request())->load();
+    $navigationResponse = new Response();
+    cradle()->trigger(
+        'system-schema-search',
+        $navigationRequest,
+        $navigationResponse
+    );
+
+    $navigation = $navigationResponse->getResults();
+
     $content = cradle('/app/admin')->template(
         '_page',
         array(
             'page' => $response->getPage(),
             'results' => $response->getResults(),
-            'content' => $response->getContent()
+            'content' => $response->getContent(),
+            'navigation' => $navigation
         ),
         array(
             'head',

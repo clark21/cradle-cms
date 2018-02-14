@@ -19,24 +19,59 @@
         <div id="main-nav" class="collapse navbar-collapse{{#session 'me'}} loggedin{{/session}}">
             {{#session 'me'}}
             <ul class="nav navbar-nav">
-                <li><a href="/admin/system/schema/search">Schemas</a></li>
-                <li><a href="/admin/auth/search">Auth</a></li>
-                <!-- START: GENERATED MENU -->
-                <li><a href="/admin/user/search">Users</a></li>
-                <!-- END: GENERATED MENU -->
+                <li class="dropdown">
+                    <a
+                        href="#"
+                        class="dropdown-toggle"
+                        data-toggle="dropdown"
+                        role="button"
+                        aria-haspopup="true"
+                        aria-expanded="false"
+                    >
+                        Users <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="/admin/user/search">
+                                <i class="fa fa-user"></i> Users
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/admin/auth/search">
+                                <i class="fa fa-lock"></i> Authentications
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a
+                        href="#"
+                        class="dropdown-toggle"
+                        data-toggle="dropdown"
+                        role="button"
+                        aria-haspopup="true"
+                        aria-expanded="false"
+                    >
+                        Content <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        {{#each ../navigation.rows}}
+                            <li><a href="/admin/system/object/{{name}}/search">{{plural}}</a></li>
+                        {{/each}}
+                        <li role="separator" class="divider"></li>
+                        <li>
+                            <a href="/admin/system/schema/search">
+                                <i class="fa fa-cogs"></i> Schemas
+                            </a>
+                        </li>
+                    </ul>
+                </li>
 
-                {{#each ../navigation}}
-                <li><a href="{{href}}">{{label}}</a></li>
-                {{/each}}
+
             </ul>
             {{/session}}
             <ul class="nav navbar-nav navbar-right">
                 {{#session 'me'}}
-                    <li>
-                        <a href="/account?redirect_uri={{server 'REQUEST_URI'}}" class="btn text-info">
-                            {{_ 'Account Settings'}}
-                        </a>
-                    </li>
                     <li>
                         <a href="/logout?redirect_uri={{server 'REQUEST_URI'}}" class="btn text-danger">
                             {{_ 'Logout'}}
