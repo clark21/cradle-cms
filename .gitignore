@@ -4,6 +4,7 @@ vendor
 config/services.php
 config/settings.php
 config/test.php
+config/schema/*.php
 
 public/bower_components
 public/upload
