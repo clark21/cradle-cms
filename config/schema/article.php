@@ -3,7 +3,7 @@
   'singular' => 'Article',
   'plural' => 'Articles',
   'name' => 'article',
-  'detail' => 'This is for Articles na',
+  'detail' => 'This is for Articles',
   'fields' => 
   array (
     0 => 

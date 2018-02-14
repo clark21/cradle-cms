@@ -301,6 +301,7 @@ class SqlService
             return $this->create($data, true);
         }
 
+        $primary = $this->resource->getPrimaryKey($data['name']);
         $columns = $this->resource->getColumns($data['name']);
         $query = $this->resource->getAlterQuery($data['name']);
 
@@ -442,8 +443,6 @@ class SqlService
             $queries[] = 'DROP TABLE IF EXISTS `'. $relation['name'] . '`;';
             $queries[] = (string) $query;
         }
-
-        cradle()->inspect($queries);exit;
 
         //execute queries
         $results = [];
