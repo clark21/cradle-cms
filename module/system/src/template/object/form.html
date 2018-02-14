@@ -5,7 +5,7 @@
 
     <div class="panel-body" >
         <form enctype="multipart/form-data" method="post">
-            
+
             <div class="form-group{{#if errors.user_name}} has-error{{/if}}">
                 <label class="control-label">Name</label>
                 <div>
@@ -16,11 +16,11 @@
                     {{/if}}
                 </div>
             </div>
-            
+
             <div class="form-group{{#if errors.user_meta}} has-error{{/if}}">
                 <label class="control-label">Meta Data</label>
                 <div>
-                    
+
                     <div data-do="meta-field" class="meta-field" data-name="user_meta">
                             {{#each item.user_meta}}
                                 <div class="meta">
@@ -38,7 +38,7 @@
                     {{/if}}
                 </div>
             </div>
-            
+
             <div class="form-group{{#if errors.user_files}} has-error{{/if}}">
                 <label class="control-label">Files</label>
                 <div>
@@ -49,7 +49,7 @@
                     {{/if}}
                 </div>
             </div>
-            
+
 
             <div class="clear form-group">
                 <input type="hidden" name="csrf" value="" />
