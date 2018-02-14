@@ -443,6 +443,8 @@ class SqlService
             $queries[] = (string) $query;
         }
 
+        cradle()->inspect($queries);exit;
+
         //execute queries
         $results = [];
         foreach($queries as $query) {
