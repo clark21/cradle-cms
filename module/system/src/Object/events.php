@@ -50,13 +50,13 @@ $cradle->on('system-object-create', function ($request, $response) {
 
     //----------------------------//
     // 3. Prepare Data
-    $data = $schema
-        ->model()
-        ->formatter(
-            $data,
-            $this->package('global')->service('s3-main'),
-            $this->package('global')->path('upload')
-        );
+    // $data = $schema
+    //     ->model()
+    //     ->formatter(
+    //         $data,
+    //         $this->package('global')->service('s3-main'),
+    //         $this->package('global')->path('upload')
+    //     );
 
     //----------------------------//
     // 4. Process Data
@@ -64,7 +64,6 @@ $cradle->on('system-object-create', function ($request, $response) {
     $objectSql = $schema->model()->service('sql');
     $objectRedis = $schema->model()->service('redis');
     $objectElastic = $schema->model()->service('elastic');
-
     //save object to database
     $results = $objectSql->create($data);
 
@@ -168,7 +167,7 @@ $cradle->on('system-object-detail', function ($request, $response) {
 
         if ($results) {
             //cache it from database or index
-            $objectRedis->createDetail($key, $id, $results);
+            $objectRedis->createDetail([$key => $id], $results);
         }
     }
 

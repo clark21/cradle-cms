@@ -339,8 +339,10 @@ class Schema
         $table = $this->data['name'];
         foreach($this->data['fields'] as $field) {
             $name = $table . '_' . $field['name'];
-            if($field['type'] === 'slug') {
-                $results[] = $name;
+            if (isset($field['type'])) {
+                if($field['type'] === 'slug') {
+                    $results[] = $name;
+                }
             }
         }
 
