@@ -253,7 +253,19 @@
             }
         }
 
+        // get error message element
+        var err = target.nextAll('.error-message');
+
         target.remove();
+
+        // remove if error message exist
+        if(err.length) {
+            for(var i = 0; i < 2; i++) {
+                if (err[i] !== undefined) {
+                    err[i].remove();
+                }
+            }
+        }
     });
 
     $(window).on('option-remove-click', function(e, trigger) {
