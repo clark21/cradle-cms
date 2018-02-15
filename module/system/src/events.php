@@ -144,8 +144,13 @@ $cradle->on('system-schema-remove', function ($request, $response) {
     $table = $schema->getTableName();
     //this/these will be used a lot
     $systemSql = $schema->service('sql');
-    //remove table
-    $systemSql->remove($data);
+
+    try {
+        //remove table
+        $systemSql->remove($data);
+    } catch(\Exception $e) {
+        return $response->setError(true, $e->getMessage());
+    }
 
     $path = $this->package('global')->path('config')
         . '/schema/'

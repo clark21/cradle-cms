@@ -32,6 +32,11 @@ class Exception extends BaseException
     const ERROR_SCHEMA_NOT_FOUND = 'Could not find schema %s.';
 
     /**
+     * @const string ERROR_SCHEMA_ARCHIVE_EXISTS
+     */
+    const ERROR_SCHEMA_ARCHIVE_EXISTS = 'An archive of %s schema already exists.';
+
+    /**
      * Create a new exception for missing Schema
      *
      * @return Exception
@@ -51,6 +56,20 @@ class Exception extends BaseException
     public static function forSchemaNotFound(string $name): ObjectException
     {
         $message = sprintf(static::ERROR_SCHEMA_NOT_FOUND, $name);
+        return new static($message);
+    }
+
+    /**
+     * Create a new exception if an archived of the
+     * given schema already exists.
+     * 
+     * @param *string $name
+     * 
+     * @return ObjectException
+     */
+    public static function forSchemaArchiveExists(string $name)
+    {
+        $message = sprintf(static::ERROR_SCHEMA_ARCHIVE_EXISTS, $name);
         return new static($message);
     }
 }
