@@ -19,7 +19,7 @@
                     />
 
                     {{#if errors.singular}}
-                    <span class="help-text">{{errors.singular}}</span>
+                    <span class="help-text error-message">{{errors.singular}}</span>
                     {{/if}}
                 </div>
             </div>
@@ -36,7 +36,7 @@
                     />
 
                     {{#if errors.plural}}
-                    <span class="help-text">{{errors.plural}}</span>
+                    <span class="help-text error-message">{{errors.plural}}</span>
                     {{/if}}
                 </div>
             </div>
@@ -57,7 +57,7 @@
                     />
 
                     {{#if errors.name}}
-                    <span class="help-text">{{errors.name}}</span>
+                    <span class="help-text error-message">{{errors.name}}</span>
                     {{/if}}
                 </div>
             </div>
@@ -73,7 +73,7 @@
                     >{{{item.detail}}}</textarea>
 
                     {{#if errors.detail}}
-                    <span class="help-text">{{errors.detail}}</span>
+                    <span class="help-text error-message">{{errors.detail}}</span>
                     {{/if}}
                 </div>
             </div>
@@ -105,6 +105,10 @@
                                 </tbody>
                             </table>
                         </div>
+
+                        {{#if errors.fields}}
+                        <div class="help-text error-message">{{errors.fields}}</div><br/>
+                        {{/if}}
                         <button
                             class="field-add btn btn-info"
                             data-do="field-add"
@@ -118,7 +122,7 @@
                 </div>
             </div>
 
-            <div class="form-group{{#if errors.fields}} has-error{{/if}}">
+            <div class="form-group{{#if errors.relations}} has-error{{/if}}">
                 <label class="control-label">Relations</label>
                 <div>
                     {{#each item.relations}}

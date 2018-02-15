@@ -183,6 +183,11 @@ class SqlService
         //queries to run
         $queries = [];
 
+        // check if table is already archived
+        if($this->exists(sprintf('_%s', $data['name']))) {
+            throw SystemException::forSchemaArchiveExists($data['name']);
+        }
+
         //if system exists
         if($this->exists($data['name'])) {
             if($restorable) {
@@ -234,6 +239,11 @@ class SqlService
 
         //queries to run
         $queries = [];
+
+        // check if table is already archived
+        if($this->exists($data['name'])) {
+            throw SystemException::forSchemaAlreadyExists($data['name']);
+        }
 
         //if there's no system
         if(!$this->exists('_' . $data['name'])) {
