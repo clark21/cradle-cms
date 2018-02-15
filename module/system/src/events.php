@@ -313,7 +313,19 @@ $cradle->on('system-schema-update', function ($request, $response) {
 
     //----------------------------//
     // 3. Prepare Data
-    //no preparation needed
+
+    // filter relations
+    if(isset($data['relations'])) {
+        // filter out empty relations
+        $data['relations'] = array_filter(
+            $data['relations'], 
+            function($relation) {
+                // make sure we have relation name
+                return $relation['name'] !== '' ? true : false;
+            }
+        );
+    }
+
     //----------------------------//
     // 4. Process Data
     $schema = SystemSchema::i($data);
