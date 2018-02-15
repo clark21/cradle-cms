@@ -7,6 +7,7 @@
  * distributed with this package.
  */
 
+use Cradle\Module\Utility\File;
 use Cradle\Module\System\Schema as SystemSchema;
 
 /**
@@ -193,17 +194,171 @@ $cradle->get('/admin/system/object/:schema/create', function($request, $response
 
     //----------------------------//
     // 2. Prepare Data
-    $data = ['item' => $request->getPost()];
+    cradle()->trigger('system-schema-detail', $request, $response);
+
+    $schema = SystemSchema::i($response->getResults());
+
+    $data = [
+        'item' => $request->getPost(),
+        'schema' => [
+            'name' => $schema->getTableName(),
+            'singular' => $schema->getSingular(),
+            'fields' => $schema->getFields(),
+            'files' => $schema->getFiles()
+        ]
+    ];
 
     if ($response->isError()) {
         $response->setFlash($response->getMessage(), 'danger');
         $data['errors'] = $response->getValidation();
     }
 
+    //add CSRF
+    cradle()->trigger('csrf-load', $request, $response);
+    $data['csrf'] = $response->getResults('csrf');
+
+    if (!empty($data['schema']['files'])) {
+        //add CDN
+        $config = $this->package('global')->service('s3-main');
+        $data['cdn_config'] = File::getS3Client($config);
+    }
+
     //----------------------------//
     // 3. Render Template
     $class = 'page-developer-user-create page-admin';
-    $data['title'] = cradle('global')->translate('Create System Object');
+    $data['title'] = cradle('global')->translate('Create %s', $data['schema']['singular']);
+
+    //I need a better when
+    cradle('global')
+        ->handlebars()
+        ->registerHelper('when', function(...$args) {
+            //$value1, $operator, $value2, $options
+            $options = array_pop($args);
+            $value2 = array_pop($args);
+            $operator = array_pop($args);
+
+            $value1 = array_shift($args);
+
+            foreach($args as $arg) {
+                if(!isset($value1[$arg])) {
+                    $value1 = null;
+                    break;
+                }
+
+                $value1 = $value1[$arg];
+            }
+
+            $valid = false;
+
+            switch (true) {
+                case $operator == '=='   && $value1 == $value2:
+                case $operator == '==='  && $value1 === $value2:
+                case $operator == '!='   && $value1 != $value2:
+                case $operator == '!=='  && $value1 !== $value2:
+                case $operator == '<'    && $value1 < $value2:
+                case $operator == '<='   && $value1 <= $value2:
+                case $operator == '>'    && $value1 > $value2:
+                case $operator == '>='   && $value1 >= $value2:
+                case $operator == '&&'   && ($value1 && $value2):
+                case $operator == '||'   && ($value1 || $value2):
+                    $valid = true;
+                    break;
+            }
+
+            if($valid) {
+                return $options['fn']();
+            }
+
+            return $options['inverse']();
+        })
+        ->registerHelper('loop', function(...$args) {
+            $args = func_get_args();
+
+            //$object, $options
+            $options = array_pop($args);
+            $object = array_shift($args);
+
+            foreach($args as $arg) {
+                if(!isset($object[$arg])) {
+                    $object = null;
+                    break;
+                }
+
+                $object = $object[$arg];
+            }
+
+            if (is_scalar($object) || !$object) {
+                return $options['inverse']();
+            }
+
+            //test foreach
+            $keyName = null;
+            $valueName = null;
+            //see handlebars.js {{#each array as |value, key|}}
+            if (strpos($options['args'], ' as |') !== false
+                && substr_count($options['args'], '|') === 2
+            ) {
+                list($tmp, $valueName) = explode('|', $options['args']);
+
+                if (strpos($valueName, ',') !== false) {
+                    list($valueName, $keyName) = explode(',', trim($valueName));
+                }
+
+                $keyName = trim($keyName);
+                $valueName = trim($valueName);
+            }
+
+            $buffer = [];
+            $object = (array) $object;
+
+            $first = $last = null;
+
+            if (!empty($object)) {
+                //get last
+                end($object);
+                $last = key($object);
+
+                //get first
+                reset($object);
+                $first = key($object);
+            }
+
+            $i = 0;
+            foreach ($object as $key => $value) {
+                //pass on hash
+                if (is_array($value)
+                    && isset($options['hash'])
+                    && is_array($options['hash'])
+                ) {
+                    $value = array_merge($value, $options['hash']);
+                }
+
+                if (!is_array($value)) {
+                    $value = ['this' => $value];
+                } else {
+                    $value['this'] = $value;
+                }
+
+                if ($valueName) {
+                    $value[$valueName] = $value['this'];
+                }
+
+                if ($keyName) {
+                    $value[$keyName] = $key;
+                }
+
+                $value['@index'] = $i;
+                $value['@key'] = $key;
+                $value['@first'] = $first == $key;
+                $value['@last'] = $last == $key;
+
+                $buffer[] = $options['fn']($value);
+                $i++;
+            }
+
+            return implode('', $buffer);
+        })
+        ;
     $body = cradle('/module/system')->template('object/form', $data);
 
     //set content

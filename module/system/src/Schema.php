@@ -152,6 +152,42 @@ class Schema
     }
 
     /**
+     * Returns All files
+     *
+     * @return array
+     */
+    public function getFiles()
+    {
+        $results = [];
+        if(!isset($this->data['fields'])
+            || empty($this->data['fields'])
+        ) {
+            return $results;
+        }
+
+        $table = $this->data['name'];
+        foreach($this->data['fields'] as $field) {
+            $name = $table . '_' . $field['name'];
+
+            if(
+                in_array(
+                    $field['field']['type'],
+                    [
+                        'file',
+                        'image',
+                        'files',
+                        'images'
+                    ]
+                )
+            ) {
+                $results[] = $name;
+            }
+        }
+
+        return $results;
+    }
+
+    /**
      * Returns JSON fields
      *
      * @return array
