@@ -40,6 +40,10 @@ class Validator
             $errors['name'] = 'Keyword is required';
         }
 
+        if(!isset($data['fields']) || empty($data['fields'])) {
+            $errors['fields'] = 'Fields is required';
+        }
+
         return self::getOptionalErrors($data, $errors);
     }
 
@@ -63,6 +67,10 @@ class Validator
 
         if(isset($data['name']) && empty($data['name'])) {
             $errors['name'] = 'Keyword is required';
+        }
+
+        if(!isset($data['fields']) || empty($data['fields'])) {
+            $errors['fields'] = 'Fields is required';
         }
 
         return self::getOptionalErrors($data, $errors);
