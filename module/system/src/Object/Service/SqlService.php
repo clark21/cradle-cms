@@ -63,8 +63,8 @@ class SqlService
         }
 
         $table = $this->schema->getTableName();
-        $created = $this->schema->getCreated($object);
-        $updated = $this->schema->getUpdated($object);
+        $created = $this->schema->getCreated($data);
+        $updated = $this->schema->getUpdated($data);
 
         if($created) {
             $data[$created] = date('Y-m-d H:i:s');

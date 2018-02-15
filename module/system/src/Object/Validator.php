@@ -50,22 +50,23 @@ class Validator
      *
      * @return array
      */
-    public static function getCreateErrors(array $data, array $errors = [])
+    public function getCreateErrors(array $data, array $errors = [])
     {
+        $object = [];
         $fields = $this->schema->getFields();
         $table = $this->schema->getTableName();
-
         foreach($fields as $field) {
-            $name = $table . '_' . $field['key'];
-            foreach($field['validation'] as $validation) {
-                if($validation['method'] === 'required'
-                    && (!isset($data[$name]) || empty($data[$name]))
-                ) {
-                    $errors[$name] = $validation['message'];
+            $name = $table . '_' . $field['name'];
+            if (isset($field['validation'])) {
+                foreach($field['validation'] as $validation) {
+                    if($validation['method'] === 'required'
+                        && (!isset($data[$name]) || empty($data[$name]))
+                    ) {
+                        $errors[$name] = $validation['message'];
+                    }
                 }
             }
         }
-
         return self::getOptionalErrors($object, $data, $errors);
     }
 
@@ -78,7 +79,7 @@ class Validator
      *
      * @return array
      */
-    public static function getUpdateErrors(array $object, array $data, array $errors = [])
+    public function getUpdateErrors(array $object, array $data, array $errors = [])
     {
         $fields = $this->schema->getFields();
         $table = $this->schema->getTableName();
@@ -114,14 +115,14 @@ class Validator
      *
      * @return array
      */
-    public static function getOptionalErrors(array $object, array $data, array $errors = [])
+    public function getOptionalErrors(array $object, array $data, array $errors = [])
     {
         $fields = $this->schema->getFields();
         $table = $this->schema->getTableName();
         $primary = $this->schema->getPrimary();
 
         foreach($fields as $field) {
-            $name = $table . '_' . $field['key'];
+            $name = $table . '_' . $field['name'];
             //if there is no data
             if(!isset($data[$name])) {
                 //no need to validate

@@ -161,7 +161,6 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
                 $columns[] = $options['fn']($field['list']);
             }
 
-
             return implode('', $columns);
         })
         ;
@@ -200,10 +199,20 @@ $cradle->get('/admin/system/object/:schema/create', function($request, $response
         $data['errors'] = $response->getValidation();
     }
 
+    cradle()->trigger('system-schema-detail', $request, $response);
+    $data = array_merge($data, $response->getResults());
+
+     //can we update ?
+    if($response->isError()) {
+        //add a flash
+        cradle('global')->flash($response->getMessage(), 'danger');
+        return cradle('global')->redirect('/admin/system/schema/search');
+    }
+
     //----------------------------//
     // 3. Render Template
     $class = 'page-developer-user-create page-admin';
-    $data['title'] = cradle('global')->translate('Create System Object');
+    $data['title'] = cradle('global')->translate('Create %s', $data['singular']);
     $body = cradle('/module/system')->template('object/form', $data);
 
     //set content
@@ -233,13 +242,14 @@ $cradle->get('/admin/system/object/:schema/update/:id', function($request, $resp
 
     //if no item
     if(empty($data['item'])) {
-        cradle()->trigger('user-detail', $request, $response);
+        $request->setStage($request->getStage('schema') . '_id', $request->getStage('id'));
+        cradle()->trigger('system-object-detail', $request, $response);
 
         //can we update ?
         if($response->isError()) {
             //add a flash
             cradle('global')->flash($response->getMessage(), 'danger');
-            return cradle('global')->redirect('/admin/user/search');
+            return cradle('global')->redirect('/admin/system/object/'. $request->getStage('schema') .'/search');
         }
 
         $data['item'] = $response->getResults();
@@ -250,11 +260,21 @@ $cradle->get('/admin/system/object/:schema/update/:id', function($request, $resp
         $data['errors'] = $response->getValidation();
     }
 
+    cradle()->trigger('system-schema-detail', $request, $response);
+    $data = array_merge($data, $response->getResults());
+
+     //can we update ?
+    if($response->isError()) {
+        //add a flash
+        cradle('global')->flash($response->getMessage(), 'danger');
+        return cradle('global')->redirect('/admin/system/object/'. $request->getStage('schema') .'/search');
+    }
+
     //----------------------------//
     // 3. Render Template
     $class = 'page-developer-user-update page-admin';
     $data['title'] = cradle('global')->translate('Updating System Object');
-    $body = cradle('/app/admin')->template('user/form', $data);
+    $body = cradle('/module/system')->template('object/form', $data);
 
     //Set Content
     $response
@@ -280,33 +300,14 @@ $cradle->post('/admin/system/object/:schema/create', function($request, $respons
     //----------------------------//
     // 2. Prepare Data
 
-    //user_slug is disallowed
-    $request->removeStage('user_slug');
-
-    //if user_meta has no value make it null
-    if ($request->hasStage('user_meta') && !$request->getStage('user_meta')) {
-        $request->setStage('user_meta', null);
-    }
-
-    //if user_files has no value make it null
-    if ($request->hasStage('user_files') && !$request->getStage('user_files')) {
-        $request->setStage('user_files', null);
-    }
-
-    //user_type is disallowed
-    $request->removeStage('user_type');
-
-    //user_flag is disallowed
-    $request->removeStage('user_flag');
-
     //----------------------------//
     // 3. Process Request
-    cradle()->trigger('user-create', $request, $response);
+    cradle()->trigger('system-object-create', $request, $response);
 
     //----------------------------//
     // 4. Interpret Results
     if($response->isError()) {
-        return cradle()->triggerRoute('get', '/admin/user/create', $request, $response);
+        return cradle()->triggerRoute('get', '/admin/system/object/'. $request->getStage('schema') .'/create', $request, $response);
     }
 
     //it was good
@@ -314,7 +315,7 @@ $cradle->post('/admin/system/object/:schema/create', function($request, $respons
     cradle('global')->flash('System Object was Created', 'success');
 
     //redirect
-    cradle('global')->redirect('/admin/user/search');
+    cradle('global')->redirect('/admin/system/object/'. $request->getStage('schema') .'/create');
 });
 
 /**
@@ -358,7 +359,7 @@ $cradle->post('/admin/system/object/:schema/update/:id', function($request, $res
     //----------------------------//
     // 4. Interpret Results
     if($response->isError()) {
-        $route = '/admin/user/update/' . $request->getStage('user_id');
+        $route = '/admin/system/object/'. $request->getStage('schema') .'/update' . $request->getStage('id');
         return cradle()->triggerRoute('get', $route, $request, $response);
     }
 
@@ -367,7 +368,7 @@ $cradle->post('/admin/system/object/:schema/update/:id', function($request, $res
     cradle('global')->flash('System Object was Updated', 'success');
 
     //redirect
-    cradle('global')->redirect('/admin/user/search');
+    cradle('global')->redirect('/admin/system/object/'. $request->getStage('schema') .'/update' . $request->getStage('id'));
 });
 
 /**

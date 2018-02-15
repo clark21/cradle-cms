@@ -330,3 +330,7 @@ body > .wrapper { background-color: #FFFFFF; }
     color: #006699;
     cursor: pointer;
 }
+
+.has-error span.help-text {
+    color: #A94442;
+}

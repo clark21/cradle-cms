@@ -70,19 +70,19 @@
                         </thead>
                         <tbody>
                             {{#each rows}}
-                                <tr data-id="{{key schema.primary this}}">
+                                <tr data-id="{{key ../schema.primary this}}">
                                     <td>
                                         {{#is_active this schema}}
                                             <a
                                                 title="Edit"
-                                                href="/admin/user/update/{{key ../../schema.primary ../this}}"
+                                                href="/admin/system/object/{{../schema.name}}/update/{{key ../schema.primary this}}"
                                             >
                                                 <i class="fa fa-edit"></i>
                                             </a>
                                             &nbsp;
                                             <a
                                                 title="Remove"
-                                                href="/admin/user/remove/{{key ../../schema.primary ../this}}"
+                                                href="/admin/system/object/{{../schema.name}}/remove/{{key ../schema.primary this}}"
                                                 class="text-danger remove"
                                             >
                                                 <i class="fa fa-times"></i>
@@ -90,25 +90,25 @@
                                         {{else}}
                                             <a
                                                 title="Restore"
-                                                href="/admin/user/restore/{{key ../../schema.primary ../this}}"
+                                                href="/admin/system/object/{{../schema.name}}/restore/{{key ../schema.primary this}}"
                                                 class="text-success restore"
                                             >
                                                 <i class="fa fa-external-link"></i>
                                             </a>
                                         {{/is_active}}
                                     </td>
-                                    {{#get_format this schema}}
+                                    {{#get_format this ../schema}}
                                         {{#when format '===' 'none'}}
                                             <td>{{value}}</td>
                                         {{/when}}
                                         {{#when format '===' 'lower'}}
-                                            <td>{{date value parameters}}</td>
+                                            <td>{{tolower value}}</td>
                                         {{/when}}
                                         {{#when format '===' 'upper'}}
-                                            <td>{{date value parameters}}</td>
+                                            <td>{{toupper value}}</td>
                                         {{/when}}
                                         {{#when format '===' 'capital'}}
-                                            <td>{{date value parameters}}</td>
+                                            <td>{{capital value}}</td>
                                         {{/when}}
                                         {{#when format '===' 'length'}}
                                             <td>{{char_length value parameters}}</td>

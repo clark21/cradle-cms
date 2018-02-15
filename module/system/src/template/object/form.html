@@ -4,51 +4,251 @@
     </div>
 
     <div class="panel-body" >
-        <form enctype="multipart/form-data" method="post">
-
-            <div class="form-group{{#if errors.user_name}} has-error{{/if}}">
-                <label class="control-label">Name</label>
+        <form {{#if has_file}}
+            enctype="multipart/form-data"
+            method="post"
+            {{#if cdn_config}}
+                data-do="cdn-upload"
+                data-on="submit"
+                data-progress="We are uploading your files. Please do not refresh page."
+                data-complete="Upload Complete"
+                data-enctype="{{cdn_config.field.enctype}}"
+                data-method="{{cdn_config.field.method}}"
+                data-action="{{cdn_config.field.action}}"
+                data-cdn="{{cdn_config.field.action}}"
+                data-acl="{{cdn_config.inputs.acl}}"
+                data-key="{{cdn_config.inputs.key}}"
+                data-credential="{{cdn_config.inputs.X-Amz-Credential}}"
+                data-algorythm="{{cdn_config.inputs.X-Amz-Algorithm}}"
+                data-date="{{cdn_config.inputs.X-Amz-Date}}"
+                data-policy="{{cdn_config.inputs.Policy}}"
+                data-signature="{{cdn_config.inputs.X-Amz-Signature}}"
+            {{/if}}
+        {{else}}enctype="multipart/form-data" method="post"{{/if}}>
+            {{#each fields}}
+            <div class="form-group{{#error_exist ../errors name ../name}} has-error{{/error_exist}}">
+                <label class="control-label {{#when field.type '==' 'created'}}hide{{/when}} {{#when field.type '==' 'updated'}}hide{{/when}}">{{label}}</label>
                 <div>
-                    <input name="user_name" value="{{item.user_name}}" placeholder="John Doe" type="text" class="form-control" />
+                    {{#when field.type '==' 'text'}}
+                    <input name="{{../name}}_{{name}}" type="{{field.type}}" value="{{get_data ../this ../name name}}" class="form-control" {{#if field.attributes}}{{#each field.attributes}} {{@key}}="{{this}}"{{/each}}{{/if}} />
+                    {{/when}}
 
-                    {{#if errors.user_name}}
-                    <span class="help-text">{{errors.user_name}}</span>
-                    {{/if}}
-                </div>
-            </div>
+                    {{#when field.type '==' 'email'}}
+                    <input name="{{../name}}_{{name}}" type="{{field.type}}" class="form-control" {{#if field.attributes}}{{#each field.attributes}} {{@key}}="{{this}}"{{/each}}{{/if}}></input>
+                    {{/when}}
 
-            <div class="form-group{{#if errors.user_meta}} has-error{{/if}}">
-                <label class="control-label">Meta Data</label>
-                <div>
+                    {{#when field.type '==' 'password'}}
+                    <input name="{{../name}}_{{name}}" type="{{field.type}}" class="form-control" {{#if field.attributes}}{{#each field.attributes}} {{@key}}="{{this}}"{{/each}}{{/if}}></input>
+                    {{/when}}
 
-                    <div data-do="meta-field" class="meta-field" data-name="user_meta">
-                            {{#each item.user_meta}}
+                    {{#when field.type '==' 'search'}}
+                    <input name="{{../name}}_{{name}}" type="{{field.type}}" class="form-control" {{#if field.attributes}}{{#each field.attributes}} {{@key}}="{{this}}"{{/each}}{{/if}}></input>
+                    {{/when}}
+
+                    {{#when field.type '==' 'url'}}
+                    <input name="{{../name}}_{{name}}" type="{{field.type}}" class="form-control" {{#if field.attributes}}{{#each field.attributes}} {{@key}}="{{this}}"{{/each}}{{/if}}></input>
+                    {{/when}}
+
+                    {{#when field.type '==' 'color'}}
+                    <input name="{{../name}}_{{name}}" type="{{field.type}}" class="form-control" {{#if field.attributes}}{{#each field.attributes}} {{@key}}="{{this}}"{{/each}}{{/if}}></input>
+                    {{/when}}
+
+                    {{#when field.type '==' 'format'}}
+                    <input name="{{../name}}_{{name}}" type="{{field.type}}" class="form-control" {{#if field.attributes}}{{#each field.attributes}} {{@key}}="{{this}}"{{/each}}{{/if}}></input>
+                    {{/when}}
+
+                    {{#when field.type '==' 'slug'}}
+                    <input name="{{../name}}_{{name}}" type="{{field.type}}" class="form-control" {{#if field.attributes}}{{#each field.attributes}} {{@key}}="{{this}}"{{/each}}{{/if}}></input>
+                    {{/when}}
+
+                    {{#when field.type '==' 'textarea'}}
+                    <textarea name="{{../name}}_{{name}}" class="form-control" {{#if field.attributes}}{{#each field.attributes}} {{@key}}="{{this}}"{{/each}}{{/if}}></textarea>
+                    {{/when}}
+
+                    {{#when field.type '==' 'wysiwyg'}}
+                    <textarea name="{{../name}}_{{name}}" data-do="wysiwyg" class="form-control" {{#if field.attributes}}{{#each field.attributes}} {{@key}}="{{this}}"{{/each}}{{/if}}></textarea>
+                    {{/when}}
+
+                    {{#when field.type '==' 'number'}}
+                    <input name="{{../name}}_{{name}}" type="{{field.type}}" class="form-control" min="0" max="2147483647" {{#if field.attributes}}{{#each field.attributes}} {{@key}}="{{this}}"{{/each}}{{/if}}></input>
+                    {{/when}}
+
+                    {{#when field.type '==' 'small'}}
+                    <input name="{{../name}}_{{name}}" type="number" class="form-control" min="0"{{#if field.attributes}}{{#each field.attributes}} {{@key}}="{{this}}"{{/each}}{{/if}}></input>
+                    {{/when}}
+
+                    {{#when field.type '==' 'range'}}
+                    <input name="{{../name}}_{{name}}" type="number" class="form-control" min="0"{{#if field.attributes}}{{#each field.attributes}} {{@key}}="{{this}}"{{/each}}{{/if}}></input>
+                    {{/when}}
+
+                    {{#when field.type '==' 'float'}}
+                    <input name="{{../name}}_{{name}}" type="number" class="form-control" min="0"{{#if field.attributes}}{{#each field.attributes}} {{@key}}="{{this}}"{{/each}}{{/if}}></input>
+                    {{/when}}
+
+                    {{#when field.type '==' 'price'}}
+                    <input name="{{../name}}_{{name}}" type="number" class="form-control" min="0"{{#if field.attributes}}{{#each field.attributes}} {{@key}}="{{this}}"{{/each}}{{/if}}></input>
+                    {{/when}}
+
+                    {{#when field.type '==' 'date'}}
+                    <input name="{{../name}}_{{name}}" type="{{field.type}}" class="form-control" min="0"{{#if field.attributes}}{{#each field.attributes}} {{@key}}="{{this}}"{{/each}}{{/if}}></input>
+                    {{/when}}
+
+                    {{#when field.type '==' 'time'}}
+                    <input name="{{../name}}_{{name}}" type="{{field.type}}" class="form-control" min="0"{{#if field.attributes}}{{#each field.attributes}} {{@key}}="{{this}}"{{/each}}{{/if}}></input>
+                    {{/when}}
+
+                    {{#when field.type '==' 'datetime'}}
+                    <input name="{{../name}}_{{name}}" type="datetime-local" class="form-control" min="0"{{#if field.attributes}}{{#each field.attributes}} {{@key}}="{{this}}"{{/each}}{{/if}}></input>
+                    {{/when}}
+
+                    {{#when field.type '==' 'week'}}
+                    <input name="{{../name}}_{{name}}" type="{{field.type}}" class="form-control" min="0"{{#if field.attributes}}{{#each field.attributes}} {{@key}}="{{this}}"{{/each}}{{/if}}></input>
+                    {{/when}}
+
+                    {{#when field.type '==' 'month'}}
+                    <input name="{{../name}}_{{name}}" type="{{field.type}}" class="form-control" min="0"{{#if field.attributes}}{{#each field.attributes}} {{@key}}="{{this}}"{{/each}}{{/if}}></input>
+                    {{/when}}
+
+                    {{#when field.type '==' 'select'}}
+                    <select name="{{../name}}_{{name}}" class="form-control" {{#if field.attributes}}{{#each field.attributes}} {{@key}}="{{this}}"{{/each}}{{/if}}>
+                        {{#each field.options}}
+                        <option value="{{_ key}}">{{value}}</option>
+                        {{/each}}
+                    </select>
+                    {{/when}}
+
+
+                    {{#when field.type '==' 'active'}}
+                    <select name="{{../name}}_{{name}}" class="form-control">
+                        <option value="1">Active</option>
+                        <option value="0">Inactive</option>
+                    </select>
+                    {{/when}}
+
+                    {{#when field.type '==' 'checkboxes'}}
+                        {{#each field.options}}
+                    <label>
+                        <input type="checkbox" name="{{../../name}}_{{../name}}[]" value="{{_ key}}"{{#if field.attributes}}{{#each ../field.attributes}} {{@key}}="{{this}}"{{/each}}{{/if}}{{#in value item.{{../../name}}_{{../name}}}}checked{{/in}} />
+                        <span>{{this}}</span>
+                    </label>
+                        {{/each}}
+                    {{/when}}
+
+                    {{#when field.type '==' 'radios'}}
+                        {{#each field.options}}
+                    <label>
+                        <input type="radio" name="{{../../name}}_{{../name}}" value="{{_ key}}"{{#if field.attributes}}{{#each ../field.attributes}} {{@key}}="{{this}}"{{/each}}{{/if}}{{#when item.{{../../name}}_{{../name}} '==' '{{@key}}'}} checked{{/when}} />
+                        <span>{{this}}</span>
+                    </label>
+                        {{/each}}
+                    {{/when}}
+
+                    {{#when field.type '==' 'file'}}
+                    <div
+                        data-do="file-field"
+                        data-name="{{../name}}_{{name}}"
+                    >
+                        {{#if item.{NAME}}}
+                            <h5>Current Files</h5>
+                            {{#each item.{NAME}}}
+                            <div class="file">
+                                <a href="{{this}}" target="_blank">{{this}}</a>
+                            </div>
+                            {{/each}}
+                        {{/if}}
+                    </div>
+                    {{/when}}
+
+                    {{#when field.type '==' 'files'}}
+                    <div
+                        data-do="file-field"
+                        data-name="{{../name}}_{{name}}"
+                        data-multiple="1"
+                    >
+                        {{#if item.{NAME}}}
+                            <h5>Current Files</h5>
+                            {{#each item.{NAME}}}
+                            <div class="file">
+                                <a href="{{this}}" target="_blank">{{this}}</a>
+                            </div>
+                            {{/each}}
+                        {{/if}}
+                    </div>
+                    {{/when}}
+
+                    {{#when field.type '==' 'image'}}
+                    <div data-do="image-field"
+                        data-name="{{../name}}_{{name}}"
+                        data-width="200"
+                        data-height="200"
+                        data-alt="Change this Photo"
+                        class="image-field">
+                            {{#if item.{NAME}}}
+                                <input type="hidden" name="{NAME}" value="{{item.{NAME}}}" />
+                                <img alt="Change this Photo" width="200" src="{{item.{NAME}}}" />
+                            {{else}}
+                                <img alt="Upload a Photo" width="200" class="placeholder" src="/images/default-image.png" />
+                            {{/if}}
+                    </div>
+                    {{/when}}
+
+                    {{#when field.type '==' 'images'}}
+                    <div data-do="image-field"
+                        data-name="{{../name}}_{{name}}"
+                        data-width="0|200"
+                        data-height="0|200"
+                        data-label="original|small"
+                        data-display="small"
+                        data-multiple="1"
+                        data-alt="Change this Photo"
+                        class="image-field multiple">
+                            {{#if item.{NAME}}}
+                                {{#each item.{NAME}}}
+                                    <input type="hidden" name="{{item.{NAME}}}[{{@index}}][original]" value="{{original}}" />
+                                    <input type="hidden" name="{{item.{NAME}}}[{{@index}}][small]" value="{{small}}" />
+                                    <img alt="Change this Photo" width="200" src="{{small}}" />
+                                {{/each}}
+                            {{else}}
+                                <img alt="Upload a Photo" width="200" class="placeholder" src="/images/default-image.png" />
+                            {{/if}}
+                    </div>
+                    {{/when}}
+
+                    {{#when field.type '==' 'tag'}}
+                    <div data-do="tag-field" class="tag-field" data-name="{{../name}}_{{name}}">
+                        {{#each item.{{../name}}_{{name}}}}
+                            <div class="tag">
+                                <input type="text" class="tag-input text-field" name="{{../name}}_{{name}}[]" placeholder="{{_ 'Add Tag'}}" value="{{this}}" />
+                                <a class="remove" href="javascript:void(0)"><i class="fa fa-times"></i></a>
+                            </div>
+                        {{/each}}
+                    </div>
+                    {{/when}}
+
+                    {{#when field.type '==' 'meta'}}
+                    <div data-do="meta-field" class="meta-field" data-name="{NAME}">
+                            {{#each item.{NAME}}}
                                 <div class="meta">
                                     <input type="text" class="meta-input key" placeholder="{{_ 'Name'}}" value="{{@key}}" />
                                     <input type="text" class="meta-input value" placeholder="{{_ 'Value'}}" value="{{this}}" />
-                                    <input type="hidden" name="user_meta[{{@key}}]" value="{{this}}">
+                                    <input type="hidden" name="{NAME}[{{@key}}]" value="{{this}}">
                                     <a class="remove" href="javascript:void(0)"><i class="fa fa-times"></i></a>
                                 </div>
                             {{/each}}
                     </div>
                     <a class="add-meta" href="javascript:void(0)"><i class="fa fa-plus"></i></a>
+                    {{/when}}
 
-                    {{#if errors.user_meta}}
-                    <span class="help-text">{{errors.user_meta}}</span>
-                    {{/if}}
+                    {{#when field.type '==' 'button'}}
+                    <button name="{{../name}}[]" value="{{this}}"{{#if field.attributes}}{{#each ../field.attributes}} {{@key}}="{{this}}"{{/each}}{{/if}}{{#in value ../item.{{../name}}}}checked{{/in}}>{{this}}</button>
+                    {{/when}}
                 </div>
+                {{#error_exist ../errors name ../name}}
+                <span class="help-text">{{value}}</span>
+                {{/error_exist}}
             </div>
 
-            <div class="form-group{{#if errors.user_files}} has-error{{/if}}">
-                <label class="control-label">Files</label>
-                <div>
-                    <input name="user_files" value="{{item.user_files}}" multiple="multiple" type="file" class="form-control" />
-
-                    {{#if errors.user_files}}
-                    <span class="help-text">{{errors.user_files}}</span>
-                    {{/if}}
-                </div>
-            </div>
+            {{/each}}
 
 
             <div class="clear form-group">
