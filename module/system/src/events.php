@@ -37,12 +37,12 @@ $cradle->on('system-schema-create', function ($request, $response) {
 
     //----------------------------//
     // 3. Prepare Data
-    
+
     // filter relations
     if(isset($data['relations'])) {
         // filter out empty relations
         $data['relations'] = array_filter(
-            $data['relations'], 
+            $data['relations'],
             function($relation) {
                 // make sure we have relation name
                 return $relation['name'] !== '' ? true : false;
