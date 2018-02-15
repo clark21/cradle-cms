@@ -10,6 +10,9 @@
 use Cradle\Module\Utility\File;
 use Cradle\Module\System\Schema as SystemSchema;
 
+use Cradle\Http\Request;
+use Cradle\Http\Response;
+
 /**
  * Render the System Object Search Page
  *
@@ -28,9 +31,9 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
         $request->setStage('range', 50);
     }
 
-    cradle()->trigger('system-schema-detail', $request, $response);
-
-    $schema = SystemSchema::i($response->getResults());
+    $schemaResponse = Response::i()->load();
+    cradle()->trigger('system-schema-detail', $request, $schemaResponse);
+    $schema = SystemSchema::i($schemaResponse->getResults());
 
     //filter possible filter options
     //we do this to prevent SQL injections
@@ -193,24 +196,23 @@ $cradle->get('/admin/system/object/:schema/create', function($request, $response
 
     //----------------------------//
     // 2. Prepare Data
-    cradle()->trigger('system-schema-detail', $request, $response);
-
-    $schema = SystemSchema::i($response->getResults());
-
-    $data = [
-        'item' => $request->getPost(),
-        'schema' => [
-            'name' => $schema->getTableName(),
-            'singular' => $schema->getSingular(),
-            'fields' => $schema->getFields(),
-            'files' => $schema->getFiles()
-        ]
-    ];
+    $data = ['item' => $request->getPost()];
 
     if ($response->isError()) {
         $response->setFlash($response->getMessage(), 'danger');
         $data['errors'] = $response->getValidation();
     }
+
+    $schemaResponse = Response::i()->load();
+    cradle()->trigger('system-schema-detail', $request, $schemaResponse);
+    $schema = SystemSchema::i($schemaResponse->getResults());
+
+    $data['schema'] = [
+        'name' => $schema->getTableName(),
+        'singular' => $schema->getSingular(),
+        'fields' => $schema->getFields(),
+        'files' => $schema->getFiles()
+    ];
 
     //add CSRF
     cradle()->trigger('csrf-load', $request, $response);
@@ -224,7 +226,7 @@ $cradle->get('/admin/system/object/:schema/create', function($request, $response
 
     //----------------------------//
     // 3. Render Template
-    $class = 'page-developer-user-create page-admin';
+    $class = 'page-admin-system-object-create page-admin';
     $data['title'] = cradle('global')->translate('Create %s', $data['schema']['singular']);
 
     //I need a better when
@@ -357,7 +359,17 @@ $cradle->get('/admin/system/object/:schema/create', function($request, $response
 
             return implode('', $buffer);
         })
-        ;
+        ->registerHelper('has', function($value, $array, $options) {
+            if(!is_array($array)) {
+                return $options['inverse']();
+            }
+
+            if(isset($array[$value])) {
+                return $options['fn']();
+            }
+
+            return $options['inverse']();
+        });
 
     $body = cradle('/module/system')->template('object/form', $data);
 
@@ -386,9 +398,18 @@ $cradle->get('/admin/system/object/:schema/update/:id', function($request, $resp
     // 2. Prepare Data
     $data = ['item' => $request->getPost()];
 
+    if($response->isError()) {
+        $response->setFlash($response->getMessage(), 'danger');
+        $data['errors'] = $response->getValidation();
+    }
+
     //if no item
     if(empty($data['item'])) {
-        $request->setStage($request->getStage('schema') . '_id', $request->getStage('id'));
+        $request->setStage(
+            $request->getStage('schema') . '_id',
+            $request->getStage('id')
+        );
+
         cradle()->trigger('system-object-detail', $request, $response);
 
         //can we update ?
@@ -401,25 +422,177 @@ $cradle->get('/admin/system/object/:schema/update/:id', function($request, $resp
         $data['item'] = $response->getResults();
     }
 
-    if($response->isError()) {
-        $response->setFlash($response->getMessage(), 'danger');
-        $data['errors'] = $response->getValidation();
-    }
+    $schemaResponse = Response::i()->load();
+    cradle()->trigger('system-schema-detail', $request, $schemaResponse);
+    $schema = SystemSchema::i($schemaResponse->getResults());
 
-    cradle()->trigger('system-schema-detail', $request, $response);
-    $data = array_merge($data, $response->getResults());
+    $data['schema'] = [
+        'name' => $schema->getTableName(),
+        'singular' => $schema->getSingular(),
+        'fields' => $schema->getFields(),
+        'files' => $schema->getFiles()
+    ];
 
-     //can we update ?
-    if($response->isError()) {
-        //add a flash
-        cradle('global')->flash($response->getMessage(), 'danger');
-        return cradle('global')->redirect('/admin/system/object/'. $request->getStage('schema') .'/search');
+    //add CSRF
+    cradle()->trigger('csrf-load', $request, $response);
+    $data['csrf'] = $response->getResults('csrf');
+
+    if (!empty($data['schema']['files'])) {
+        //add CDN
+        $config = $this->package('global')->service('s3-main');
+        $data['cdn_config'] = File::getS3Client($config);
     }
 
     //----------------------------//
     // 3. Render Template
-    $class = 'page-developer-user-update page-admin';
-    $data['title'] = cradle('global')->translate('Updating System Object');
+    $class = 'page-admin-system-object-update page-admin';
+    $data['title'] = cradle('global')->translate(
+        'Updating %s',
+        $data['schema']['singular']
+    );
+
+    //I need a better when
+    cradle('global')
+        ->handlebars()
+        ->registerHelper('when', function(...$args) {
+            //$value1, $operator, $value2, $options
+            $options = array_pop($args);
+            $value2 = array_pop($args);
+            $operator = array_pop($args);
+
+            $value1 = array_shift($args);
+
+            foreach($args as $arg) {
+                if(!isset($value1[$arg])) {
+                    $value1 = null;
+                    break;
+                }
+
+                $value1 = $value1[$arg];
+            }
+
+            $valid = false;
+
+            switch (true) {
+                case $operator == '=='   && $value1 == $value2:
+                case $operator == '==='  && $value1 === $value2:
+                case $operator == '!='   && $value1 != $value2:
+                case $operator == '!=='  && $value1 !== $value2:
+                case $operator == '<'    && $value1 < $value2:
+                case $operator == '<='   && $value1 <= $value2:
+                case $operator == '>'    && $value1 > $value2:
+                case $operator == '>='   && $value1 >= $value2:
+                case $operator == '&&'   && ($value1 && $value2):
+                case $operator == '||'   && ($value1 || $value2):
+                    $valid = true;
+                    break;
+            }
+
+            if($valid) {
+                return $options['fn']();
+            }
+
+            return $options['inverse']();
+        })
+        ->registerHelper('loop', function(...$args) {
+            $args = func_get_args();
+
+            //$object, $options
+            $options = array_pop($args);
+            $object = array_shift($args);
+
+            foreach($args as $arg) {
+                if(!isset($object[$arg])) {
+                    $object = null;
+                    break;
+                }
+
+                $object = $object[$arg];
+            }
+
+            if (is_scalar($object) || !$object) {
+                return $options['inverse']();
+            }
+
+            //test foreach
+            $keyName = null;
+            $valueName = null;
+            //see handlebars.js {{#each array as |value, key|}}
+            if (strpos($options['args'], ' as |') !== false
+                && substr_count($options['args'], '|') === 2
+            ) {
+                list($tmp, $valueName) = explode('|', $options['args']);
+
+                if (strpos($valueName, ',') !== false) {
+                    list($valueName, $keyName) = explode(',', trim($valueName));
+                }
+
+                $keyName = trim($keyName);
+                $valueName = trim($valueName);
+            }
+
+            $buffer = [];
+            $object = (array) $object;
+
+            $first = $last = null;
+
+            if (!empty($object)) {
+                //get last
+                end($object);
+                $last = key($object);
+
+                //get first
+                reset($object);
+                $first = key($object);
+            }
+
+            $i = 0;
+            foreach ($object as $key => $value) {
+                //pass on hash
+                if (is_array($value)
+                    && isset($options['hash'])
+                    && is_array($options['hash'])
+                ) {
+                    $value = array_merge($value, $options['hash']);
+                }
+
+                if (!is_array($value)) {
+                    $value = ['this' => $value];
+                } else {
+                    $value['this'] = $value;
+                }
+
+                if ($valueName) {
+                    $value[$valueName] = $value['this'];
+                }
+
+                if ($keyName) {
+                    $value[$keyName] = $key;
+                }
+
+                $value['@index'] = $i;
+                $value['@key'] = $key;
+                $value['@first'] = $first == $key;
+                $value['@last'] = $last == $key;
+
+                $buffer[] = $options['fn']($value);
+                $i++;
+            }
+
+            return implode('', $buffer);
+        })
+        ->registerHelper('has', function($value, $array, $options) {
+            if(!is_array($array)) {
+                return $options['inverse']();
+            }
+
+            if(isset($array[$value])) {
+                return $options['fn']();
+            }
+
+            return $options['inverse']();
+        });
+
     $body = cradle('/module/system')->template('object/form', $data);
 
     //Set Content
@@ -445,6 +618,51 @@ $cradle->post('/admin/system/object/:schema/create', function($request, $respons
 
     //----------------------------//
     // 2. Prepare Data
+    $schemaResponse = Response::i()->load();
+    cradle()->trigger('system-schema-detail', $request, $schemaResponse);
+    $schema = SystemSchema::i($schemaResponse->getResults());
+
+    $fields = $schema->getFields();
+
+    $invalidTypes = ['none', 'active', 'created', 'updated'];
+    $requiredFields = $schema->getRequired();
+
+    foreach($fields as $name => $field) {
+        if(in_array($field['field']['type'], $invalidTypes)) {
+            $request->removeStage($name);
+            continue;
+        }
+
+        if(//if there is a default
+            isset($field['default'])
+            && trim($field['default'])
+            // and there's no stage
+            && $request->hasStage($name)
+            && !$request->getStage($name)
+        ) {
+            //set the default
+            $request->setStage($name, $field['default']);
+            continue;
+        }
+
+        if(//if this field is required
+            in_array($name, $requiredFields)
+            // and there's no stage
+            && $request->hasStage($name)
+            && !$request->getStage($name)
+        ) {
+            //set the default
+            $request->setStage($name, null);
+            continue;
+        }
+    }
+
+    if(//special shot out to user
+        in_array('user', $schema->getRelations())
+        && !$request->hasStage('user_id')
+    ) {
+        $request->setStage('user_id', $request->getSession('me', 'user_id'));
+    }
 
     //----------------------------//
     // 3. Process Request
@@ -453,15 +671,20 @@ $cradle->post('/admin/system/object/:schema/create', function($request, $respons
     //----------------------------//
     // 4. Interpret Results
     if($response->isError()) {
-        return cradle()->triggerRoute('get', '/admin/system/object/'. $request->getStage('schema') .'/create', $request, $response);
+        return cradle()->triggerRoute(
+            'get',
+            '/admin/system/object/'. $request->getStage('schema') . '/create',
+            $request,
+            $response
+        );
     }
 
     //it was good
     //add a flash
-    cradle('global')->flash('System Object was Created', 'success');
+    cradle('global')->flash($schema->getSingular() . ' was Created', 'success');
 
     //redirect
-    cradle('global')->redirect('/admin/system/object/'. $request->getStage('schema') .'/create');
+    cradle('global')->redirect('/admin/system/object/'. $request->getStage('schema') . '/search');
 });
 
 /**
@@ -478,43 +701,67 @@ $cradle->post('/admin/system/object/:schema/update/:id', function($request, $res
 
     //----------------------------//
     // 2. Prepare Data
+    $request->setStage(
+        $request->getStage('schema') . '_id',
+        $request->getStage('id')
+    );
 
-    //user_slug is disallowed
-    $request->removeStage('user_slug');
+    $schemaResponse = Response::i()->load();
+    cradle()->trigger('system-schema-detail', $request, $schemaResponse);
+    $schema = SystemSchema::i($schemaResponse->getResults());
 
-    //if user_meta has no value make it null
-    if ($request->hasStage('user_meta') && !$request->getStage('user_meta')) {
-        $request->setStage('user_meta', null);
+    $fields = $schema->getFields();
+
+    $invalidTypes = ['none', 'active', 'created', 'updated'];
+    $requiredFields = $schema->getRequired();
+
+    foreach($fields as $name => $field) {
+        if(in_array($field['field']['type'], $invalidTypes)) {
+            $request->removeStage($name);
+            continue;
+        }
+
+        if(//if there is a default
+            isset($field['default'])
+            && trim($field['default'])
+            // and there's no stage
+            && $request->hasStage($name)
+            && !$request->getStage($name)
+        ) {
+            //set the default
+            $request->setStage($name, $field['default']);
+            continue;
+        }
+
+        if(//if this field is required
+            in_array($name, $requiredFields)
+            // and there's no stage
+            && $request->hasStage($name)
+            && !$request->getStage($name)
+        ) {
+            //set the default
+            $request->setStage($name, null);
+            continue;
+        }
     }
-
-    //if user_files has no value make it null
-    if ($request->hasStage('user_files') && !$request->getStage('user_files')) {
-        $request->setStage('user_files', null);
-    }
-
-    //user_type is disallowed
-    $request->removeStage('user_type');
-
-    //user_flag is disallowed
-    $request->removeStage('user_flag');
 
     //----------------------------//
     // 3. Process Request
-    cradle()->trigger('user-update', $request, $response);
+    cradle()->trigger('system-object-update', $request, $response);
 
     //----------------------------//
     // 4. Interpret Results
     if($response->isError()) {
-        $route = '/admin/system/object/'. $request->getStage('schema') .'/update' . $request->getStage('id');
+        $route = '/admin/system/object/'. $request->getStage('schema') .'/update/' . $request->getStage('id');
         return cradle()->triggerRoute('get', $route, $request, $response);
     }
 
     //it was good
     //add a flash
-    cradle('global')->flash('System Object was Updated', 'success');
+    cradle('global')->flash($schema->getSingular() . ' was Updated', 'success');
 
     //redirect
-    cradle('global')->redirect('/admin/system/object/'. $request->getStage('schema') .'/update' . $request->getStage('id'));
+    cradle('global')->redirect('/admin/system/object/'. $request->getStage('schema') .'/search');
 });
 
 /**

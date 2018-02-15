@@ -27,7 +27,7 @@
             {{#each schema.fields}}
                 {{#in field.type 'none,hide,active,created,updated'}}
                 {{else}}
-                    <div class="form-group{{#in @key ../errors}} has-error{{/in}}">
+                    <div class="form-group{{#has @key ../errors}} has-error{{/has}}">
                         <label class="control-label">{{label}}</label>
                         <div>
                             {{#when field.type '===' 'text'}}
@@ -484,9 +484,9 @@
                             {{/when}}
                             {{#when field.type '===' 'multirange'}}
                             {{/when}}
-                            {{#when ../errors name '==' 1}}
-                                <span class="help-text">{{errors.user_name}}</span>
-                            {{/when}}
+                            {{#has @key ../errors}}
+                                <span class="help-text">{{key @key ../errors}}</span>
+                            {{/has}}
                         </div>
                     </div>
                 {{/in}}

@@ -67,19 +67,18 @@ class Validator
                 }
             }
         }
-        return self::getOptionalErrors($object, $data, $errors);
+        return self::getOptionalErrors($data, $errors);
     }
 
     /**
      * Returns Create Errors
      *
-     * @param *array $object
      * @param *array $data
      * @param array  $errors
      *
      * @return array
      */
-    public function getUpdateErrors(array $object, array $data, array $errors = [])
+    public function getUpdateErrors(array $data, array $errors = [])
     {
         $fields = $this->schema->getFields();
         $table = $this->schema->getTableName();
@@ -89,8 +88,11 @@ class Validator
             $errors[$primary] = 'Invalid ID';
         }
 
-        foreach($fields as $field) {
-            $name = $table . '_' . $field['key'];
+        foreach($fields as $name => $field) {
+            if(!isset($field['validation'])) {
+                continue;
+            }
+
             foreach($field['validation'] as $validation) {
                 if($validation['method'] === 'required'
                     && isset($data[$name])
@@ -101,7 +103,7 @@ class Validator
             }
         }
 
-        return self::getOptionalErrors($object, $data, $errors);
+        return self::getOptionalErrors($data, $errors);
 
         return $errors;
     }
@@ -115,7 +117,7 @@ class Validator
      *
      * @return array
      */
-    public function getOptionalErrors(array $object, array $data, array $errors = [])
+    public function getOptionalErrors(array $data, array $errors = [])
     {
         $fields = $this->schema->getFields();
         $table = $this->schema->getTableName();

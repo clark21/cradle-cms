@@ -50,13 +50,14 @@ $cradle->on('system-object-create', function ($request, $response) {
 
     //----------------------------//
     // 3. Prepare Data
-    // $data = $schema
-    //     ->model()
-    //     ->formatter(
-    //         $data,
-    //         $this->package('global')->service('s3-main'),
-    //         $this->package('global')->path('upload')
-    //     );
+    $data = $schema
+        ->model()
+        ->formatter()
+        ->formatData(
+            $data,
+            $this->package('global')->service('s3-main'),
+            $this->package('global')->path('upload')
+        );
 
     //----------------------------//
     // 4. Process Data
@@ -148,7 +149,7 @@ $cradle->on('system-object-detail', function ($request, $response) {
     //if no flag
     if (!$request->hasGet('nocache')) {
         //get it from cache
-        $results = $objectRedis->getDetail($key, $id);
+        $results = $objectRedis->getDetail($key . '-' . $id);
     }
 
     //if no results
@@ -167,7 +168,7 @@ $cradle->on('system-object-detail', function ($request, $response) {
 
         if ($results) {
             //cache it from database or index
-            $objectRedis->createDetail([$key => $id], $results);
+            $objectRedis->createDetail($key . '-' . $id, $results);
         }
     }
 

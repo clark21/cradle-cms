@@ -383,6 +383,35 @@ class Schema
     }
 
     /**
+     * Returns a list of required fields
+     *
+     * @return array
+     */
+    public function getRequired()
+    {
+        $results = [];
+        if(!isset($this->data['fields']) || empty($this->data['fields'])) {
+            return $results;
+        }
+
+        $table = $this->data['name'];
+        foreach($this->data['fields'] as $field) {
+            $name = $table . '_' . $field['name'];
+            if (!isset($field['validation'])) {
+                continue;
+            }
+
+            foreach ($field['validation'] as $validation) {
+                if ($validation === 'required') {
+                    $results[] = $name;
+                }
+            }
+        }
+
+        return $results;
+    }
+
+    /**
      * Returns singular name
      *
      * @return string
@@ -400,6 +429,35 @@ class Schema
     public function getTableName()
     {
         return $this->data['name'];
+    }
+
+    /**
+     * Returns a list of unique fields
+     *
+     * @return array
+     */
+    public function getUnique()
+    {
+        $results = [];
+        if(!isset($this->data['fields']) || empty($this->data['fields'])) {
+            return $results;
+        }
+
+        $table = $this->data['name'];
+        foreach($this->data['fields'] as $field) {
+            $name = $table . '_' . $field['name'];
+            if (!isset($field['validation'])) {
+                continue;
+            }
+
+            foreach ($field['validation'] as $validation) {
+                if ($validation === 'unique') {
+                    $results[] = $name;
+                }
+            }
+        }
+
+        return $results;
     }
 
     /**
