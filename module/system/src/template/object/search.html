@@ -72,7 +72,7 @@
                             {{#each rows}}
                                 <tr data-id="{{key ../schema.primary this}}">
                                     <td>
-                                        {{#is_active this schema}}
+                                        {{#is_active this ../schema}}
                                             <a
                                                 title="Edit"
                                                 href="/admin/system/object/{{../schema.name}}/update/{{key ../schema.primary this}}"

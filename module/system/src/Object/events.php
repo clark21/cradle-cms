@@ -201,11 +201,11 @@ $cradle->on('system-object-remove', function ($request, $response) {
     // 3. Prepare Data
     $data = $response->getResults();
 
-    if(!isset($data['schema'])) {
+    if(!$request->hasStage('schema')) {
         throw SystemException::forNoSchema();
     }
 
-    $schema = SystemSchema::i($data['schema']);
+    $schema = SystemSchema::i($request->getStage('schema'));
 
     $primary = $schema->getPrimary();
     $active = $schema->getActive();
@@ -266,11 +266,12 @@ $cradle->on('system-object-restore', function ($request, $response) {
     // 3. Prepare Data
     $data = $response->getResults();
 
-    if(!isset($data['schema'])) {
+    if(!$request->hasStage('schema')) {
         throw SystemException::forNoSchema();
     }
 
-    $schema = SystemSchema::i($data['schema']);
+    $schema = SystemSchema::i($request->getStage('schema'));
+
     $primary = $schema->getPrimary();
     $active = $schema->getActive();
 

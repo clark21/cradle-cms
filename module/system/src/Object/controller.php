@@ -778,10 +778,17 @@ $cradle->get('/admin/system/object/:schema/remove/:id', function($request, $resp
 
     //----------------------------//
     // 2. Prepare Data
-    // no data to preapre
+    $request->setStage(
+        $request->getStage('schema') . '_id',
+        $request->getStage('id')
+    );
+
+    $schemaResponse = Response::i()->load();
+    cradle()->trigger('system-schema-detail', $request, $schemaResponse);
+
     //----------------------------//
     // 3. Process Request
-    cradle()->trigger('user-remove', $request, $response);
+    cradle()->trigger('system-object-remove', $request, $response);
 
     //----------------------------//
     // 4. Interpret Results
@@ -790,11 +797,12 @@ $cradle->get('/admin/system/object/:schema/remove/:id', function($request, $resp
         cradle('global')->flash($response->getMessage(), 'danger');
     } else {
         //add a flash
-        $message = cradle('global')->translate('System Object was Removed');
+        $message = cradle('global')->translate('%s was Removed', $schema->getSingular());
         cradle('global')->flash($message, 'success');
     }
 
-    cradle('global')->redirect('/admin/user/search');
+    //redirect
+    cradle('global')->redirect('/admin/system/object/'. $request->getStage('schema') .'/search');
 });
 
 /**
@@ -811,10 +819,18 @@ $cradle->get('/admin/system/object/:schema/restore/:id', function($request, $res
 
     //----------------------------//
     // 2. Prepare Data
-    // no data to preapre
+    $request->setStage(
+        $request->getStage('schema') . '_id',
+        $request->getStage('id')
+    );
+
+    $schemaResponse = Response::i()->load();
+    cradle()->trigger('system-schema-detail', $request, $schemaResponse);
+    $schema = SystemSchema::i($schemaResponse->getResults());
+
     //----------------------------//
     // 3. Process Request
-    cradle()->trigger('user-restore', $request, $response);
+    cradle()->trigger('system-object-restore', $request, $response);
 
     //----------------------------//
     // 4. Interpret Results
@@ -823,9 +839,10 @@ $cradle->get('/admin/system/object/:schema/restore/:id', function($request, $res
         cradle('global')->flash($response->getMessage(), 'danger');
     } else {
         //add a flash
-        $message = cradle('global')->translate('System Object was Restored');
+        $message = cradle('global')->translate('%s was Restored', $schema->getSingular());
         cradle('global')->flash($message, 'success');
     }
 
-    cradle('global')->redirect('/admin/user/search');
+    //redirect
+    cradle('global')->redirect('/admin/system/object/'. $request->getStage('schema') .'/search');
 });
