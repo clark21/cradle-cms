@@ -785,6 +785,7 @@ $cradle->get('/admin/system/object/:schema/remove/:id', function($request, $resp
 
     $schemaResponse = Response::i()->load();
     cradle()->trigger('system-schema-detail', $request, $schemaResponse);
+    $schema = SystemSchema::i($schemaResponse->getResults());
 
     //----------------------------//
     // 3. Process Request
