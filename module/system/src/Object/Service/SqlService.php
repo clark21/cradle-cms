@@ -258,6 +258,7 @@ class SqlService
 
         //keyword?
         $searchable = $this->schema->getSearchable(1);
+
         if(!empty($searchable)) {
             $keywords = [];
 

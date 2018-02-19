@@ -749,22 +749,12 @@
         reindexRelations();
     });
 
-    $(window).on('icon-field-init', function(e, target) {
-        $('input', target)
-            .focus(function() {
-                $(target).next().removeClass('hide');
-            })
-            .blur(function() {
-                //$(target).next().addClass('hide');
-            });
+    $(window).on('preview-icon-change', function(e, target) {
+        var target = $(target);
 
-        $(target)
-            .next()
-            .find('i')
-            .click(function() {
-                $('input', target).val($(this)[0].className);
-                $('i', target)[0].className = $(this)[0].className;
-            });
+        var val = target.val();
+
+        $("#iconPreview i").attr("class", val);
     });
 
     var reindexFields = function() {

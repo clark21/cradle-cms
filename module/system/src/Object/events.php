@@ -446,3 +446,62 @@ $cradle->on('system-object-update', function ($request, $response) {
     //return response format
     $response->setError(false)->setResults($results);
 });
+
+/**
+ * System Object Csv Export Job
+ *
+ * @param Request $request
+ * @param Response $response
+ */
+$cradle->on('system-object-csv-export', function ($request, $response) {
+    $data['csv'] = $request->getStage('csv');
+    $data['header'] = $request->getStage('header');
+    $data['filename'] = $request->getStage('filename');
+
+    //Set CSV header
+    foreach (array_keys($data['csv'][0]) as $key => $value) {
+        if (array_key_exists($value, $data['header'])) {
+            $header[$value] = $data['header'][$value];
+            $fields[] = $value;
+        }
+    }
+
+    $fields = array_intersect(array_keys($data['header']), $fields);
+    $head = array_intersect(array_keys($data['header']), array_keys($header));
+
+    foreach ($head as $key => $value) {
+        $head[$key] =  $header[$value];
+    }
+
+    //Set new rows by required field
+    foreach ($data['csv'] as $row) {
+        $newRow = [];
+        $arranged = [];
+
+        foreach ($row as $key => $value) {
+            if (in_array($key, $fields)) {
+                $newRow[array_search($key, $fields)] = $row[$key];
+            }
+        }
+
+        ksort($newRow);
+        $newData[] = array_combine($fields, $newRow);
+    }
+
+    header('Content-Encoding: UTF-8');
+    header('Content-type: text/csv; charset=UTF-8');
+    header('Content-Disposition: attachment; filename=' . $data['filename']);
+
+    ob_clean();
+    $f = fopen('php://output', 'w');
+
+    fputcsv($f, $head);
+
+    foreach ($newData as $row) {
+        fputcsv($f, $row);
+    }
+
+    fclose($f);
+
+    return ' ';
+});

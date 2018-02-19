@@ -17,6 +17,12 @@
 <div class="clearfix">
     <!-- START: SEARCH FORM -->
     <form class="pull-right search form-inline" method="get">
+        <select name="filter_by" class="form-control">
+        <option value="" {{#unless filter_by}}selected{{/unless}}>Please select a filter</option>
+        {{#each schema.filterable}}
+            <option value="{{col}}" {{#when ../filter_by '==' col}}selected{{/when}}>Filter By {{capital name}}</option>
+        {{/each}}
+        </select>
         <div class="form-group">
             <input name="q[]" placeholder="Search" type="text"
             value="{{q.0}}" class="form-control" />
@@ -24,6 +30,17 @@
         <button class="btn"><i class="fa fa-search"></i></button>
     </form>
     <!-- END: SEARCH FORM -->
+
+    <!-- START: Export CSV -->
+    <div class="pull-right {{#session 'me'}}{{#when auth_type '==' 'staff'}} hide {{/when}} {{/session}}">
+        <form class="form-inline" method="get">
+            <input name="keyword" type="hidden" value="{{q.0}}" id="q[]"/>
+            <input name="keyword" type="hidden" value="{{filter_by}}" id="filter_by"/>
+            <input name="action" type="hidden" value="export"/>
+            <button type="submit" class="btn btn-info" {{#unless rows.length}}disabled{{/unless}}>Export</button>
+        </form>
+    </div>
+    <!-- END: Export CSV -->
 
     <div class="btn-group" role="group" aria-label="...">
         <a class="btn btn-primary" href="?filter[{{schema.active}}]=1">
