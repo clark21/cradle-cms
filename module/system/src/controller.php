@@ -70,13 +70,35 @@ $cradle->get('/admin/system/schema/create', function($request, $response) {
     $class = 'page-admin-system-schema-create page-admin';
     $data['title'] = cradle('global')->translate('Create System Schema');
 
-    cradle('global')->handlebars()->registerHelper('is_array', function($value, $option) {
+    cradle('global')
+        ->handlebars()
+        ->registerHelper('is_array', function($value, $option) {
         if(is_array($value)) {
             return $option['fn']();
         }
 
         return $option['inverse']();
-    });
+        })
+        ->registerHelper('get_icons', function($options) {
+            function array_delete($array, $element) {
+                return (is_array($element)) ? array_values(array_diff($array, $element)) : array_values(array_diff($array, array($element)));
+            }
+
+            $icons_file = "bower_components/font-awesome/css/font-awesome.css";
+            $parsed_file = file_get_contents($icons_file);
+            preg_match_all("/fa\-([a-zA-z0-9\-]+[^\:\.\,\s])/", $parsed_file, $matches);
+            $exclude_icons = array("fa-lg", "fa-lg{", "fa-2x", "fa-2x{", "fa-3x", "fa-3x{", "fa-4x", "fa-4x{", "fa-5x", "fa-5x{", "fa-ul", "fa-ul{", "fa-ul>", "fa-li", "fa-li{", "fa-fw", "fa-fw{", "fa-border", "fa-pulse", "fa-rotate-90", "fa-rotate-90{", "fa-rotate-180", "fa-rotate-180{", "fa-rotate-270", "fa-rotate-270{", "fa-spin", "fa-flip-horizontal", "fa-flip-vertical", "fa-stack", "fa-stack{", "fa-stack-1x", "fa-stack-1x{", "fa-stack-2x", "fa-stack-2x{", "fa-inverse", "fa-pull-left", "fa-pull-right");
+            $icons = array("icons" => array_delete($matches[0], $exclude_icons));
+
+            $columns = [];
+
+            foreach($icons['icons'] as $key => $value) {
+                $columns[] = $options['fn'](["value" => 'fa ' . $value]);
+            }
+
+            return implode('', $columns);
+        })
+        ;
 
     $body = cradle('/module/system')->template(
         'form',
@@ -146,13 +168,35 @@ $cradle->get('/admin/system/schema/update/:name', function($request, $response) 
     $class = 'page-admin-system-schema-update page-admin';
     $data['title'] = cradle('global')->translate('Updating System Schema');
 
-    cradle('global')->handlebars()->registerHelper('is_array', function($value, $option) {
-        if(is_array($value)) {
-            return $option['fn']();
-        }
+    cradle('global')
+        ->handlebars()
+        ->registerHelper('is_array', function($value, $option) {
+            if(is_array($value)) {
+                return $option['fn']();
+            }
 
-        return $option['inverse']();
-    });
+            return $option['inverse']();
+        })
+        ->registerHelper('get_icons', function($options) {
+            function array_delete($array, $element) {
+                return (is_array($element)) ? array_values(array_diff($array, $element)) : array_values(array_diff($array, array($element)));
+            }
+
+            $icons_file = "bower_components/font-awesome/css/font-awesome.css";
+            $parsed_file = file_get_contents($icons_file);
+            preg_match_all("/fa\-([a-zA-z0-9\-]+[^\:\.\,\s])/", $parsed_file, $matches);
+            $exclude_icons = array("fa-lg", "fa-lg{", "fa-2x", "fa-2x{", "fa-3x", "fa-3x{", "fa-4x", "fa-4x{", "fa-5x", "fa-5x{", "fa-ul", "fa-ul{", "fa-ul>", "fa-li", "fa-li{", "fa-fw", "fa-fw{", "fa-border", "fa-pulse", "fa-rotate-90", "fa-rotate-90{", "fa-rotate-180", "fa-rotate-180{", "fa-rotate-270", "fa-rotate-270{", "fa-spin", "fa-flip-horizontal", "fa-flip-vertical", "fa-stack", "fa-stack{", "fa-stack-1x", "fa-stack-1x{", "fa-stack-2x", "fa-stack-2x{", "fa-inverse", "fa-pull-left", "fa-pull-right");
+            $icons = array("icons" => array_delete($matches[0], $exclude_icons));
+
+            $columns = [];
+
+            foreach($icons['icons'] as $key => $value) {
+                $columns[] = $options['fn'](["value" => 'fa ' . $value]);
+            }
+
+            return implode('', $columns);
+        })
+        ;
 
     $body = cradle('/module/system')->template(
         'form',

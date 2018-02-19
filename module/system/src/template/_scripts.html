@@ -749,6 +749,14 @@
         reindexRelations();
     });
 
+    $(window).on('preview-icon-change', function(e, target) {
+        var target = $(target);
+
+        var val = target.val();
+
+        $("#iconPreview i").attr("class", val);
+    });
+
     var reindexFields = function() {
         var format = {
             disable: 'fields[{INDEX}][disable]',
