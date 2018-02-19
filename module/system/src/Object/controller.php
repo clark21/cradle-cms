@@ -37,7 +37,7 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
 
     //set filter
     //we do this to prevent SQL injections
-    if($request->hasStage('filter_by')) {
+    if($request->getStage('filter_by') && $request->getStage('q', 0)) {
         $request->setStage('filter', $request->getStage('filter_by'), $request->getStage('q', 0));
     }
 
@@ -80,11 +80,26 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
     ];
 
     foreach($schema->getFilterable() as $key => $filterable) {
-        if(preg_match("/". $schema->getTableName() . "_active/", $filterable)) {
+        if(preg_match("/". $data['schema']['name'] . "_active/", $filterable)) {
             continue;
         }
 
-        $data['schema']['filterable'][$key] = ['col' => $filterable, 'name' => str_replace($schema->getTableName() . '_' , '', $filterable)];
+        $data['schema']['filterable'][$key] = ['col' => $filterable, 'name' => str_replace($data['schema']['name'] . '_' , '', $filterable)];
+    }
+
+    if ($request->getStage('action') == 'export') {
+        // Set CSV header
+        $header = [];
+        foreach ($data['schema']['fields'] as $key => $head) {
+            $header[$key] = ucfirst(str_replace($data['schema']['name'] . '_' , '', $key));
+        }
+
+        //Set Filename
+        $request->setStage('filename', $data['schema']['plural'].'-'.date("Y-m-d").".csv");
+        $request->setStage('header', $header);
+        $request->setStage('csv', $data['rows']);
+        cradle()->trigger('system-object-csv-export', $request, $response);
+        exit;
     }
 
     //----------------------------//
