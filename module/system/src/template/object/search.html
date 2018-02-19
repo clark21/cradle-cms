@@ -17,6 +17,12 @@
 <div class="clearfix">
     <!-- START: SEARCH FORM -->
     <form class="pull-right search form-inline" method="get">
+        <select name="filter_by" class="form-control">
+        <option value="" {{#unless filter_by}}selected{{/unless}}>Please select a filter</option>
+        {{#each schema.filterable}}
+            <option value="{{col}}" {{#when ../filter_by '==' col}}selected{{/when}}>Filter By {{capital name}}</option>
+        {{/each}}
+        </select>
         <div class="form-group">
             <input name="q[]" placeholder="Search" type="text"
             value="{{q.0}}" class="form-control" />

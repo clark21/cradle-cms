@@ -35,6 +35,12 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
     cradle()->trigger('system-schema-detail', $request, $schemaResponse);
     $schema = SystemSchema::i($schemaResponse->getResults());
 
+    //set filter
+    //we do this to prevent SQL injections
+    if($request->hasStage('filter_by')) {
+        $request->setStage('filter', $request->getStage('filter_by'), $request->getStage('q', 0));
+    }
+
     //filter possible filter options
     //we do this to prevent SQL injections
     if(is_array($request->getStage('filter'))) {
@@ -73,6 +79,14 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
         'sortable' => $schema->getSortable(),
     ];
 
+    foreach($schema->getFilterable() as $key => $filterable) {
+        if(preg_match("/". $schema->getTableName() . "_active/", $filterable)) {
+            continue;
+        }
+
+        $data['schema']['filterable'][$key] = ['col' => $filterable, 'name' => str_replace($schema->getTableName() . '_' , '', $filterable)];
+    }
+
     //----------------------------//
     // 3. Render Template
     $class = 'page-admin-system-object-search page-admin';
@@ -90,7 +104,9 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
             $value1 = array_shift($args);
 
             foreach($args as $arg) {
-                $value1 = $value1[$arg];
+                if (isset($value1[$arg])) {
+                    $value1 = $value1[$arg];
+                }
             }
 
             $valid = false;
@@ -168,8 +184,6 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
             return implode('', $columns);
         })
         ;
-
-
 
     $body = cradle('/module/system')->template('object/search', $data);
 
