@@ -17,30 +17,64 @@
         <link rel="icon" type="image/png" href="{{config 'cdn'}}/favicon.png" />
         <link rel="icon" type="image/x-icon" href="{{config 'cdn'}}/favicon.ico" />
 
-        <link rel="stylesheet" type="text/css" href="{{config 'cdn'}}/bower_components/font-awesome/css/font-awesome.min.css" />
-        <link rel="stylesheet" type="text/css" href="{{config 'cdn'}}/bower_components/opensans-webfont-latin/css/opensans-latin.css" />
-        <link rel="stylesheet" type="text/css" href="{{config 'cdn'}}/bower_components/bootstrap/dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="{{config 'cdn'}}/components/fontawesome5-webfont/css/fontawesome-all.min.css" />
+        <link rel="stylesheet" type="text/css" href="{{config 'cdn'}}/components/toastr/build/toastr.min.css" />
+        <link rel="stylesheet" type="text/css" href="{{config 'cdn'}}/components/open-sans-fontface/open-sans.css" />
+        <link rel="stylesheet" type="text/css" href="{{config 'cdn'}}/components/bootstrap/dist/css/bootstrap.min.css" />
         <link rel="stylesheet" type="text/css" href="{{config 'cdn'}}/styles/admin.css" />
 
-        <script type="text/javascript" src="{{config 'cdn'}}/bower_components/jquery/dist/jquery.min.js"></script>
-        <script type="text/javascript" src="{{config 'cdn'}}/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="{{config 'cdn'}}/components/jquery/dist/jquery.min.js"></script>
+        <script type="text/javascript" src="{{config 'cdn'}}/components/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="{{config 'cdn'}}/components/toastr/build/toastr.min.js"></script>
         <script type="text/javascript" src="{{config 'cdn'}}/scripts/doon.js"></script>
         <script type="text/javascript" src="{{config 'cdn'}}/scripts/cropper.js"></script>
         <script type="text/javascript" src="{{config 'cdn'}}/scripts/admin.js"></script>
+        <script type="text/javascript">
+            // prevent toastr duplicates
+            toastr.options.preventDuplicates = true;
+            // enable a close button
+            toastr.options.closeButton = true;
+            // override the close button's HTML.
+            toastr.options.closeHtml = '<button><i class="fa fa-close"></i></button>';
+            // show toastr progress bar
+            toastr.options.progressBar = true;
+            // show toastr on bottom right
+            toastr.options.positionClass = 'toast-bottom-left';
+        </script>
     </head>
 
     <body>
         <header class="head">{{> head}}</header>
-        <div class="wrapper">
-            {{#if page.flash}}
-            <div data-do="notify" class="notify notify-{{page.flash.type}}">
-                <span class="message">{{page.flash.message}}</span>
-            </div>
-            {{/if}}
-            <section class="body container">
-                {{{content}}}
-            </section>
-        </div>
-        <footer class="foot">{{> foot}}</footer>
+        <section class="body">
+            <aside class="sidebar">
+                {{> sidebar}}
+            </aside>
+            <main class="main">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item"><a href="#">Library</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Data</li>
+                    </ol>
+                </nav>
+                <div class="main-padding">
+                    {{{content}}}
+                </div>
+            </main>
+        </section>
+        {{#if page.flash}}
+            <script type="text/javascript">
+                // get flash type
+                var type = '{{page.flash.type}}';
+
+                // if danger
+                if(type == 'danger') {
+                    type = 'error';
+                }
+
+                // init toastr
+                toastr[type]('{{page.flash.message}}');
+            </script>
+        {{/if}}
     </body>
 </html>

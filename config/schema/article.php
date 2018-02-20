@@ -3,6 +3,7 @@
   'singular' => 'Article',
   'plural' => 'Articles',
   'name' => 'article',
+  'icon' => '',
   'detail' => 'This is for Articles',
   'fields' => 
   array (
@@ -140,11 +141,10 @@
       ),
       'detail' => 
       array (
-        'format' => 'date',
+        'format' => 'relative',
         'parameters' => 'F d, Y',
       ),
       'default' => 'NOW()',
-      'sortable' => '1',
     ),
     4 => 
     array (
