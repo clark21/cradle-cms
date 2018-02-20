@@ -36,6 +36,8 @@
         'format' => 'none',
       ),
       'default' => '',
+      'searchable' => '1',
+      'filterable' => '1',
     ),
     1 => 
     array (
@@ -71,6 +73,8 @@
         'format' => 'hide',
       ),
       'default' => '',
+      'filterable' => '1',
+      'searchable' => '1',
     ),
     2 => 
     array (

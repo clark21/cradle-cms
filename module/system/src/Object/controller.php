@@ -89,7 +89,10 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
 
     if ($request->getStage('action') == 'export') {
         // Set CSV header
-        $header = [];
+        if (!empty($data['schema']['primary'])) {
+            $header[$data['schema']['primary']] = ucfirst(str_replace($data['schema']['name'] . '_' , '', $data['schema']['primary']));
+        }
+
         foreach ($data['schema']['fields'] as $key => $head) {
             $header[$key] = ucfirst(str_replace($data['schema']['name'] . '_' , '', $key));
         }
@@ -791,6 +794,82 @@ $cradle->post('/admin/system/object/:schema/update/:id', function($request, $res
 
     //redirect
     cradle('global')->redirect('/admin/system/object/'. $request->getStage('schema') .'/search');
+});
+
+/**
+ * Process the Product Restore
+ *
+ * @param Request $request
+ * @param Response $response
+ */
+$cradle->post('/admin/system/object/:schema/import', function($request, $response) {
+    //----------------------------//
+    // 1. Route Permissions
+    //only for store
+    cradle('global')->requireLogin('admin');
+    //----------------------------//
+    // 2. Prepare Data
+    $data = ['item' => $request->getPost()];
+
+    if ($response->isError()) {
+        $response->setFlash($response->getMessage(), 'danger');
+        $data['errors'] = $response->getValidation();
+    }
+
+    $schemaResponse = Response::i()->load();
+    cradle()->trigger('system-schema-detail', $request, $schemaResponse);
+    $schema = SystemSchema::i($schemaResponse->getResults());
+
+    $data['schema'] = [
+        'name' => $schema->getTableName(),
+        'primary' => $schema->getPrimary(),
+        'singular' => $schema->getSingular(),
+        'plural' => $schema->getPlural(),
+        'fields' => $schema->getFields(),
+    ];
+
+    //set primary to columns
+    $columns = ['keys' => [$data['schema']['primary']]];
+
+    //set columns
+    foreach ($data['schema']['fields'] as $key => $value) {
+        $columns['keys'][] = $key;
+    }
+
+    //----------------------------//
+    // 3. Process Request
+    $request->setStage($columns);
+    cradle()->trigger('system-object-csv-import', $request, $response);
+    $results = $response->getResults();
+
+    if ($response->isError()) {
+        cradle('global')->flash($response->getMessage(), 'danger');
+        cradle('global')->redirect('/admin/system/object/' . $data['schema']['name'] . '/search');
+    }
+
+    if (empty($data)) {
+        cradle('global')->flash('Empty CSV', 'danger');
+        cradle('global')->redirect('/admin/system/object/' . $data['schema']['name'] . '/search');
+    }
+
+    $request->setStage($results);
+
+    //saved product to data
+    cradle()->trigger('system-object-import', $request, $response);
+
+    //----------------------------//
+    // 4. Interpret Results
+    if($response->isError()) {
+        //return
+        return cradle()->triggerRoute('get', '/admin/system/object/' . $data['schema']['name'] . '/search', $request, $response);
+    }
+
+    //add a flash
+    $results = $response->getResults();
+    $message = cradle('global')->translate($data['schema']['plural'] . ' was Imported');
+    cradle('global')->flash($message, 'success');
+
+    cradle('global')->redirect('/admin/system/object/' . $data['schema']['name'] . '/search');
 });
 
 /**
