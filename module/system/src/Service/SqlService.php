@@ -420,7 +420,6 @@ class SqlService
 
         //determine the relation tables that need to be removed
         foreach($installed as $relation) {
-            $relation = str_replace($data['name'] . '_', '', $relation);
             //uninstall if it's not in the schema
             if (!in_array($relation, $relations)) {
                 $queries[] = 'DROP TABLE IF EXISTS `' . $data['name'] . '_' . $relation . '`;';

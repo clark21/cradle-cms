@@ -602,9 +602,12 @@ class Schema
             }
 
             //if theres a reason to index
-            if ((isset($field['searchable']) && $field['searchable'])
-                || (isset($field['filterable']) && $field['filterable'])
-                || (isset($field['sortable']) && $field['sortable'])
+            if ($format['type'] !== 'TEXT'
+                && (
+                    (isset($field['searchable']) && $field['searchable'])
+                    || (isset($field['filterable']) && $field['filterable'])
+                    || (isset($field['sortable']) && $field['sortable'])
+                )
             ) {
                 //index it
                 $format['index'] = true;
@@ -645,42 +648,42 @@ class Schema
      */
     protected static $fieldTypes = [
         'text' => [
-            'type' => 'varchar',
+            'type' => 'VARCHAR',
             'length' => 255
         ],
         'email' => [
-            'type' => 'varchar',
+            'type' => 'VARCHAR',
             'length' => 255
         ],
         'password' => [
-            'type' => 'varchar',
+            'type' => 'VARCHAR',
             'length' => 255
         ],
         'search' => [
-            'type' => 'varchar',
+            'type' => 'VARCHAR',
             'length' => 255
         ],
         'url' => [
-            'type' => 'varchar',
+            'type' => 'VARCHAR',
             'length' => 255
         ],
         'color' => [
-            'type' => 'varchar',
+            'type' => 'VARCHAR',
             'length' => 7
         ],
         'format' => [
-            'type' => 'varchar',
+            'type' => 'VARCHAR',
             'length' => 255
         ],
         'slug' => [
-            'type' => 'varchar',
+            'type' => 'VARCHAR',
             'length' => 255
         ],
         'textarea' => [
-            'type' => 'text'
+            'type' => 'TEXT'
         ],
         'wysiwyg' => [
-            'type' => 'text'
+            'type' => 'TEXT'
         ],
         'number' => [
             'type' => 'INT'
@@ -730,22 +733,22 @@ class Schema
             'attribute' => 'unsigned'
         ],
         'select' => [
-            'type' => 'varchar',
+            'type' => 'VARCHAR',
             'length' => 255
         ],
         'checkboxes' => [
             'type' => 'JSON'
         ],
         'radios' => [
-            'type' => 'varchar',
+            'type' => 'VARCHAR',
             'length' => 255
         ],
         'file' => [
-            'type' => 'varchar',
+            'type' => 'VARCHAR',
             'length' => 255
         ],
         'image' => [
-            'type' => 'varchar',
+            'type' => 'VARCHAR',
             'length' => 255
         ],
         'files' => [
