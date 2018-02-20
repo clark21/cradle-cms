@@ -238,33 +238,28 @@ input, select, button, a.btn {
     width: 145px;
 }
 
-.auth-form .panel {
+.auth-form .card {
     border: 0;
     border-radius: 0;
     margin: auto;
     width: 350px;
 }
 
-.auth-form .panel-heading {
-    background: none;
-    border: none;
-}
-
-.auth-form .panel-body {
+.auth-form .card-body {
     font-size: 12px;
 }
 
-.auth-form .panel-title {
+.auth-form .card-title {
     color: #45A9D9;
     font-size: 18px;
     font-weight: 100;
 }
 
-.auth-form .input-group > * {
+.auth-form .input-group .input-group-prepend > * {
     border-radius: 0;
 }
 
-.auth-form .input-group-addon {
+.auth-form .input-group .input-group-prepend .input-group-text {
     background: #FFFFFF;
     color: #AAAAAA;
     width: 39px;
