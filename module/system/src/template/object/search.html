@@ -160,10 +160,22 @@
                                             <td>{{#if value}}Yes{{else}}No{{/if}}</td>
                                         {{/when}}
                                         {{#when format '===' 'date'}}
-                                            <td>{{date value parameters}}</td>
+                                            <td>
+                                                {{#if value}}
+                                                    {{date value parameters}}
+                                                {{else}}
+                                                    &nbsp;
+                                                {{/if}}
+                                            </td>
                                         {{/when}}
                                         {{#when format '===' 'relative'}}
-                                            <td>{{relative value parameters}}</td>
+                                            <td>
+                                                {{#if value}}
+                                                    {{relative value parameters}}
+                                                {{else}}
+                                                    &nbsp;
+                                                {{/if}}
+                                            </td>
                                         {{/when}}
                                         {{#when format '===' 'strip'}}
                                             <td>{{strip value parameters}}</td>

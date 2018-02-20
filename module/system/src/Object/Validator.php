@@ -137,6 +137,12 @@ class Validator
                         && empty($data[$name]):
                     case $validation['method'] === 'number'
                         && !is_numeric($data[$name]):
+                    case $validation['method'] === 'float'
+                        && !preg_match('/^[-+]?(\d*)?\.\d+$/', $data[$name]):
+                    case $validation['method'] === 'price'
+                        && !preg_match('/^[-+]?(\d*)?\.\d{2}$/', $data[$name]):
+                    case $validation['method'] === 'price'
+                        && !is_numeric($data[$name]):
                     case $validation['method'] === 'regexp'
                         && !preg_match($validation['parameters'], $data[$name]):
                     case $validation['method'] === 'gt'
@@ -163,6 +169,30 @@ class Validator
                         && !(str_word_count($data[$name]) < $validation['parameters']):
                     case $validation['method'] === 'word_lte'
                         && !(str_word_count($data[$name]) <= $validation['parameters']):
+                    case $validation['method'] === 'date'
+                        && !preg_match('/^[0-9]{4}\-[0-9]{2}\-[0-9]{2}$/', $data[$name]):
+                    case $validation['method'] === 'time'
+                        && !preg_match('/^[0-9]{2}:[0-9]{2}:[0-9]{2}$/', $data[$name]):
+                    case $validation['method'] === 'datetime'
+                        && !preg_match('/^[0-9]{4}\-[0-9]{2}\-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$/', $data[$name]):
+                    case $validation['method'] === 'email'
+                        && !preg_match('/^(?:(?:(?:[^@,"\[\]\x5c\x00-\x20\x7f-\xff\.]|\x5c(?=[@,"\[\]'.
+                        '\x5c\x00-\x20\x7f-\xff]))(?:[^@,"\[\]\x5c\x00-\x20\x7f-\xff\.]|(?<=\x5c)[@,"\[\]'.
+                        '\x5c\x00-\x20\x7f-\xff]|\x5c(?=[@,"\[\]\x5c\x00-\x20\x7f-\xff])|\.(?=[^\.])){1,62'.
+                        '}(?:[^@,"\[\]\x5c\x00-\x20\x7f-\xff\.]|(?<=\x5c)[@,"\[\]\x5c\x00-\x20\x7f-\xff])|'.
+                        '[^@,"\[\]\x5c\x00-\x20\x7f-\xff\.]{1,2})|"(?:[^"]|(?<=\x5c)"){1,62}")@(?:(?!.{64})'.
+                        '(?:[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]\.?|[a-zA-Z0-9]\.?)+\.(?:xn--[a-zA-Z0-9]'.
+                        '+|[a-zA-Z]{2,6})|\[(?:[0-1]?\d?\d|2[0-4]\d|25[0-5])(?:\.(?:[0-1]?\d?\d|2[0-4]\d|25'.
+                        '[0-5])){3}\])$/', $data[$name]):
+                    case $validation['method'] === 'url'
+                        && !preg_match('/^(http|https|ftp):\/\/([A-Z0-9][A-Z0'.
+                        '-9_-]*(?:.[A-Z0-9][A-Z0-9_-]*)+):?(d+)?\/?/i', $data[$name]):
+                    case $validation['method'] === 'hex'
+                        && preg_match('/^[0-9a-fA-F]{6}$/', $data[$name]):
+                    case $validation['method'] === 'cc'
+                        && !preg_match('/^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]'.
+                        '{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-'.
+                        '5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11})$/', $data[$name]):
                         $errors[$name] = $validation['message'];
                         break;
                     case $validation['method'] === 'one':

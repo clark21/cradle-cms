@@ -671,7 +671,7 @@ class Schema
             'type' => 'VARCHAR',
             'length' => 7
         ],
-        'format' => [
+        'mask' => [
             'type' => 'VARCHAR',
             'length' => 255
         ],
