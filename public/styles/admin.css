@@ -358,6 +358,7 @@ input, select, button, a.btn {
     text-shadow: none;
 }
 
+<<<<<<< HEAD
 .sidebar .nav-item.active a,
 .sidebar .nav-item.active a:hover,
 .sidebar .nav-item.active a:focus,
@@ -374,6 +375,8 @@ input, select, button, a.btn {
     vertical-align: middle;
 }
 
+=======
+>>>>>>> a226a6ad043781f9a2d927ca8cbaaa86d2061dc7
 /* Field - Buttons
 ------------------------------*/
 .btn {
