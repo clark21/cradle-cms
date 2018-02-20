@@ -422,7 +422,7 @@ class SqlService
         foreach($installed as $relation) {
             //uninstall if it's not in the schema
             if (!in_array($relation, $relations)) {
-                $queries[] = 'DROP TABLE IF EXISTS `' . $data['name'] . '_' . $relation . '`;';
+                $queries[] = 'DROP TABLE IF EXISTS `' . $relation . '`;';
             }
         }
 

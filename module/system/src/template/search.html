@@ -35,6 +35,7 @@
                         <tr>
                             <th>Actions</th>
                             <th>Schema</th>
+                            <th>Relations</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -55,6 +56,28 @@
                                 <td>
                                     <a href="/admin/system/object/{{name}}/search"><i class="{{icon}}"></i> {{capital singular}}</a>
                                     <p>{{detail}}</p>
+                                </td>
+                                <td>
+                                    {{#if relations.length}}
+                                        {{#each relations}}
+                                            <div class="relation">
+                                                <i class="fa fa-arrow-right"></i>
+                                                {{#when many '==' 0}}
+                                                    <span>1:0</span>
+                                                {{/when}}
+                                                {{#when many '==' 1}}
+                                                    <span>1:1</span>
+                                                {{/when}}
+                                                {{#when many '==' 2}}
+                                                    <span>1:N</span>
+                                                {{/when}}
+                                                <i class="fa fa-arrow-right"></i>
+                                                {{name}}
+                                            </div>
+                                        {{/each}}
+                                    {{else}}
+                                        &nbsp;
+                                    {{/if}}
                                 </td>
                             </tr>
                         {{/each}}
