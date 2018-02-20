@@ -20,6 +20,10 @@ input, select, button, a.btn {
     border-radius: 0 !important;
 }
 
+.nav-right {
+    float: right;
+}
+
 .clear { clear: both; }
 .pad-top { margin-top: 10px; }
 .pad-bottom { margin-top: 10px; }
@@ -352,6 +356,22 @@ input, select, button, a.btn {
     padding: 0 16px 0 7px;
     text-decoration: none;
     text-shadow: none;
+}
+
+.sidebar .nav-item.active a,
+.sidebar .nav-item.active a:hover,
+.sidebar .nav-item.active a:focus,
+.sidebar .nav-item.active a:active {
+    color: #2B7DBC;
+}
+
+.sidebar .nav-link > i:first-child {
+    display: inline-block;
+    font-size: 18px;
+    margin-right: 2px;
+    min-width: 30px;
+    text-align: center;
+    vertical-align: middle;
 }
 
 /* Field - Buttons
