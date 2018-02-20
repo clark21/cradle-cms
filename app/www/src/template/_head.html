@@ -1,4 +1,4 @@
-<nav class="navbar navbar-default navbar-branding navbar-static-top">
+<nav class="navbar navbar-default navbar-branding navbar-static-top" style="display: none;">
     <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
@@ -12,7 +12,56 @@
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse" id="header">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="#">Navbar</a>
+            <button
+                class="navbar-toggler"
+                type="button"
+                data-toggle="collapse"
+                data-target="#navbarNavDropdown"
+                aria-controls="navbarNavDropdown"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a
+                            title="Choose Your Language"
+                            href="javascript:void(0)"
+                            class="nav-link dropdown-toggle"
+                            data-toggle="dropdown"
+                            role="button"
+                            aria-haspopup="true"
+                            aria-expanded="false">
+                        {{i18n}}
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <a title="Chinese" href="/can_CN{{page.meta.path}}">Catonese</a>
+                            <a title="English" href="/en_US{{page.meta.path}}">English</a>
+                            <a title="French" href="/fr_FR{{page.meta.path}}">French</a>
+                            <a title="Chinese" href="/cmn_CN{{page.meta.path}}">Mandarin</a>
+                            <a title="Spanish" href="/es_ES{{page.meta.path}}">Spanish</a>
+                            <a title="Filipino" href="/tl_PH{{page.meta.path}}">Tagalog</a>
+                            <a title="Thai" href="/th_TH{{page.meta.path}}">Thai</a>
+                            <a title="Filipino" href="/ceb_PH{{page.meta.path}}">Visaya</a>
+                        </div>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Pricing</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <div style="display" class="collapse navbar-collapse" id="header">
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">
                     <a
@@ -54,4 +103,68 @@
             </ul>
         </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
+</nav>
+
+<nav class="navbar navbar-expand-lg sticky-top navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#"><img alt="Cradle PHP" src="/images/logo-long.png" /></a>
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-toggle="collapse"
+            data-target="#navbarTogglerDemo02"
+            aria-controls="navbarTogglerDemo02"
+            aria-expanded="false"
+            aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                <li class="nav-item dropdown">
+                    <a
+                        class="nav-link dropdown-toggle"
+                        title="Choose Your Language"
+                        href="#"
+                        id="navbarDropdownMenuLink"
+                        data-toggle="dropdown"
+                        aria-haspopup="true"
+                        aria-expanded="false">
+                        {{i18n}}
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" title="Chinese" href="/can_CN{{page.meta.path}}">Catonese</a>
+                        <a class="dropdown-item" title="English" href="/en_US{{page.meta.path}}">English</a>
+                        <a class="dropdown-item" title="French" href="/fr_FR{{page.meta.path}}">French</a>
+                        <a class="dropdown-item" title="Chinese" href="/cmn_CN{{page.meta.path}}">Mandarin</a>
+                        <a class="dropdown-item" title="Spanish" href="/es_ES{{page.meta.path}}">Spanish</a>
+                        <a class="dropdown-item" title="Filipino" href="/tl_PH{{page.meta.path}}">Tagalog</a>
+                        <a class="dropdown-item" title="Thai" href="/th_TH{{page.meta.path}}">Thai</a>
+                        <a class="dropdown-item" title="Filipino" href="/ceb_PH{{page.meta.path}}">Visaya</a>
+                    </div>
+                </li>
+            </ul>
+            <ul class="navbar-nav my-2 my-lg-0">
+                {{#session 'me'}}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/account?redirect_uri={{../page.meta.path}}">
+                            {{_ 'Account Settings'}}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout?redirect_uri={{../page.meta.path}}">
+                            {{_ 'Logout'}}
+                        </a>
+                    </li>
+                {{else}}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login?redirect_uri={{page.meta.path}}">{{_ 'Login'}}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/signup?redirect_uri={{page.meta.path}}">{{_ 'Signup'}}</a>
+                    </li>
+                {{/session}}
+            </ul>
+        </div>
+    </div>
 </nav>
