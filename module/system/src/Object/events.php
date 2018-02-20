@@ -460,6 +460,8 @@ $cradle->on('system-object-csv-export', function ($request, $response) {
 
     //Set CSV header
     foreach (array_keys($data['csv'][0]) as $key => $value) {
+            cradle()->inspect($value);
+            cradle()->inspect($data['header']);
         if (array_key_exists($value, $data['header'])) {
             $header[$value] = $data['header'][$value];
             $fields[] = $value;
@@ -504,4 +506,171 @@ $cradle->on('system-object-csv-export', function ($request, $response) {
     fclose($f);
 
     return ' ';
+});
+
+/**
+ * System Object Csv Import Job
+ *
+ * @param Request $request
+ * @param Response $response
+ */
+$cradle->on('system-object-csv-import', function ($request, $response) {
+    //get columns
+    $columns = $request->getStage('keys');
+
+    if (!$columns) {
+        return $response->setError(true, 'Column is not set');
+    }
+
+    $data  = array();
+    $mimeTypes = array(
+        'text/comma-separated-values',
+        'text/csv',
+        'application/csv',
+        'application/vnd.ms-excel'
+    );
+
+    //validate file
+    if (empty($_FILES['csv']['tmp_name'])) {
+        return $response->setError(true, 'No CSV');
+    }
+
+    $extension = substr(strrchr($_FILES['csv']['tmp_name'], "."), 1);
+    if (!in_array($_FILES['csv']['type'], $mimeTypes) || $extension == 'csv') {
+        return $response->setError(true, 'Invalid CSV');
+    }
+
+    $handle = fopen($_FILES['csv']['tmp_name'], 'r');
+
+    $csv = array();
+    if ($handle !== false) {
+        $ctr = 0;
+        while (($row = fgetcsv($handle, 0, ',')) !== false) {
+            //if columns not match
+            if (count($columns) != count($row)) {
+                return $response->setError(true, 'Columns not Match');
+            }
+
+            //set header
+            if ($ctr == 0) {
+                $data['header'] = $row;
+            } else {
+                $csv[] = $row;
+            }
+
+            $ctr++;
+        }
+    }
+
+    //set columns to key
+    foreach ($csv as $item) {
+        foreach ($item as $key => $value) {
+            $tmp[$columns[$key]] = $value;
+        }
+        $data['csv'][] = $tmp;
+    }
+
+    $response->setError(false)->setResults($data);
+});
+
+/**
+ * System Object Item Import Job
+ *
+ * @param Request $request
+ * @param Response $response
+ */
+$cradle->on('system-object-import', function ($request, $response) {
+    //----------------------------//
+    // 1. Get Data
+    $data = [];
+    if ($request->hasStage()) {
+        $data = $request->getStage();
+    }
+
+    //set counter
+    $ctr = ['new' => 0, 'old' => 0];
+
+    if(!isset($data['schema'])) {
+        throw SystemException::forNoSchema();
+    }
+
+    $schema = SystemSchema::i($data['schema']);
+    //----------------------------//
+    // 2. Validate Data
+    //validate data
+    foreach ($data['csv'] as $item) {
+        $errors = $schema
+            ->model()
+            ->validator()
+            ->getCreateErrors($item);
+
+        //if there are errors
+        if (!empty($errors)) {
+            return $response
+                ->setError(true, 'Invalid Parameters')
+                ->set('json', 'validation', $errors);
+        }
+    }
+
+    // remove products on stage first
+    $request->removeStage('csv');
+
+    // There is no error,
+    // So proceed on adding/updating the items one by one
+    foreach ($data['csv'] as $key => $item) {
+        //get primary
+        $primary = $item[$schema->getPrimary()];
+        $request->setStage('filter', $schema->getPrimary(), $primary);
+
+        cradle()->trigger('system-object-detail', $request, $response);
+        $existingItem = $response->getResults();
+
+        // be sure to clear product stage
+        $request->removeStage();
+
+        //set schema
+        $request->setStage('schema', $data['schema']);
+
+        if ($existingItem && !empty($item[$schema->getPrimary()])) {
+            //if date created is empty
+            if (isset($item[$data['schema'] . '_created']) && empty($item[$data['schema'] . '_created'])) {
+                unset($item[$data['schema'] . '_created']);
+            }
+
+            // set item data to stage
+            $request->setStage($item);
+
+            //set primary
+            $request->setStage($schema->getPrimary(), $primary);
+
+            // trigger single object update event
+            cradle()->trigger('system-object-update', $request, $response);
+            // check response if there is an error
+            if ($response->isError()) {
+                // return error
+                return;
+            }
+
+            //increment old counter
+            $ctr['old']++;
+            continue;
+        }
+
+        // unset primary and set object data to stage
+        unset($item[$schema->getPrimary()]);
+        $request->setStage($item);
+
+        // trigger single product create event
+        cradle()->trigger('system-object-create', $request, $response);
+        // check response if there is an error
+        if ($response->isError()) {
+            // return error
+            return;
+        }
+
+        //increment new counter
+        $ctr['new']++;
+    }
+
+    $response->setError(false)->setResults($ctr);
 });
