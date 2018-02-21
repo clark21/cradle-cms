@@ -2,10 +2,13 @@
 # yarn lockfile v1
 
 
+<<<<<<< HEAD
 almond@~0.3.1:
   version "0.3.3"
   resolved "https://registry.yarnpkg.com/almond/-/almond-0.3.3.tgz#a0e7c95ac7624d6417b4494b1e68bff693168a20"
 
+=======
+>>>>>>> 722dd748633c9d350ca18cef3a8ea2d2806f6d17
 bootstrap@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/bootstrap/-/bootstrap-4.0.0.tgz#ceb03842c145fcc1b9b4e15da2a05656ba68469a"
@@ -14,10 +17,13 @@ fontawesome5-webfont@^5.0.4:
   version "5.0.4"
   resolved "https://registry.yarnpkg.com/fontawesome5-webfont/-/fontawesome5-webfont-5.0.4.tgz#f392cee1529e6dd81f1e103be8cc6c3522282995"
 
+<<<<<<< HEAD
 jquery-mousewheel@~3.1.13:
   version "3.1.13"
   resolved "https://registry.yarnpkg.com/jquery-mousewheel/-/jquery-mousewheel-3.1.13.tgz#06f0335f16e353a695e7206bf50503cb523a6ee5"
 
+=======
+>>>>>>> 722dd748633c9d350ca18cef3a8ea2d2806f6d17
 jquery@>=1.12.0, jquery@^3.3.1:
   version "3.3.1"
   resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.3.1.tgz#958ce29e81c9790f31be7792df5d4d95fc57fbca"
@@ -26,6 +32,7 @@ open-sans-fontface@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/open-sans-fontface/-/open-sans-fontface-1.4.0.tgz#03cc6d1bf5e6a8b5b47910888562f722c5dd3428"
 
+<<<<<<< HEAD
 select2@^4.0.6-rc.1:
   version "4.0.6-rc.1"
   resolved "https://registry.yarnpkg.com/select2/-/select2-4.0.6-rc.1.tgz#aa6c3038a7f0f2e91ffade38f0a21c15e1813276"
@@ -33,6 +40,8 @@ select2@^4.0.6-rc.1:
     almond "~0.3.1"
     jquery-mousewheel "~3.1.13"
 
+=======
+>>>>>>> 722dd748633c9d350ca18cef3a8ea2d2806f6d17
 toastr@^2.1.4:
   version "2.1.4"
   resolved "https://registry.yarnpkg.com/toastr/-/toastr-2.1.4.tgz#8b43be64fb9d0c414871446f2db8e8ca4e95f181"
