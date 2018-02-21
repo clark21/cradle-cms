@@ -4,6 +4,10 @@
     "fontawesome5-webfont": "^5.0.4",
     "jquery": "^3.3.1",
     "open-sans-fontface": "^1.4.0",
+<<<<<<< HEAD
+    "select2": "^4.0.6-rc.1",
+=======
+>>>>>>> 722dd748633c9d350ca18cef3a8ea2d2806f6d17
     "toastr": "^2.1.4"
   },
   "scripts": {
