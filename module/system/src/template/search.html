@@ -47,7 +47,7 @@
                                 class="text-danger remove"><i class="fas fa-times"></i></a>
                             {{else}}
                                 <a title="Restore" href="/admin/system/schema/restore/{{name}}" class="text-success restore">
-                                <i class="fas fa-external-link"></i></a>
+                                <i class="fas fa-external-link-alt"></i></a>
                             {{/if}}
                         </td>
                         <td>
@@ -58,7 +58,7 @@
                             {{#if relations.length}}
                                 {{#each relations}}
                                     <div class="relation">
-                                        <i class="fa fa-arrow-right"></i>
+                                        <i class="fas fa-arrow-right"></i>
                                         {{#when many '==' 0}}
                                             <span>1:0</span>
                                         {{/when}}
