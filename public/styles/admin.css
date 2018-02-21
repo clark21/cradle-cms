@@ -74,6 +74,17 @@ nav .navbar-brand {
     margin: 0 0 20px;
 }
 
+/* Box
+------------------------------*/
+.box {
+    border: 1px solid #DEE2E6;
+    margin-bottom: 20px;
+}
+
+.box .box-padding {
+    padding: 10px;
+}
+
 /* Modal
 ------------------------------*/
 .modal .modal-title {
