@@ -1,5 +1,5 @@
 body, html {
-    background-color: #E4E6E9;
+    background-color: #29363D;
     color: #232323;
     font-family: 'Open Sans', Arial, sans-serif;
     font-size: 14px;
@@ -34,6 +34,52 @@ nav .navbar-brand {
 .pad-bottom { margin-top: 10px; }
 .pad-top-2 { margin-top: 20px; }
 .pad-bottom-2 { margin-top: 20px; }
+
+.head .nav-profile img {
+    margin: -14px 0px -10px;
+}
+
+.head .nav-notifications img {
+    float: left;
+    width: 30px;
+}
+
+.head .nav-notifications .dropdown-item {
+    padding: 10px 20px;
+}
+
+.head .nav-notifications .notification-info {
+    display: block;
+    padding-left: 40px;
+}
+
+.head .nav-notifications .dropdown-item:nth-child(2n) {
+    background-color: #E9ECEF;
+    border-bottom: 1px solid #CCCCCC;
+    border-top: 1px solid #CCCCCC;
+}
+
+.head .nav-notifications .notification-time {
+    display: block;
+    font-size: 12px;
+}
+
+.head .dropdown-menu {
+    border-radius: 0;
+}
+
+.body .main-title {
+    font-size: 18px;
+    font-weight: 500;
+    margin: 0 0 20px;
+}
+
+/* Modal
+------------------------------*/
+.modal .modal-title {
+    border-bottom: 0;
+    padding-bottom: 0;
+}
 
 /* Widget - Image Field
 ------------------------------*/
@@ -71,6 +117,10 @@ nav .navbar-brand {
     background: #ffe493;
 }
 
+.search-actions .input-group {
+    width: auto;
+}
+
 /* Widget - Tag Field
 -----------------------------*/
 .tag-field {
@@ -98,7 +148,7 @@ nav .navbar-brand {
     outline: none;
     padding: 0;
     width: 24px;
-}
+}ticle.
 
 .tag-field .tag input[type="text"]::-webkit-input-placeholder {
     color: #FFFFFF;
@@ -327,7 +377,6 @@ nav .navbar-brand {
 /* Sidebar
 ----------------------------- */
 .sidebar {
-    background-color: #29363D;
     border-right: 1px solid #CCCCCC;
     float: left;
     position: relative;
@@ -422,6 +471,7 @@ nav .navbar-brand {
     background-color: #FFFFFF;
     border-bottom: 1px solid #C2CFD6;
     border-radius: 0;
+    margin-bottom: 0;
 }
 
 /* Field - Buttons
