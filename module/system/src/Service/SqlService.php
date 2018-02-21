@@ -183,6 +183,11 @@ class SqlService
         //queries to run
         $queries = [];
 
+        // check if table is already archived
+        if($this->exists(sprintf('_%s', $data['name']))) {
+            throw SystemException::forSchemaArchiveExists($data['name']);
+        }
+
         //if system exists
         if($this->exists($data['name'])) {
             if($restorable) {
@@ -234,6 +239,11 @@ class SqlService
 
         //queries to run
         $queries = [];
+
+        // check if table is already archived
+        if($this->exists($data['name'])) {
+            throw SystemException::forSchemaAlreadyExists($data['name']);
+        }
 
         //if there's no system
         if(!$this->exists('_' . $data['name'])) {
@@ -301,6 +311,7 @@ class SqlService
             return $this->create($data, true);
         }
 
+        $primary = $this->resource->getPrimaryKey($data['name']);
         $columns = $this->resource->getColumns($data['name']);
         $query = $this->resource->getAlterQuery($data['name']);
 
@@ -409,10 +420,9 @@ class SqlService
 
         //determine the relation tables that need to be removed
         foreach($installed as $relation) {
-            $relation = str_replace($data['name'] . '_', '', $relation);
             //uninstall if it's not in the schema
             if (!in_array($relation, $relations)) {
-                $queries[] = 'DROP TABLE IF EXISTS `' . $data['name'] . '_' . $relation . '`;';
+                $queries[] = 'DROP TABLE IF EXISTS `' . $relation . '`;';
             }
         }
 

@@ -1,6 +1,10 @@
-body, html{
-    font-family: "Open Sans", Arial;
-    font-weight: 300;
+body, html {
+    background-color: #29363D;
+    color: #232323;
+    font-family: 'Open Sans', Arial, sans-serif;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: normal;
     height: 100%;
 }
 
@@ -16,11 +20,66 @@ input, select, button, a.btn {
     border-radius: 0 !important;
 }
 
+.nav-right {
+    float: right;
+}
+
+nav .navbar-brand {
+    text-align: center;
+    width: 175px;
+}
+
 .clear { clear: both; }
 .pad-top { margin-top: 10px; }
 .pad-bottom { margin-top: 10px; }
 .pad-top-2 { margin-top: 20px; }
 .pad-bottom-2 { margin-top: 20px; }
+
+.head .nav-profile img {
+    margin: -14px 0px -10px;
+}
+
+.head .nav-notifications img {
+    float: left;
+    width: 30px;
+}
+
+.head .nav-notifications .dropdown-item {
+    padding: 10px 20px;
+}
+
+.head .nav-notifications .notification-info {
+    display: block;
+    padding-left: 40px;
+}
+
+.head .nav-notifications .dropdown-item:nth-child(2n) {
+    background-color: #E9ECEF;
+    border-bottom: 1px solid #CCCCCC;
+    border-top: 1px solid #CCCCCC;
+}
+
+.head .nav-notifications .notification-time {
+    display: block;
+    font-size: 12px;
+}
+
+.head .dropdown-menu {
+    border-radius: 0;
+}
+
+.body .main-title {
+    font-size: 18px;
+    font-weight: 500;
+    margin: 0 0 20px;
+}
+
+/* Modal
+------------------------------*/
+.modal .modal-title {
+    border-bottom: 0;
+    padding-bottom: 0;
+}
 
 /* Widget - Image Field
 ------------------------------*/
@@ -58,6 +117,10 @@ input, select, button, a.btn {
     background: #ffe493;
 }
 
+.search-actions .input-group {
+    width: auto;
+}
+
 /* Widget - Tag Field
 -----------------------------*/
 .tag-field {
@@ -85,7 +148,7 @@ input, select, button, a.btn {
     outline: none;
     padding: 0;
     width: 24px;
-}
+}ticle.
 
 .tag-field .tag input[type="text"]::-webkit-input-placeholder {
     color: #FFFFFF;
@@ -158,8 +221,6 @@ input, select, button, a.btn {
 
 /* Branding
 ------------------------------*/
-.branding,
-.branding body { background-color: #45A9D9; }
 
 .branding a.btn-info,
 .branding a.btn-info:link,
@@ -195,27 +256,23 @@ input, select, button, a.btn {
 
 .branding .alert { border-radius: 0; margin-top: 20px; }
 .branding .alert .fa { font-size: 20px; }
-.branding header {
-    background-color: #FFFFFF;
-    margin-top: 20px;
-}
 
 .branding header .navbar {
     background-color: #FFFFFF;
+    border-bottom: 1px solid #C2CFD6;
     margin-bottom: 0;
-    padding: 20px 5px;
+}
+
+.branding header .navbar ul li a {
+    color: #29363D;
 }
 
 .branding header .navbar ul li a i {
     margin-top: -12px;
 }
 
-.branding header .navbar .navbar-brand {
-    padding: 7px 15px 13px;
-}
-
 .branding header .navbar .navbar-brand img {
-    height: 30px;
+    height: 20px;
 }
 
 .branding header .navbar .navbar-toggle .icon-bar {
@@ -223,8 +280,27 @@ input, select, button, a.btn {
 }
 
 .branding .body {
+    background-color: #29363D;
+    height: 100%;
+    padding: 0;
+}
+
+.branding .body .sidebar + .main {
+    left: -1px;
+    margin-left: 190px;
+    min-height: 100%;
+    position: relative;
+}
+
+.branding .body .sidebar + .main {
     background-color: #FFFFFF;
-    padding: 40px 0;
+    border-left: 1px solid #CCCCCC;
+    margin-right: 0;
+    margin-top: 0;
+}
+
+.branding .body .main-padding {
+    padding: 20px;
 }
 
 .branding footer {
@@ -298,16 +374,270 @@ input, select, button, a.btn {
     background-color: #f5f2f0;
 }
 
-body > .wrapper { background-color: #FFFFFF; }
+/* Sidebar
+----------------------------- */
+.sidebar {
+    border-right: 1px solid #CCCCCC;
+    float: left;
+    position: relative;
+    width: 190px;
+}
+
+.sidebar .nav-item {
+    border: 0;
+    border-top-width: 0px;
+    border-bottom-width: 0px;
+    border-top-style: none;
+    border-bottom-style: none;
+    border-top-color: currentcolor;
+    border-bottom-color: currentcolor;
+    display: block;
+    padding: 0;
+    margin: 0;
+    position: relative;
+}
+
+.sidebar .nav-item.active {
+    color: #FFFFFF;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.sidebar .nav-item.active .nav-link {
+    background-color: #33444C;
+}
+
+.sidebar .nav-item.active:after {
+    border: 8px solid transparent;
+    border-top-width: 8px;
+    border-right-width: 8px;
+    border-bottom-width: 8px;
+    border-left-width: 8px;
+    border-right-color: transparent;
+    border-width: 14px 10px;
+    border-right-color: #536C79;
+    content: "";
+    display: block;
+    position: absolute !important;
+    right: 0;
+    top: 4px;
+}
+
+.sidebar .nav-link {
+    background-color: #29363D;
+    color: #FFFFFF;
+    display: block;
+    font-weight: 300;
+    font-size: 13px;
+    height: 38px;
+    line-height: 36px;
+    padding: 0 16px 0 7px;
+    text-decoration: none;
+    text-shadow: none;
+}
+
+.sidebar .nav-link:hover,
+.sidebar .nav-item.active:hover .nav-link {
+    background-color: #20A8D8;
+}
+
+.sidebar .nav-item.active:hover:after {
+    border-right-color: #FFFFFF;
+}
+
+.sidebar .nav-link:hover > i:first-child {
+    color: #FFFFFF;
+}
+
+.sidebar .nav-item.active a,
+.sidebar .nav-item.active a:hover,
+.sidebar .nav-item.active a:focus,
+.sidebar .nav-item.active a:active {
+    color: #FFFFFF;
+}
+
+.sidebar .nav-link > i:first-child {
+    color: #536C79;
+    display: inline-block;
+    margin-right: 2px;
+    min-width: 30px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* Breadcrumb
+------------------------------*/
+.breadcrumb {
+    background-color: #FFFFFF;
+    border-bottom: 1px solid #C2CFD6;
+    border-radius: 0;
+    margin-bottom: 0;
+}
+
+/* Field - Buttons
+------------------------------*/
+.btn {
+    border-radius: 0;
+}
+
+.btn-default {
+    background-color: #ABBAC3;
+    border-color: #ABBAC3;
+    color: #FFFFFF;
+}
+
+.btn-default:hover {
+    background-color: #8B9AA3;
+    border-color: #ABBAC3;
+    color: #FFFFFF;
+}
+
+.btn-primary {
+    background-color: #428BCA;
+    border-color: #428BCA;
+    color: #FFFFFF;
+}
+
+.btn-primary:hover {
+    background-color: #1B6AAA;
+    border-color: #428BCA;
+}
+
+.btn-info {
+    background-color: #6FB3E0;
+    border-color: #6FB3E0;
+    color: #FFFFFF;
+}
+
+.btn-info:hover {
+    background-color: #4F99C6;
+    border-color: #6FB3E0;
+}
+
+.btn-warning {
+    background-color: #FFB752;
+    border-color: #FFB752;
+    color: #FFFFFF;
+}
+
+.btn-warning:hover {
+    background-color: #E59729;
+    border-color: #FFB752;
+    color: #FFFFFF;
+}
+
+.btn-success {
+    background-color: #87B87F;
+    border-color: #87B87F;
+    color: #FFFFFF;
+}
+
+.btn-success:hover {
+    background-color: #629B58;
+    border-color: #87B87F;
+}
+
+.btn-danger {
+    background-color: #D15B47;
+    border-color: #D15B47;
+    color: #FFFFFF;
+}
+
+.btn-danger:hover {
+    background-color: #B74635;
+    border-color: #D15B47;
+}
+
+.btn-inverse {
+    background-color: #555555;
+    border-color: #555555;
+    color: #FFFFFF;
+}
+
+.btn-inverse:hover {
+    background-color: #303030;
+    border-color: #555555;
+    color: #FFFFFF;
+}
+
+.btn-pink {
+    background-color: #D6487E;
+    border-color: #D6487E;
+    color: #FFFFFF;
+}
+
+.btn-pink:hover {
+    background-color: #B73766;
+    border-color: #D6487E;
+    color: #FFFFFF;
+}
+
+.btn-purple {
+    background-color: #9585BF;
+    border-color: #9585BF;
+    color: #FFFFFF;
+}
+
+.btn-purple:hover {
+    background-color: #7461AA;
+    border-color: #9585BF;
+    color: #FFFFFF;
+}
+
+.btn-yellow {
+    background-color: #FEE188;
+    border-color: #FEE188;
+    color: #996633;
+}
+
+.btn-yellow:hover {
+    background-color: #F7D05B;
+    border-color: #FEE188;
+}
+
+.btn-grey {
+    background-color: #A0A0A0;
+    border-color: #A0A0A0;
+    color: #FFFFFF;
+}
+
+.btn-grey:hover {
+    background-color: #888888;
+    border-color: #A0A0A0;
+    color: #FFFFFF;
+}
+
+.btn-light {
+    background-color: #E7E7E7;
+    border-color: #E7E7E7;
+    color: #888888;
+}
+
+.btn-light:hover {
+    background-color: #D9D9D9;
+    border-color: #E7E7E7;
+}
+
+.btn-outline {
+    background-color: transparent;
+    border-color: #FFFFFF;
+    color: #FFFFFF;
+}
+
+.btn-outline:hover {
+    background-color: transparent;
+    border-color: #CCCCCC;
+    color: #CCCCCC;
+}
 
 /* Component - Panel
 ------------------------------*/
-.panel {
+.card {
 	border-radius: 0;
     margin-top: 20px;
 }
 
-.panel-body {
+.card-body {
     overflow: auto;
 }
 
@@ -329,4 +659,8 @@ body > .wrapper { background-color: #FFFFFF; }
 .group-toggle {
     color: #006699;
     cursor: pointer;
+}
+
+.has-error span.help-text {
+    color: #A94442;
 }

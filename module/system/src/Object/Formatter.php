@@ -50,7 +50,7 @@ class Formatter
      *
      * @return array
      */
-    public static function formatData(array $data, $s3 = false, $upload = null) {
+    public function formatData(array $data, $s3 = false, $upload = null) {
         $fields = $this->schema->getFields();
         $table = $this->schema->getTableName();
 

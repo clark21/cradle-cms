@@ -15,8 +15,29 @@
 {{/when}}
 
 <div class="clearfix">
+    <!-- START: Users Upper Head -->
+    <div class="upper-head">
+         <!-- START: Upload CSV -->
+        <div class="float-right">
+            <form class="form-inline" method="post" action="/admin/system/object/{{schema.name}}/import"  enctype="multipart/form-data">
+                <div class="form-group">
+                    <input type="file" id="input-file" name="csv" class="form-control upload">
+                </div>
+                <button type="submit" class="btn btn-info">Upload CSV</button>
+            </form>
+        </div>
+        <!-- END: Upload CSV -->
+        <div class="clearfix margin"></div>
+    </div>
+    <br />
     <!-- START: SEARCH FORM -->
-    <form class="pull-right search form-inline" method="get">
+    <form class="float-right search form-inline" method="get">
+        <select name="filter_by" class="form-control">
+        <option value="" {{#unless filter_by}}selected{{/unless}}>Please select a filter</option>
+        {{#each schema.filterable}}
+            <option value="{{col}}" {{#when ../filter_by '==' col}}selected{{/when}}>Filter By {{capital name}}</option>
+        {{/each}}
+        </select>
         <div class="form-group">
             <input name="q[]" placeholder="Search" type="text"
             value="{{q.0}}" class="form-control" />
@@ -24,6 +45,17 @@
         <button class="btn"><i class="fa fa-search"></i></button>
     </form>
     <!-- END: SEARCH FORM -->
+
+    <!-- START: Export CSV -->
+    <div class="float-right">
+        <form class="form-inline" method="get">
+            <input name="keyword" type="hidden" value="{{q.0}}" id="q[]"/>
+            <input name="keyword" type="hidden" value="{{filter_by}}" id="filter_by"/>
+            <input name="action" type="hidden" value="export"/>
+            <button type="submit" class="btn btn-info" {{#unless rows.length}}disabled{{/unless}}>Export</button>
+        </form>
+    </div>
+    <!-- END: Export CSV -->
 
     <div class="btn-group" role="group" aria-label="...">
         <a class="btn btn-primary" href="?filter[{{schema.active}}]=1">
@@ -42,130 +74,140 @@
 </div>
 
 <!-- START: BULK FORM -->
-<form method="post" class="form-inline bulk-form pad-vertical">
-    <div class="panel panel-default clear">
-        <div class="panel-body">
+<form method="post">
+    <div class="card">
+        <div class="card">
             {{#if rows}}
-                <div class="table-overflow">
-                    <!-- START: TABLE -->
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Actions</th>
-                                {{#each schema.fields}}
-                                    {{#in @key ../schema.listable}}
-                                        {{#in @key ../schema.sortable}}
-                                            <th>
-                                                <a href="?{{sorturl @key}}">
-                                                    {{label}}
-                                                    {{sortcaret @key}}
-                                                </a>
-                                            </th>
-                                        {{else}}
-                                            <th>{{label}}</th>
-                                        {{/in}}
+                <!-- START: TABLE -->
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Actions</th>
+                            {{#each schema.fields}}
+                                {{#in @key ../schema.listable}}
+                                    {{#in @key ../schema.sortable}}
+                                        <th>
+                                            <a href="?{{sorturl @key}}">
+                                                {{label}}
+                                                {{sortcaret @key}}
+                                            </a>
+                                        </th>
+                                    {{else}}
+                                        <th>{{label}}</th>
                                     {{/in}}
-                                {{/each}}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {{#each rows}}
-                                <tr data-id="{{key schema.primary this}}">
-                                    <td>
-                                        {{#is_active this schema}}
-                                            <a
-                                                title="Edit"
-                                                href="/admin/user/update/{{key ../../schema.primary ../this}}"
-                                            >
-                                                <i class="fa fa-edit"></i>
-                                            </a>
-                                            &nbsp;
-                                            <a
-                                                title="Remove"
-                                                href="/admin/user/remove/{{key ../../schema.primary ../this}}"
-                                                class="text-danger remove"
-                                            >
-                                                <i class="fa fa-times"></i>
-                                            </a>
-                                        {{else}}
-                                            <a
-                                                title="Restore"
-                                                href="/admin/user/restore/{{key ../../schema.primary ../this}}"
-                                                class="text-success restore"
-                                            >
-                                                <i class="fa fa-external-link"></i>
-                                            </a>
-                                        {{/is_active}}
-                                    </td>
-                                    {{#get_format this schema}}
-                                        {{#when format '===' 'none'}}
-                                            <td>{{value}}</td>
-                                        {{/when}}
-                                        {{#when format '===' 'lower'}}
-                                            <td>{{date value parameters}}</td>
-                                        {{/when}}
-                                        {{#when format '===' 'upper'}}
-                                            <td>{{date value parameters}}</td>
-                                        {{/when}}
-                                        {{#when format '===' 'capital'}}
-                                            <td>{{date value parameters}}</td>
-                                        {{/when}}
-                                        {{#when format '===' 'length'}}
-                                            <td>{{char_length value parameters}}</td>
-                                        {{/when}}
-                                        {{#when format '===' 'words'}}
-                                            <td>{{word_length value parameters}}</td>
-                                        {{/when}}
-                                        {{#when format '===' 'number'}}
-                                            <td>{{number value}}</td>
-                                        {{/when}}
-                                        {{#when format '===' 'price'}}
-                                            <td>{{parameters}}{{price value}}</td>
-                                        {{/when}}
-                                        {{#when format '===' 'yes'}}
-                                            <td>{{#if value}}Yes{{else}}No{{/if}}</td>
-                                        {{/when}}
-                                        {{#when format '===' 'date'}}
-                                            <td>{{date value parameters}}</td>
-                                        {{/when}}
-                                        {{#when format '===' 'relative'}}
-                                            <td>{{relative value parameters}}</td>
-                                        {{/when}}
-                                        {{#when format '===' 'strip'}}
-                                            <td>{{strip value parameters}}</td>
-                                        {{/when}}
-                                        {{#when format '===' 'link'}}
-                                            <td><a href="{{parameters.0}}">{{parameters.1}}</a></td>
-                                        {{/when}}
-                                        {{#when format '===' 'image'}}
-                                            <td><img src="{{value}}" width="{{parameters.0}}" height="{{parameters.1}}" /></td>
-                                        {{/when}}
-                                        {{#when format '===' 'email'}}
-                                            <td><a href="mailto:{{value}}">{{parameters}}</a></td>
-                                        {{/when}}
-                                        {{#when format '===' 'phone'}}
-                                            <td><a href="tel:{{value}}">{{parameters}}</a></td>
-                                        {{/when}}
-                                        {{#when format '===' 'comma'}}
-                                            <td>{{implode value ','}}</td>
-                                        {{/when}}
-                                        {{#when format '===' 'space'}}
-                                            <td>{{implode value ' '}}</td>
-                                        {{/when}}
-                                        {{#when format '===' 'tag'}}
-                                            <td>
-                                                {{#each value}}
-                                                    <div class="tag">{{this}}</div>
-                                                {{/each}}
-                                            </td>
-                                        {{/when}}
-                                    {{/get_format}}
-                                </tr>
+                                {{/in}}
                             {{/each}}
-                        </tbody>
-                    </table>
-                    <!-- END: TABLE -->
-                </div>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each rows}}
+                            <tr data-id="{{key ../schema.primary this}}">
+                                <td>
+                                    {{#is_active this ../schema}}
+                                        <a
+                                            title="Edit"
+                                            href="/admin/system/object/{{../schema.name}}/update/{{key ../schema.primary this}}"
+                                        >
+                                            <i class="fa fa-edit"></i>
+                                        </a>
+                                        &nbsp;
+                                        <a
+                                            title="Remove"
+                                            href="/admin/system/object/{{../schema.name}}/remove/{{key ../schema.primary this}}"
+                                            class="text-danger remove"
+                                        >
+                                            <i class="fa fa-times"></i>
+                                        </a>
+                                    {{else}}
+                                        <a
+                                            title="Restore"
+                                            href="/admin/system/object/{{../schema.name}}/restore/{{key ../schema.primary this}}"
+                                            class="text-success restore"
+                                        >
+                                            <i class="fa fa-external-link"></i>
+                                        </a>
+                                    {{/is_active}}
+                                </td>
+                                {{#get_format this ../schema}}
+                                    {{#when format '===' 'none'}}
+                                        <td>{{value}}</td>
+                                    {{/when}}
+                                    {{#when format '===' 'lower'}}
+                                        <td>{{tolower value}}</td>
+                                    {{/when}}
+                                    {{#when format '===' 'upper'}}
+                                        <td>{{toupper value}}</td>
+                                    {{/when}}
+                                    {{#when format '===' 'capital'}}
+                                        <td>{{capital value}}</td>
+                                    {{/when}}
+                                    {{#when format '===' 'length'}}
+                                        <td>{{char_length value parameters}}</td>
+                                    {{/when}}
+                                    {{#when format '===' 'words'}}
+                                        <td>{{word_length value parameters}}</td>
+                                    {{/when}}
+                                    {{#when format '===' 'number'}}
+                                        <td>{{number value}}</td>
+                                    {{/when}}
+                                    {{#when format '===' 'price'}}
+                                        <td>{{parameters}}{{price value}}</td>
+                                    {{/when}}
+                                    {{#when format '===' 'yes'}}
+                                        <td>{{#if value}}Yes{{else}}No{{/if}}</td>
+                                    {{/when}}
+                                    {{#when format '===' 'date'}}
+                                        <td>
+                                            {{#if value}}
+                                                {{date value parameters}}
+                                            {{else}}
+                                                &nbsp;
+                                            {{/if}}
+                                        </td>
+                                    {{/when}}
+                                    {{#when format '===' 'relative'}}
+                                        <td>
+                                            {{#if value}}
+                                                {{relative value parameters}}
+                                            {{else}}
+                                                &nbsp;
+                                            {{/if}}
+                                        </td>
+                                    {{/when}}
+                                    {{#when format '===' 'strip'}}
+                                        <td>{{strip value parameters}}</td>
+                                    {{/when}}
+                                    {{#when format '===' 'link'}}
+                                        <td><a href="{{parameters.0}}">{{parameters.1}}</a></td>
+                                    {{/when}}
+                                    {{#when format '===' 'image'}}
+                                        <td><img src="{{value}}" width="{{parameters.0}}" height="{{parameters.1}}" /></td>
+                                    {{/when}}
+                                    {{#when format '===' 'email'}}
+                                        <td><a href="mailto:{{value}}">{{parameters}}</a></td>
+                                    {{/when}}
+                                    {{#when format '===' 'phone'}}
+                                        <td><a href="tel:{{value}}">{{parameters}}</a></td>
+                                    {{/when}}
+                                    {{#when format '===' 'comma'}}
+                                        <td>{{implode value ','}}</td>
+                                    {{/when}}
+                                    {{#when format '===' 'space'}}
+                                        <td>{{implode value ' '}}</td>
+                                    {{/when}}
+                                    {{#when format '===' 'tag'}}
+                                        <td>
+                                            {{#each value}}
+                                                <div class="tag">{{this}}</div>
+                                            {{/each}}
+                                        </td>
+                                    {{/when}}
+                                {{/get_format}}
+                            </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+                <!-- END: TABLE -->
             {{else}}
                 <!-- START: NO RESULTS -->
                 <div class="well no-results">No Results Found</div>

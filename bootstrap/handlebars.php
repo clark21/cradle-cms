@@ -44,4 +44,14 @@ return function ($request, $response) {
     $handlebars->registerHelper('tolower', function ($value) {
         return strtolower($value);
     });
+
+    $handlebars->registerHelper('error_exist', function($arr, $val, $scheme, $options) {
+        $name = $scheme . "_" . $val;
+
+        if (isset($arr[$name])) {
+            return $options['fn'](['value' => $arr[$name]]);
+        }
+
+        return $options['inverse']();
+    });
 };

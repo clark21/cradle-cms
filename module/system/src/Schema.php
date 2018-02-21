@@ -152,6 +152,42 @@ class Schema
     }
 
     /**
+     * Returns All files
+     *
+     * @return array
+     */
+    public function getFiles()
+    {
+        $results = [];
+        if(!isset($this->data['fields'])
+            || empty($this->data['fields'])
+        ) {
+            return $results;
+        }
+
+        $table = $this->data['name'];
+        foreach($this->data['fields'] as $field) {
+            $name = $table . '_' . $field['name'];
+
+            if(
+                in_array(
+                    $field['field']['type'],
+                    [
+                        'file',
+                        'image',
+                        'files',
+                        'images'
+                    ]
+                )
+            ) {
+                $results[] = $name;
+            }
+        }
+
+        return $results;
+    }
+
+    /**
      * Returns JSON fields
      *
      * @return array
@@ -303,8 +339,10 @@ class Schema
         $table = $this->data['name'];
         foreach($this->data['fields'] as $field) {
             $name = $table . '_' . $field['name'];
-            if($field['type'] === 'slug') {
-                $results[] = $name;
+            if (isset($field['type'])) {
+                if($field['type'] === 'slug') {
+                    $results[] = $name;
+                }
             }
         }
 
@@ -345,6 +383,35 @@ class Schema
     }
 
     /**
+     * Returns a list of required fields
+     *
+     * @return array
+     */
+    public function getRequired()
+    {
+        $results = [];
+        if(!isset($this->data['fields']) || empty($this->data['fields'])) {
+            return $results;
+        }
+
+        $table = $this->data['name'];
+        foreach($this->data['fields'] as $field) {
+            $name = $table . '_' . $field['name'];
+            if (!isset($field['validation'])) {
+                continue;
+            }
+
+            foreach ($field['validation'] as $validation) {
+                if ($validation === 'required') {
+                    $results[] = $name;
+                }
+            }
+        }
+
+        return $results;
+    }
+
+    /**
      * Returns singular name
      *
      * @return string
@@ -362,6 +429,35 @@ class Schema
     public function getTableName()
     {
         return $this->data['name'];
+    }
+
+    /**
+     * Returns a list of unique fields
+     *
+     * @return array
+     */
+    public function getUnique()
+    {
+        $results = [];
+        if(!isset($this->data['fields']) || empty($this->data['fields'])) {
+            return $results;
+        }
+
+        $table = $this->data['name'];
+        foreach($this->data['fields'] as $field) {
+            $name = $table . '_' . $field['name'];
+            if (!isset($field['validation'])) {
+                continue;
+            }
+
+            foreach ($field['validation'] as $validation) {
+                if ($validation === 'unique') {
+                    $results[] = $name;
+                }
+            }
+        }
+
+        return $results;
     }
 
     /**
@@ -506,9 +602,12 @@ class Schema
             }
 
             //if theres a reason to index
-            if ((isset($field['searchable']) && $field['searchable'])
-                || (isset($field['filterable']) && $field['filterable'])
-                || (isset($field['sortable']) && $field['sortable'])
+            if ($format['type'] !== 'TEXT'
+                && (
+                    (isset($field['searchable']) && $field['searchable'])
+                    || (isset($field['filterable']) && $field['filterable'])
+                    || (isset($field['sortable']) && $field['sortable'])
+                )
             ) {
                 //index it
                 $format['index'] = true;
@@ -549,42 +648,42 @@ class Schema
      */
     protected static $fieldTypes = [
         'text' => [
-            'type' => 'varchar',
+            'type' => 'VARCHAR',
             'length' => 255
         ],
         'email' => [
-            'type' => 'varchar',
+            'type' => 'VARCHAR',
             'length' => 255
         ],
         'password' => [
-            'type' => 'varchar',
+            'type' => 'VARCHAR',
             'length' => 255
         ],
         'search' => [
-            'type' => 'varchar',
+            'type' => 'VARCHAR',
             'length' => 255
         ],
         'url' => [
-            'type' => 'varchar',
+            'type' => 'VARCHAR',
             'length' => 255
         ],
         'color' => [
-            'type' => 'varchar',
+            'type' => 'VARCHAR',
             'length' => 7
         ],
-        'format' => [
-            'type' => 'varchar',
+        'mask' => [
+            'type' => 'VARCHAR',
             'length' => 255
         ],
         'slug' => [
-            'type' => 'varchar',
+            'type' => 'VARCHAR',
             'length' => 255
         ],
         'textarea' => [
-            'type' => 'text'
+            'type' => 'TEXT'
         ],
         'wysiwyg' => [
-            'type' => 'text'
+            'type' => 'TEXT'
         ],
         'number' => [
             'type' => 'INT'
@@ -634,22 +733,22 @@ class Schema
             'attribute' => 'unsigned'
         ],
         'select' => [
-            'type' => 'varchar',
+            'type' => 'VARCHAR',
             'length' => 255
         ],
         'checkboxes' => [
             'type' => 'JSON'
         ],
         'radios' => [
-            'type' => 'varchar',
+            'type' => 'VARCHAR',
             'length' => 255
         ],
         'file' => [
-            'type' => 'varchar',
+            'type' => 'VARCHAR',
             'length' => 255
         ],
         'image' => [
-            'type' => 'varchar',
+            'type' => 'VARCHAR',
             'length' => 255
         ],
         'files' => [

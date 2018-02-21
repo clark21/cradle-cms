@@ -37,6 +37,19 @@ $cradle->on('system-schema-create', function ($request, $response) {
 
     //----------------------------//
     // 3. Prepare Data
+
+    // filter relations
+    if(isset($data['relations'])) {
+        // filter out empty relations
+        $data['relations'] = array_filter(
+            $data['relations'],
+            function($relation) {
+                // make sure we have relation name
+                return $relation['name'] !== '' ? true : false;
+            }
+        );
+    }
+
     //----------------------------//
     // 4. Process Data
     $schema = SystemSchema::i($data);
@@ -131,8 +144,13 @@ $cradle->on('system-schema-remove', function ($request, $response) {
     $table = $schema->getTableName();
     //this/these will be used a lot
     $systemSql = $schema->service('sql');
-    //remove table
-    $systemSql->remove($data);
+
+    try {
+        //remove table
+        $systemSql->remove($data);
+    } catch(\Exception $e) {
+        return $response->setError(true, $e->getMessage());
+    }
 
     $path = $this->package('global')->path('config')
         . '/schema/'
@@ -180,8 +198,13 @@ $cradle->on('system-schema-restore', function ($request, $response) {
     $table = $schema->getTableName();
     //this/these will be used a lot
     $systemSql = $schema->service('sql');
-    //remove table
-    $systemSql->restore($data);
+
+    try {
+        //remove table
+        $systemSql->restore($data);
+    } catch(\Exception $e) {
+        return $response->setError(true, $e->getMessage());
+    }
 
     $path = $this->package('global')->path('config')
         . '/schema/_'
@@ -290,7 +313,19 @@ $cradle->on('system-schema-update', function ($request, $response) {
 
     //----------------------------//
     // 3. Prepare Data
-    //no preparation needed
+
+    // filter relations
+    if(isset($data['relations'])) {
+        // filter out empty relations
+        $data['relations'] = array_filter(
+            $data['relations'], 
+            function($relation) {
+                // make sure we have relation name
+                return $relation['name'] !== '' ? true : false;
+            }
+        );
+    }
+
     //----------------------------//
     // 4. Process Data
     $schema = SystemSchema::i($data);

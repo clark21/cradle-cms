@@ -253,7 +253,19 @@
             }
         }
 
+        // get error message element
+        var err = target.nextAll('.error-message');
+
         target.remove();
+
+        // remove if error message exist
+        if(err.length) {
+            for(var i = 0; i < 2; i++) {
+                if (err[i] !== undefined) {
+                    err[i].remove();
+                }
+            }
+        }
     });
 
     $(window).on('option-remove-click', function(e, trigger) {
@@ -543,7 +555,8 @@
             case 'none':    case 'required':  case 'empty':
             case 'unique':  case 'number':    case 'float':
             case 'email':   case 'url':       case 'hex':
-            case 'cc':      case 'price':
+            case 'cc':      case 'price':     case 'date':
+            case 'date':    case 'datetime':
                 container.find('div.input-input').remove();
                 container.find('div.input-options').remove();
                 break;
@@ -735,6 +748,14 @@
     $(window).on('relation-remove-click', function(e, trigger) {
         $(window).trigger('remove-click', trigger);
         reindexRelations();
+    });
+
+    $(window).on('preview-icon-change', function(e, target) {
+        var target = $(target);
+
+        var val = target.val();
+
+        $("#iconPreview i").attr("class", val);
     });
 
     var reindexFields = function() {

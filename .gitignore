@@ -4,8 +4,10 @@ vendor
 config/services.php
 config/settings.php
 config/test.php
+config/schema/*.php
 
 public/bower_components
+public/components
 public/upload
 config/version.php
 config/version.php
