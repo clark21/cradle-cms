@@ -24,6 +24,11 @@ input, select, button, a.btn {
     float: right;
 }
 
+nav .navbar-brand {
+    text-align: center;
+    width: 175px;
+}
+
 .clear { clear: both; }
 .pad-top { margin-top: 10px; }
 .pad-bottom { margin-top: 10px; }
@@ -204,7 +209,12 @@ input, select, button, a.btn {
 
 .branding header .navbar {
     background-color: #FFFFFF;
+    border-bottom: 1px solid #C2CFD6;
     margin-bottom: 0;
+}
+
+.branding header .navbar ul li a {
+    color: #29363D;
 }
 
 .branding header .navbar ul li a i {
@@ -212,7 +222,7 @@ input, select, button, a.btn {
 }
 
 .branding header .navbar .navbar-brand img {
-    height: 30px;
+    height: 20px;
 }
 
 .branding header .navbar .navbar-toggle .icon-bar {
@@ -220,6 +230,7 @@ input, select, button, a.btn {
 }
 
 .branding .body {
+    background-color: #29363D;
     height: 100%;
     padding: 0;
 }
@@ -316,7 +327,7 @@ input, select, button, a.btn {
 /* Sidebar
 ----------------------------- */
 .sidebar {
-    background-color: #F2F2F2;
+    background-color: #29363D;
     border-right: 1px solid #CCCCCC;
     float: left;
     position: relative;
@@ -331,8 +342,6 @@ input, select, button, a.btn {
     border-bottom-style: none;
     border-top-color: currentcolor;
     border-bottom-color: currentcolor;
-    border-top: 1px solid #FCFCFC;
-    border-bottom: 1px solid #E5E5E5;
     display: block;
     padding: 0;
     margin: 0;
@@ -340,16 +349,36 @@ input, select, button, a.btn {
 }
 
 .sidebar .nav-item.active {
-    background-color: #FFFFFF;
-    color: #2B7DBC;
+    color: #FFFFFF;
     font-weight: bold;
     font-size: 13px;
 }
 
-.sidebar .nav-link {
-    background-color: #F9F9F9;
-    color: #585858;
+.sidebar .nav-item.active .nav-link {
+    background-color: #33444C;
+}
+
+.sidebar .nav-item.active:after {
+    border: 8px solid transparent;
+    border-top-width: 8px;
+    border-right-width: 8px;
+    border-bottom-width: 8px;
+    border-left-width: 8px;
+    border-right-color: transparent;
+    border-width: 14px 10px;
+    border-right-color: #536C79;
+    content: "";
     display: block;
+    position: absolute !important;
+    right: 0;
+    top: 4px;
+}
+
+.sidebar .nav-link {
+    background-color: #29363D;
+    color: #FFFFFF;
+    display: block;
+    font-weight: 300;
     font-size: 13px;
     height: 38px;
     line-height: 36px;
@@ -358,25 +387,43 @@ input, select, button, a.btn {
     text-shadow: none;
 }
 
-<<<<<<< HEAD
+.sidebar .nav-link:hover,
+.sidebar .nav-item.active:hover .nav-link {
+    background-color: #20A8D8;
+}
+
+.sidebar .nav-item.active:hover:after {
+    border-right-color: #FFFFFF;
+}
+
+.sidebar .nav-link:hover > i:first-child {
+    color: #FFFFFF;
+}
+
 .sidebar .nav-item.active a,
 .sidebar .nav-item.active a:hover,
 .sidebar .nav-item.active a:focus,
 .sidebar .nav-item.active a:active {
-    color: #2B7DBC;
+    color: #FFFFFF;
 }
 
 .sidebar .nav-link > i:first-child {
+    color: #536C79;
     display: inline-block;
-    font-size: 18px;
     margin-right: 2px;
     min-width: 30px;
     text-align: center;
     vertical-align: middle;
 }
 
-=======
->>>>>>> a226a6ad043781f9a2d927ca8cbaaa86d2061dc7
+/* Breadcrumb
+------------------------------*/
+.breadcrumb {
+    background-color: #FFFFFF;
+    border-bottom: 1px solid #C2CFD6;
+    border-radius: 0;
+}
+
 /* Field - Buttons
 ------------------------------*/
 .btn {

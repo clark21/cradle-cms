@@ -1,45 +1,31 @@
 <ul class="nav flex-column">
+    {{#session 'me'}}
     <li class="nav-item active">
-        <a class="nav-link" href="#">
-            <i class="fas fa-cog"></i>
-            <span class="nav-text">Item 1</span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="#">
-            <i class="fas fa-cog"></i>
-            <span class="nav-text">Item 2</span>
-            <span class="nav-right">
-                <div class="badge badge-info">4</div>
-            </span>
+        <a class="nav-link" href="/admin/user/search">
+            <i class="fas fa-user"></i> Users
         </a>
     </li>
     <li class="nav-item">
         <a class="nav-link" data-toggle="collapse" href="#item-1">
             <i class="fas fa-cog"></i>
-            <span class="nav-text">Item 3</span>
+            <span class="nav-text">Content</span>
             <span class="nav-right">
                 <i class="fas fa-chevron-down"></i>
             </span>
         </a>
         <div id="item-1" class="collapse">
             <ul class="nav flex-column ml-4">
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        <i class="fas fa-cog"></i>
-                        <span class="nav-text">Item 1</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        <i class="fas fa-cog"></i>
-                        <span class="nav-text">Item 2</span>
-                        <span class="nav-right">
-                            <div class="badge badge-info">4</div>
-                        </span>
-                    </a>
-                </li>
+                {{#each ../navigation.rows}}
+                    <li class="nav-item">
+                        <a
+                            class="nav-link"
+                            href="/admin/system/object/{{name}}/search">
+                            <i class="{{icon}}"></i> {{capital plural}}
+                        </a>
+                    </li>
+                {{/each}}
             </ul>
         </div>
     </li>
+    {{/session}}
 </ul>
