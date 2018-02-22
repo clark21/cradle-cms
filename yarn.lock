@@ -10,16 +10,10 @@ fontawesome5-webfont@^5.0.4:
   version "5.0.4"
   resolved "https://registry.yarnpkg.com/fontawesome5-webfont/-/fontawesome5-webfont-5.0.4.tgz#f392cee1529e6dd81f1e103be8cc6c3522282995"
 
-jquery@>=1.12.0, jquery@^3.3.1:
+jquery@^3.3.1:
   version "3.3.1"
   resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.3.1.tgz#958ce29e81c9790f31be7792df5d4d95fc57fbca"
 
 open-sans-fontface@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/open-sans-fontface/-/open-sans-fontface-1.4.0.tgz#03cc6d1bf5e6a8b5b47910888562f722c5dd3428"
-
-toastr@^2.1.4:
-  version "2.1.4"
-  resolved "https://registry.yarnpkg.com/toastr/-/toastr-2.1.4.tgz#8b43be64fb9d0c414871446f2db8e8ca4e95f181"
-  dependencies:
-    jquery ">=1.12.0"

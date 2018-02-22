@@ -3,8 +3,7 @@
     "bootstrap": "^4.0.0",
     "fontawesome5-webfont": "^5.0.4",
     "jquery": "^3.3.1",
-    "open-sans-fontface": "^1.4.0",
-    "toastr": "^2.1.4"
+    "open-sans-fontface": "^1.4.0"
   },
   "scripts": {
     "build": "yarn install --modules-folder ./public/components"

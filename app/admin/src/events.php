@@ -38,8 +38,7 @@ $cradle->on('render-admin-page', function ($request, $response) {
         array(
             'head',
             'foot',
-            'sidebar',
-            'breadcrumb'
+            'side'
         )
     );
 
