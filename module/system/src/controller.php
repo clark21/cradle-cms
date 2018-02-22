@@ -68,16 +68,17 @@ $cradle->get('/admin/system/schema/create', function($request, $response) {
     //----------------------------//
     // 3. Render Template
     $class = 'page-admin-system-schema-create page-admin';
+    $data['action'] = 'create';
     $data['title'] = cradle('global')->translate('Create System Schema');
 
     cradle('global')
         ->handlebars()
         ->registerHelper('is_array', function($value, $option) {
-        if(is_array($value)) {
-            return $option['fn']();
-        }
+            if(is_array($value)) {
+                return $option['fn']();
+            }
 
-        return $option['inverse']();
+            return $option['inverse']();
         })
         ->registerHelper('get_icons', function($options) {
             function array_delete($array, $element) {
@@ -115,7 +116,8 @@ $cradle->get('/admin/system/schema/create', function($request, $response) {
             'update',
             'type-options',
             'format-options',
-            'validation-options'
+            'validation-options',
+            'icon-options'
         ]
     );
 
@@ -166,6 +168,7 @@ $cradle->get('/admin/system/schema/update/:name', function($request, $response) 
     //----------------------------//
     // 3. Render Template
     $class = 'page-admin-system-schema-update page-admin';
+    $data['action'] = 'update';
     $data['title'] = cradle('global')->translate('Updating System Schema');
 
     cradle('global')
@@ -213,7 +216,8 @@ $cradle->get('/admin/system/schema/update/:name', function($request, $response) 
             'update',
             'type-options',
             'format-options',
-            'validation-options'
+            'validation-options',
+            'icon-options'
         ]
     );
 

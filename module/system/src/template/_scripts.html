@@ -750,12 +750,17 @@
         reindexRelations();
     });
 
-    $(window).on('preview-icon-change', function(e, target) {
+    $(window).on('icon-field-init', function(e, target) {
         var target = $(target);
 
-        var val = target.val();
+        $('i', target.attr('data-target')).click(function() {
+            target.val(this.className.replace(' fa-fw', ''));
+            target.parent().find('i')[0].className = this.className;
 
-        $("#iconPreview i").attr("class", val);
+            $(target.attr('data-target')).removeClass('show');
+
+            target.focus();
+        });
     });
 
     var reindexFields = function() {
