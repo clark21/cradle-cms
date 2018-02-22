@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
 
-    <title>Openovate Admin</title>
+    <title>Admin</title>
 
     <!-- MOBILE TAGS -->
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, height=device-height, width=device-width" />
@@ -52,38 +52,16 @@
     <header class="head" data-do="fixed-scroll">{{> head}}</header>
     <section class="body">
         <aside class="sidebar">{{> side}}</aside>
-        <main class="main">
-            {{#if crumbs.length}}
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        {{#each crumbs}}
-                            {{#if active}}
-                                <li class="breadcrumb-item active" aria-current="page">
-                                    <i class="{{icon}}"></i> {{label}}
-                                </li>
-                            {{else}}
-                                <li class="breadcrumb-item">
-                                    <a href="{{link}}">
-                                        <i class="{{icon}}"></i> {{label}}
-                                    </a>
-                                </li>
-                            {{/if}}
-                        {{/each}}
-                    </ol>
-                </nav>
-            {{/if}}
-
-            <div class="main-padding">{{{content}}}</div>
-            {{#if page.flash}}
-                <div id="toast-container" class="toast-top-right">
-                    <div class="toast toast-{{page.flash.type}}" aria-live="polite">
-                        <div class="toast-title">{{capital page.flash.type}}</div>
-                        <div class="toast-message">{{page.flash.message}}</div>
-                    </div>
-                </div>
-            {{/if}}
-        </main>
+        <main class="main">{{{content}}}</main>
     </section>
-    <footer class="foot"></footer>
+    <footer class="foot">{{> foot}}</footer>
+    {{#if page.flash}}
+        <div id="toast-container" class="toast-top-right">
+            <div class="toast toast-{{page.flash.type}}" aria-live="polite">
+                <div class="toast-title">{{capital page.flash.type}}</div>
+                <div class="toast-message">{{page.flash.message}}</div>
+            </div>
+        </div>
+    {{/if}}
 </body>
 </html>
