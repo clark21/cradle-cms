@@ -611,6 +611,95 @@ jQuery(function($) {
         });
 
         /**
+         * Select Csv to Import
+         */
+        $(window).on('select-csv-click', function(e, target) {
+            e.preventDefault();
+            var target = $(target);
+            $("#import-csv").trigger('click');
+        });
+
+        /**
+         * import csv
+         */
+        $(window).on('import-csv-change', function(e, target) {
+            var target = $(target);
+            target.closest('#importForm').submit();
+        });
+
+        /**
+         * Select Csv to Export
+         */
+        $(window).on('export-csv-click', function(e, target) {
+            e.preventDefault();
+            var target = $(target);
+            $("#exportForm").submit();
+        });
+
+        /**
+         * Search filter more less toggle
+         */
+        $(window).on('search-filter-toggle-click', function(e, target) {
+            if($('i', target).hasClass('fa-caret-down')) {
+                $('i', target)
+                    .removeClass('fa-caret-down')
+                    .addClass('fa-caret-up');
+                $('span', target).html('less');
+            } else {
+                $('i', target)
+                    .removeClass('fa-caret-up')
+                    .addClass('fa-caret-down');
+                $('span', target).html('more');
+            }
+        });
+
+        /**
+         * Search table check all
+         */
+        $(window).on('table-checkall-init', function(e, trigger) {
+            var target = $(trigger).parents('table').eq(0);
+
+            $(trigger).click(function() {
+                if($(trigger).prop('checked')) {
+                    $('td input[type="checkbox"]', target).prop('checked', true);
+                } else {
+                    $('td input[type="checkbox"]', target).prop('checked', false);
+                }
+            });
+
+            $('td input[type="checkbox"]', target).click(function() {
+                var allChecked = true;
+                $('td input[type="checkbox"]', target).each(function() {
+                    if(!$(this).prop('checked')) {
+                        allChecked = false;
+                    }
+                });
+
+                $(trigger).prop('checked', allChecked);
+            });
+        });
+
+        /**
+         * Search submit search form
+         */
+        $(window).on('object-search-click', function(e, target) {
+            var target = $(target);
+            var form = target.parents('form');
+
+            form.submit(function() {
+                form.find(":input").filter(
+                    function() {
+                        return !this.value;
+                    }).attr("disabled", "disabled");
+
+                return true; // ensure form still submits
+            });
+
+            // Un-disable form fields when page loads, in case they click back after submission
+            form.find( ":input" ).prop( "disabled", false );
+        });
+
+        /**
          * Generate Slug
          */
         $(window).on('slugger-init', function(e, target) {

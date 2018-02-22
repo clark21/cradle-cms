@@ -758,6 +758,41 @@
         $("#iconPreview i").attr("class", val);
     });
 
+
+    /**
+     * Search filter more less toggle
+     */
+    $(window).on('search-filter-toggle-click', function(e, target) {
+        if($('i', target).hasClass('fa-caret-down')) {
+            $('i', target)
+                .removeClass('fa-caret-down')
+                .addClass('fa-caret-up');
+            $('span', target).html('less');
+        } else {
+            $('i', target)
+                .removeClass('fa-caret-up')
+                .addClass('fa-caret-down');
+            $('span', target).html('more');
+        }
+    });
+
+    /**
+     * Search filter more less toggle
+     */
+    $(window).on('search-filter-toggle-click', function(e, target) {
+        if($('i', target).hasClass('fa-caret-down')) {
+            $('i', target)
+                .removeClass('fa-caret-down')
+                .addClass('fa-caret-up');
+            $('span', target).html('less');
+        } else {
+            $('i', target)
+                .removeClass('fa-caret-up')
+                .addClass('fa-caret-down');
+            $('span', target).html('more');
+        }
+    });
+
     var reindexFields = function() {
         var format = {
             disable: 'fields[{INDEX}][disable]',
