@@ -3,6 +3,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
+                    <h5 class="modal-title">Create Field</h5>
                     <button
                         class="close"
                         data-do="modal-cancel"
@@ -11,7 +12,6 @@
                     >
                         <span aria-hidden="true">&times;</span>
                     </button>
-                    <h4 class="modal-title">Create Field</h4>
                 </div>
                 <div class="modal-body" data-index="{INDEX}">
                     <div class="form-group form-group-label">
@@ -171,7 +171,7 @@
                 data-on="click"
                 href="javascript:void(0)"
             >
-                <i class="fa fa-edit"></i>
+                <i class="fas fa-edit"></i>
             </a>
             <a
                 class="field-move-up-trigger"
@@ -180,7 +180,7 @@
                 data-level="2"
                 href="javascript:void(0)"
             >
-                <i class="fa fa-arrow-up"></i>
+                <i class="fas fa-arrow-up"></i>
             </a>
             <a
                 class="field-move-down-trigger"
@@ -189,7 +189,7 @@
                 data-level="2"
                 href="javascript:void(0)"
             >
-                <i class="fa fa-arrow-down"></i>
+                <i class="fas fa-arrow-down"></i>
             </a>
             <a
                 class="field-remove-trigger text-danger"
@@ -198,7 +198,7 @@
                 data-level="2"
                 href="javascript:void(0)"
             >
-                <i class="fa fa-remove"></i>
+                <i class="fas fa-times"></i>
             </a>
         </td>
         <td class="field-name-value"></td>
@@ -231,7 +231,7 @@
                     data-on="click"
                     data-level="3"
                 >
-                    <i class="fa fa-remove"></i>
+                    <i class="fas fa-times"></i>
                 </a>
             </span>
         </div>
@@ -306,7 +306,7 @@
             data-level="1"
             href="javascript:void(0)"
         >
-            <i class="fa fa-remove"></i>
+            <i class="fas fa-times"></i>
         </a>
     </div>
 </script>
@@ -341,7 +341,7 @@
                 data-level="2"
                 href="javascript:void(0)"
             >
-                <i class="fa fa-remove"></i>
+                <i class="fas fa-times"></i>
             </a>
         </span>
     </div>
@@ -382,7 +382,7 @@
             data-level="1"
             href="javascript:void(0)"
         >
-            <i class="fa fa-remove"></i>
+            <i class="fas fa-times"></i>
         </a>
     </div>
 </script>
@@ -396,7 +396,7 @@
             data-on="click"
             href="javascript:void(0)"
         >
-            <i class="fa fa-remove"></i>
+            <i class="fas fa-times"></i>
         </a>
         <strong
             class="schema-relation-singular"
@@ -406,13 +406,13 @@
         >
             {SINGULAR}
         </strong>
-        <i class="fa fa-arrow-right"></i>
+        <i class="fas fa-arrow-right"></i>
         <select class="form-control relation-many" name="{NAME_1}">
             <option value="0">1:0</option>
             <option value="1">1:1</option>
             <option value="2">1:N</option>
         </select>
-        <i class="fa fa-arrow-right"></i>
+        <i class="fas fa-arrow-right"></i>
         <input
             class="form-control relation-name"
             name="{NAME_2}"
