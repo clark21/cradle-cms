@@ -1194,7 +1194,7 @@ select.form-control {
     background-color: #F2F2F2;
     border-right: 1px solid #CCCCCC;
     float: left;
-    position: relative;
+    position: absolute;
     width: 190px;
 }
 
@@ -1310,6 +1310,7 @@ select.form-control {
 
 .body .main-padding {
     padding: 20px;
+    min-height: 700px;
 }
 
 .body .main-title {
