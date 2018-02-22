@@ -1,177 +1,80 @@
-<nav class="navbar navbar-default" style="display: none;">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <button
-            type="button"
-            class="navbar-toggle collapsed"
-            data-toggle="collapse"
-            data-target="#main-nav">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="/">
-                <img height="50" src="/images/logo-long.png" />
-            </a>
-        </div>
-
-        <div id="main-nav" class="collapse navbar-collapse{{#session 'me'}} loggedin{{/session}}">
-            {{#session 'me'}}
-            <ul class="nav navbar-nav">
-                <li class="dropdown">
-                    <a
-                        href="#"
-                        class="dropdown-toggle"
-                        data-toggle="dropdown"
-                        role="button"
-                        aria-haspopup="true"
-                        aria-expanded="false"
-                    >
-                        Users <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li>
-                            <a href="/admin/user/search">
-                                <i class="fa fa-user"></i> Users
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/admin/auth/search">
-                                <i class="fa fa-lock"></i> Authentications
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="dropdown">
-                    <a
-                        href="#"
-                        class="dropdown-toggle"
-                        data-toggle="dropdown"
-                        role="button"
-                        aria-haspopup="true"
-                        aria-expanded="false"
-                    >
-                        Content <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        {{#each ../navigation.rows}}
-                            <li><a href="/admin/system/object/{{name}}/search"><i class="{{icon}}"></i> {{capital plural}}</a></li>
-                        {{/each}}
-                        <li role="separator" class="divider"></li>
-                        <li>
-                            <a href="/admin/system/schema/search">
-                                <i class="fa fa-cogs"></i> Schemas
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-            {{/session}}
-            <ul class="nav navbar-nav navbar-right">
-                {{#session 'me'}}
-                    <li>
-                        <a href="/logout?redirect_uri={{server 'REQUEST_URI'}}" class="btn text-danger">
-                            {{_ 'Logout'}}
-                        </a>
-                    </li>
-                {{else}}
-                    <li><a href="/login?redirect_uri={{server 'REQUEST_URI'}}">Login</a></li>
-                    <li><a href="/signup?redirect_uri={{server 'REQUEST_URI'}}">Signup</a></li>
-                {{/session}}
-            </ul>
-        </div><!-- /.navbar-collapse -->
-    </div><!-- /.container-fluid -->
-</nav>
-
-
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#">
-        <img alt="Cradle PHP" src="/images/logo-long.png" />
-    </a>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">Admin</a>
     <button
-        class="navbar-toggler"
-        type="button"
-        data-toggle="collapse"
-        data-target="#navbarSupportedContent"
         aria-controls="navbarSupportedContent"
         aria-expanded="false"
-        aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
+        aria-label="Toggle navigation"
+        class="navbar-toggler"
+        data-target="#navbarSupportedContent"
+        data-toggle="collapse"
+        type="button"
+    >
+        <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <a class="nav-link" href="#">Dashboard <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="/">Front End</a>
             </li>
         </ul>
         <ul class="navbar-nav my-2 my-lg-0">
-            {{#session 'me'}}
-                <li class="nav-item dropdown nav-notifications">
-                    <a
-                        class="nav-link dropdown-toggle"
-                        href="#"
-                        role="button"
-                        data-toggle="dropdown"
-                        aria-haspopup="true"
-                        aria-expanded="false"
-                    >
-                        <i class="fas fa-bell"></i>
-                        <span class="badge badge-danger">55</span>
+            <li class="nav-item dropdown nav-notifications">
+                <a
+                    class="nav-link dropdown-toggle"
+                    href="#"
+                    role="button"
+                    data-toggle="dropdown"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                >
+                    <i class="fas fa-bell"></i>
+                    <span class="badge badge-danger">55</span>
+                </a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="#">
+                        <img class="rounded-circle" src="/images/default-avatar.png" />
+                        <span class="notification-info">
+                            <span class="notification-message">has deleted everything.</span>
+                            <em class="notification-time">2 hours ago</em>
+                        </span>
                     </a>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" href="#">
-                            <img class="rounded-circle" src="/images/default-avatar.png" />
-                            <span class="notification-info">
-                                <span class="notification-message">has deleted everything.</span>
-                                <em class="notification-time">2 hours ago</em>
-                            </span>
-                        </a>
-                        <a class="dropdown-item" href="#">
-                            <img class="rounded-circle" src="/images/default-avatar.png" />
-                            <span class="notification-info">
-                                <span class="notification-message">has deleted everything.</span>
-                                <em class="notification-time">2 hours ago</em>
-                            </span>
-                        </a>
-                        <a class="dropdown-item" href="#">
-                            <img class="rounded-circle" src="/images/default-avatar.png" />
-                            <span class="notification-info">
-                                <span class="notification-message">has deleted everything.</span>
-                                <em class="notification-time">2 hours ago</em>
-                            </span>
-                        </a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">Mark all as Read</a>
-                    </div>
-                </li>
-                <li class="nav-item dropdown nav-profile">
-                    <a
-                        class="nav-link dropdown-toggle"
-                        href="#"
-                        role="button"
-                        data-toggle="dropdown"
-                        aria-haspopup="true"
-                        aria-expanded="false"
-                    >
-                        <img class="rounded-circle" src="/images/default-avatar.png" width="40" />
-                        Welcome {{#session 'me'}}{{user_name}}{{/session}}
+                    <a class="dropdown-item" href="#">
+                        <img class="rounded-circle" src="/images/default-avatar.png" />
+                        <span class="notification-info">
+                            <span class="notification-message">has deleted everything.</span>
+                            <em class="notification-time">2 hours ago</em>
+                        </span>
                     </a>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" href="#">Action</a>
-                        <a class="dropdown-item" href="#">Another action</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="/logout?redirect_uri={{server 'REQUEST_URI'}}">Logout</a>
-                    </div>
-                </li>
-            {{else}}
-                <li class="nav-item">
-                    <a class="nav-link" href="/login?redirect_uri={{server 'REQUEST_URI'}}">Login</a>
-                </li>
-                <li class="nav-item">
-                    <a href="/signup?redirect_uri={{server 'REQUEST_URI'}}">Signup</a>
-                </li>
-            {{/session}}
+                    <a class="dropdown-item" href="#">
+                        <img class="rounded-circle" src="/images/default-avatar.png" />
+                        <span class="notification-info">
+                            <span class="notification-message">has deleted everything.</span>
+                            <em class="notification-time">2 hours ago</em>
+                        </span>
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="#">Mark all as Read</a>
+                </div>
+            </li>
+            <li class="nav-item dropdown nav-profile">
+                <a
+                    class="nav-link dropdown-toggle"
+                    href="#"
+                    role="button"
+                    data-toggle="dropdown"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                >
+                    <img class="rounded-circle" src="/images/default-avatar.png" width="40" />
+                    Welcome {{#session 'me'}}{{user_name}}{{/session}}
+                </a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="#">Action</a>
+                    <a class="dropdown-item" href="#">Another action</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="/logout?redirect_uri={{server 'REQUEST_URI'}}">Logout</a>
+                </div>
+            </li>
         </ul>
     </div>
 </nav>

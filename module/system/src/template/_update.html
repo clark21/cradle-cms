@@ -91,7 +91,7 @@
 
                 <div class="form-group form-group-indexes">
                     <div>
-                        <label>
+                        <label class="checkbox checkbox-2">
                             <input
                                 class="field-searchable"
                                 name="fields[{{@index}}][searchable]"
@@ -99,10 +99,10 @@
                                 value="1"
                                 {{#if searchable}} checked{{/if}}
                             />
-                            Searchable
+                            <span>Searchable</span>
                         </label>
                         <br />
-                        <label>
+                        <label class="checkbox checkbox-2">
                             <input
                                 class="field-filterable"
                                 name="fields[{{@index}}][filterable]"
@@ -110,10 +110,10 @@
                                 value="1"
                                 {{#if filterable}} checked{{/if}}
                             />
-                            Filterable
+                            <span>Filterable</span>
                         </label>
                         <br />
-                        <label>
+                        <label class="checkbox checkbox-2">
                             <input
                                 class="field-sortable"
                                 name="fields[{{@index}}][sortable]"
@@ -121,7 +121,7 @@
                                 value="1"
                                 {{#if sortable}} checked{{/if}}
                             />
-                            Sortable
+                            <span>Sortable</span>
                         </label>
                     </div>
                 </div>

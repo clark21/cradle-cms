@@ -1,0 +1,28 @@
+<ul class="nav flex-column">
+    {{#each navigation.rows}}
+        <li class="nav-item">
+            <a
+                class="nav-link"
+                href="/admin/system/object/{{name}}/search">
+                <i class="{{#if icon}}{{icon}}{{else}}fas fa-align-justify{{/if}}"></i> {{capital plural}}
+            </a>
+        </li>
+    {{/each}}
+    <li role="separator" class="divider"></li>
+    <li class="nav-item">
+        <a class="nav-link" href="/admin/user/search">
+            <i class="fas fa-user"></i> Users
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/admin/auth/search">
+            <i class="fas fa-lock"></i> Auth
+        </a>
+    </li>
+    <li role="separator" class="divider"></li>
+    <li class="nav-item">
+        <a class="nav-link" href="/admin/system/schema/search">
+            <i class="fas fa-cogs"></i> Schemas
+        </a>
+    </li>
+</ul>

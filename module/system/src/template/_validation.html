@@ -14,15 +14,16 @@
                 data-do="remove"
                 data-on="click"
                 data-level="3"
+                href="javascript:void(0)"
             >
-                <i class="fa fa-remove"></i>
+                <i class="fas fa-times"></i>
             </a>
         </span>
     </div>
 
     {{#if parameters}}
         {{#is_array parameters}}
-            <div class="input-options">
+            <div class="input-options">``
                 {{#each parameters}}
                     <div class="option-row input-group" data-index="{{@index}}">
                         <input
@@ -40,7 +41,7 @@
                                 data-level="2"
                                 href="javascript:void(0)"
                             >
-                                <i class="fa fa-remove"></i>
+                                <i class="fas fa-times"></i>
                             </a>
                         </span>
                     </div>
