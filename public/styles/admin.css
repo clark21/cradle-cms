@@ -69,9 +69,11 @@ nav .navbar-brand {
 }
 
 .body .main-title {
+    border-bottom: 0;
     font-size: 18px;
     font-weight: 500;
     margin: 0 0 20px;
+    padding-bottom: 0;
 }
 
 /* Box
@@ -418,7 +420,7 @@ nav .navbar-brand {
     background-color: #33444C;
 }
 
-.sidebar .nav-item.active:after {
+.sidebar .nav-item.active::after {
     border: 8px solid transparent;
     border-top-width: 8px;
     border-right-width: 8px;
@@ -447,8 +449,35 @@ nav .navbar-brand {
     text-shadow: none;
 }
 
+.sidebar > .nav > .nav-item > div > .nav {
+    position: relative;
+}
+
+.sidebar > .nav > .nav-item > div > .nav::before {
+    content: "";
+    bottom: 0;
+    border: 1px dotted #9dbdd6;
+    border-width: 0 0 0 1px;
+    display: block;
+    position: absolute;
+    left: -2px;
+    top: 0;
+    z-index: 1;
+}
+
+.sidebar > .nav > .nav-item > div > .nav > .nav-item::before {
+    border-top: 1px dotted #9dbdd6;
+    content: "";
+    display: inline-block;
+    position: absolute;
+    left: 0;
+    top: 17px;
+    width: 7px;
+}
+
 .sidebar .nav-link:hover,
-.sidebar .nav-item.active:hover .nav-link {
+.sidebar .nav-item.active:hover .nav-link,
+.sidebar .nav-item .collapse ul li:hover .nav-link {
     background-color: #20A8D8;
 }
 
@@ -458,6 +487,11 @@ nav .navbar-brand {
 
 .sidebar .nav-link:hover > i:first-child {
     color: #FFFFFF;
+}
+
+.sidebar .nav-item .collapse,
+.sidebar .nav-item .collapse ul li .nav-link {
+    background-color: #33444C;
 }
 
 .sidebar .nav-item.active a,

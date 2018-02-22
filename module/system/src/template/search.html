@@ -8,22 +8,23 @@
     </h3>
 {{/if}}
 
-<form method="post">
-    <div class="clearfix mb-4 search-actions">
-        <div class="float-right">
-            <div class="btn-group" role="group" aria-label="...">
-                <a class="btn btn-primary" href="?filter[active]=1">
-                    Active
-                </a>
-                <a class="btn btn-danger" href="?filter[active]=0">
-                    Inactive
-                </a>
-            </div>
-            <a class="btn btn-success" href="/admin/system/schema/create">
-                <i class="fas fa-plus"></i> Create Schema
+<div class="clearfix mb-4 search-actions">
+    <div class="float-right">
+        <div class="btn-group" role="group" aria-label="...">
+            <a class="btn btn-primary" href="?filter[active]=1">
+                Active
+            </a>
+            <a class="btn btn-danger" href="?filter[active]=0">
+                Inactive
             </a>
         </div>
+        <a class="btn btn-success" href="/admin/system/schema/create">
+            <i class="fas fa-plus"></i> Create Schema
+        </a>
     </div>
+</div>
+
+<form method="post">
     <div class="table-overflow">
     {{#if rows}}
         <!-- START: TABLE -->
