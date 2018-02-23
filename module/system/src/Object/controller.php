@@ -77,15 +77,8 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
         'listable' => $schema->getListable(),
         'fields' => $schema->getFields(),
         'sortable' => $schema->getSortable(),
+        'icon' => $schema->getIcon()
     ];
-
-    foreach($schema->getFilterable() as $key => $filterable) {
-        if(preg_match("/". $data['schema']['name'] . "_active/", $filterable)) {
-            continue;
-        }
-
-        $data['schema']['filterable'][$key] = ['col' => $filterable, 'name' => str_replace($data['schema']['name'] . '_' , '', $filterable)];
-    }
 
     if ($request->getStage('action') == 'export') {
         // Set CSV header
@@ -847,7 +840,7 @@ $cradle->post('/admin/system/object/:schema/import', function($request, $respons
         cradle('global')->redirect('/admin/system/object/' . $data['schema']['name'] . '/search');
     }
 
-    if (empty($data)) {
+    if (empty($results)) {
         cradle('global')->flash('Empty CSV', 'danger');
         cradle('global')->redirect('/admin/system/object/' . $data['schema']['name'] . '/search');
     }
@@ -871,6 +864,49 @@ $cradle->post('/admin/system/object/:schema/import', function($request, $respons
 
     cradle('global')->redirect('/admin/system/object/' . $data['schema']['name'] . '/search');
 });
+
+/**
+ * Process the Product Restore
+ *
+ * @param Request $request
+ * @param Response $response
+ */
+$cradle->post('/admin/system/object/:schema/bulk-update', function($request, $response) {
+    //----------------------------//
+    // 1. Route Permissions
+    //only for admin
+    cradle('global')->requireLogin('admin');
+
+    //----------------------------//
+    // 2. Prepare Data
+    $data = $request->getStage();
+
+    $schemaResponse = Response::i()->load();
+    cradle()->trigger('system-schema-detail', $request, $schemaResponse);
+    $schema = SystemSchema::i($schemaResponse->getResults());
+    $ctr = ['ok' => 0, 'error' => 0];
+
+    //----------------------------//
+    // 3. Process Request
+    foreach ($data[$schema->getPrimary()] as $key => $value) {
+        $request->setStage($schema->getPrimary(), $value);
+        cradle()->trigger('system-object-'. strtolower($data['action']), $request, $response);
+
+        //interpret result per object
+        if($response->isError()) {
+            $ctr['error'] += 1;
+        } else {
+            $ctr['ok'] += 1;
+        }
+    }
+
+    //----------------------------//
+    // 4. Interpret Results
+    $message = "[" . $ctr['ok'] . "] successfully " . strtolower($data['action']) . ". [" . $ctr['error'] . "] unsuccessfully " . strtolower($data['action']);
+
+    cradle('global')->flash($message, 'success');
+    cradle('global')->redirect('/admin/system/object/'. $request->getStage('schema') .'/search');
+ });
 
 /**
  * Process the System Object Remove

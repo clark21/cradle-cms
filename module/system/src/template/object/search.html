@@ -1,224 +1,316 @@
-{{#when filter schema.active '===' '0'}}
-    <h3>
-        {{number total}} Inactive {{title}}
-        {{#if q.0}}
-            matching {{q.0}}
-        {{/if}}
-    </h3>
-{{else}}
-    <h3>
-        {{number total}} {{title}}
-        {{#if q.0}}
-            matching {{q.0}}
-        {{/if}}
-    </h3>
-{{/when}}
-
-<div class="clearfix">
-    <!-- START: Users Upper Head -->
-    <div class="upper-head">
-         <!-- START: Upload CSV -->
-        <div class="float-right">
-            <form class="form-inline" method="post" action="/admin/system/object/{{schema.name}}/import"  enctype="multipart/form-data">
-                <div class="form-group">
-                    <input type="file" id="input-file" name="csv" class="form-control upload">
-                </div>
-                <button type="submit" class="btn btn-info">Upload CSV</button>
-            </form>
-        </div>
-        <!-- END: Upload CSV -->
-        <div class="clearfix margin"></div>
-    </div>
-    <br />
-    <!-- START: SEARCH FORM -->
-    <form class="float-right search form-inline" method="get">
-        <select name="filter_by" class="form-control">
-        <option value="" {{#unless filter_by}}selected{{/unless}}>Please select a filter</option>
-        {{#each schema.filterable}}
-            <option value="{{col}}" {{#when ../filter_by '==' col}}selected{{/when}}>Filter By {{capital name}}</option>
-        {{/each}}
-        </select>
-        <div class="form-group">
-            <input name="q[]" placeholder="Search" type="text"
-            value="{{q.0}}" class="form-control" />
-        </div>
-        <button class="btn"><i class="fa fa-search"></i></button>
-    </form>
-    <!-- END: SEARCH FORM -->
-
-    <!-- START: Export CSV -->
-    <div class="float-right">
-        <form class="form-inline" method="get">
-            <input name="keyword" type="hidden" value="{{q.0}}" id="q[]"/>
-            <input name="keyword" type="hidden" value="{{filter_by}}" id="filter_by"/>
-            <input name="action" type="hidden" value="export"/>
-            <button type="submit" class="btn btn-info" {{#unless rows.length}}disabled{{/unless}}>Export</button>
-        </form>
-    </div>
-    <!-- END: Export CSV -->
-
-    <div class="btn-group" role="group" aria-label="...">
-        <a class="btn btn-primary" href="?filter[{{schema.active}}]=1">
-            Active
-        </a>
-        <a class="btn btn-danger" href="?filter[{{schema.active}}]=0">
-            Inactive
-        </a>
-    </div>
-    <span>
-        <a class="btn btn-success" href="/admin/system/object/{{schema.name}}/create">
-            <i class="fa fa-plus"></i>
-            Create New {{schema.singular}}
-        </a>
-    </span>
-</div>
-
-<!-- START: BULK FORM -->
-<form method="post">
-    <div class="card">
-        <div class="card">
-            {{#if rows}}
-                <!-- START: TABLE -->
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Actions</th>
-                            {{#each schema.fields}}
-                                {{#in @key ../schema.listable}}
-                                    {{#in @key ../schema.sortable}}
-                                        <th>
-                                            <a href="?{{sorturl @key}}">
-                                                {{label}}
-                                                {{sortcaret @key}}
-                                            </a>
-                                        </th>
-                                    {{else}}
-                                        <th>{{label}}</th>
-                                    {{/in}}
-                                {{/in}}
-                            {{/each}}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {{#each rows}}
-                            <tr data-id="{{key ../schema.primary this}}">
-                                <td>
-                                    {{#is_active this ../schema}}
-                                        <a
-                                            title="Edit"
-                                            href="/admin/system/object/{{../schema.name}}/update/{{key ../schema.primary this}}"
-                                        >
-                                            <i class="fa fa-edit"></i>
-                                        </a>
-                                        &nbsp;
-                                        <a
-                                            title="Remove"
-                                            href="/admin/system/object/{{../schema.name}}/remove/{{key ../schema.primary this}}"
-                                            class="text-danger remove"
-                                        >
-                                            <i class="fa fa-times"></i>
-                                        </a>
-                                    {{else}}
-                                        <a
-                                            title="Restore"
-                                            href="/admin/system/object/{{../schema.name}}/restore/{{key ../schema.primary this}}"
-                                            class="text-success restore"
-                                        >
-                                            <i class="fas fa-external-link-alt"></i>
-                                        </a>
-                                    {{/is_active}}
-                                </td>
-                                {{#get_format this ../schema}}
-                                    {{#when format '===' 'none'}}
-                                        <td>{{value}}</td>
-                                    {{/when}}
-                                    {{#when format '===' 'lower'}}
-                                        <td>{{tolower value}}</td>
-                                    {{/when}}
-                                    {{#when format '===' 'upper'}}
-                                        <td>{{toupper value}}</td>
-                                    {{/when}}
-                                    {{#when format '===' 'capital'}}
-                                        <td>{{capital value}}</td>
-                                    {{/when}}
-                                    {{#when format '===' 'length'}}
-                                        <td>{{char_length value parameters}}</td>
-                                    {{/when}}
-                                    {{#when format '===' 'words'}}
-                                        <td>{{word_length value parameters}}</td>
-                                    {{/when}}
-                                    {{#when format '===' 'number'}}
-                                        <td>{{number value}}</td>
-                                    {{/when}}
-                                    {{#when format '===' 'price'}}
-                                        <td>{{parameters}}{{price value}}</td>
-                                    {{/when}}
-                                    {{#when format '===' 'yes'}}
-                                        <td>{{#if value}}Yes{{else}}No{{/if}}</td>
-                                    {{/when}}
-                                    {{#when format '===' 'date'}}
-                                        <td>
-                                            {{#if value}}
-                                                {{date value parameters}}
-                                            {{else}}
-                                                &nbsp;
-                                            {{/if}}
-                                        </td>
-                                    {{/when}}
-                                    {{#when format '===' 'relative'}}
-                                        <td>
-                                            {{#if value}}
-                                                {{relative value parameters}}
-                                            {{else}}
-                                                &nbsp;
-                                            {{/if}}
-                                        </td>
-                                    {{/when}}
-                                    {{#when format '===' 'strip'}}
-                                        <td>{{strip value parameters}}</td>
-                                    {{/when}}
-                                    {{#when format '===' 'link'}}
-                                        <td><a href="{{parameters.0}}">{{parameters.1}}</a></td>
-                                    {{/when}}
-                                    {{#when format '===' 'image'}}
-                                        <td><img src="{{value}}" width="{{parameters.0}}" height="{{parameters.1}}" /></td>
-                                    {{/when}}
-                                    {{#when format '===' 'email'}}
-                                        <td><a href="mailto:{{value}}">{{parameters}}</a></td>
-                                    {{/when}}
-                                    {{#when format '===' 'phone'}}
-                                        <td><a href="tel:{{value}}">{{parameters}}</a></td>
-                                    {{/when}}
-                                    {{#when format '===' 'comma'}}
-                                        <td>{{implode value ','}}</td>
-                                    {{/when}}
-                                    {{#when format '===' 'space'}}
-                                        <td>{{implode value ' '}}</td>
-                                    {{/when}}
-                                    {{#when format '===' 'tag'}}
-                                        <td>
-                                            {{#each value}}
-                                                <div class="tag">{{this}}</div>
-                                            {{/each}}
-                                        </td>
-                                    {{/when}}
-                                {{/get_format}}
-                            </tr>
-                        {{/each}}
-                    </tbody>
-                </table>
-                <!-- END: TABLE -->
-            {{else}}
-                <!-- START: NO RESULTS -->
-                <div class="well no-results">No Results Found</div>
-                <!-- END: NO RESULTS -->
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="/admin/system/schema/search">
+                <i class="fas fa-home"></i> Admin
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <i class="{{schema.icon}}"></i> {{title}}
+        </li>
+    </ol>
+</nav>
+<div class="main-padding">
+    <h3 class="main-title">{{number total}} <i class="{{schema.icon}}"></i> 
+    {{#when filter schema.active '===' '0'}}
+            Inactive {{capital title}}
+            {{#if q.0}}
+                matching {{q.0}}
             {{/if}}
+    {{else}}
+            {{capital title}}
+            {{#if q.0}}
+                matching {{q.0}}
+            {{/if}}
+    {{/when}}
+    </h3>
+    <div class="box search-filters">
+    <div class="box-head box-default">
+        <h3 class="box-title">Filters</h3>
+    </div>
+    <form method="get">
+        <div class="box-body box-padding">
+            <div class="form-group">
+                <label for="q">Search</label>
+                <input class="form-control" name="q[]" value="{{q.0}}" placeholder="Enter Search Terms" type="search" />
+            </div>
+
+            <div class="form-group">
+                <a
+                    data-do="search-filter-toggle"
+                    data-on="click"
+                    data-toggle="collapse"
+                    data-target="#filter-options"
+                >
+                    <span>more</span> <i class="fas fa-caret-down"></i>
+                </a>
+            </div>
+
+            <div id="filter-options" class="collapse">
+                {{#each schema.fields}}
+                    {{#if filterable}}
+                        {{#in field.type 'date,datetime,week,month,time'}}
+                            <div class="form-group">
+                                <label for="span[{{@key}}]">{{capital name}}</label>
+                                <input 
+                                    class="form-control" 
+                                    name="span[{{@key}}]" 
+                                    data-do="date-range-field"
+                                    name="{{@key}}"
+                                    type="text"
+                                    value="{{key @key ../span}}" placeholder="Enter {{capital name}}" type="text" />
+                            </div>
+                        {{else}}
+                            {{#when field.type '==' 'select'}}
+                            <div class="form-group">
+                                <label for="filter[{{@key}}]">{{capital name}}</label>
+                                <select class="form-control" name="filter[{{@key}}]">
+                                    <option value="">Select a status</option>
+                                    {{#each field.options}}
+                                        <option value="{{value}}"  {{#when ../../filter ../@key '==' key}}selected{{/when}}>{{value}}</option>
+                                    {{/each}}
+                                </select>
+                            </div>
+                            {{/when}}
+                            {{#when field.type '==' 'checkboxes'}}
+                            <label for="in[{{@key}}]">{{capital name}}</label>
+                            <div class="form-row">
+                                {{#each options}}
+                                <label class="checkbox checkbox-1">
+                                    <input type="checkbox" name="in[{{../@key}}][0]" value="{{value}}" />
+                                    <span>Checkbox 1</span>
+                                </label>
+                                {{/each}}
+                            </div>
+                            {{/when}}
+                            {{#when field.type '==' 'radios'}}
+                            <label for="in[{{@key}}]">{{capital name}}</label>
+                            <div class="form-row">
+                                {{#each options}}
+                                <label class="radio radio-1">
+                                    <input type="radio" name="{{@key}}" value="{{value}}"/> {{value}}
+                                    <span>Checkbox 1</span>
+                                </label>
+                                {{/each}}
+                            </div>
+                            {{/when}}
+                        {{/in}}
+                    {{/if}}
+                {{/each}}
+            </div>
         </div>
+        <div class="box-foot box-light">
+            <div class="box-left">
+                <button class="btn btn-danger" type="reset">Reset</button>
+            </div>
+            <div class="box-right">
+                <button class="btn btn-primary" data-do="object-search" data-on="click">Search</button>
+            </div>
+        </div>
+    </form>
+    </div>
+    <div class="clearfix">
+        <!-- START: Users Upper Head -->
+        <div class="upper-head">
+            <div class="clearfix margin"></div>
+        </div>
+
+        <!-- START: HIDDEN FORMS -->
+        <div hidden>
+            <!-- START: Import CSV -->
+            <form method="post" action="/admin/system/object/{{schema.name}}/import" id="importForm" enctype="multipart/form-data">
+                <input name="csv" type="file" id="import-csv" data-do="import-csv" data-on="change"/>
+                <input type="submit"/>
+            </form>
+            <!-- END: Import CSV -->
+
+            <!-- START: Export CSV -->
+            <form method="get" id="exportForm">
+                <input name="keyword" type="hidden" value="{{q.0}}" id="q[]"/>
+                <input name="filter_by" type="hidden" value="{{filter_by}}" id="filter_by"/>
+                <input name="action" type="hidden" value="export"/>
+                <button type="submit" class="btn btn-purple" {{#unless rows.length}}disabled{{/unless}}><i class="fas fa-download"></i> Export</button>
+            </form>
+            <!-- END: Export CSV -->
+        </div>
+        <!-- END: HIDDEN FORMS -->
     </div>
 
-    <ul class="pagination">
-        {{#pager total range}}
-        <li{{#if active}} class="active"{{/if}}><a href="?{{href}}">{{page}}</a></li>
-        {{/pager}}
-    </ul>
-</form>
+    <form method="post" action="/admin/system/object/{{schema.name}}/bulk-update">
+        <div class="clearfix mb-4 search-actions">
+            <div class="input-group float-left">
+                <select class="form-control" name="action">
+                    <option value="remove">Remove</option>
+                    <option value="restore">Restore</option>
+                </select>
+                <button class="btn btn-secondary">Apply</button>
+            </div>
+
+            <div class="float-right">
+                    <a class="btn btn-pink" href="#" data-do="select-csv" data-on="click">
+                        <i class="fas fa-upload"></i> Import
+                    </a>
+                    <a class="btn btn-purple" href="#" data-do="export-csv" data-on="click">
+                        <i class="fas fa-download"></i> Export
+                    </a>
+                    <a class="btn btn-success" href="/admin/system/object/{{schema.name}}/create">
+                        <i class="fa fa-plus"></i>
+                        Create New {{capital schema.singular}}
+                    </a>
+            </div>
+        </div>
+        <div class="table-overflow">
+            <!-- START: TABLE -->
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th class="table-bulk-checkbox">
+                            <label class="checkbox checkbox-1">
+                                <input
+                                    data-do="table-checkall"
+                                    type="checkbox"
+                                />
+                                <span></span>
+                            </label>
+                        </th>
+                        <th>Actions</th>
+                        {{#each schema.fields}}
+                            {{#in @key ../schema.listable}}
+                                {{#in @key ../schema.sortable}}
+                                    <th>
+                                        <a href="?{{sorturl @key}}">
+                                            {{label}}
+                                            {{{sortcaret @key}}}
+                                        </a>
+                                    </th>
+                                {{else}}
+                                    <th>{{label}}</th>
+                                {{/in}}
+                            {{/in}}
+                        {{/each}}
+                    </tr>
+                </thead>
+                <tbody>
+                {{#unless rows}}
+                <tr><td colspan="100" class="text-center">No Results Found</td></tr>
+                {{/unless}}
+                {{#each rows}}
+                    <tr data-id="{{key ../schema.primary this}}">
+                        <td class="table-bulk-checkbox">
+                            <label class="checkbox checkbox-1">
+                                <input type="checkbox" name="{{../schema.primary}}[]" value="{{key ../schema.primary this}}" />
+                                <span></span>
+                            </label>
+                        </td>
+                        <td>
+                            {{#is_active this ../schema}}
+                                <a
+                                    title="Edit"
+                                    href="/admin/system/object/{{../schema.name}}/update/{{key ../schema.primary this}}"
+                                >
+                                    <i class="fa fa-edit"></i>
+                                </a>
+                                &nbsp;
+                                <a
+                                    title="Remove"
+                                    href="/admin/system/object/{{../schema.name}}/remove/{{key ../schema.primary this}}"
+                                    class="text-danger remove"
+                                >
+                                    <i class="fa fa-times"></i>
+                                </a>
+                            {{else}}
+                                <a
+                                    title="Restore"
+                                    href="/admin/system/object/{{../schema.name}}/restore/{{key ../schema.primary this}}"
+                                    class="text-success restore"
+                                >
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+                            {{/is_active}}
+                        </td>
+                        {{#get_format this ../schema}}
+                            {{#when format '===' 'none'}}
+                                <td>{{value}}</td>
+                            {{/when}}
+                            {{#when format '===' 'lower'}}
+                                <td>{{tolower value}}</td>
+                            {{/when}}
+                            {{#when format '===' 'upper'}}
+                                <td>{{toupper value}}</td>
+                            {{/when}}
+                            {{#when format '===' 'capital'}}
+                                <td>{{capital value}}</td>
+                            {{/when}}
+                            {{#when format '===' 'length'}}
+                                <td>{{char_length value parameters}}</td>
+                            {{/when}}
+                            {{#when format '===' 'words'}}
+                                <td>{{word_length value parameters}}</td>
+                            {{/when}}
+                            {{#when format '===' 'number'}}
+                                <td>{{number value}}</td>
+                            {{/when}}
+                            {{#when format '===' 'price'}}
+                                <td>{{parameters}}{{price value}}</td>
+                            {{/when}}
+                            {{#when format '===' 'yes'}}
+                                <td>{{#if value}}Yes{{else}}No{{/if}}</td>
+                            {{/when}}
+                            {{#when format '===' 'date'}}
+                                <td>
+                                    {{#if value}}
+                                        {{date value parameters}}
+                                    {{else}}
+                                        &nbsp;
+                                    {{/if}}
+                                </td>
+                            {{/when}}
+                            {{#when format '===' 'relative'}}
+                                <td>
+                                    {{#if value}}
+                                        {{relative value parameters}}
+                                    {{else}}
+                                        &nbsp;
+                                    {{/if}}
+                                </td>
+                            {{/when}}
+                            {{#when format '===' 'strip'}}
+                                <td>{{strip value parameters}}</td>
+                            {{/when}}
+                            {{#when format '===' 'link'}}
+                                <td><a href="{{parameters.0}}">{{parameters.1}}</a></td>
+                            {{/when}}
+                            {{#when format '===' 'image'}}
+                                <td><img src="{{value}}" width="{{parameters.0}}" height="{{parameters.1}}" /></td>
+                            {{/when}}
+                            {{#when format '===' 'email'}}
+                                <td><a href="mailto:{{value}}">{{parameters}}</a></td>
+                            {{/when}}
+                            {{#when format '===' 'phone'}}
+                                <td><a href="tel:{{value}}">{{parameters}}</a></td>
+                            {{/when}}
+                            {{#when format '===' 'comma'}}
+                                <td>{{implode value ','}}</td>
+                            {{/when}}
+                            {{#when format '===' 'space'}}
+                                <td>{{implode value ' '}}</td>
+                            {{/when}}
+                            {{#when format '===' 'tag'}}
+                                <td>
+                                    {{#each value}}
+                                        <div class="tag">{{this}}</div>
+                                    {{/each}}
+                                </td>
+                            {{/when}}
+                        {{/get_format}}
+                    </tr>
+                {{/each}}
+            </table>
+            <!-- END: TABLE -->
+        <ul class="pagination">
+            {{#pager total range}}
+            <li{{#if active}} class="active"{{/if}}><a href="?{{href}}">{{page}}</a></li>
+            {{/pager}}
+        </ul>
+    </form>
+</div>

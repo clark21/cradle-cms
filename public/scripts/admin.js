@@ -48,6 +48,52 @@ jQuery(function($) {
     })();
 
     /**
+     * Select Csv to Import
+     */
+    $(window).on('select-csv-click', function(e, target) {
+        e.preventDefault();
+        var target = $(target);
+        $("#import-csv").trigger('click');
+    });
+
+    /**
+     * import csv
+     */
+    $(window).on('import-csv-change', function(e, target) {
+        var target = $(target);
+        target.closest('#importForm').submit();
+    });
+
+    /**
+     * Select Csv to Export
+     */
+    $(window).on('export-csv-click', function(e, target) {
+        e.preventDefault();
+        var target = $(target);
+        $("#exportForm").submit();
+    });
+
+    /**
+     * Search submit search form
+     */
+    $(window).on('object-search-click', function(e, target) {
+        var target = $(target);
+        var form = target.parents('form');
+
+        form.submit(function() {
+            form.find(":input").filter(
+                function() {
+                    return !this.value;
+                }).attr("disabled", "disabled");
+
+            return true; // ensure form still submits
+        });
+
+        // Un-disable form fields when page loads, in case they click back after submission
+        form.find( ":input" ).prop( "disabled", false );
+    });
+
+    /**
      * General Forms
      */
     (function() {
