@@ -188,6 +188,16 @@ class Schema
     }
 
     /**
+     * Returns icon
+     *
+     * @return string
+     */
+    public function getIcon()
+    {
+        return $this->data['icon'];
+    }
+
+    /**
      * Returns JSON fields
      *
      * @return array

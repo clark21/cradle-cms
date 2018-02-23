@@ -1,8 +1,179 @@
 jQuery(function($) {
     /**
+     * General Search
+     */
+    (function() {
+        /**
+         * Search filter more less toggle
+         */
+        $(window).on('search-filter-toggle-click', function(e, target) {
+            if($('i', target).hasClass('fa-caret-down')) {
+                $('i', target)
+                    .removeClass('fa-caret-down')
+                    .addClass('fa-caret-up');
+                $('span', target).html('less');
+            } else {
+                $('i', target)
+                    .removeClass('fa-caret-up')
+                    .addClass('fa-caret-down');
+                $('span', target).html('more');
+            }
+        });
+
+        /**
+         * Search table check all
+         */
+        $(window).on('table-checkall-init', function(e, trigger) {
+            var target = $(trigger).parents('table').eq(0);
+
+            $(trigger).click(function() {
+                if($(trigger).prop('checked')) {
+                    $('td input[type="checkbox"]', target).prop('checked', true);
+                } else {
+                    $('td input[type="checkbox"]', target).prop('checked', false);
+                }
+            });
+
+            $('td input[type="checkbox"]', target).click(function() {
+                var allChecked = true;
+                $('td input[type="checkbox"]', target).each(function() {
+                    if(!$(this).prop('checked')) {
+                        allChecked = false;
+                    }
+                });
+
+                $(trigger).prop('checked', allChecked);
+            });
+        });
+    })();
+
+    /**
      * General Forms
      */
     (function() {
+        /**
+         * Suggestion Field
+         */
+        $(window).on('suggestion-field-init', function(e, target) {
+            target = $(target);
+
+            var searching = false,
+                prevent = false,
+                label = target.attr('data-label'),
+                value = target.attr('data-value'),
+                url = target.attr('data-url')
+                template = '<li class="suggestion-item">{VALUE}</li>';
+
+            if(!label || !value || !url) {
+                return;
+            }
+
+            label = $(label);
+            value = $(value);
+
+            var loadSuggestions = function(list, callback) {
+                target.html('');
+
+                list.forEach(function(item) {
+                    var row = template.replace('{VALUE}', item.label);
+
+                    row = $(row).click(function() {
+                        callback(item);
+                        target.addClass('d-none');
+                    });
+
+                    target.append(row);
+                });
+
+                if(list.length) {
+                    target.removeClass('d-none');
+                } else {
+                    target.addClass('d-none');
+                }
+            };
+
+            label
+                .keypress(function(e) {
+                    if(e.keyCode == 13 && prevent) {
+                        e.preventDefault();
+                    }
+                })
+                .keydown(function(e) {
+                    prevent = false;
+                    if(!target.hasClass('d-none')) {
+                        switch(e.keyCode) {
+                            case 40: //down
+                                var next = $('li.hover', target).removeClass('hover').index() + 1;
+
+                                if(next === $('li', target).length) {
+                                    next = 0;
+                                }
+
+                                $('li:eq('+next+')', target).addClass('hover');
+
+                                return;
+                            case 38: //up
+                                var prev = $('li.hover', target).removeClass('hover').index() - 1;
+
+                                if(prev < 0) {
+                                    prev = $('li', target).length - 1;
+                                }
+
+                                $('li:eq('+prev+')', target).addClass('hover');
+
+                                return;
+                            case 13: //enter
+                                if($('li.hover', target).length) {
+                                    $('li.hover', target)[0].click();
+                                    prevent = true;
+                                }
+                                return;
+                            case 37:
+                            case 39:
+                                return;
+                        }
+                    }
+
+                    if(searching) {
+                        return;
+                    }
+
+                    setTimeout(function() {
+                        if (label.val() == '') {
+                            return;
+                        }
+
+                        searching = true;
+
+                        $.ajax({
+                            url : url.replace('{QUERY}', label.val()),
+                            type : 'GET',
+                            success : function(response) {
+                                var list = [];
+
+                                if(typeof response === 'string' || typeof response === 'number') {
+                                    response = [response];
+                                }
+
+                                if(response instanceof Array) {
+                                    response.forEach(function(item) {
+                                        list.push(item);
+                                    });
+                                }
+
+                                loadSuggestions(list, function(item) {
+                                    value.val(item.value);
+                                    label.val(item.label).trigger('keyup');
+                                });
+                                searching = false;
+                            }, error : function() {
+                                searching = false;
+                            }
+                        });
+                    }, 1);
+                });
+        });
+
         /**
          * Tag Field
          */
@@ -166,190 +337,6 @@ jQuery(function($) {
         });
 
         /**
-         * Image Field
-         * HTML config for single images
-         * data-do="image-field"
-         * data-name="profile_image"
-         * data-width="200"
-         * data-height="200"
-         * data-alt="Change this Photo"
-         *
-         * HTML config for multiple images
-         * data-do="image-field"
-         * data-name="profile_image"
-         * data-width="200"
-         * data-height="200"
-         * data-multiple="1"
-         * data-alt="Change this Photo"
-         *
-         * HTML config for single images / multiple sizes
-         * data-do="image-field"
-         * data-name="profile_image"
-         * data-width="0|200|100"
-         * data-height="0|200|100"
-         * data-label="original|small|large"
-         * data-display="large|small"
-         * data-alt="Change this Photo"
-         *
-         * HTML config for multiple images / multiple sizes
-         * data-do="image-field"
-         * data-name="profile_image"
-         * data-width="0|200|100"
-         * data-height="0|200|100"
-         * data-label="original|small|large"
-         * data-display="large"
-         * data-multiple="1"
-         * data-alt="Change this Photo"
-         */
-        $(window).on('image-field-init', function(e, target) {
-            //current
-            var container = $(target);
-
-            //get meta data
-
-            //for hidden fields
-            var name = container.attr('data-name');
-
-            //for file field
-            var multiple = container.attr('data-multiple');
-
-            //for image fields
-            var alt = container.attr('data-alt');
-            var classes = container.attr('data-class');
-
-            var width = parseInt(container.attr('data-width') || 0);
-            var height = parseInt(container.attr('data-height') || 0);
-
-            var widths = container.attr('data-width') || '0';
-            var heights = container.attr('data-height') || '0';
-            var labels = container.attr('data-label') || '';
-            var displays = container.attr('data-display') || '';
-
-            widths = widths.split('|');
-            heights = heights.split('|');
-            labels = labels.split('|');
-            displays = displays.split('|');
-
-            if(!displays[0].length) {
-                displays = false;
-            }
-
-            if(widths.length !== heights.length) {
-                throw 'Invalid Attributes. Width and Height counts are not the same.';
-            }
-
-            //make an image config
-            var config = [];
-            widths.forEach(function(width, i) {
-                var label = labels[i] || '' + i;
-
-                if(widths.length === 1
-                    && (
-                        typeof labels[i] === 'undefined'
-                        || !labels[i].length
-                    )
-                )
-                {
-                    label = false;
-                }
-
-                config.push({
-                    label: label,
-                    display: !displays || displays.indexOf(label) !== -1,
-                    width: parseInt(widths[i]),
-                    height: parseInt(heights[i])
-                });
-            });
-
-            //make a file
-            var file = $('<input type="file" />')
-                .attr('accept', 'image/png,image/jpg,image/jpeg,image/gif')
-                .addClass('hide')
-                .appendTo(target);
-
-            if(multiple) {
-                file.attr('multiple', 'multiple');
-            }
-
-            //listen for clicks
-            container.click(function(e) {
-                if(e.target !== file[0]) {
-                    file.click();
-                }
-            });
-
-            var generate = function(file, name, width, height, display) {
-                var image = new Image();
-
-                //listen for when the src is set
-                image.onload = function() {
-                    //if no dimensions, get the natural dimensions
-                    width = width || this.width;
-                    height = height || this.height;
-
-                    //so we can crop
-                    $.cropper(file, width, height, function(data) {
-                        //create img and input tags
-                        $('<input type="hidden" />')
-                            .attr('name', name)
-                            .val(data)
-                            .appendTo(target);
-
-                        if(display) {
-                            $('<img />')
-                                .addClass(classes)
-                                .attr('alt', alt)
-                                .attr('src', data)
-                                .appendTo(target);
-                        }
-                    });
-                };
-
-                image.src = URL.createObjectURL(file);
-            };
-
-            file.change(function() {
-                if(!this.files || !this.files[0]) {
-                    return;
-                }
-
-                //remove all
-                $('input[type="hidden"], img', target).remove();
-
-                for(var i = 0; i < this.files.length; i++) {
-                    config.forEach(function(file, meta) {
-                        //expecting
-                        //  meta[label]
-                        //  meta[display]
-                        //  meta[width]
-                        //  meta[height]
-
-                        //make a path
-                        var path = '';
-
-                        if(meta.label !== false) {
-                            path = '[' + meta.label + ']';
-                        }
-
-                        if(multiple) {
-                            path = '[' + i + ']' + path;
-                        }
-
-                        path = name + path;
-
-                        generate(
-                            file,
-                            path,
-                            meta.width,
-                            meta.height,
-                            meta.display
-                        );
-                    }.bind(null, this.files[i]));
-                }
-            });
-        });
-
-        /**
          * File Field
          * HTML config for single files
          * data-do="file-field"
@@ -361,8 +348,44 @@ jQuery(function($) {
          * data-multiple="1"
          */
         $(window).on('file-field-init', function(e, target) {
+            var template = {
+                previewFile:
+                    '<div class="file-field-preview-container">'
+                    + '<i class="fas fa-file text-info"></i>'
+                    + '<span class="file-field-extension">{EXTENSION}</span>'
+                    + '</div>',
+                previewImage:
+                    '<div class="file-field-preview-container">'
+                    + '<img src="{DATA}" height="50" />'
+                    + '</div>',
+                row:
+                    '<tr class="file-field-item">'
+                    + '<td class="file-field-preview">{PREVIEW}</td>'
+                    + '<td class="file-field-name">{NAME}</td>'
+                    + '<td class="file-field-mime">{MIME}</td>'
+                    + '<td class="file-field-size">{SIZE}</td>'
+                    + '<td class="file-field-actions">'
+                        + '<a class="text-info file-field-move-up" href="javascript:void(0)">'
+                            + '<i class="fas fa-arrow-up"></i>'
+                        + '</a>'
+                        + '&nbsp;&nbsp;&nbsp;'
+                        + '<a class="text-info file-field-move-down" href="javascript:void(0)">'
+                            + '<i class="fas fa-arrow-down"></i>'
+                        + '</a>'
+                        + '&nbsp;&nbsp;&nbsp;'
+                        + '<a class="btn btn-danger file-field-remove" href="javascript:void(0)">'
+                            + '<i class="fas fa-times"></i>'
+                        + '</a>'
+                    + '</td>'
+                    + '</tr>'
+            };
+
             //current
             var container = $(target);
+            var body = $('tbody', container);
+            var foot = $('tfoot', container);
+
+            var noresults = $('tr.file-field-none', body);
 
             //get meta data
 
@@ -371,24 +394,95 @@ jQuery(function($) {
 
             //for file field
             var multiple = container.attr('data-multiple');
+            var accept = container.attr('data-accept') || false;
             var classes = container.attr('data-class');
+            var width = parseInt(container.attr('data-width') || 0);
+            var height = parseInt(container.attr('data-height') || 0);
 
             //make a file
-            var file = $('<input type="file" />').prependTo(target);
+            var file = $('<input type="file" />').hide();
 
             if(multiple) {
                 file.attr('multiple', 'multiple');
             }
 
-            var generate = function(file, name) {
+            if(accept) {
+                file.attr('accept', accept);
+            }
+
+            foot.append(file);
+
+            $('button.file-field-upload', container).click(function(e) {
+                file.click();
+            });
+
+            var listen = function(row, body) {
+                $('a.file-field-remove', row).click(function() {
+                    row.remove();
+                    if($('tr', body).length < 2) {
+                        noresults.show();
+                    }
+                });
+
+                $('a.file-field-move-up', row).click(function() {
+                    var prev = row.prev();
+
+                    if(prev.length && !prev.hasClass('file-field-none')) {
+                        prev.before(row);
+                    }
+                });
+
+                $('a.file-field-move-down', row).click(function() {
+                    var next = row.next();
+
+                    if(next.length) {
+                        next.after(row);
+                    }
+                });
+            };
+
+            var generate = function(file, name, width, height) {
                 var reader = new FileReader();
                 reader.readAsDataURL(file);
                 reader.onload = function () {
+                    var extension = file.name.split('.').pop();
+
+                    if(file.name.indexOf('.') === -1) {
+                        extension = '???';
+                    }
+
+                    var preview = template.previewFile.replace('{EXTENSION}', extension);
+
+                    if(file.type.indexOf('image/') === 0) {
+                        preview = template.previewImage.replace('{DATA}', reader.result);
+                    }
+
+                    noresults.hide();
+
+                    var row = $(
+                        template.row
+                            .replace('{PREVIEW}', preview)
+                            .replace('{NAME}', file.name)
+                            .replace('{MIME}', file.type)
+                            .replace('{SIZE}', file.size)
+                    ).appendTo(body);
+
                     //create input tags
-                    $('<input type="hidden" />')
+                    var hidden = $('<input type="hidden" />')
                         .attr('name', name)
-                        .val(reader.result)
-                        .appendTo(target);
+                        .val(reader.result);
+
+                    $('td.file-field-actions', row).append(hidden);
+
+                    listen(row, body);
+
+                    if(file.type.indexOf('image/') === 0 && (width !== 0 || height !== 0)) {
+                        //so we can crop
+                        $.cropper(file, width, height, function(data) {
+                            $('div.file-field-preview-container img', row).attr('src', data);
+                            hidden.val(data);
+                        });
+                    }
                 };
 
             };
@@ -403,13 +497,272 @@ jQuery(function($) {
 
                 for(var path = '', i = 0; i < this.files.length; i++, path = '') {
                     if(multiple) {
-                        path = '[' + i + ']' + path;
+                        path = '[]' + path;
                     }
 
                     path = name + path;
 
-                    generate(this.files[i], path);
+                    generate(this.files[i], path, width, height);
                 }
+            });
+
+            $('tr', body).each(function() {
+                if($(this).hasClass('file-field-none')) {
+                    return;
+                }
+
+                listen($(this), body)
+            });
+        });
+
+        /**
+         * Direct CDN Upload
+         */
+        $(window).on('wysiwyg-init', function(e, target) {
+            var template = '<div class="wysiwyg-toolbar position-relative" style="display: none;">'
+                + '<div class="btn-group">'
+                    + '<a class="btn btn-default" data-wysihtml-command="bold" title="CTRL+B"><i class="fas fa-bold"></i></a>'
+                    + '<a class="btn btn-default" data-wysihtml-command="italic" title="CTRL+I"><i class="fas fa-italic"></i></a>'
+                    + '<a class="btn btn-default" data-wysihtml-command="underline" title="CTRL+U"><i class="fas fa-underline"></i></a>'
+                    + '<a class="btn btn-default" data-wysihtml-command="strike" title="CTRL+U"><i class="fas fa-strikethrough"></i></a>'
+                + '</div> '
+                + '<div class="btn-group">'
+                    + '<a class="btn btn-info" data-wysihtml-command="createLink"><i class="fas fa-external-link-alt"></i></a>'
+                    + '<a class="btn btn-danger" data-wysihtml-command="removeLink"><i class="fas fa-ban"></i></a>'
+                + '</div> '
+                + '<a class="btn btn-purple" data-wysihtml-command="insertImage"><i class="fas fa-image"></i></a> '
+                + '<div class="dropdown d-inline-block">'
+                    + '<button aria-haspopup="true" aria-expanded="false" class="btn btn-grey" data-toggle="dropdown" type="button">Headers <i class="fas fa-chevron-down"></i></button>'
+                    + '<div class="dropdown-menu">'
+                        + '<a class="dropdown-item" data-wysihtml-command="formatBlock" data-wysihtml-command-blank-value="true">Normal</a>'
+                        + '<a class="dropdown-item" data-wysihtml-command="formatBlock" data-wysihtml-command-value="h1">Header 1</a>'
+                        + '<a class="dropdown-item" data-wysihtml-command="formatBlock" data-wysihtml-command-value="h2">Header 2</a>'
+                        + '<a class="dropdown-item" data-wysihtml-command="formatBlock" data-wysihtml-command-value="h3">Header 3</a>'
+                        + '<a class="dropdown-item" data-wysihtml-command="formatBlock" data-wysihtml-command-value="h4">Header 4</a>'
+                        + '<a class="dropdown-item" data-wysihtml-command="formatBlock" data-wysihtml-command-value="h5">Header 5</a>'
+                        + '<a class="dropdown-item" data-wysihtml-command="formatBlock" data-wysihtml-command-value="h6">Header 6</a>'
+                    + '</div>'
+                + '</div> '
+                + '<div class="dropdown d-inline-block">'
+                    + '<button aria-haspopup="true" aria-expanded="false" class="btn btn-pink" data-toggle="dropdown" type="button">Colors <i class="fas fa-chevron-down"></i></button>'
+                    + '<div class="dropdown-menu">'
+                        + '<a class="dropdown-item text-danger" data-wysihtml-command="foreColor" data-wysihtml-command-value="red"><i class="fas fa-square-full"></i> Red</a>'
+                        + '<a class="dropdown-item text-success" data-wysihtml-command="foreColor" data-wysihtml-command-value="green"><i class="fas fa-square-full"></i> Green</a>'
+                        + '<a class="dropdown-item text-primary" data-wysihtml-command="foreColor" data-wysihtml-command-value="blue"><i class="fas fa-square-full"></i> Blue</a>'
+                        + '<a class="dropdown-item text-purple" data-wysihtml-command="foreColor" data-wysihtml-command-value="purple"><i class="fas fa-square-full"></i> Purple</a>'
+                        + '<a class="dropdown-item text-warning" data-wysihtml-command="foreColor" data-wysihtml-command-value="orange"><i class="fas fa-square-full"></i> Orange</a>'
+                        + '<a class="dropdown-item text-yellow" data-wysihtml-command="foreColor" data-wysihtml-command-value="yellow"><i class="fas fa-square-full"></i> Yellow</a>'
+                        + '<a class="dropdown-item text-pink" data-wysihtml-command="foreColor" data-wysihtml-command-value="pink"><i class="fas fa-square-full"></i> Pink</a>'
+                        + '<a class="dropdown-item text-white" data-wysihtml-command="foreColor" data-wysihtml-command-value="white"><i class="fas fa-square-full"></i> White</a>'
+                        + '<a class="dropdown-item text-inverse" data-wysihtml-command="foreColor" data-wysihtml-command-value="black"><i class="fas fa-square-full"></i> Black</a>'
+                    + '</div>'
+                + '</div> '
+                + '<div class="btn-group">'
+                    + '<a class="btn btn-default" data-wysihtml-command="insertUnorderedList"><i class="fas fa-list-ul"></i></a>'
+                    + '<a class="btn btn-default" data-wysihtml-command="insertOrderedList"><i class="fas fa-list-ol"></i></a>'
+                + '</div> '
+                + '<div class="btn-group">'
+                    + '<a class="btn btn-light" data-wysihtml-command="undo"><i class="fas fa-undo"></i></a><a class="btn btn-light" data-wysihtml-command="redo"><i class="fas fa-redo"></i></a>'
+                + '</div> '
+                + '<a class="btn btn-light" data-wysihtml-command="insertSpeech"><i class="fas fa-comments"></i></a> '
+                + '<a class="btn btn-inverse" data-wysihtml-action="change_view"><i class="fas fa-code"></i></a> '
+                + '<div class="wysiwyg-dialog" data-wysihtml-dialog="createLink" style="display: none;">'
+                    + '<input class="form-control" data-wysihtml-dialog-field="href" placeholder="http://" />'
+                    + '<input class="form-control mb-2" data-wysihtml-dialog-field="title" placeholder="Title" />'
+                    + '<a class="btn btn-primary" data-wysihtml-dialog-action="save" href="javascript:void(0)">OK</a>'
+                    + '<a class="btn btn-danger" data-wysihtml-dialog-action="cancel" href="javascript:void(0)">Cancel</a>'
+                + '</div>'
+                + '<div class="wysiwyg-dialog" data-wysihtml-dialog="insertImage" style="display: none;">'
+                    + '<input class="form-control" data-wysihtml-dialog-field="src" placeholder="http://">'
+                    + '<input class="form-control" data-wysihtml-dialog-field="alt" placeholder="alt">'
+                    + '<select class="form-control mb-2" data-wysihtml-dialog-field="className">'
+                        + '<option value="">None</option>'
+                        + '<option value="float-left">Left</option>'
+                        + '<option value="float-right">Right</option>'
+                    + '</select>'
+                    + '<a class="btn btn-primary" data-wysihtml-dialog-action="save" href="javascript:void(0)">OK</a>'
+                    + '<a class="btn btn-danger" data-wysihtml-dialog-action="cancel" href="javascript:void(0)">Cancel</a>'
+                + '</div>'
+            + '</div>';
+
+            var toolbar = $(template);
+            $(target).before(toolbar);
+
+            var e = new wysihtml.Editor(target, {
+                toolbar:        toolbar[0],
+                parserRules:    wysihtmlParserRules,
+                stylesheets:  '/styles/custom.css'
+            });
+        });
+
+        /**
+         * Generate Slug
+         */
+        $(window).on('slugger-init', function(e, target) {
+            var source = $(target).attr('data-source');
+
+            if(!source || !source.length) {
+                return;
+            }
+
+            var upper = $(target).attr('data-upper');
+            var space = $(target).attr('data-space') || '-';
+
+            $(source).keyup(function() {
+                var slug = $(this)
+                    .val()
+                    .toString()
+                    .toLowerCase()
+                    .replace(/\s+/g, '-')           // Replace spaces with -
+                    .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
+                    .replace(/\-\-+/g, '-')         // Replace multiple - with single -
+                    .replace(/^-+/, '')             // Trim - from start of text
+                    .replace(/-+$/, '');
+
+                if (upper != 0) {
+                    slug = slug.replace(
+                        /(^([a-zA-Z\p{M}]))|([ -][a-zA-Z\p{M}])/g,
+                        function(s) {
+                            return s.toUpperCase();
+                        }
+                    );
+                }
+
+                slug = slug.replace(/\-/g, space);
+
+                $(target).val(slug);
+            });
+        });
+
+        /**
+         * Mask
+         */
+        $(window).on('mask-field-init', function(e, target) {
+            var format = $(target).attr('data-format');
+            $(target).inputmask(format);
+        });
+
+        /**
+         * Mask
+         */
+        $(window).on('knob-field-init', function(e, target) {
+            $(target).knob();
+        });
+
+        /**
+         * Select
+         */
+        $(window).on('select-field-init', function(e, target) {
+            $(target).select2();
+        });
+
+        /**
+         * Code Editor - Ace
+         */
+        $(window).on('code-editor-init', function(e, target) {
+            target = $(target);
+
+            var editor = ace.edit("editor");
+
+            editor.getSession().setMode("ace/mode/html");
+            editor.setTheme("ace/theme/chaos");
+            editor.setValue('<!DOCTYPE html> \n'+
+                '<html> \n'+
+                '\t<head> \n'+
+                '\t\t<title>Ace Editor</title> \n'+
+                '\t</head> \n'+
+                '\t<body> \n'+
+                '\t</body> \n'+
+                '</html>');
+            editor.getValue();
+
+            setInterval(function() {
+                $('#editor-raw').val(editor.getValue());
+            }, 200);
+        });
+
+        /**
+         * Multirange
+         */
+        $(window).on('multirange-field-init', function(e, target) {
+            target = $(target);
+
+            var params = {};
+            // loop all attributes
+            $.each(target[0].attributes,function(index, attr) {
+                // skip if data do and on
+                if (attr.name == 'data-do' || attr.name == 'data-on') {
+                    return true;
+                }
+
+                // look for attr with data- as prefix
+                if (attr.name.search(/data-/g) > -1) {
+                    // get parameter name
+                    var key = attr.name
+                        .replace('data-', '')
+                        .replace('-', '_');
+
+                    // prepare parameter
+                    params[key] = attr.value;
+
+                    // if value is boolean
+                    if(attr.value == 'true') {
+                        params[key] = attr.value == 'true' ? true : false;
+                    }
+                }
+            });
+
+            target.ionRangeSlider(params);
+        });
+
+        /**
+         * Date Field
+         */
+        $(window).on('date-field-init', function(e, target) {
+            $(target).flatpickr({
+                dateFormat: "Y-m-d",
+            });
+        });
+
+        /**
+         * Time Field
+         */
+        $(window).on('time-field-init', function(e, target) {
+            $(target).flatpickr({
+                enableTime: true,
+                noCalendar: true,
+                dateFormat: "H:i",
+            });
+        });
+
+        /**
+         * DateTime Field
+         */
+        $(window).on('datetime-field-init', function(e, target) {
+            $(target).flatpickr({
+                enableTime: true,
+                dateFormat: "Y-m-d H:i",
+            });
+        });
+
+        /**
+         * Date Range Field
+         */
+        $(window).on('date-range-field-init', function(e, target) {
+            $(target).flatpickr({
+                mode: "range",
+                dateFormat: "Y-m-d",
+            });
+        });
+
+        /**
+         * DateTime Range Field
+         */
+        $(window).on('datetime-range-field-init', function(e, target) {
+            $(target).flatpickr({
+                mode: "range",
+                enableTime: true,
+                dateFormat: "Y-m-d H:i",
             });
         });
 
@@ -585,32 +938,6 @@ jQuery(function($) {
         });
 
         /**
-         * Direct CDN Upload
-         */
-        $(window).on('wysiwyg-init', function(e, target) {
-            $(target).wysihtml5({
-                "font-styles": true, //Font styling, e.g. h1, h2, etc. Default true
-                "emphasis": true, //Italics, bold, etc. Default true
-                "lists": true, //(Un)ordered lists, e.g. Bullets, Numbers. Default true
-                "html": true, //Button which allows you to edit the generated HTML. Default false
-                "link": true, //Button to insert a link. Default true
-                "image": true, //Button to insert an image. Default true,
-                "color": true, //Button to change color of font
-                "blockquote": true, //Blockquote
-                toolbar: {
-                    "font-styles": true, //Font styling, e.g. h1, h2, etc. Default true
-                    "emphasis": true, //Italics, bold, etc. Default true
-                    "lists": true, //(Un)ordered lists, e.g. Bullets, Numbers. Default true
-                    "html": true, //Button which allows you to edit the generated HTML. Default false
-                    "link": true, //Button to insert a link. Default true
-                    "image": true, //Button to insert an image. Default true,
-                    "color": true, //Button to change color of font
-                    "blockquote": true, //Blockquote
-                  }
-            });
-        });
-
-        /**
          * Select Csv to Import
          */
         $(window).on('select-csv-click', function(e, target) {
@@ -637,49 +964,6 @@ jQuery(function($) {
         });
 
         /**
-         * Search filter more less toggle
-         */
-        $(window).on('search-filter-toggle-click', function(e, target) {
-            if($('i', target).hasClass('fa-caret-down')) {
-                $('i', target)
-                    .removeClass('fa-caret-down')
-                    .addClass('fa-caret-up');
-                $('span', target).html('less');
-            } else {
-                $('i', target)
-                    .removeClass('fa-caret-up')
-                    .addClass('fa-caret-down');
-                $('span', target).html('more');
-            }
-        });
-
-        /**
-         * Search table check all
-         */
-        $(window).on('table-checkall-init', function(e, trigger) {
-            var target = $(trigger).parents('table').eq(0);
-
-            $(trigger).click(function() {
-                if($(trigger).prop('checked')) {
-                    $('td input[type="checkbox"]', target).prop('checked', true);
-                } else {
-                    $('td input[type="checkbox"]', target).prop('checked', false);
-                }
-            });
-
-            $('td input[type="checkbox"]', target).click(function() {
-                var allChecked = true;
-                $('td input[type="checkbox"]', target).each(function() {
-                    if(!$(this).prop('checked')) {
-                        allChecked = false;
-                    }
-                });
-
-                $(trigger).prop('checked', allChecked);
-            });
-        });
-
-        /**
          * Search submit search form
          */
         $(window).on('object-search-click', function(e, target) {
@@ -699,44 +983,6 @@ jQuery(function($) {
             form.find( ":input" ).prop( "disabled", false );
         });
 
-        /**
-         * Generate Slug
-         */
-        $(window).on('slugger-init', function(e, target) {
-            var source = $(target).attr('data-source');
-
-            if(!source || !source.length) {
-                return;
-            }
-
-            var upper = $(target).attr('data-upper');
-            var space = $(target).attr('data-space') || '-';
-
-            $(source).keyup(function() {
-                var slug = $(this)
-                    .val()
-                    .toString()
-                    .toLowerCase()
-                    .replace(/\s+/g, '-')           // Replace spaces with -
-                    .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
-                    .replace(/\-\-+/g, '-')         // Replace multiple - with single -
-                    .replace(/^-+/, '')             // Trim - from start of text
-                    .replace(/-+$/, '');
-
-                if (upper != 0) {
-                    slug = slug.replace(
-                        /(^([a-zA-Z\p{M}]))|([ -][a-zA-Z\p{M}])/g,
-                        function(s) {
-                            return s.toUpperCase();
-                        }
-                    );
-                }
-
-                slug = slug.replace(/\-/g, space);
-
-                $(target).val(slug);
-            });
-        });
 
         var mimeExtensions = {
             'application/mathml+xml': 'mathml',
@@ -840,21 +1086,15 @@ jQuery(function($) {
 
         $.extend({
             notify: function(message, type, timeout) {
-                type = type || 'info';
-
-                if(typeof timeout === 'undefined') {
-                    timeout = 3000;
+                if(type === 'danger') {
+                    type = 'error';
                 }
 
-                var template = '<div data-do="notify" data-timeout="{TIMEOUT}" class="notify notify-{TYPE}"><span class="message">{MESSAGE}</span></div>';
+                toastr.success('We do have the Kapua suite available.', 'Turtle Bay Resort', {timeOut: 20000000})
 
-                var notification = $(template
-                    .replace('{TYPE}', type)
-                    .replace('{MESSAGE}', message)
-                    .replace('{TIMEOUT}', timeout));
-
-                $(document.body).append(notification);
-                return notification.doon();
+                toastr[type](message, type[0].toUpperCase() + type.substr(1), {
+                    timeOut: timeout
+                });
             }
         })
     })();

@@ -1,0 +1,109 @@
+<ul class="nav flex-column">
+    {{#each navigation.rows}}
+        <li class="nav-item{{#nav_match '/admin/system/object' name}} active{{/nav_match}}">
+            <a
+                class="nav-link"
+                href="/admin/system/object/{{name}}/search"
+            >
+                <i class="{{#if icon}}{{icon}}{{else}}fas fa-align-justify{{/if}}"></i>
+                <span class="nav-title">
+                    <span class="nav-text">{{capital plural}}</span>
+                </span>
+            </a>
+        </li>
+    {{/each}}
+    <li class="nav-item{{#nav_match '/admin/user'}} active{{/nav_match}}">
+        <a class="nav-link" href="/admin/user/search">
+            <i class="fas fa-user"></i>
+            <span class="nav-title">
+                <span class="nav-text">Users</span>
+            </span>
+        </a>
+    </li>
+    <li class="nav-item{{#nav_match '/admin/auth'}} active{{/nav_match}}">
+        <a class="nav-link" href="/admin/auth/search">
+            <i class="fas fa-lock"></i>
+            <span class="nav-title">
+                <span class="nav-text">Auth</span>
+            </span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" data-toggle="collapse" href="#system-schema-nav">
+            <i class="fas fa-code"></i>
+            <span class="nav-title">
+                <span class="nav-text">System</span>
+                <span class="nav-right">
+                    <i class="fas fa-chevron-down"></i>
+                </span>
+            </span>
+        </a>
+        <div id="system-schema-nav" class="collapse nav-sub nav-sub-1
+            {{~#nav_match '/admin/system/schema'}} show{{/nav_match~}}
+            {{~#nav_match '/admin/system/template'}} show{{/nav_match~}}
+            {{~#nav_match '/admin/system/docs'}} show{{/nav_match~}}
+        ">
+            <ul class="nav flex-column ml-4">
+                <li class="nav-item{{~#nav_match '/admin/system/schema'}} active{{/nav_match~}}">
+                    <a class="nav-link" href="/admin/system/schema/search">
+                        <i class="fas fa-database"></i>
+                        <span class="nav-title">
+                            <span class="nav-text">Schemas</span>
+                        </span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="collapse" href="#system-template-nav">
+                        <i class="fas fa-columns"></i>
+                        <span class="nav-title">
+                            <span class="nav-text">Templates</span>
+                            <span class="nav-right">
+                                <i class="fas fa-chevron-down"></i>
+                            </span>
+                        </span>
+                    </a>
+                    <div id="system-template-nav" class="collapse nav-sub nav-sub-2
+                        {{~#nav_match '/admin/system/template'}} show{{/nav_match~}}
+                    ">
+                        <ul class="nav flex-column ml-4">
+                            <li class="nav-item{{~#nav_match '/admin/system/template/search'}} active{{/nav_match~}}">
+                                <a class="nav-link" href="/admin/system/template/search">
+                                    <i class="fas fa-search"></i>
+                                    <span class="nav-title">
+                                        <span class="nav-text">Search</span>
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="nav-item{{~#nav_match '/admin/system/template/create'}} active{{/nav_match~}}">
+                                <a class="nav-link" href="/admin/system/template/create">
+                                    <i class="fas fa-plus"></i>
+                                    <span class="nav-title">
+                                        <span class="nav-text">Create</span>
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="nav-item{{~#nav_match '/admin/system/template/update'}} active{{/nav_match~}}">
+                                <a class="nav-link" href="/admin/system/template/update">
+                                    <i class="fas fa-edit"></i>
+                                    <span class="nav-title">
+                                        <span class="nav-text">Update</span>
+                                    </span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item{{~#nav_match '/admin/system/docs'}} active{{/nav_match~}}">
+                    <a class="nav-link" href="/admin/system/docs">
+                        <i class="fas fa-book"></i>
+                        <span class="nav-title">
+                            <span class="nav-text">Docs</span>
+                        </span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </li>
+
+
+</ul>
