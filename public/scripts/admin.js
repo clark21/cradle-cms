@@ -45,53 +45,61 @@ jQuery(function($) {
                 $(trigger).prop('checked', allChecked);
             });
         });
-    })();
 
-    /**
-     * Select Csv to Import
-     */
-    $(window).on('select-csv-click', function(e, target) {
-        e.preventDefault();
-        var target = $(target);
-        $("#import-csv").trigger('click');
-    });
+        /**
+         * Importer tool
+         */
+        $(window).on('import-click', function(e, trigger) {
+            var url = $(trigger).attr('data-url');
+            //make a file
+            $('<input type="file" />')
+                .attr(
+                    'accept',
+                    [
+                        'text/plain',
+                        'text/csv',
+                        'text/x-csv',
+                        'application/vnd.ms-excel',
+                        'application/csv',
+                        'application/x-csv',
+                        'text/comma-separated-values',
+                        'text/x-comma-separated-values',
+                        'text/tab-separated-values'
+                    ].join(',')
+                )
+                .change(function(err, file, inputElem, reason) {
+                    $(this).parse({
+                        config: {
+                            header: true,
+                            skipEmptyLines: true,
+                            complete: function(results, file) {
+                                var form = $('<form>')
+                                    .attr('method', 'post')
+                                    .attr('action', url);
 
-    /**
-     * import csv
-     */
-    $(window).on('import-csv-change', function(e, target) {
-        var target = $(target);
-        target.closest('#importForm').submit();
-    });
+                                results.data.forEach(function(row, i) {
+                                    var key, name;
+                                    for(key in row) {
+                                        name = 'rows[' + i + '][' + key + ']';
+                                        $('<input>')
+                                            .attr('type', 'hidden')
+                                            .attr('name', name)
+                                            .attr('value', row[key])
+                                            .appendTo(form);
+                                    }
+                                });
 
-    /**
-     * Select Csv to Export
-     */
-    $(window).on('export-csv-click', function(e, target) {
-        e.preventDefault();
-        var target = $(target);
-        $("#exportForm").submit();
-    });
-
-    /**
-     * Search submit search form
-     */
-    $(window).on('object-search-click', function(e, target) {
-        var target = $(target);
-        var form = target.parents('form');
-
-        form.submit(function() {
-            form.find(":input").filter(
-                function() {
-                    return !this.value;
-                }).attr("disabled", "disabled");
-
-            return true; // ensure form still submits
+                                form.hide().appendTo(document.body).submit();
+                            },
+                            error: function(error, file, input, reason) {
+                                $.notify(error.message, 'error');
+                            }
+                        }
+                    });
+                })
+                .click();
         });
-
-        // Un-disable form fields when page loads, in case they click back after submission
-        form.find( ":input" ).prop( "disabled", false );
-    });
+    })();
 
     /**
      * General Forms
@@ -404,13 +412,8 @@ jQuery(function($) {
                     '<div class="file-field-preview-container">'
                     + '<img src="{DATA}" height="50" />'
                     + '</div>',
-                row:
-                    '<tr class="file-field-item">'
-                    + '<td class="file-field-preview">{PREVIEW}</td>'
-                    + '<td class="file-field-name">{NAME}</td>'
-                    + '<td class="file-field-mime">{MIME}</td>'
-                    + '<td class="file-field-size">{SIZE}</td>'
-                    + '<td class="file-field-actions">'
+                actions:
+                    '<td class="file-field-actions">'
                         + '<a class="text-info file-field-move-up" href="javascript:void(0)">'
                             + '<i class="fas fa-arrow-up"></i>'
                         + '</a>'
@@ -422,7 +425,15 @@ jQuery(function($) {
                         + '<a class="btn btn-danger file-field-remove" href="javascript:void(0)">'
                             + '<i class="fas fa-times"></i>'
                         + '</a>'
+                    + '</td>',
+                row:
+                    '<tr class="file-field-item">'
+                    + '<td class="file-field-preview">{PREVIEW}</td>'
+                    + '<td class="file-field-name">'
+                        + '{FILENAME}'
+                        + '<input name="{NAME}" type="hidden" value="{DATA}" />'
                     + '</td>'
+                    + '{ACTIONS}'
                     + '</tr>'
             };
 
@@ -487,7 +498,7 @@ jQuery(function($) {
                 });
             };
 
-            var generate = function(file, name, width, height) {
+            var generate = function(file, name, width, height, row) {
                 var reader = new FileReader();
                 reader.readAsDataURL(file);
                 reader.onload = function () {
@@ -505,20 +516,13 @@ jQuery(function($) {
 
                     noresults.hide();
 
-                    var row = $(
-                        template.row
+                    row = $(
+                        row
+                            .replace('{NAME}', name)
+                            .replace('{DATA}', reader.result)
                             .replace('{PREVIEW}', preview)
-                            .replace('{NAME}', file.name)
-                            .replace('{MIME}', file.type)
-                            .replace('{SIZE}', file.size)
+                            .replace('{FILENAME}', file.name)
                     ).appendTo(body);
-
-                    //create input tags
-                    var hidden = $('<input type="hidden" />')
-                        .attr('name', name)
-                        .val(reader.result);
-
-                    $('td.file-field-actions', row).append(hidden);
 
                     listen(row, body);
 
@@ -526,7 +530,7 @@ jQuery(function($) {
                         //so we can crop
                         $.cropper(file, width, height, function(data) {
                             $('div.file-field-preview-container img', row).attr('src', data);
-                            hidden.val(data);
+                            $('input[type="hidden"]', row).val(data);
                         });
                     }
                 };
@@ -538,17 +542,25 @@ jQuery(function($) {
                     return;
                 }
 
-                //remove all
-                $('input[type="hidden"]', target).remove();
+                if(!multiple) {
+                    $('tr', body).each(function() {
+                        if($(this).hasClass('file-field-none')) {
+                            return;
+                        }
 
-                for(var path = '', i = 0; i < this.files.length; i++, path = '') {
+                        $(this).remove();
+                    })
+                }
+
+                for(var row, path = '', i = 0; i < this.files.length; i++, path = '') {
+                    row = template.row.replace('{ACTIONS}', '');
                     if(multiple) {
                         path = '[]' + path;
+                        row = template.row.replace('{ACTIONS}', template.actions);
                     }
 
                     path = name + path;
-
-                    generate(this.files[i], path, width, height);
+                    generate(this.files[i], path, width, height, row);
                 }
             });
 
@@ -637,7 +649,7 @@ jQuery(function($) {
             var e = new wysihtml.Editor(target, {
                 toolbar:        toolbar[0],
                 parserRules:    wysihtmlParserRules,
-                stylesheets:  '/styles/custom.css'
+                stylesheets:  '/styles/admin.css'
             });
         });
 
@@ -1080,6 +1092,7 @@ jQuery(function($) {
                 $(trigger).fadeOut('fast', function() {
                     $(trigger).remove();
                 });
+
             }, timeout);
         });
 

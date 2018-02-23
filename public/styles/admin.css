@@ -71,6 +71,16 @@ select.form-control {
     border-radius: 0;
 }
 
+.has-error {
+    color: #D15B47;
+}
+
+.has-error input,
+.has-error select,
+.has-error textarea {
+    border: 1px solid #B74635;
+}
+
 /* Text
 ------------------------------*/
 .text-default {

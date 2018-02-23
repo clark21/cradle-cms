@@ -131,6 +131,10 @@ class Validator
                 continue;
             }
 
+            if(!isset($field['validation']) || !is_array($field['validation'])) {
+                continue;
+            }
+
             foreach($field['validation'] as $validation) {
                 switch(true) {
                     case $validation['method'] === 'empty'
