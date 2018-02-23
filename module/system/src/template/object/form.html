@@ -47,6 +47,7 @@
                     <div>
                         {{#when field.type '===' 'text'}}
                             <input
+                                autocomplete="{{name}}"
                                 class="form-control"
                                 name="{{@key}}"
                                 type="text"
@@ -58,6 +59,7 @@
                         {{/when}}
                         {{#when field.type '===' 'email'}}
                             <input
+                                autocomplete="email"
                                 class="form-control"
                                 name="{{@key}}"
                                 type="email"
@@ -69,6 +71,7 @@
                         {{/when}}
                         {{#when field.type '===' 'password'}}
                             <input
+                                autocomplete="password"
                                 class="form-control"
                                 name="{{@key}}"
                                 type="password"
@@ -80,6 +83,7 @@
                         {{/when}}
                         {{#when field.type '===' 'search'}}
                             <input
+                                autocomplete="search"
                                 class="form-control"
                                 name="{{@key}}"
                                 type="search"
@@ -91,6 +95,7 @@
                         {{/when}}
                         {{#when field.type '===' 'url'}}
                             <input
+                                autocomplete="url"
                                 class="form-control"
                                 name="{{@key}}"
                                 type="url"
@@ -102,6 +107,7 @@
                         {{/when}}
                         {{#when field.type '===' 'color'}}
                             <input
+                                autocomplete="color"
                                 class="form-control"
                                 name="{{@key}}"
                                 type="color"
@@ -113,6 +119,7 @@
                         {{/when}}
                         {{#when field.type '===' 'mask'}}
                             <input
+                                autocomplete="{{name}}"
                                 class="form-control"
                                 data-do="mask-field"
                                 name="{{@key}}"
@@ -125,6 +132,7 @@
                         {{/when}}
                         {{#when field.type '===' 'slug'}}
                             <input
+                                autocomplete="{{name}}"
                                 class="form-control"
                                 data-do="slugger"
                                 name="{{@key}}"
@@ -156,6 +164,7 @@
                         {{/when}}
                         {{#when field.type '===' 'number'}}
                             <input
+                                autocomplete="{{name}}"
                                 class="form-control"
                                 name="{{@key}}"
                                 type="number"
@@ -167,6 +176,7 @@
                         {{/when}}
                         {{#when field.type '===' 'small'}}
                             <input
+                                autocomplete="{{name}}"
                                 class="form-control"
                                 max="9"
                                 min="0"
@@ -194,6 +204,7 @@
                         {{/when}}
                         {{#when field.type '===' 'float'}}
                             <input
+                                autocomplete="{{name}}"
                                 class="form-control"
                                 name="{{@key}}"
                                 step="0.00001"
@@ -206,6 +217,7 @@
                         {{/when}}
                         {{#when field.type '===' 'price'}}
                             <input
+                                autocomplete="{{name}}"
                                 class="form-control"
                                 min="0"
                                 name="{{@key}}"

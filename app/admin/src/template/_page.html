@@ -57,7 +57,7 @@
     </section>
     <footer class="foot">{{> foot}}</footer>
     {{#if page.flash}}
-        <div id="toast-container" class="toast-top-right">
+        <div id="toast-container" class="toast-top-right" data-do="notify">
             <div class="toast toast-{{page.flash.type}}" aria-live="polite">
                 <div class="toast-title">{{capital page.flash.type}}</div>
                 <div class="toast-message">{{page.flash.message}}</div>

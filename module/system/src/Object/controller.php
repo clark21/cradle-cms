@@ -218,7 +218,7 @@ $cradle->get('/admin/system/object/:schema/create', function($request, $response
     $data = ['item' => $request->getPost()];
 
     if ($response->isError()) {
-        $response->setFlash($response->getMessage(), 'danger');
+        $response->setFlash($response->getMessage(), 'error');
         $data['errors'] = $response->getValidation();
     }
 
@@ -232,7 +232,8 @@ $cradle->get('/admin/system/object/:schema/create', function($request, $response
         'singular' => $schema->getSingular(),
         'plural' => $schema->getPlural(),
         'fields' => $schema->getFields(),
-        'files' => $schema->getFiles()
+        'files' => $schema->getFiles(),
+        'relations' => $schema->getRelations()
     ];
 
     //add CSRF
@@ -421,7 +422,7 @@ $cradle->get('/admin/system/object/:schema/update/:id', function($request, $resp
     $data = ['item' => $request->getPost()];
 
     if($response->isError()) {
-        $response->setFlash($response->getMessage(), 'danger');
+        $response->setFlash($response->getMessage(), 'error');
         $data['errors'] = $response->getValidation();
     }
 
@@ -437,7 +438,7 @@ $cradle->get('/admin/system/object/:schema/update/:id', function($request, $resp
         //can we update ?
         if($response->isError()) {
             //add a flash
-            cradle('global')->flash($response->getMessage(), 'danger');
+            cradle('global')->flash($response->getMessage(), 'error');
             return cradle('global')->redirect('/admin/system/object/'. $request->getStage('schema') .'/search');
         }
 
@@ -819,7 +820,7 @@ $cradle->get('/admin/system/object/:schema/remove/:id', function($request, $resp
     // 4. Interpret Results
     if($response->isError()) {
         //add a flash
-        cradle('global')->flash($response->getMessage(), 'danger');
+        cradle('global')->flash($response->getMessage(), 'error');
     } else {
         //add a flash
         $message = cradle('global')->translate('%s was Removed', $schema->getSingular());
@@ -861,7 +862,7 @@ $cradle->get('/admin/system/object/:schema/restore/:id', function($request, $res
     // 4. Interpret Results
     if($response->isError()) {
         //add a flash
-        cradle('global')->flash($response->getMessage(), 'danger');
+        cradle('global')->flash($response->getMessage(), 'error');
     } else {
         //add a flash
         $message = cradle('global')->translate('%s was Restored', $schema->getSingular());
