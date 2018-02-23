@@ -450,7 +450,9 @@ $cradle->get('/admin/system/object/:schema/update/:id', function($request, $resp
 
     $data['schema'] = [
         'name' => $schema->getTableName(),
+        'icon' => $schema->getIcon(),
         'singular' => $schema->getSingular(),
+        'plural' => $schema->getPlural(),
         'fields' => $schema->getFields(),
         'files' => $schema->getFiles()
     ];
