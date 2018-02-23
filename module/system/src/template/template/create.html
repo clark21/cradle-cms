@@ -243,6 +243,44 @@
             </div>
         </div>
         <div class="form-group">
+            <label for="file_1" class="col-sm-2 col-form-label">File</label>
+            <div class="col-sm-10">
+                <table
+                    class="table table-striped file-field"
+                    data-do="file-field"
+                    data-name="file_1"
+                    data-width="200"
+                    data-height="200"
+                >
+                    <thead>
+                        <tr>
+                            <th>Preview</th>
+                            <th>Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="file-field-none">
+                            <td colspan="5">
+                                <div class="alert alert-info">No File Selected</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="5">
+                                <button
+                                    class="file-field-upload btn btn-info"
+                                    type="button"
+                                >
+                                    Choose File
+                                </button>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+        <div class="form-group">
             <label for="files_1" class="col-sm-2 col-form-label">Files</label>
             <div class="col-sm-10">
                 <table
@@ -257,8 +295,6 @@
                         <tr>
                             <th>Preview</th>
                             <th>Name</th>
-                            <th>Mime</th>
-                            <th>Size</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -285,13 +321,52 @@
             </div>
         </div>
         <div class="form-group">
+            <label for="image_1" class="col-sm-2 col-form-label">Image</label>
+            <div class="col-sm-10">
+                <table
+                    class="table table-striped file-field"
+                    data-accept="image/png,image/jpg,image/jpeg,image/gif"
+                    data-do="file-field"
+                    data-name="image_1"
+                    data-width="200"
+                    data-height="200"
+                >
+                    <thead>
+                        <tr>
+                            <th>Preview</th>
+                            <th>Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="file-field-none">
+                            <td colspan="5">
+                                <div class="alert alert-info">No File Selected</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="5">
+                                <button
+                                    class="file-field-upload btn btn-info"
+                                    type="button"
+                                >
+                                    Choose File
+                                </button>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+        <div class="form-group">
             <label for="images_1" class="col-sm-2 col-form-label">Images</label>
             <div class="col-sm-10">
                 <table
                     class="table table-striped file-field"
+                    data-accept="image/png,image/jpg,image/jpeg,image/gif"
                     data-do="file-field"
                     data-name="images_1"
-                    data-accept="image/png,image/jpg,image/jpeg,image/gif"
                     data-multiple="1"
                     data-width="200"
                     data-height="200"
@@ -300,15 +375,13 @@
                         <tr>
                             <th>Preview</th>
                             <th>Name</th>
-                            <th>Mime</th>
-                            <th>Size</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr class="file-field-none">
                             <td colspan="5">
-                                <div class="alert alert-info">No Images Selected</div>
+                                <div class="alert alert-info">No Files Selected</div>
                             </td>
                         </tr>
                     </tbody>

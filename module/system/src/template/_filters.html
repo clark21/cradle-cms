@@ -1,0 +1,293 @@
+{{#each schema.fields}}
+    {{#in @key ../schema.filterable}}
+        {{#in field.type 'password,files,images,textarea,wysiwyg,markdown,none,hide,active'}}
+        {{else}}
+            <div class="form-group">
+                <label for="filter[{{@key}}]">{{label}}</label>
+                {{#in field.type 'text,slug,file,image'}}
+                    <input
+                        class="form-control"
+                        name="filter[{{@key}}]"
+                        type="text"
+                        value="{{key @key ../filter}}"
+                        {{#each field.attributes}}
+                            {{@key}}="{{this}}"
+                        {{/each}}
+                    />
+                {{/in}}
+                {{#in field.type 'email,search,url,color,number,week,month'}}
+                    <input
+                        class="form-control"
+                        name="filter[{{@key}}]"
+                        type="{{field.type}}"
+                        value="{{key @key ../filter}}"
+                        {{#each field.attributes}}
+                            {{@key}}="{{this}}"
+                        {{/each}}
+                    />
+                {{/in}}
+                {{#when field.type '===' 'mask'}}
+                    <input
+                        class="form-control"
+                        data-do="mask-field"
+                        name="filter[{{@key}}]"
+                        type="text"
+                        value="{{key @key ../filter}}"
+                        {{#each field.attributes}}
+                            {{@key}}="{{this}}"
+                        {{/each}}
+                    />
+                {{/when}}
+                {{#when field.type '===' 'small'}}
+                    <input
+                        class="form-control"
+                        max="9"
+                        min="0"
+                        name="filter[{{@key}}]"
+                        step="1"
+                        type="number"
+                        value="{{key @key ../filter}}"
+                        {{#each field.attributes}}
+                            {{@key}}="{{this}}"
+                        {{/each}}
+                    />
+                {{/when}}
+                {{#when field.type '===' 'range'}}
+                    <input
+                        class="irs-hidden-input"
+                        data-do="multirange-field"
+                        name="filter[{{@key}}]"
+                        tabindex="-1"
+                        type="hidden"
+                        value="{{key @key ../filter}}"
+                        {{#each field.attributes}}
+                            {{@key}}="{{this}}"
+                        {{/each}}
+                    />
+                {{/when}}
+                {{#when field.type '===' 'float'}}
+                    <input
+                        class="form-control"
+                        name="filter[{{@key}}]"
+                        step="0.00001"
+                        type="number"
+                        value="{{key @key ../filter}}"
+                        {{#each field.attributes}}
+                            {{@key}}="{{this}}"
+                        {{/each}}
+                    />
+                {{/when}}
+                {{#when field.type '===' 'price'}}
+                    <input
+                        class="form-control"
+                        min="0"
+                        name="filter[{{@key}}]"
+                        step="0.01"
+                        type="number"
+                        value="{{key @key ../filter}}"
+                        {{#each field.attributes}}
+                            {{@key}}="{{this}}"
+                        {{/each}}
+                    />
+                {{/when}}
+                {{#when field.type '===' 'date'}}
+                    <input
+                        aria-haspopup="true"
+                        aria-expanded="false"
+                        class="form-control date"
+                        data-do="date-field"
+                        name="filter[{{@key}}]"
+                        type="text"
+                        value="{{key @key ../filter}}"
+                        {{#each field.attributes}}
+                            {{@key}}="{{this}}"
+                        {{/each}}
+                    />
+                {{/when}}
+                {{#when field.type '===' 'time'}}
+                    <input
+                        aria-haspopup="true"
+                        aria-expanded="false"
+                        class="form-control date"
+                        data-do="time-field"
+                        name="filter[{{@key}}]"
+                        type="text"
+                        value="{{key @key ../filter}}"
+                        {{#each field.attributes}}
+                            {{@key}}="{{this}}"
+                        {{/each}}
+                    />
+                {{/when}}
+                {{#when field.type '===' 'datetime'}}
+                    <input
+                        aria-haspopup="true"
+                        aria-expanded="false"
+                        class="form-control date"
+                        data-do="datetime-field"
+                        name="filter[{{@key}}]"
+                        type="text"
+                        value="{{key @key ../filter}}"
+                        {{#each field.attributes}}
+                            {{@key}}="{{this}}"
+                        {{/each}}
+                    />
+                {{/when}}
+                {{#when field.type '===' 'checkbox'}}
+                    <label class="checkbox checkbox-2">
+                        <input
+                            name="filter[{{@key}}]"
+                            type="checkbox"
+                            value="1"
+                            {{#when ../filter @key '==' 1}}checked{{/when}}
+                            {{#each field.attributes}}
+                                {{@key}}="{{this}}"
+                            {{/each}}
+                        />
+                        <span>{{field.attributes.placeholder}}</span>
+                    </label>
+                {{/when}}
+                {{#when field.type '===' 'switch'}}
+                    <input
+                        name="{{@key}}"
+                        type="hidden"
+                        value="0"
+                    />
+                    <label class="switch switch-1">
+                        <input
+                            name="filter[{{@key}}]"
+                            type="checkbox"
+                            value="1"
+                            {{#when ../filter @key '==' 1}}checked{{/when}}
+                            {{#each field.attributes}}
+                                {{@key}}="{{this}}"
+                            {{/each}}
+                        />
+                        <span>{{field.attributes.placeholder}}</span>
+                    </label>
+                {{/when}}
+                {{#when field.type '===' 'knob'}}
+                    <input
+                        class="form-control"
+                        data-do="knob-field"
+                        name="filter[{{@key}}]"
+                        type="text"
+                        value="{{key @key ../filter}}"
+                        {{#each field.attributes}}
+                            {{@key}}="{{this}}"
+                        {{/each}}
+                    />
+                {{/when}}
+                {{#when field.type '===' 'select'}}
+                    <select
+                        class="form-control"
+                        data-do="select-field"
+                        name="filter[{{@key}}]"
+                        {{#each field.attributes}}
+                            {{@key}}="{{this}}"
+                        {{/each}}
+                    >
+                        {{#each field.options}}
+                            <option
+                                value="{{./key}}"
+                                {{#when ../../filter ../@key '==' key}}selected{{/when}}
+                            >
+                                {{value}}
+                            </option>
+                        {{/each}}
+                    </select>
+                {{/when}}
+                {{#when field.type '===' 'multiselect'}}
+                    <select
+                        class="form-control"
+                        data-do="select-field"
+                        multiple="multiple"
+                        name="filter[{{@key}}][]"
+                        {{#each field.attributes}}
+                            {{@key}}="{{this}}"
+                        {{/each}}
+                    >
+                        {{#each field.options}}
+                            <option
+                                value="{{./key}}"
+                                {{#when ../../filter ../@key '==' key}}selected{{/when}}
+                            >
+                                {{value}}
+                            </option>
+                        {{/each}}
+                    </select>
+                {{/when}}
+                {{#when field.type '===' 'checkboxes'}}
+                    <div{{#each field.attributes}} {{@key}}="{{this}}"{{/each}}>
+                        {{#each field.options}}
+                            <label class="checkbox checkbox-2">
+                                <input
+                                    name="filter[{{@key}}][]"
+                                    type="checkbox"
+                                    value="{{./key}}"
+                                    {{#when ../../filter ../@key '==' key}}checked{{/when}}
+                                />
+                                {{value}}
+                            </label>
+                        {{/each}}
+                    </div>
+                {{/when}}
+                {{#when field.type '===' 'radios'}}
+                    <div{{#each field.attributes}} {{@key}}="{{this}}"{{/each}}>
+                        {{#each field.options}}
+                            <label class="radio radio-2">
+                                <input
+                                    name="filter[{{@key}}]"
+                                    type="radio"
+                                    value="{{./key}}"
+                                    {{#when ../../filter ../@key '==' key}}checked{{/when}}
+                                />
+                                {{value}}
+                            </label>
+                        {{/each}}
+                    </div>
+                {{/when}}
+                {{#when field.type '===' 'tag'}}
+                    <div
+                        data-do="tag-field"
+                        class="tag-field"
+                        data-name="filter[{{@key}}]"
+                        {{#each field.attributes}}
+                            {{@key}}="{{this}}"
+                        {{/each}}
+                    >
+                        {{#loop ../item @key}}
+                            <div class="tag">
+                                <input
+                                    class="tag-input text-field"
+                                    type="text"
+                                    name="filter[{{../@key}}][]"
+                                    value="{{this}}"
+                                />
+                                <a
+                                    class="remove"
+                                    href="javascript:void(0)"
+                                >
+                                    <i class="fa fa-times"></i>
+                                </a>
+                            </div>
+                        {{/loop}}
+                    </div>
+                {{/when}}
+                {{#when field.type '===' 'multirange'}}
+                    <input
+                        class="irs-hidden-input"
+                        data-do="multirange-field"
+                        data-type="double"
+                        name="filter[{{@key}}]"
+                        tabindex="-1"
+                        type="hidden"
+                        value="{{key @key ../filter}}"
+                        {{#each field.attributes}}
+                            {{@key}}="{{this}}"
+                        {{/each}}
+                    />
+                {{/when}}
+            </div>
+        {{/in}}
+    {{/in}}
+{{/each}}

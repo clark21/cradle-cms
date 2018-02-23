@@ -45,6 +45,24 @@ return function ($request, $response) {
         return strtolower($value);
     });
 
+    $handlebars->registerHelper('fileinfo', function($file, $options) {
+        return $options['fn']([
+            'name' => $file,
+            'base' => basename($file),
+            'path' => dirname($file),
+            'extension' => File::getExtensionFromLink($file),
+            'mime' => File::getMimeFromLink($file)
+        ]);
+    });
+
+    $handlebars->registerHelper('scope', function($array, $key, $options) {
+        if (isset($array[$key])) {
+            return $options['fn']($array[$key]);
+        }
+
+        return $options['inverse']();
+    });
+
     $handlebars->registerHelper('error_exist', function($arr, $val, $scheme, $options) {
         $name = $scheme . "_" . $val;
 

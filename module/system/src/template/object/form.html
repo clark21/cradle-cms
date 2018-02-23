@@ -1,243 +1,293 @@
-<h3>{{title}}</h3>
-<div class="card">
-    <div class="card-body">
-        <form
-            method="post"
-            {{#if cdn_config}}
-                data-do="cdn-upload"
-                data-on="submit"
-                data-progress="{{_ 'We are uploading your files. Please do not refresh page.'}}"
-                data-complete="{{_ 'Upload Complete'}}"
-                data-enctype="{{cdn_config.form.enctype}}"
-                data-method="{{cdn_config.form.method}}"
-                data-action="{{cdn_config.form.action}}"
-                data-cdn="{{cdn_config.form.action}}"
-                data-acl="{{cdn_config.inputs.acl}}"
-                data-key="{{cdn_config.inputs.key}}"
-                data-credential="{{cdn_config.inputs.X-Amz-Credential}}"
-                data-algorythm="{{cdn_config.inputs.X-Amz-Algorithm}}"
-                data-date="{{cdn_config.inputs.X-Amz-Date}}"
-                data-policy="{{cdn_config.inputs.Policy}}"
-                data-signature="{{cdn_config.inputs.X-Amz-Signature}}"
-            {{/if}}
-        >
-            {{#each schema.fields}}
-                {{#in field.type 'none,hide,active,created,updated'}}
-                {{else}}
-                    <div class="form-group{{#has @key ../errors}} has-error{{/has}}">
-                        <label class="control-label">{{label}}</label>
-                        <div>
-                            {{#when field.type '===' 'text'}}
-                                <input
-                                    class="form-control"
-                                    name="{{@key}}"
-                                    type="text"
-                                    value="{{key @key ../item}}"
-                                    {{#each field.attributes}}
-                                        {{@key}}="{{this}}"
-                                    {{/each}}
-                                />
-                            {{/when}}
-                            {{#when field.type '===' 'email'}}
-                                <input
-                                    class="form-control"
-                                    name="{{@key}}"
-                                    type="email"
-                                    value="{{key @key ../item}}"
-                                    {{#each field.attributes}}
-                                        {{@key}}="{{this}}"
-                                    {{/each}}
-                                />
-                            {{/when}}
-                            {{#when field.type '===' 'password'}}
-                                <input
-                                    class="form-control"
-                                    name="{{@key}}"
-                                    type="password"
-                                    value="{{key @key ../item}}"
-                                    {{#each field.attributes}}
-                                        {{@key}}="{{this}}"
-                                    {{/each}}
-                                />
-                            {{/when}}
-                            {{#when field.type '===' 'search'}}
-                                <input
-                                    class="form-control"
-                                    name="{{@key}}"
-                                    type="search"
-                                    value="{{key @key ../item}}"
-                                    {{#each field.attributes}}
-                                        {{@key}}="{{this}}"
-                                    {{/each}}
-                                />
-                            {{/when}}
-                            {{#when field.type '===' 'url'}}
-                                <input
-                                    class="form-control"
-                                    name="{{@key}}"
-                                    type="url"
-                                    value="{{key @key ../item}}"
-                                    {{#each field.attributes}}
-                                        {{@key}}="{{this}}"
-                                    {{/each}}
-                                />
-                            {{/when}}
-                            {{#when field.type '===' 'color'}}
-                                <input
-                                    class="form-control"
-                                    name="{{@key}}"
-                                    type="color"
-                                    value="{{key @key ../item}}"
-                                    {{#each field.attributes}}
-                                        {{@key}}="{{this}}"
-                                    {{/each}}
-                                />
-                            {{/when}}
-                            {{#when field.type '===' 'mask'}}
-                            {{/when}}
-                            {{#when field.type '===' 'slug'}}
-                            {{/when}}
-                            {{#when field.type '===' 'textarea'}}
-                                <textarea
-                                    class="form-control"
-                                    name="{{@key}}"
-                                    {{#each field.attributes}}
-                                        {{@key}}="{{this}}"
-                                    {{/each}}
-                                >{{{key @key ../item}}}</textarea>
-                            {{/when}}
-                            {{#when field.type '===' 'wysiwyg'}}
-                                <textarea
-                                    class="form-control"
-                                    data-do="wysiwyg"
-                                    name="{{@key}}"
-                                    {{#each field.attributes}}
-                                        {{@key}}="{{this}}"
-                                    {{/each}}
-                                >{{{key @key ../item}}}</textarea>
-                            {{/when}}
-                            {{#when field.type '===' 'number'}}
-                                <input
-                                    class="form-control"
-                                    name="{{@key}}"
-                                    type="number"
-                                    value="{{key @key ../item}}"
-                                    {{#each field.attributes}}
-                                        {{@key}}="{{this}}"
-                                    {{/each}}
-                                />
-                            {{/when}}
-                            {{#when field.type '===' 'small'}}
-                                <input
-                                    class="form-control"
-                                    max="9"
-                                    min="0"
-                                    name="{{@key}}"
-                                    step="1"
-                                    type="number"
-                                    value="{{key @key ../item}}"
-                                    {{#each field.attributes}}
-                                        {{@key}}="{{this}}"
-                                    {{/each}}
-                                />
-                            {{/when}}
-                            {{#when field.type '===' 'range'}}
-                                <input
-                                    class="form-control"
-                                    name="{{@key}}"
-                                    type="range"
-                                    value="{{key @key ../item}}"
-                                    {{#each field.attributes}}
-                                        {{@key}}="{{this}}"
-                                    {{/each}}
-                                />
-                            {{/when}}
-                            {{#when field.type '===' 'float'}}
-                                <input
-                                    class="form-control"
-                                    name="{{@key}}"
-                                    step="0.00001"
-                                    type="number"
-                                    value="{{key @key ../item}}"
-                                    {{#each field.attributes}}
-                                        {{@key}}="{{this}}"
-                                    {{/each}}
-                                />
-                            {{/when}}
-                            {{#when field.type '===' 'price'}}
-                                <input
-                                    class="form-control"
-                                    min="0"
-                                    name="{{@key}}"
-                                    step="0.01"
-                                    type="number"
-                                    value="{{key @key ../item}}"
-                                    {{#each field.attributes}}
-                                        {{@key}}="{{this}}"
-                                    {{/each}}
-                                />
-                            {{/when}}
-                            {{#when field.type '===' 'date'}}
-                                <input
-                                    class="form-control"
-                                    name="{{@key}}"
-                                    type="date"
-                                    value="{{key @key ../item}}"
-                                    {{#each field.attributes}}
-                                        {{@key}}="{{this}}"
-                                    {{/each}}
-                                />
-                            {{/when}}
-                            {{#when field.type '===' 'time'}}
-                                <input
-                                    class="form-control"
-                                    name="{{@key}}"
-                                    type="time"
-                                    value="{{key @key ../item}}"
-                                    {{#each field.attributes}}
-                                        {{@key}}="{{this}}"
-                                    {{/each}}
-                                />
-                            {{/when}}
-                            {{#when field.type '===' 'datetime'}}
-                                <input
-                                    class="form-control"
-                                    name="{{@key}}"
-                                    type="datetime-local"
-                                    value="{{key @key ../item}}"
-                                    {{#each field.attributes}}
-                                        {{@key}}="{{this}}"
-                                    {{/each}}
-                                />
-                            {{/when}}
-                            {{#when field.type '===' 'week'}}
-                                <input
-                                    class="form-control"
-                                    name="{{@key}}"
-                                    type="week"
-                                    value="{{key @key ../item}}"
-                                    {{#each field.attributes}}
-                                        {{@key}}="{{this}}"
-                                    {{/each}}
-                                />
-                            {{/when}}
-                            {{#when field.type '===' 'month'}}
-                                <input
-                                    class="form-control"
-                                    name="{{@key}}"
-                                    type="month"
-                                    value="{{key @key ../item}}"
-                                    {{#each field.attributes}}
-                                        {{@key}}="{{this}}"
-                                    {{/each}}
-                                />
-                            {{/when}}
-                            {{#when field.type '===' 'checkbox'}}
-                                <input
-                                    name="{{@key}}"
-                                    type="hidden"
-                                    value="0"
-                                />
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="/admin">
+                <i class="fas fa-home"></i> Admin
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="/admin/system/object/{{schema.name}}/search">
+                <i class="fas fa-{{schema.icon}}"></i> {{schema.plural}}
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <i class="fas fa-plus"></i> {{title}}
+        </li>
+    </ol>
+</nav>
+
+<div class="main-padding">
+    <h3 class="main-title"><i class="fa fa-plus"></i> {{title}}</h3>
+
+    <form
+        method="post"
+        {{#if cdn_config}}
+            data-do="cdn-upload"
+            data-on="submit"
+            data-progress="{{_ 'We are uploading your files. Please do not refresh page.'}}"
+            data-complete="{{_ 'Upload Complete'}}"
+            data-enctype="{{cdn_config.form.enctype}}"
+            data-method="{{cdn_config.form.method}}"
+            data-action="{{cdn_config.form.action}}"
+            data-cdn="{{cdn_config.form.action}}"
+            data-acl="{{cdn_config.inputs.acl}}"
+            data-key="{{cdn_config.inputs.key}}"
+            data-credential="{{cdn_config.inputs.X-Amz-Credential}}"
+            data-algorythm="{{cdn_config.inputs.X-Amz-Algorithm}}"
+            data-date="{{cdn_config.inputs.X-Amz-Date}}"
+            data-policy="{{cdn_config.inputs.Policy}}"
+            data-signature="{{cdn_config.inputs.X-Amz-Signature}}"
+        {{/if}}
+    >
+        {{#each schema.fields}}
+            {{#in field.type 'none,hide,active,created,updated'}}
+            {{else}}
+                <div class="form-group{{#has @key ../errors}} has-error{{/has}}">
+                    <label class="control-label">{{label}}</label>
+                    <div>
+                        {{#when field.type '===' 'text'}}
+                            <input
+                                class="form-control"
+                                name="{{@key}}"
+                                type="text"
+                                value="{{key @key ../item}}"
+                                {{#each field.attributes}}
+                                    {{@key}}="{{this}}"
+                                {{/each}}
+                            />
+                        {{/when}}
+                        {{#when field.type '===' 'email'}}
+                            <input
+                                class="form-control"
+                                name="{{@key}}"
+                                type="email"
+                                value="{{key @key ../item}}"
+                                {{#each field.attributes}}
+                                    {{@key}}="{{this}}"
+                                {{/each}}
+                            />
+                        {{/when}}
+                        {{#when field.type '===' 'password'}}
+                            <input
+                                class="form-control"
+                                name="{{@key}}"
+                                type="password"
+                                value="{{key @key ../item}}"
+                                {{#each field.attributes}}
+                                    {{@key}}="{{this}}"
+                                {{/each}}
+                            />
+                        {{/when}}
+                        {{#when field.type '===' 'search'}}
+                            <input
+                                class="form-control"
+                                name="{{@key}}"
+                                type="search"
+                                value="{{key @key ../item}}"
+                                {{#each field.attributes}}
+                                    {{@key}}="{{this}}"
+                                {{/each}}
+                            />
+                        {{/when}}
+                        {{#when field.type '===' 'url'}}
+                            <input
+                                class="form-control"
+                                name="{{@key}}"
+                                type="url"
+                                value="{{key @key ../item}}"
+                                {{#each field.attributes}}
+                                    {{@key}}="{{this}}"
+                                {{/each}}
+                            />
+                        {{/when}}
+                        {{#when field.type '===' 'color'}}
+                            <input
+                                class="form-control"
+                                name="{{@key}}"
+                                type="color"
+                                value="{{key @key ../item}}"
+                                {{#each field.attributes}}
+                                    {{@key}}="{{this}}"
+                                {{/each}}
+                            />
+                        {{/when}}
+                        {{#when field.type '===' 'mask'}}
+                            <input
+                                class="form-control"
+                                data-do="mask-field"
+                                name="{{@key}}"
+                                type="text"
+                                value="{{key @key ../item}}"
+                                {{#each field.attributes}}
+                                    {{@key}}="{{this}}"
+                                {{/each}}
+                            />
+                        {{/when}}
+                        {{#when field.type '===' 'slug'}}
+                            <input
+                                class="form-control"
+                                data-do="slugger"
+                                name="{{@key}}"
+                                type="text"
+                                value="{{key @key ../item}}"
+                                {{#each field.attributes}}
+                                    {{@key}}="{{this}}"
+                                {{/each}}
+                            />
+                        {{/when}}
+                        {{#when field.type '===' 'textarea'}}
+                            <textarea
+                                class="form-control"
+                                name="{{@key}}"
+                                {{#each field.attributes}}
+                                    {{@key}}="{{this}}"
+                                {{/each}}
+                            >{{{key @key ../item}}}</textarea>
+                        {{/when}}
+                        {{#when field.type '===' 'wysiwyg'}}
+                            <textarea
+                                class="form-control"
+                                data-do="wysiwyg"
+                                name="{{@key}}"
+                                {{#each field.attributes}}
+                                    {{@key}}="{{this}}"
+                                {{/each}}
+                            >{{{key @key ../item}}}</textarea>
+                        {{/when}}
+                        {{#when field.type '===' 'number'}}
+                            <input
+                                class="form-control"
+                                name="{{@key}}"
+                                type="number"
+                                value="{{key @key ../item}}"
+                                {{#each field.attributes}}
+                                    {{@key}}="{{this}}"
+                                {{/each}}
+                            />
+                        {{/when}}
+                        {{#when field.type '===' 'small'}}
+                            <input
+                                class="form-control"
+                                max="9"
+                                min="0"
+                                name="{{@key}}"
+                                step="1"
+                                type="number"
+                                value="{{key @key ../item}}"
+                                {{#each field.attributes}}
+                                    {{@key}}="{{this}}"
+                                {{/each}}
+                            />
+                        {{/when}}
+                        {{#when field.type '===' 'range'}}
+                            <input
+                                class="irs-hidden-input"
+                                data-do="multirange-field"
+                                name="{{@key}}"
+                                tabindex="-1"
+                                type="hidden"
+                                value="{{key @key ../item}}"
+                                {{#each field.attributes}}
+                                    {{@key}}="{{this}}"
+                                {{/each}}
+                            />
+                        {{/when}}
+                        {{#when field.type '===' 'float'}}
+                            <input
+                                class="form-control"
+                                name="{{@key}}"
+                                step="0.00001"
+                                type="number"
+                                value="{{key @key ../item}}"
+                                {{#each field.attributes}}
+                                    {{@key}}="{{this}}"
+                                {{/each}}
+                            />
+                        {{/when}}
+                        {{#when field.type '===' 'price'}}
+                            <input
+                                class="form-control"
+                                min="0"
+                                name="{{@key}}"
+                                step="0.01"
+                                type="number"
+                                value="{{key @key ../item}}"
+                                {{#each field.attributes}}
+                                    {{@key}}="{{this}}"
+                                {{/each}}
+                            />
+                        {{/when}}
+                        {{#when field.type '===' 'date'}}
+                            <input
+                                aria-haspopup="true"
+                                aria-expanded="false"
+                                class="form-control date"
+                                data-do="date-field"
+                                name="{{@key}}"
+                                type="text"
+                                value="{{key @key ../item}}"
+                                {{#each field.attributes}}
+                                    {{@key}}="{{this}}"
+                                {{/each}}
+                            />
+                        {{/when}}
+                        {{#when field.type '===' 'time'}}
+                            <input
+                                aria-haspopup="true"
+                                aria-expanded="false"
+                                class="form-control date"
+                                data-do="time-field"
+                                name="{{@key}}"
+                                type="text"
+                                value="{{key @key ../item}}"
+                                {{#each field.attributes}}
+                                    {{@key}}="{{this}}"
+                                {{/each}}
+                            />
+                        {{/when}}
+                        {{#when field.type '===' 'datetime'}}
+                            <input
+                                aria-haspopup="true"
+                                aria-expanded="false"
+                                class="form-control date"
+                                data-do="datetime-field"
+                                name="{{@key}}"
+                                type="text"
+                                value="{{key @key ../item}}"
+                                {{#each field.attributes}}
+                                    {{@key}}="{{this}}"
+                                {{/each}}
+                            />
+                        {{/when}}
+                        {{#when field.type '===' 'week'}}
+                            <input
+                                class="form-control"
+                                name="{{@key}}"
+                                type="week"
+                                value="{{key @key ../item}}"
+                                {{#each field.attributes}}
+                                    {{@key}}="{{this}}"
+                                {{/each}}
+                            />
+                        {{/when}}
+                        {{#when field.type '===' 'month'}}
+                            <input
+                                class="form-control"
+                                name="{{@key}}"
+                                type="month"
+                                value="{{key @key ../item}}"
+                                {{#each field.attributes}}
+                                    {{@key}}="{{this}}"
+                                {{/each}}
+                            />
+                        {{/when}}
+                        {{#when field.type '===' 'checkbox'}}
+                            <input
+                                name="{{@key}}"
+                                type="hidden"
+                                value="0"
+                            />
+                            <label class="checkbox checkbox-2">
                                 <input
                                     name="{{@key}}"
                                     type="checkbox"
@@ -247,256 +297,518 @@
                                         {{@key}}="{{this}}"
                                     {{/each}}
                                 />
-                            {{/when}}
-                            {{#when field.type '===' 'switch'}}
-                            {{/when}}
-                            {{#when field.type '===' 'select'}}
-                                <select
-                                    class="form-control"
+                                <span>{{field.attributes.placeholder}}</span>
+                            </label>
+                        {{/when}}
+                        {{#when field.type '===' 'switch'}}
+                            <input
+                                name="{{@key}}"
+                                type="hidden"
+                                value="0"
+                            />
+                            <label class="switch switch-1">
+                                <input
                                     name="{{@key}}"
+                                    type="checkbox"
+                                    value="1"
+                                    {{#when ../item @key '==' 1}}checked{{/when}}
                                     {{#each field.attributes}}
                                         {{@key}}="{{this}}"
                                     {{/each}}
-                                >
-                                    {{#each field.options}}
-                                        <option
+                                />
+                                <span>{{field.attributes.placeholder}}</span>
+                            </label>
+                        {{/when}}
+                        {{#when field.type '===' 'knob'}}
+                            <input
+                                class="form-control"
+                                data-do="knob-field"
+                                name="{{@key}}"
+                                type="text"
+                                value="{{key @key ../item}}"
+                                {{#each field.attributes}}
+                                    {{@key}}="{{this}}"
+                                {{/each}}
+                            />
+                        {{/when}}
+                        {{#when field.type '===' 'select'}}
+                            <select
+                                class="form-control"
+                                data-do="select-field"
+                                name="{{@key}}"
+                                {{#each field.attributes}}
+                                    {{@key}}="{{this}}"
+                                {{/each}}
+                            >
+                                {{#each field.options}}
+                                    <option
+                                        value="{{./key}}"
+                                        {{#when ../../item ../@key '==' key}}selected{{/when}}
+                                    >
+                                        {{value}}
+                                    </option>
+                                {{/each}}
+                            </select>
+                        {{/when}}
+                        {{#when field.type '===' 'multiselect'}}
+                            <select
+                                class="form-control"
+                                data-do="select-field"
+                                multiple="multiple"
+                                name="{{@key}}[]"
+                                {{#each field.attributes}}
+                                    {{@key}}="{{this}}"
+                                {{/each}}
+                            >
+                                {{#each field.options}}
+                                    <option
+                                        value="{{./key}}"
+                                        {{#when ../../item ../@key '==' key}}selected{{/when}}
+                                    >
+                                        {{value}}
+                                    </option>
+                                {{/each}}
+                            </select>
+                        {{/when}}
+                        {{#when field.type '===' 'checkboxes'}}
+                            <div{{#each field.attributes}} {{@key}}="{{this}}"{{/each}}>
+                                {{#each field.options}}
+                                    <label class="checkbox checkbox-2">
+                                        <input
+                                            name="{{../@key}}[]"
+                                            type="checkbox"
                                             value="{{./key}}"
-                                            {{#when ../../item ../@key '==' key}}selected{{/when}}
-                                        >
-                                            {{value}}
-                                        </option>
-                                    {{/each}}
-                                </select>
-                            {{/when}}
-                            {{#when field.type '===' 'checkboxes'}}
-                                <div{{#each field.attributes}} {{@key}}="{{this}}"{{/each}}>
-                                    {{#each field.options}}
-                                        <label>
-                                            <input
-                                                name="{{../@key}}[]"
-                                                type="checkbox"
-                                                value="{{./key}}"
-                                                {{#when ../../item ../@key '==' key}}checked{{/when}}
-                                            />
-                                            {{value}}
-                                        </label>
-                                    {{/each}}
-                                </div>
-                            {{/when}}
-                            {{#when field.type '===' 'radios'}}
-                                <div{{#each field.attributes}} {{@key}}="{{this}}"{{/each}}>
-                                    {{#each field.options}}
-                                        <label>
-                                            <input
-                                                name="{{../@key}}"
-                                                type="radio"
-                                                value="{{./key}}"
-                                                {{#when ../../item ../@key '==' key}}checked{{/when}}
-                                            />
-                                            {{value}}
-                                        </label>
-                                    {{/each}}
-                                </div>
-                            {{/when}}
-                            {{#when field.type '===' 'file'}}
-                                <div
-                                    data-do="file-field"
-                                    data-name="{{@key}}"
-                                    {{#each field.attributes}}
-                                        {{@key}}="{{this}}"
-                                    {{/each}}
-                                >
-                                    {{#in ../item @key}}
-                                        <h5>Current Files</h5>
-                                        <div class="file">
-                                            <a
-                                                href="{{key @key ../item}}"
-                                                target="_blank"
-                                            >
-                                                {{key @key ../item}}
-                                            </a>
-                                        </div>
-                                    {{/in}}
-                                </div>
-                            {{/when}}
-                            {{#when field.type '===' 'files'}}
-                                <div
-                                    data-do="file-field"
-                                    data-name="{{@key}}"
-                                    multiple="1"
-                                    {{#each field.attributes}}
-                                        {{@key}}="{{this}}"
-                                    {{/each}}
-                                >
-                                    {{#in ../item @key}}
-                                        <h5>Current Files</h5>
-                                        {{#loop ../item @key}}
-                                            <div class="file">
-                                                <a
-                                                    href="{{this}}"
-                                                    target="_blank"
-                                                >
-                                                    {{this}}
-                                                </a>
-                                            </div>
-                                        {{/loop}}
-                                    {{/in}}
-                                </div>
-                            {{/when}}
-                            {{#when field.type '===' 'image'}}
-                                <div
-                                    class="image-field"
-                                    data-alt="Change this Photo"
-                                    data-do="image-field"
-                                    data-name="{{@key}}"
-                                    {{#each field.attributes}}
-                                        {{@key}}="{{this}}"
-                                    {{/each}}
-                                >
-                                        {{#in ../item @key}}
-                                            <input
-                                                name="{{@key}}"
-                                                type="hidden"
-                                                value="{{key @key ../item}}"
-                                            />
-                                            <img
-                                                alt="Change this Photo"
-                                                src="{{key @key ../item}}"
-                                                width="200"
-                                            />
-                                        {{else}}
-                                            <img
-                                                alt="Upload a Photo"
-                                                class="placeholder"
-                                                src="/images/default-image.png"
-                                                width="200"
-                                            />
-                                        {{/in}}
-                                </div>
-                            {{/when}}
-                            {{#when field.type '===' 'images'}}
-                                <div
-                                    data-do="image-field"
-                                    data-name="{{@key}}"
-                                    data-multiple="1"
-                                    data-alt="Change this Photo"
-                                    class="image-field multiple"
-                                    {{#each field.attributes}}
-                                        {{@key}}="{{this}}"
-                                    {{/each}}
-                                >
-                                    {{#in ../item @key}}
-                                        {{#loop ../item @key}}
-                                            <input
-                                                type="hidden"
-                                                name="{{../@key}}[]"
-                                                value="{{this}}"
-                                            />
-                                            <img
-                                                alt="Change this Photo"
-                                                src="{{this}}"
-                                                width="200"
-                                            />
-                                        {{/loop}}
-                                    {{else}}
-                                        <img
-                                            alt="Upload a Photo"
-                                            class="placeholder"
-                                            src="/images/default-image.png"
-                                            width="200"
+                                            {{#when ../../item ../@key '==' key}}checked{{/when}}
                                         />
-                                    {{/in}}
-                                </div>
-                            {{/when}}
-                            {{#when field.type '===' 'tag'}}
-                                <div
-                                    data-do="tag-field"
-                                    class="tag-field"
-                                    data-name="{{@key}}"
-                                    {{#each field.attributes}}
-                                        {{@key}}="{{this}}"
-                                    {{/each}}
-                                >
-                                    {{#loop ../item @key}}
-                                        <div class="tag">
-                                            <input
-                                                class="tag-input text-field"
-                                                type="text"
-                                                name="{{../@key}}[]"
-                                                value="{{this}}"
-                                            />
-                                            <a
-                                                class="remove"
-                                                href="javascript:void(0)"
+                                        {{value}}
+                                    </label>
+                                {{/each}}
+                            </div>
+                        {{/when}}
+                        {{#when field.type '===' 'radios'}}
+                            <div{{#each field.attributes}} {{@key}}="{{this}}"{{/each}}>
+                                {{#each field.options}}
+                                    <label class="radio radio-2">
+                                        <input
+                                            name="{{../@key}}"
+                                            type="radio"
+                                            value="{{./key}}"
+                                            {{#when ../../item ../@key '==' key}}checked{{/when}}
+                                        />
+                                        {{value}}
+                                    </label>
+                                {{/each}}
+                            </div>
+                        {{/when}}
+                        {{#when field.type '===' 'file'}}
+                            <table
+                                class="table table-striped file-field"
+                                data-do="file-field"
+                                data-name="{{@key}}"
+                                {{#each field.attributes}}
+                                    {{@key}}="{{this}}"
+                                {{/each}}
+                            >
+                                <thead>
+                                    <tr>
+                                        <th>Preview</th>
+                                        <th>Name</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#scope ../item @key}}
+                                        <tr class="file-field-none" style="display:none;">
+                                            <td colspan="5">
+                                                <div class="alert alert-info">No File Selected</div>
+                                            </td>
+                                        </tr>
+                                        <tr class="file-field-item" data-index="{INDEX}">
+                                            <td class="file-field-preview">
+                                                {{#fileinfo this}}
+                                                    {{#in extension 'jpg,jpeg,png,gif'}}
+                                                        <div class="file-field-preview-container">
+                                                            <img src="{{../this}}" height="50" />
+                                                        </div>
+                                                    {{else}}
+                                                        <div class="file-field-preview-container">
+                                                            <i class="fas fa-file text-info"></i>
+                                                            <span class="file-field-extension">{{extension}}</span>
+                                                        </div>
+                                                    {{/in}}
+                                                {{/fileinfo}}
+                                            </td>
+                                            <td class="file-field-name">
+                                                {{this}}
+                                                <input name="{{../@key}}" type="hidden" value="{{this}}" />
+                                            </td>
+                                            <td class="file-field-actions">
+                                                <a class="text-info file-field-move-up" href="javascript:void(0)">
+                                                    <i class="fas fa-arrow-up"></i>
+                                                </a>
+                                                &nbsp;&nbsp;&nbsp;'
+                                                <a class="text-info file-field-move-down" href="javascript:void(0)">
+                                                    <i class="fas fa-arrow-down"></i>
+                                                </a>
+                                                &nbsp;&nbsp;&nbsp;'
+                                                <a class="btn btn-danger file-field-remove" href="javascript:void(0)">
+                                                    <i class="fas fa-times"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {{else}}
+                                        <tr class="file-field-none">
+                                            <td colspan="5">
+                                                <div class="alert alert-info">No File Selected</div>
+                                            </td>
+                                        </tr>
+                                    {{/scope}}
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="5">
+                                            <button
+                                                class="file-field-upload btn btn-info"
+                                                type="button"
                                             >
-                                                <i class="fa fa-times"></i>
-                                            </a>
-                                        </div>
-                                    {{/loop}}
-                                </div>
-                            {{/when}}
-                            {{#when field.type '===' 'meta'}}
-                                <div
-                                    data-do="meta-field"
-                                    class="meta-field"
-                                    data-name="{{@key}}"
-                                    {{#each field.attributes}}
-                                        {{@key}}="{{this}}"
-                                    {{/each}}
-                                >
-                                    {{#each item.{NAME}}}
-                                        <div class="meta">
-                                            <input
-                                                class="meta-input key"
-                                                placeholder="{{_ 'Name'}}"
-                                                type="text"
-                                                value="{{@key}}"
-                                            />
-                                            <input
-                                                class="meta-input value"
-                                                type="text"
-                                                placeholder="{{_ 'Value'}}"
-                                                value="{{this}}"
-                                            />
-                                            <input
-                                                name="{NAME}[{{@key}}]"
-                                                type="hidden"
-                                                value="{{this}}"
-                                            />
-                                            <a
-                                                class="remove"
-                                                href="javascript:void(0)"
+                                                Choose File
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        {{/when}}
+                        {{#when field.type '===' 'files'}}
+                            <table
+                                class="table table-striped file-field"
+                                data-do="file-field"
+                                data-name="{{@key}}"
+                                data-multiple="1"
+                                {{#each field.attributes}}
+                                    {{@key}}="{{this}}"
+                                {{/each}}
+                            >
+                                <thead>
+                                    <tr>
+                                        <th>Preview</th>
+                                        <th>Name</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#scope ../item @key}}
+                                        <tr class="file-field-none" style="display:none;">
+                                            <td colspan="5">
+                                                <div class="alert alert-info">No Files Selected</div>
+                                            </td>
+                                        </tr>
+                                        <tr class="file-field-item" data-index="{INDEX}">
+                                            <td class="file-field-preview">
+                                                {{#fileinfo this}}
+                                                    {{#in extension 'jpg,jpeg,png,gif'}}
+                                                        <div class="file-field-preview-container">
+                                                            <img src="{{../this}}" height="50" />
+                                                        </div>
+                                                    {{else}}
+                                                        <div class="file-field-preview-container">
+                                                            <i class="fas fa-file text-info"></i>
+                                                            <span class="file-field-extension">{{extension}}</span>
+                                                        </div>
+                                                    {{/in}}
+                                                {{/fileinfo}}
+                                            </td>
+                                            <td class="file-field-name">
+                                                {{this}}
+                                                <input name="{{../@key}}" type="hidden" value="{{this}}" />
+                                            </td>
+                                            <td class="file-field-actions">
+                                                <a class="text-info file-field-move-up" href="javascript:void(0)">
+                                                    <i class="fas fa-arrow-up"></i>
+                                                </a>
+                                                &nbsp;&nbsp;&nbsp;'
+                                                <a class="text-info file-field-move-down" href="javascript:void(0)">
+                                                    <i class="fas fa-arrow-down"></i>
+                                                </a>
+                                                &nbsp;&nbsp;&nbsp;'
+                                                <a class="btn btn-danger file-field-remove" href="javascript:void(0)">
+                                                    <i class="fas fa-times"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {{else}}
+                                        <tr class="file-field-none">
+                                            <td colspan="5">
+                                                <div class="alert alert-info">No Files Selected</div>
+                                            </td>
+                                        </tr>
+                                    {{/scope}}
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="5">
+                                            <button
+                                                class="file-field-upload btn btn-info"
+                                                type="button"
                                             >
-                                                <i class="fa fa-times"></i>
-                                            </a>
-                                        </div>
-                                    {{/each}}
-                                </div>
-                                <a
-                                    class="add-meta"
-                                    href="javascript:void(0)"
-                                >
-                                    <i class="fa fa-plus"></i>
-                                </a>
-                            {{/when}}
-                            {{#when field.type '===' 'multirange'}}
-                            {{/when}}
-                            {{#has @key ../errors}}
-                                <span class="help-text">{{key @key ../errors}}</span>
-                            {{/has}}
-                        </div>
+                                                Choose Files
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        {{/when}}
+                        {{#when field.type '===' 'image'}}
+                            <table
+                                class="table table-striped file-field"
+                                data-accept="image/png,image/jpg,image/jpeg,image/gif"
+                                data-do="file-field"
+                                data-name="{{@key}}"
+                                {{#each field.attributes}}
+                                    {{@key}}="{{this}}"
+                                {{/each}}
+                            >
+                                <thead>
+                                    <tr>
+                                        <th>Preview</th>
+                                        <th>Name</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#scope ../item @key}}
+                                        <tr class="file-field-none" style="display:none;">
+                                            <td colspan="5">
+                                                <div class="alert alert-info">No File Selected</div>
+                                            </td>
+                                        </tr>
+                                        <tr class="file-field-item" data-index="{INDEX}">
+                                            <td class="file-field-preview">
+                                                {{#fileinfo this}}
+                                                    {{#in extension 'jpg,jpeg,png,gif'}}
+                                                        <div class="file-field-preview-container">
+                                                            <img src="{{../this}}" height="50" />
+                                                        </div>
+                                                    {{else}}
+                                                        <div class="file-field-preview-container">
+                                                            <i class="fas fa-file text-info"></i>
+                                                            <span class="file-field-extension">{{extension}}</span>
+                                                        </div>
+                                                    {{/in}}
+                                                {{/fileinfo}}
+                                            </td>
+                                            <td class="file-field-name">
+                                                {{this}}
+                                                <input name="{{../@key}}" type="hidden" value="{{this}}" />
+                                            </td>
+                                            <td class="file-field-actions">
+                                                <a class="text-info file-field-move-up" href="javascript:void(0)">
+                                                    <i class="fas fa-arrow-up"></i>
+                                                </a>
+                                                &nbsp;&nbsp;&nbsp;'
+                                                <a class="text-info file-field-move-down" href="javascript:void(0)">
+                                                    <i class="fas fa-arrow-down"></i>
+                                                </a>
+                                                &nbsp;&nbsp;&nbsp;'
+                                                <a class="btn btn-danger file-field-remove" href="javascript:void(0)">
+                                                    <i class="fas fa-times"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {{else}}
+                                        <tr class="file-field-none">
+                                            <td colspan="5">
+                                                <div class="alert alert-info">No File Selected</div>
+                                            </td>
+                                        </tr>
+                                    {{/scope}}
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="5">
+                                            <button
+                                                class="file-field-upload btn btn-info"
+                                                type="button"
+                                            >
+                                                Choose File
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        {{/when}}
+                        {{#when field.type '===' 'images'}}
+                            <table
+                                class="table table-striped file-field"
+                                data-accept="image/png,image/jpg,image/jpeg,image/gif"
+                                data-do="file-field"
+                                data-name="{{@key}}"
+                                data-multiple="1"
+                                {{#each field.attributes}}
+                                    {{@key}}="{{this}}"
+                                {{/each}}
+                            >
+                                <thead>
+                                    <tr>
+                                        <th>Preview</th>
+                                        <th>Name</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#scope ../item @key}}
+                                        <tr class="file-field-none" style="display:none;">
+                                            <td colspan="5">
+                                                <div class="alert alert-info">No Files Selected</div>
+                                            </td>
+                                        </tr>
+                                        <tr class="file-field-item" data-index="{INDEX}">
+                                            <td class="file-field-preview">
+                                                {{#fileinfo this}}
+                                                    {{#in extension 'jpg,jpeg,png,gif'}}
+                                                        <div class="file-field-preview-container">
+                                                            <img src="{{../this}}" height="50" />
+                                                        </div>
+                                                    {{else}}
+                                                        <div class="file-field-preview-container">
+                                                            <i class="fas fa-file text-info"></i>
+                                                            <span class="file-field-extension">{{extension}}</span>
+                                                        </div>
+                                                    {{/in}}
+                                                {{/fileinfo}}
+                                            </td>
+                                            <td class="file-field-name">
+                                                {{this}}
+                                                <input name="{{../@key}}" type="hidden" value="{{this}}" />
+                                            </td>
+                                            <td class="file-field-actions">
+                                                <a class="text-info file-field-move-up" href="javascript:void(0)">
+                                                    <i class="fas fa-arrow-up"></i>
+                                                </a>
+                                                &nbsp;&nbsp;&nbsp;'
+                                                <a class="text-info file-field-move-down" href="javascript:void(0)">
+                                                    <i class="fas fa-arrow-down"></i>
+                                                </a>
+                                                &nbsp;&nbsp;&nbsp;'
+                                                <a class="btn btn-danger file-field-remove" href="javascript:void(0)">
+                                                    <i class="fas fa-times"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {{else}}
+                                        <tr class="file-field-none">
+                                            <td colspan="5">
+                                                <div class="alert alert-info">No Files Selected</div>
+                                            </td>
+                                        </tr>
+                                    {{/scope}}
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="5">
+                                            <button
+                                                class="file-field-upload btn btn-info"
+                                                type="button"
+                                            >
+                                                Choose Files
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        {{/when}}
+                        {{#when field.type '===' 'tag'}}
+                            <div
+                                data-do="tag-field"
+                                class="tag-field"
+                                data-name="{{@key}}"
+                                {{#each field.attributes}}
+                                    {{@key}}="{{this}}"
+                                {{/each}}
+                            >
+                                {{#loop ../item @key}}
+                                    <div class="tag">
+                                        <input
+                                            class="tag-input text-field"
+                                            type="text"
+                                            name="{{../@key}}[]"
+                                            value="{{this}}"
+                                        />
+                                        <a
+                                            class="remove"
+                                            href="javascript:void(0)"
+                                        >
+                                            <i class="fa fa-times"></i>
+                                        </a>
+                                    </div>
+                                {{/loop}}
+                            </div>
+                        {{/when}}
+                        {{#when field.type '===' 'meta'}}
+                            <div
+                                data-do="meta-field"
+                                class="meta-field"
+                                data-name="{{@key}}"
+                                {{#each field.attributes}}
+                                    {{@key}}="{{this}}"
+                                {{/each}}
+                            >
+                                {{#each item.{NAME}}}
+                                    <div class="meta">
+                                        <input
+                                            class="meta-input key"
+                                            placeholder="{{_ 'Name'}}"
+                                            type="text"
+                                            value="{{@key}}"
+                                        />
+                                        <input
+                                            class="meta-input value"
+                                            type="text"
+                                            placeholder="{{_ 'Value'}}"
+                                            value="{{this}}"
+                                        />
+                                        <input
+                                            name="{NAME}[{{@key}}]"
+                                            type="hidden"
+                                            value="{{this}}"
+                                        />
+                                        <a
+                                            class="remove"
+                                            href="javascript:void(0)"
+                                        >
+                                            <i class="fa fa-times"></i>
+                                        </a>
+                                    </div>
+                                {{/each}}
+                            </div>
+                            <a
+                                class="add-meta"
+                                href="javascript:void(0)"
+                            >
+                                <i class="fa fa-plus"></i>
+                            </a>
+                        {{/when}}
+                        {{#when field.type '===' 'multirange'}}
+                            <input
+                                class="irs-hidden-input"
+                                data-do="multirange-field"
+                                data-type="double"
+                                name="{{@key}}"
+                                tabindex="-1"
+                                type="hidden"
+                                value="{{key @key ../item}}"
+                                {{#each field.attributes}}
+                                    {{@key}}="{{this}}"
+                                {{/each}}
+                            />
+                        {{/when}}
+                        {{#has @key ../errors}}
+                            <span class="help-text">{{key @key ../errors}}</span>
+                        {{/has}}
                     </div>
-                {{/in}}
-            {{/each}}
-            <div class="clear form-group">
-                <input type="hidden" name="csrf" value="{{csrf}}" />
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </div>
-        </form>
-    </div>
+                </div>
+            {{/in}}
+        {{/each}}
+        <div class="clear form-group">
+            <input type="hidden" name="csrf" value="{{csrf}}" />
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </form>
 </div>
-<script type="text/javascript" src="{{config 'cdn'}}/scripts/cropper.js"></script>
-<link rel="stylesheet" type="text/css" href="{{config 'cdn'}}/bower_components/bootstrap3-wysihtml5-bower/dist/bootstrap3-wysihtml5.min.css" />
-<script src="{{config 'cdn'}}/bower_components/wysihtml5x/dist/wysihtml5x-toolbar.min.js"></script>
-<script src="{{config 'cdn'}}/bower_components/handlebars/handlebars.runtime.min.js"></script>
-<script src="{{config 'cdn'}}/bower_components/bootstrap3-wysihtml5-bower/dist/bootstrap3-wysihtml5.min.js"></script>
