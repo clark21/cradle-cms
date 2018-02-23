@@ -19,6 +19,7 @@ use Cradle\Http\Response;
 $cradle->on('render-admin-page', function ($request, $response) {
     $navigationRequest = (new Request())->load();
     $navigationResponse = new Response();
+
     cradle()->trigger(
         'system-schema-search',
         $navigationRequest,
@@ -26,6 +27,25 @@ $cradle->on('render-admin-page', function ($request, $response) {
     );
 
     $navigation = $navigationResponse->getResults();
+
+    $navMatch = function(...$args) use ($request) {
+        //$haystack, $needle, $options
+        $haystack = $request->get('path', 'string');
+        $needle = array_shift($args);
+        $options = array_pop($args);
+
+        foreach($args as $path) {
+            $needle .= '/' . $path;
+        }
+
+        if (strpos($haystack, $needle) === 0) {
+            return $options['fn']();
+        }
+
+        return $options['inverse']();
+    };
+
+    cradle('global')->handlebars()->registerHelper('nav_match', $navMatch);
 
     $content = cradle('/app/admin')->template(
         '_page',

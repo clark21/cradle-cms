@@ -68,16 +68,17 @@ $cradle->get('/admin/system/schema/create', function($request, $response) {
     //----------------------------//
     // 3. Render Template
     $class = 'page-admin-system-schema-create page-admin';
+    $data['action'] = 'create';
     $data['title'] = cradle('global')->translate('Create System Schema');
 
     cradle('global')
         ->handlebars()
         ->registerHelper('is_array', function($value, $option) {
-        if(is_array($value)) {
-            return $option['fn']();
-        }
+            if(is_array($value)) {
+                return $option['fn']();
+            }
 
-        return $option['inverse']();
+            return $option['inverse']();
         })
         ->registerHelper('get_icons', function($options) {
             function array_delete($array, $element) {
@@ -115,7 +116,8 @@ $cradle->get('/admin/system/schema/create', function($request, $response) {
             'update',
             'type-options',
             'format-options',
-            'validation-options'
+            'validation-options',
+            'icon-options'
         ]
     );
 
@@ -166,6 +168,7 @@ $cradle->get('/admin/system/schema/update/:name', function($request, $response) 
     //----------------------------//
     // 3. Render Template
     $class = 'page-admin-system-schema-update page-admin';
+    $data['action'] = 'update';
     $data['title'] = cradle('global')->translate('Updating System Schema');
 
     cradle('global')
@@ -213,7 +216,8 @@ $cradle->get('/admin/system/schema/update/:name', function($request, $response) 
             'update',
             'type-options',
             'format-options',
-            'validation-options'
+            'validation-options',
+            'icon-options'
         ]
     );
 
@@ -388,3 +392,60 @@ $cradle->get('/admin/system/schema/restore/:name', function($request, $response)
 
     cradle('global')->redirect('/admin/system/schema/search');
 });
+
+
+/**
+ * Render Template Actions
+ *
+ * @param Request $request
+ * @param Response $response
+ */
+$cradle->get('/admin/system/template/:action', function($request, $response) {
+    //----------------------------//
+    // 1. Route Permissions
+    //only for admin
+    cradle('global')->requireLogin('admin');
+
+    $action = $request->getStage('action');
+
+    //----------------------------//
+    // 2. Render Template
+    $class = 'page-admin-system-template-' . $action . ' page-admin';
+    $data['title'] = cradle('global')->translate('System Template ' . ucfirst($action));
+    $body = cradle('/module/system')->template('template/' . $action, $data);
+
+    //set content
+    $response
+        ->setPage('title', $data['title'])
+        ->setPage('class', $class)
+        ->setContent($body);
+
+    //render page
+}, 'render-admin-page');
+
+/**
+ * Render Docs Actions
+ *
+ * @param Request $request
+ * @param Response $response
+ */
+$cradle->get('/admin/system/docs', function($request, $response) {
+    //----------------------------//
+    // 1. Route Permissions
+    //only for admin
+    cradle('global')->requireLogin('admin');
+
+    //----------------------------//
+    // 2. Render Template
+    $class = 'page-admin-system-docs page-admin';
+    $data['title'] = cradle('global')->translate('Documentation');
+    $body = cradle('/module/system')->template('docs', $data);
+
+    //set content
+    $response
+        ->setPage('title', $data['title'])
+        ->setPage('class', $class)
+        ->setContent($body);
+
+    //render page
+}, 'render-admin-page');
