@@ -442,16 +442,6 @@ class Schema
     }
 
     /**
-     * Returns table icon
-     *
-     * @return string
-     */
-    public function getIcon()
-    {
-        return $this->data['icon'];
-    }
-
-    /**
      * Returns a list of unique fields
      *
      * @return array
