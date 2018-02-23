@@ -951,7 +951,7 @@ $cradle->post('/admin/system/object/:schema/import', function($request, $respons
     }
 
     //record logs
-    cradle()->log($data['schema']['plural'] . ' was Imported',
+    cradle()->log($schema->getPlural() . ' was Imported',
         $request,
         $response
     );
