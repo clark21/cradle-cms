@@ -19,6 +19,12 @@ $cradle->get('/admin/system/schema/search', function($request, $response) {
     //only for admin
     cradle('global')->requireLogin('admin');
 
+    //record logs
+    cradle()->log('View schema listing',
+        $request,
+        $response
+    );
+
     //----------------------------//
     // 2. Prepare Data
     if(!$request->hasStage()) {
@@ -270,6 +276,13 @@ $cradle->post('/admin/system/schema/create', function($request, $response) {
         return cradle()->triggerRoute('get', '/admin/system/schema/create', $request, $response);
     }
 
+    //record logs
+    $data = $request->getStage();
+    cradle()->log(ucfirst($data['name']) . ' schema created',
+        $request,
+        $response
+    );
+
     //it was good
     //add a flash
     cradle('global')->flash('System Schema was Created', 'success');
@@ -319,6 +332,14 @@ $cradle->post('/admin/system/schema/update/:name', function($request, $response)
         return cradle()->triggerRoute('get', $route, $request, $response);
     }
 
+    //record logs
+    $data = $request->getStage();
+    $data = $request->getStage();
+    cradle()->log(ucfirst($data['name']) . ' schema updated',
+        $request,
+        $response
+    );
+
     //it was good
     //add a flash
     cradle('global')->flash('System Schema was Updated', 'success');
@@ -355,7 +376,15 @@ $cradle->get('/admin/system/schema/remove/:name', function($request, $response) 
         //add a flash
         $message = cradle('global')->translate('System Schema was Removed');
         cradle('global')->flash($message, 'success');
+
+        //record logs
+        $data = $request->getStage();
+        cradle()->log(ucfirst($data['name']) . ' schema removed',
+            $request,
+            $response
+        );
     }
+
 
     cradle('global')->redirect('/admin/system/schema/search');
 });
@@ -388,7 +417,15 @@ $cradle->get('/admin/system/schema/restore/:name', function($request, $response)
         //add a flash
         $message = cradle('global')->translate('System Schema was Restored');
         cradle('global')->flash($message, 'success');
+
+        //record logs
+        $data = $request->getStage();
+        cradle()->log(ucfirst($data['name']) . ' schema restored',
+            $request,
+            $response
+        );
     }
+
 
     cradle('global')->redirect('/admin/system/schema/search');
 });

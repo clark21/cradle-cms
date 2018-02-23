@@ -19,6 +19,12 @@ $cradle->get('/admin/user/search', function($request, $response) {
     //only for admin
     cradle('global')->requireLogin('admin');
 
+    //record logs
+    cradle()->log('View user listing',
+        $request,
+        $response
+    );
+
     //----------------------------//
     // 2. Prepare Data
     if(!$request->hasStage('range')) {
@@ -188,6 +194,9 @@ $cradle->post('/admin/user/create', function($request, $response) {
         return cradle()->triggerRoute('get', '/admin/user/create', $request, $response);
     }
 
+    //record logs
+    cradle()->log('User '. ucfirst($request->getStage('user_slug')) . ' is created', $request, $response);
+
     //it was good
     //add a flash
     cradle('global')->flash('User was Created', 'success');
@@ -241,6 +250,9 @@ $cradle->post('/admin/user/update/:user_id', function($request, $response) {
         return cradle()->triggerRoute('get', $route, $request, $response);
     }
 
+    //record logs
+    cradle()->log('User #'. ucfirst($request->getStage('user_id')) . ' is updated', $request, $response);
+
     //it was good
     //add a flash
     cradle('global')->flash('User was Updated', 'success');
@@ -277,7 +289,11 @@ $cradle->get('/admin/user/remove/:user_id', function($request, $response) {
         //add a flash
         $message = cradle('global')->translate('User was Removed');
         cradle('global')->flash($message, 'success');
+
+        //record logs
+        cradle()->log('User #'. ucfirst($request->getStage('user_id')) . ' removed', $request, $response);
     }
+
 
     cradle('global')->redirect('/admin/user/search');
 });
@@ -310,6 +326,9 @@ $cradle->get('/admin/user/restore/:user_id', function($request, $response) {
         //add a flash
         $message = cradle('global')->translate('User was Restored');
         cradle('global')->flash($message, 'success');
+
+        //record logs
+        cradle()->log('User #'. ucfirst($request->getStage('user_id')) . ' restored', $request, $response);
     }
 
     cradle('global')->redirect('/admin/user/search');

@@ -25,6 +25,12 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
     //only for admin
     cradle('global')->requireLogin('admin');
 
+    //record logs
+    cradle()->log('View '. ucfirst($request->getStage('schema')) . ' listing',
+        $request,
+        $response
+    );
+
     //----------------------------//
     // 2. Prepare Data
     if(!$request->hasStage('range')) {
@@ -704,6 +710,12 @@ $cradle->post('/admin/system/object/:schema/create', function($request, $respons
         );
     }
 
+    //record logs
+    cradle()->log('New '. ucfirst($request->getStage('schema')) . ' created',
+        $request,
+        $response
+    );
+
     //it was good
     //add a flash
     cradle('global')->flash($schema->getSingular() . ' was Created', 'success');
@@ -781,6 +793,12 @@ $cradle->post('/admin/system/object/:schema/update/:id', function($request, $res
         return cradle()->triggerRoute('get', $route, $request, $response);
     }
 
+    //record logs
+    cradle()->log($schema->getSingular() . ' #'. ucfirst($request->getStage('id')) . ' updated',
+        $request,
+        $response
+    );
+
     //it was good
     //add a flash
     cradle('global')->flash($schema->getSingular() . ' was Updated', 'success');
@@ -857,6 +875,12 @@ $cradle->post('/admin/system/object/:schema/import', function($request, $respons
         return cradle()->triggerRoute('get', '/admin/system/object/' . $data['schema']['name'] . '/search', $request, $response);
     }
 
+    //record logs
+    cradle()->log($data['schema']['plural'] . ' was Imported',
+        $request,
+        $response
+    );
+
     //add a flash
     $results = $response->getResults();
     $message = cradle('global')->translate($data['schema']['plural'] . ' was Imported');
@@ -904,6 +928,13 @@ $cradle->post('/admin/system/object/:schema/bulk-update', function($request, $re
     // 4. Interpret Results
     $message = "[" . $ctr['ok'] . "] successfully " . strtolower($data['action']) . ". [" . $ctr['error'] . "] unsuccessfully " . strtolower($data['action']);
 
+    cradle()->log('Bulk '. strtolower($data['action']) .
+        ' on ' . $schema->getSingular() .
+        ' successfully performed.',
+        $request,
+        $response
+    );
+
     cradle('global')->flash($message, 'success');
     cradle('global')->redirect('/admin/system/object/'. $request->getStage('schema') .'/search');
  });
@@ -944,7 +975,15 @@ $cradle->get('/admin/system/object/:schema/remove/:id', function($request, $resp
         //add a flash
         $message = cradle('global')->translate('%s was Removed', $schema->getSingular());
         cradle('global')->flash($message, 'success');
+
+        //record logs
+        cradle()->log($schema->getSingular() . ' #' .
+            $request->getStage('id') . ' removed.',
+            $request,
+            $response
+        );
     }
+
 
     //redirect
     cradle('global')->redirect('/admin/system/object/'. $request->getStage('schema') .'/search');
@@ -986,7 +1025,15 @@ $cradle->get('/admin/system/object/:schema/restore/:id', function($request, $res
         //add a flash
         $message = cradle('global')->translate('%s was Restored', $schema->getSingular());
         cradle('global')->flash($message, 'success');
+
+        //record logs
+        cradle()->log($schema->getSingular() . ' #' .
+            $request->getStage('id') . ' restored.',
+            $request,
+            $response
+        );
     }
+
 
     //redirect
     cradle('global')->redirect('/admin/system/object/'. $request->getStage('schema') .'/search');

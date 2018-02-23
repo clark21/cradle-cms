@@ -21,6 +21,12 @@ $cradle->get('/admin/auth/search', function($request, $response) {
 
     //----------------------------//
     // 2. Prepare Data
+    //record logs
+    cradle()->log('View auth listing',
+        $request,
+        $response
+    );
+
     if(!$request->hasStage('range')) {
         $request->setStage('range', 50);
     }
@@ -180,6 +186,12 @@ $cradle->post('/admin/auth/create', function($request, $response) {
         return cradle()->triggerRoute('get', '/admin/auth/create', $request, $response);
     }
 
+    //record logs
+    cradle()->log('New Authentication was created.',
+        $request,
+        $response
+    );
+
     //it was good
     //add a flash
     cradle('global')->flash('Authentication was Created', 'success');
@@ -225,6 +237,12 @@ $cradle->post('/admin/auth/update/:auth_id', function($request, $response) {
         return cradle()->triggerRoute('get', $route, $request, $response);
     }
 
+    //record logs
+    cradle()->log('Authentication #'. $request->getStage('auth_id') . ' was updated.',
+        $request,
+        $response
+    );
+
     //it was good
     //add a flash
     cradle('global')->flash('Authentication was Updated', 'success');
@@ -261,7 +279,14 @@ $cradle->get('/admin/auth/remove/:auth_id', function($request, $response) {
         //add a flash
         $message = cradle('global')->translate('Authentication was Removed');
         cradle('global')->flash($message, 'success');
+
+        //record logs
+        cradle()->log('Authentication #'. $request->getStage('auth_id') . ' was removed.',
+            $request,
+            $response
+        );
     }
+
 
     cradle('global')->redirect('/admin/auth/search');
 });
@@ -294,7 +319,14 @@ $cradle->get('/admin/auth/restore/:auth_id', function($request, $response) {
         //add a flash
         $message = cradle('global')->translate('Authentication was Restored');
         cradle('global')->flash($message, 'success');
+
+        //record logs
+        cradle()->log('Authentication #'. $request->getStage('auth_id') . ' was Restored.',
+            $request,
+            $response
+        );
     }
+
 
     cradle('global')->redirect('/admin/auth/search');
 });
