@@ -106,9 +106,10 @@ class Formatter
                     break;
                 case 'active':
                 case 'checkbox':
-                    $data[$name] = 0;
                     if($data[$name]) {
                         $data[$name] = 1;
+                    } else {
+                        $data[$name] = 0;
                     }
                     break;
                 case 'uuid':

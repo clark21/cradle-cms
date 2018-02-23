@@ -61,10 +61,11 @@ return function ($request, $response) {
      *
      * @param *string $path
      */
-    ->addMethod('flash', function ($message, $type = 'info') {
+    ->addMethod('flash', function ($message, $type = 'info', array $list = []) {
         $_SESSION['flash'] = [
             'message' => cradle()->package('global')->translate($message),
-            'type' => $type
+            'type' => $type,
+            'list' => $list
         ];
     });
 };

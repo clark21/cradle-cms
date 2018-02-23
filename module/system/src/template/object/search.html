@@ -55,7 +55,7 @@
                             </div>
 
                             <div id="filter-options" class="collapse">
-                                {{> filters}}
+                                {{> object_filters}}
                                 <div class="form-group">
                                     <label for="save">Save Filters</label>
                                     <input class="form-control" name="save" placeholder="Enter Filter Name" type="text" />
@@ -270,6 +270,19 @@
             {{/pager}}
         </ul>
     {{else}}
+        <div class="clearfix mb-4 search-actions">
+            {{#if schema.active}}
+                <div class="btn-group" role="group" aria-label="...">
+                    <a class="btn btn-primary" href="?filter[{{schema.active}}]=1">
+                        Active
+                    </a>
+                    <a class="btn btn-danger" href="?filter[{{schema.active}}]=0">
+                        Inactive
+                    </a>
+                </div>
+            {{/if}}
+        </div>
+
         <!-- START: NO RESULTS -->
         <div class="alert alert-info no-results">
             <center>

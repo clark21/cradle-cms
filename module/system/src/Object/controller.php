@@ -35,12 +35,6 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
     cradle()->trigger('system-schema-detail', $request, $schemaResponse);
     $schema = SystemSchema::i($schemaResponse->getResults());
 
-    //set filter
-    //we do this to prevent SQL injections
-    if($request->getStage('filter_by') && $request->getStage('q', 0)) {
-        $request->setStage('filter', $request->getStage('filter_by'), $request->getStage('q', 0));
-    }
-
     //filter possible filter options
     //we do this to prevent SQL injections
     if(is_array($request->getStage('filter'))) {
@@ -189,7 +183,7 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
         ;
 
     $body = cradle('/module/system')->template('object/search', $data, [
-        'filters'
+        'object_filters'
     ]);
 
     //set content
@@ -391,10 +385,11 @@ $cradle->get('/admin/system/object/:schema/create', function($request, $response
             }
 
             return $options['inverse']();
-        })
-        ;
+        });
 
-    $body = cradle('/module/system')->template('object/form', $data);
+    $body = cradle('/module/system')->template('object/form', $data, [
+        'object_fields'
+    ]);
 
     //set content
     $response
@@ -618,7 +613,9 @@ $cradle->get('/admin/system/object/:schema/update/:id', function($request, $resp
             return $options['inverse']();
         });
 
-    $body = cradle('/module/system')->template('object/form', $data);
+    $body = cradle('/module/system')->template('object/form', $data, [
+        'object_fields'
+    ]);
 
     //Set Content
     $response
@@ -903,7 +900,19 @@ $cradle->post('/admin/system/object/:schema/import', function($request, $respons
     );
 
     if($response->isError()) {
-        cradle('global')->flash($response->getMessage(), 'error');
+        $errors = [];
+        foreach($response->getValidation() as $i => $validation) {
+            foreach ($validation as $key => $error) {
+                $errors[] = sprintf('ROW %s - %s: %s', $i, $key, $error);
+            }
+        }
+
+        cradle('global')->flash(
+            $response->getMessage(),
+            'error',
+            $errors
+        );
+
         cradle('global')->redirect($redirect);
     }
 
@@ -1045,4 +1054,90 @@ $cradle->get('/admin/system/object/:schema/export/:type', function($request, $re
         ->addHeader('Content-Disposition', 'attachment; filename=' . $filename . '.json');
 
     $response->set('json', $rows);
+});
+
+/**
+ * Render System Object Suggestions
+ *
+ * @param Request $request
+ * @param Response $response
+ */
+$cradle->get('/admin/system/object/:schema/suggestions', function($request, $response) {
+    //----------------------------//
+    // 1. Route Permissions
+    //only for admin
+    cradle('global')->requireLogin('admin');
+
+    //----------------------------//
+    // 2. Prepare Data
+    if(!$request->hasStage('range')) {
+        $request->setStage('range', 50);
+    }
+
+    $schemaResponse = Response::i()->load();
+    cradle()->trigger('system-schema-detail', $request, $schemaResponse);
+    $schema = SystemSchema::i($schemaResponse->getResults());
+
+    //filter possible filter options
+    //we do this to prevent SQL injections
+    if(is_array($request->getStage('filter'))) {
+        $filterable = $schema->getFilterable();
+
+        foreach($request->getStage('filter') as $key => $value) {
+            if(!in_array($key, $filterable)) {
+                $request->removeStage('filter', $key);
+            }
+        }
+    }
+
+    //filter possible sort options
+    //we do this to prevent SQL injections
+    if(is_array($request->getStage('order'))) {
+        $sortable = $schema->getSortable();
+
+        foreach($request->getStage('order') as $key => $value) {
+            if(!in_array($key, $sortable)) {
+                $request->removeStage('order', $key);
+            }
+        }
+    }
+
+    //trigger job
+    cradle()->trigger('system-object-search', $request, $response);
+
+    //find all searchable
+    $primary = $schema->getPrimary();
+    $searchable = $schema->getSearchable();
+    $field = $schema->getFields();
+    $results = $response->getResults('rows');
+
+    foreach($results as $i => $result) {
+        $label = [];
+        foreach($searchable as $name) {
+            if(isset($result[$name])
+                && trim($result[$name])
+                && !in_array(
+                    $field[$name]['field']['type'],
+                    [
+                        'textarea',
+                        'wysiwyg',
+                        'markdown',
+                        'code'
+                    ]
+                )
+            )
+            {
+                $label[] = $result[$name];
+            }
+        }
+
+        $results[$i] = [
+            'label' => implode(', ', $label),
+            'value' => $result[$primary]
+        ];
+    }
+
+    //----------------------------//
+    // 3. Render Template
+    $response->set('json', $results);
 });

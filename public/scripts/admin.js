@@ -67,7 +67,7 @@ jQuery(function($) {
                         'text/tab-separated-values'
                     ].join(',')
                 )
-                .change(function(err, file, inputElem, reason) {
+                .change(function() {
                     $(this).parse({
                         config: {
                             header: true,
@@ -111,6 +111,8 @@ jQuery(function($) {
         $(window).on('suggestion-field-init', function(e, target) {
             target = $(target);
 
+            var container = $('<ul>').appendTo(target);
+
             var searching = false,
                 prevent = false,
                 label = target.attr('data-label'),
@@ -126,7 +128,7 @@ jQuery(function($) {
             value = $(value);
 
             var loadSuggestions = function(list, callback) {
-                target.html('');
+                container.html('');
 
                 list.forEach(function(item) {
                     var row = template.replace('{VALUE}', item.label);
@@ -136,7 +138,7 @@ jQuery(function($) {
                         target.addClass('d-none');
                     });
 
-                    target.append(row);
+                    container.append(row);
                 });
 
                 if(list.length) {

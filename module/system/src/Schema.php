@@ -290,6 +290,7 @@ class Schema
 
         foreach($this->data['relations'] as $relation) {
             $relation = [
+                'table' => $relation['name'],
                 'name' => $table . '_' . $relation['name'],
                 'primary1' => $primary,
                 'primary2' => $relation['name'] . '_id',

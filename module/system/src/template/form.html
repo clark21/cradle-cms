@@ -142,6 +142,25 @@
             </div>
 
             <div class="form-group">
+                <label class="control-label">Suggestion Format</label>
+                <div>
+                    <input
+                        class="form-control schema-suggestion {{#if errors.plural}}is-invalid{{/if}}"
+                        name="suggestion"
+                        value="{{item.suggestion}}"
+                        placeholder="{\{table_column}} - {\{table_column}}"
+                        type="text"
+                    />
+
+                    {{#if errors.suggestion}}
+                        <div class="invalid-feedback">
+                            {{errors.suggestion}}
+                        </div>
+                    {{/if}}
+                </div>
+            </div>
+
+            <div class="form-group">
                 <label class="control-label">Fields</label>
                 <div>
                     <div id="schema-fields" class="schema-fields" data-name="fields">
@@ -199,7 +218,7 @@
                                 data-on="click"
                                 href="javascript:void(0)"
                             >
-                                <i class="fa fa-remove"></i>
+                                <i class="fa fa-times"></i>
                             </a>
                             <strong
                                 class="relation-singular"

@@ -945,15 +945,7 @@ select.form-control {
 /* Field - Suggestion
 -----------------------------*/
 .input-suggestion {
-    border: 1px solid #CED4DA;
-    left: 0;
-    list-style: none;
-    background-color: #FFFFFF;
-    padding: 10px;
-    position: absolute;
-    top: 33px;
-    width: 100%;
-    z-index: 1;
+    position: relative;
 }
 
 .input-suggestion ul {
