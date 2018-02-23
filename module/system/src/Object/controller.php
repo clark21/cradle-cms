@@ -25,6 +25,12 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
     //only for admin
     cradle('global')->requireLogin('admin');
 
+    //record logs
+    cradle()->log('View '. ucfirst($request->getStage('schema')) . ' listing',
+        $request,
+        $response
+    );
+
     //----------------------------//
     // 2. Prepare Data
     if(!$request->hasStage('range')) {
@@ -701,6 +707,12 @@ $cradle->post('/admin/system/object/:schema/create', function($request, $respons
         );
     }
 
+    //record logs
+    cradle()->log('New '. ucfirst($request->getStage('schema')) . ' created',
+        $request,
+        $response
+    );
+
     //it was good
     //add a flash
     cradle('global')->flash($schema->getSingular() . ' was Created', 'success');
@@ -778,6 +790,12 @@ $cradle->post('/admin/system/object/:schema/update/:id', function($request, $res
         return cradle()->triggerRoute('get', $route, $request, $response);
     }
 
+    //record logs
+    cradle()->log($schema->getSingular() . ' #'. ucfirst($request->getStage('id')) . ' updated',
+        $request,
+        $response
+    );
+
     //it was good
     //add a flash
     cradle('global')->flash($schema->getSingular() . ' was Updated', 'success');
@@ -822,7 +840,15 @@ $cradle->get('/admin/system/object/:schema/remove/:id', function($request, $resp
         //add a flash
         $message = cradle('global')->translate('%s was Removed', $schema->getSingular());
         cradle('global')->flash($message, 'success');
+
+        //record logs
+        cradle()->log($schema->getSingular() . ' #' .
+            $request->getStage('id') . ' removed.',
+            $request,
+            $response
+        );
     }
+
 
     //redirect
     cradle('global')->redirect('/admin/system/object/'. $request->getStage('schema') .'/search');
@@ -864,7 +890,15 @@ $cradle->get('/admin/system/object/:schema/restore/:id', function($request, $res
         //add a flash
         $message = cradle('global')->translate('%s was Restored', $schema->getSingular());
         cradle('global')->flash($message, 'success');
+
+        //record logs
+        cradle()->log($schema->getSingular() . ' #' .
+            $request->getStage('id') . ' restored.',
+            $request,
+            $response
+        );
     }
+
 
     //redirect
     cradle('global')->redirect('/admin/system/object/'. $request->getStage('schema') .'/search');
@@ -916,6 +950,12 @@ $cradle->post('/admin/system/object/:schema/import', function($request, $respons
         cradle('global')->redirect($redirect);
     }
 
+    //record logs
+    cradle()->log($data['schema']['plural'] . ' was Imported',
+        $request,
+        $response
+    );
+
     //add a flash
     $message = cradle('global')->translate($schema->getPlural() . ' was Imported');
 
@@ -944,12 +984,6 @@ $cradle->get('/admin/system/object/:schema/export/:type', function($request, $re
     $schemaResponse = Response::i()->load();
     cradle()->trigger('system-schema-detail', $request, $schemaResponse);
     $schema = SystemSchema::i($schemaResponse->getResults());
-
-    //set filter
-    //we do this to prevent SQL injections
-    if($request->getStage('filter_by') && $request->getStage('q', 0)) {
-        $request->setStage('filter', $request->getStage('filter_by'), $request->getStage('q', 0));
-    }
 
     //filter possible filter options
     //we do this to prevent SQL injections
@@ -982,6 +1016,12 @@ $cradle->get('/admin/system/object/:schema/export/:type', function($request, $re
     $rows = $response->getResults('rows');
     $filename = $schema->getPlural() . '-' . date('Y-m-d');
 
+    //record logs
+    cradle()->log($schema->getPlural() . ' was Exported',
+        $request,
+        $response
+    );
+
     if($type === 'csv') {
         if(empty($rows)) {
             $rows = [array_keys($schema->getFields())];
@@ -1013,7 +1053,6 @@ $cradle->get('/admin/system/object/:schema/export/:type', function($request, $re
 
     if($type === 'xml') {
         $toXml = function($array, $xml) use (&$toXml) {
-
             foreach($array as $key => $value) {
                 if(is_array($value)) {
                     if(!is_numeric($key)) {

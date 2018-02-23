@@ -74,13 +74,13 @@
             </form>
         </div>
 
-        <form method="post">
+        <form method="post" action="/admin/system/object/{{schema.name}}/bulk-update">
             <div class="clearfix mb-4 search-actions">
                 <div class="float-left mr-2">
                     <div class="input-group">
                         <select class="form-control" name="action">
                             <option value="remove">Remove</option>
-                            <option value="remove">Restore</option>
+                            <option value="restore">Restore</option>
                         </select>
                         <button class="btn btn-secondary">Apply</button>
                     </div>
@@ -151,7 +151,7 @@
                             <tr data-id="{{key ../schema.primary this}}">
                                 <td class="table-bulk-checkbox">
                                     <label class="checkbox checkbox-1">
-                                        <input type="checkbox" name="id[]" value="1" />
+                                        <input type="checkbox" name="{{../schema.primary}}[]" value="{{@key}}" />
                                         <span></span>
                                     </label>
                                 </td>

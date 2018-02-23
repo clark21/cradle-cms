@@ -1,0 +1,63 @@
+<div class="main-padding">
+    {{#when filter.history_active '===' '0'}}
+        <h3 class="main-title">
+            {{number total}} Inactive {{title}}
+            {{#if q.0}}
+                matching {{q.0}}
+            {{/if}}
+        </h3>
+    {{else}}
+        <h3 class="main-title">
+            {{number total}} {{title}}
+            {{#if q.0}}
+                matching {{q.0}}
+            {{/if}}
+        </h3>
+    {{/when}}
+
+    <div class="clearfix mb-4 search-actions">
+        <form class="float-right search" method="get">
+            <div class="input-group">
+                <input name="q[]" placeholder="Search" type="text"
+                value="{{q.0}}" c lass="form-control" />
+                <button class="btn btn-secondary"><i class="fas fa-search"></i></button>
+            </div>
+        </form>
+    </div>
+
+    <!-- START: BULK FORM -->
+    <form method="post">
+        <div class="table-overflow">
+            <!-- START: TABLE -->
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Activity</th>
+                        <th>Date Logged</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- START: NO RESULTS -->
+                    {{#unless rows}}
+                    <tr><td colspan="100" class="text-center">No Results Found</td></tr>
+                    {{/unless}}
+                    <!-- END: NO RESULTS -->
+                    {{#each rows}}
+                    <tr data-id="{{history_id}}">
+                        <td>{{user_name}}</td>
+                        <td>{{history_activity}}</td>
+                        <td>{{date 'Y-m-d H:i:s' history_created}}</td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+            <!-- END: TABLE -->
+        </div>
+        <ul class="pagination">
+            {{#pager total range}}
+            <li class="page-item {{#if active}}active{{/if}}"><a class="page-link" href="?{{href}}">{{page}}</a></li>
+            {{/pager}}
+        </ul>
+    </form>
+</div>
