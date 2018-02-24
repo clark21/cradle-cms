@@ -71,9 +71,9 @@ class Exception extends BaseException
      *
      * @param *string $name
      *
-     * @return ObjectException
+     * @return Exception
      */
-    public static function forSchemaNotFound($name): ObjectException
+    public static function forSchemaNotFound($name): Exception
     {
         $message = sprintf(static::ERROR_SCHEMA_NOT_FOUND, $name);
         return new static($message);
@@ -84,7 +84,7 @@ class Exception extends BaseException
      *
      * @param *string $name
      *
-     * @return ObjectException
+     * @return Exception
      */
     public static function forSchemaAlreadyExists(string $name)
     {
@@ -98,7 +98,7 @@ class Exception extends BaseException
      *
      * @param *string $name
      *
-     * @return ObjectException
+     * @return Exception
      */
     public static function forSchemaArchiveExists(string $name)
     {

@@ -25,29 +25,21 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
     //only for admin
     cradle('global')->requireLogin('admin');
 
-    //record logs
-    cradle()->log('View '. ucfirst($request->getStage('schema')) . ' listing',
-        $request,
-        $response
-    );
-
     //----------------------------//
     // 2. Prepare Data
+    //get schema data
+    $schema = SystemSchema::i($request->getStage('schema'));
+
+    //set a default range
     if(!$request->hasStage('range')) {
         $request->setStage('range', 50);
     }
 
-    $schemaResponse = Response::i()->load();
-    cradle()->trigger('system-schema-detail', $request, $schemaResponse);
-    $schema = SystemSchema::i($schemaResponse->getResults());
-
     //filter possible filter options
     //we do this to prevent SQL injections
     if(is_array($request->getStage('filter'))) {
-        $filterable = $schema->getFilterableFieldNames();
-
         foreach($request->getStage('filter') as $key => $value) {
-            if(!in_array($key, $filterable)) {
+            if(!preg_match('/^[a-zA-Z0-9_]+$/', $key)) {
                 $request->removeStage('filter', $key);
             }
         }
@@ -56,10 +48,8 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
     //filter possible sort options
     //we do this to prevent SQL injections
     if(is_array($request->getStage('order'))) {
-        $sortable = $schema->getSortableFieldNames();
-
         foreach($request->getStage('order') as $key => $value) {
-            if(!in_array($key, $sortable)) {
+            if(!preg_match('/^[a-zA-Z0-9_]+$/', $key)) {
                 $request->removeStage('order', $key);
             }
         }
@@ -68,28 +58,44 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
     //trigger job
     cradle()->trigger('system-object-search', $request, $response);
 
-    if($request->getStage('json')) {
+    //if we only want the raw data
+    if($request->getStage('render') === 'false') {
         return;
     }
 
-    $data = array_merge($request->getStage(), $response->getResults());
+    //form the data
+    $data = array_merge(
+        //we need to case for things like
+        //filter and sort on the template
+        $request->getStage(),
+        //this is from the search event
+        $response->getResults()
+    );
+
+    //also pass the schema to the template
     $data['schema'] = $schema->getAll();
 
+    //if there's an active field
     if($data['schema']['active']) {
+        //find it
         foreach($data['schema']['filterable'] as $i => $filter) {
+            //if we found it
             if($filter === $data['schema']['active']) {
+                //remove it from the filters
                 unset($data['schema']['filterable'][$i]);
             }
         }
 
+        //reindex filterable
         $data['schema']['filterable'] = array_values($data['schema']['filterable']);
     }
 
     //----------------------------//
     // 3. Render Template
+    //set the class name
     $class = 'page-admin-system-object-search page-admin';
 
-    //I need a better when
+    //add custom page helpers
     cradle('global')
         ->handlebars()
         ->registerHelper('when', function(...$args) {
@@ -179,9 +185,9 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
             }
 
             return implode('', $columns);
-        })
-        ;
+        });
 
+    //render the body
     $body = cradle('/module/system')->template('object/search', $data, [
         'object_filters'
     ]);
@@ -192,8 +198,80 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
         ->setPage('class', $class)
         ->setContent($body);
 
+    //if we only want the body
+    if($request->getStage('render') === 'body') {
+        return;
+    }
+
     //render page
     cradle()->trigger('render-admin-page', $request, $response);
+
+    //record logs
+    cradle()->log(
+        sprintf(
+            'View %s listing',
+            $schema->getSingular()
+        ),
+        $request,
+        $response
+    );
+});
+
+/**
+ * Render the System Object Search Page Filtered by Relation
+ *
+ * @param Request $request
+ * @param Response $response
+ */
+$cradle->get('/admin/system/object/:schema1/search/:schema2/:id', function($request, $response) {
+    //variable list
+    $id = $request->getStage('id');
+    $schema1 = $request->getStage('schema1');
+    $schema2 = SystemSchema::i($request->getStage('schema2'));
+    $request->setStage('filter', $schema2->getPrimaryFieldName(), $id);
+
+    //remove the data from stage
+    //because we wont need it anymore
+    $request
+        ->removeStage('id')
+        ->removeStage('schema1')
+        ->removeStage('schema2');
+
+    //get the schema detail
+    $detailRequest = Request::i()->load();
+    $detailResponse = Response::i()->load();
+
+    $detailRequest
+        //let the event know what schema we are using
+        ->setStage('schema', $schema2->getName())
+        //table_id, 1 for example
+        ->setStage($schema2->getPrimaryFieldName(), $id);
+
+    //now get the actual table row
+    cradle()->trigger('system-object-detail', $detailRequest, $detailResponse);
+
+    //get the table row
+    $results = $detailResponse->getResults();
+    //and determine the title of the table row
+    //this will be used on the breadcrumbs and title for example
+    $suggestion = $schema2->getSuggestionFormat($results);
+
+    //pass all the relational data we collected
+    $request
+        ->setStage('relation', 'schema', $schema2->getAll())
+        ->setStage('relation', 'data', $results)
+        ->setStage('relation', 'suggestion', $suggestion);
+
+    //now let the original search take over
+    cradle()->triggerRoute(
+        'get',
+        sprintf(
+            '/admin/system/object/%s/search',
+            $schema1
+        ),
+        $request,
+        $response
+    );
 });
 
 /**
@@ -210,40 +288,57 @@ $cradle->get('/admin/system/object/:schema/create', function($request, $response
 
     //----------------------------//
     // 2. Prepare Data
+    //get schema data
+    $schema = SystemSchema::i($request->getStage('schema'));
+
+    //pass the item with only the post data
     $data = ['item' => $request->getPost()];
 
+    //if this is a return back from processing
+    //this form and it's because of an error
     if ($response->isError()) {
+        //pass the error messages to the template
         $response->setFlash($response->getMessage(), 'error');
         $data['errors'] = $response->getValidation();
     }
 
-    $schemaResponse = Response::i()->load();
-    cradle()->trigger('system-schema-detail', $request, $schemaResponse);
-    $schema = SystemSchema::i($schemaResponse->getResults());
-
+    //also pass the schema to the template
     $data['schema'] = $schema->getAll();
 
     //add CSRF
     cradle()->trigger('csrf-load', $request, $response);
     $data['csrf'] = $response->getResults('csrf');
 
+    //if there are file fields
     if (!empty($data['schema']['files'])) {
         //add CDN
         $config = $this->package('global')->service('s3-main');
         $data['cdn_config'] = File::getS3Client($config);
     }
 
-    //add suggestions field for each relation
+    //pass suggestion title field for each relation to the template
     foreach ($data['schema']['relations'] as $name => $relation) {
         $data['schema']['relations'][$name]['suggestion_name'] = '_' . $relation['primary2'];
     }
 
+    //if this is a relational process
+    if ($request->hasStage('relation')) {
+        //also pass the relation to the form
+        $data['relation'] = $request->getStage('relation');
+    }
+
     //----------------------------//
     // 3. Render Template
+    //set the class name
     $class = 'page-admin-system-object-create page-admin';
-    $data['title'] = cradle('global')->translate('Create %s', $data['schema']['singular']);
 
-    //I need a better when
+    //determine the title
+    $data['title'] = cradle('global')->translate(
+        'Create %s',
+        $data['schema']['singular']
+    );
+
+    //add custom page helpers
     cradle('global')
         ->handlebars()
         ->registerHelper('when', function(...$args) {
@@ -385,9 +480,15 @@ $cradle->get('/admin/system/object/:schema/create', function($request, $response
             return $options['inverse']();
         });
 
+    //render the body
     $body = cradle('/module/system')->template('object/form', $data, [
         'object_fields'
     ]);
+
+    //if we only want the body
+    if($request->getStage('render') === 'body') {
+        return;
+    }
 
     //set content
     $response
@@ -396,7 +497,65 @@ $cradle->get('/admin/system/object/:schema/create', function($request, $response
         ->setContent($body);
 
     //render page
-}, 'render-admin-page');
+    cradle()->trigger('render-admin-page', $request, $response);
+});
+
+/**
+ * Render the System Object Search Page Filtered by Relation
+ *
+ * @param Request $request
+ * @param Response $response
+ */
+$cradle->get('/admin/system/object/:schema1/create/:schema2/:id', function($request, $response) {
+    //variable list
+    $id = $request->getStage('id');
+    $schema1 = $request->getStage('schema1');
+    $schema2 = SystemSchema::i($request->getStage('schema2'));
+    $request->setStage('filter', $schema2->getPrimaryFieldName(), $id);
+
+    //remove the data from stage
+    //because we wont need it anymore
+    $request
+        ->removeStage('id')
+        ->removeStage('schema1')
+        ->removeStage('schema2');
+
+    //get the schema detail
+    $detailRequest = Request::i()->load();
+    $detailResponse = Response::i()->load();
+
+    $detailRequest
+        //let the event know what schema we are using
+        ->setStage('schema', $schema2->getName())
+        //table_id, 1 for example
+        ->setStage($schema2->getPrimaryFieldName(), $id);
+
+    //now get the actual table row
+    cradle()->trigger('system-object-detail', $detailRequest, $detailResponse);
+
+    //get the table row
+    $results = $detailResponse->getResults();
+    //and determine the title of the table row
+    //this will be used on the breadcrumbs and title for example
+    $suggestion = $schema2->getSuggestionFormat($results);
+
+    //pass all the relational data we collected
+    $request
+        ->setStage('relation', 'schema', $schema2->getAll())
+        ->setStage('relation', 'data', $results)
+        ->setStage('relation', 'suggestion', $suggestion);
+
+    //now let the original search take over
+    cradle()->triggerRoute(
+        'get',
+        sprintf(
+            '/admin/system/object/%s/create',
+            $schema1
+        ),
+        $request,
+        $response
+    );
+});
 
 /**
  * Render the System Object Update Page
@@ -412,68 +571,85 @@ $cradle->get('/admin/system/object/:schema/update/:id', function($request, $resp
 
     //----------------------------//
     // 2. Prepare Data
+    //get schema data
+    $schema = SystemSchema::i($request->getStage('schema'));
+
+    //pass the item with only the post data
     $data = ['item' => $request->getPost()];
 
-    if($response->isError()) {
+    //if this is a return back from processing
+    //this form and it's because of an error
+    if ($response->isError()) {
+        //pass the error messages to the template
         $response->setFlash($response->getMessage(), 'error');
         $data['errors'] = $response->getValidation();
     }
 
     //if no item
     if(empty($data['item'])) {
+        //table_id, 1 for example
         $request->setStage(
-            $request->getStage('schema') . '_id',
+            $schema->getPrimaryFieldName(),
             $request->getStage('id')
         );
 
+        //get the original table row
         cradle()->trigger('system-object-detail', $request, $response);
 
         //can we update ?
         if($response->isError()) {
             //add a flash
             cradle('global')->flash($response->getMessage(), 'error');
-            return cradle('global')->redirect('/admin/system/object/'. $request->getStage('schema') .'/search');
+            return cradle('global')->redirect(sprintf(
+                '/admin/system/object/%s/search',
+                $request->getStage('schema')
+            ));
         }
 
+        //pass the item to the template
         $data['item'] = $response->getResults();
+
+        //add suggestion value for each relation
+        foreach ($data['schema']['relations'] as $name => $relation) {
+            $suggestion = '_' . $relation['primary2'];
+            try {
+                $data['item'][$suggestion] = SystemSchema::i($relation['name'])
+                    ->getSuggestionFormat($data['item']);
+            } catch(Exception $e) {}
+        }
     }
 
-    $schemaResponse = Response::i()->load();
-    cradle()->trigger('system-schema-detail', $request, $schemaResponse);
-    $schema = SystemSchema::i($schemaResponse->getResults());
-
+    //also pass the schema to the template
     $data['schema'] = $schema->getAll();
 
     //add CSRF
     cradle()->trigger('csrf-load', $request, $response);
     $data['csrf'] = $response->getResults('csrf');
 
+    //if there are file fields
     if (!empty($data['schema']['files'])) {
         //add CDN
         $config = $this->package('global')->service('s3-main');
         $data['cdn_config'] = File::getS3Client($config);
     }
 
-    //add suggestions field for each relation
+    //pass suggestion title field for each relation to the template
     foreach ($data['schema']['relations'] as $name => $relation) {
-        $suggestion = '_' . $relation['primary2'];
-        $data['schema']['relations'][$name]['suggestion_name'] = $suggestion;
-
-        try {
-            $data['item'][$suggestion] = SystemSchema::i($relation['name'])
-                ->getSuggestionFormat($data['item']);
-        } catch(Exception $e) {}
+        $data['schema']['relations'][$name]['suggestion_name'] = '_' . $relation['primary2'];
     }
 
     //----------------------------//
     // 3. Render Template
+    //set the class name
     $class = 'page-admin-system-object-update page-admin';
+
+    //determine the title
     $data['title'] = cradle('global')->translate(
         'Updating %s',
         $data['schema']['singular']
     );
 
-    //I need a better when
+    //add custom page helpers
     cradle('global')
         ->handlebars()
         ->registerHelper('when', function(...$args) {
@@ -615,18 +791,25 @@ $cradle->get('/admin/system/object/:schema/update/:id', function($request, $resp
             return $options['inverse']();
         });
 
+    //render the body
     $body = cradle('/module/system')->template('object/form', $data, [
         'object_fields'
     ]);
 
-    //Set Content
+    //if we only want the body
+    if($request->getStage('render') === 'body') {
+        return;
+    }
+
+    //set content
     $response
         ->setPage('title', $data['title'])
         ->setPage('class', $class)
         ->setContent($body);
 
-    //Render page
-}, 'render-admin-page');
+    //render page
+    cradle()->trigger('render-admin-page', $request, $response);
+});
 
 /**
  * Process the System Object Create Page
@@ -642,16 +825,20 @@ $cradle->post('/admin/system/object/:schema/create', function($request, $respons
 
     //----------------------------//
     // 2. Prepare Data
-    $schemaResponse = Response::i()->load();
-    cradle()->trigger('system-schema-detail', $request, $schemaResponse);
-    $schema = SystemSchema::i($schemaResponse->getResults());
+    //get schema data
+    $schema = SystemSchema::i($request->getStage('schema'));
 
+    //get all the schema field data
     $fields = $schema->getFields();
 
+    //these are invalid types to set
     $invalidTypes = ['none', 'active', 'created', 'updated'];
+    //get the required fields
     $requiredFields = $schema->getRequiredFieldNames();
 
+    //for each field
     foreach($fields as $name => $field) {
+        //if the field is invalid
         if(in_array($field['field']['type'], $invalidTypes)) {
             $request->removeStage($name);
             continue;
@@ -695,27 +882,140 @@ $cradle->post('/admin/system/object/:schema/create', function($request, $respons
 
     //----------------------------//
     // 4. Interpret Results
+    //if the event returned an error
     if($response->isError()) {
-        return cradle()->triggerRoute(
-            'get',
-            '/admin/system/object/'. $request->getStage('schema') . '/create',
-            $request,
-            $response
+        //determine route
+        $route = sprintf(
+            '/admin/system/object/%s/create',
+            $request->getStage('schema')
         );
+
+        //this is for flexibility
+        if($request->hasStage('route')) {
+            $route = $request->getStage('route');
+        }
+
+        //let the form route handle the rest
+        return cradle()->triggerRoute('get', $route, $request, $response);
     }
 
+    //it was good
+
     //record logs
-    cradle()->log('New '. ucfirst($request->getStage('schema')) . ' created',
+    cradle()->log(
+        sprintf(
+            'New %s created',
+            $schema->getSingular()
+        ),
         $request,
         $response
     );
 
-    //it was good
-    //add a flash
-    cradle('global')->flash($schema->getSingular() . ' was Created', 'success');
-
     //redirect
-    cradle('global')->redirect('/admin/system/object/'. $request->getStage('schema') . '/search');
+    $redirect = sprintf(
+        '/admin/system/object/%s/search',
+        $schema->getName()
+    );
+
+    //if there is a specified redirect
+    if($request->hasStage('redirect_uri')) {
+        //set the redirect
+        $redirect = $request->getStage('redirect_uri');
+    }
+
+    //if we dont want to redirect
+    if($redirect === 'false') {
+        return;
+    }
+
+    //add a flash
+    cradle('global')->flash(sprintf(
+        '%s was Created', 'success',
+        $schema->getSingular()
+    ));
+
+    cradle('global')->redirect($redirect);
+});
+
+/**
+ * Process the System Object Search Page Filtered by Relation
+ *
+ * @param Request $request
+ * @param Response $response
+ */
+$cradle->post('/admin/system/object/:schema1/create/:schema2/:id', function($request, $response) {
+    //variable list
+    $id = $request->getStage('id');
+    $schema1 = SystemSchema::i($request->getStage('schema1'));
+    $schema2 = SystemSchema::i($request->getStage('schema2'));
+
+    //setup the redirect now, kasi we will change it later
+    $redirect = sprintf(
+        '/admin/system/object/%s/search/%s/%s',
+        $schema1->getName(),
+        $schema2->getName(),
+        $id
+    );
+
+    //if there is a specified redirect
+    if($request->hasStage('redirect_uri')) {
+        //set the redirect
+        $redirect = $request->getStage('redirect_uri');
+    }
+
+    //pass all the relational data we collected
+    $request
+        ->setStage('route', sprintf(
+            '/admin/system/object/%s/create/%s/%s',
+            $schema1->getName(),
+            $schema2->getName(),
+            $id
+        ))
+        ->setStage('redirect_uri', 'false');
+
+    //now let the original create take over
+    cradle()->triggerRoute(
+        'post',
+        sprintf(
+            '/admin/system/object/%s/create',
+            $schema1->getName()
+        ),
+        $request,
+        $response
+    );
+
+    //if there's an error or there's content
+    if ($response->isError() || $response->hasContent()) {
+        return;
+    }
+
+    //so it must have been successful
+    //lets link the tables now
+    $primary1 = $schema1->getPrimaryFieldName();
+    $primary2 = $schema2->getPrimaryFieldName();
+
+    //set the stage to link
+    $request
+        ->setStage('schema2', $schema1->getName())
+        ->setStage('schema1', $schema2->getName())
+        ->setStage($primary1, $response->getResults($primary1))
+        ->setStage($primary2, $id);
+
+    //now link it
+    cradle()->trigger('system-object-link', $request, $response);
+
+    //if we dont want to redirect
+    if($redirect === 'false') {
+        return;
+    }
+
+    //add a flash
+    cradle('global')->flash(sprintf(
+        '%s was Created', 'success',
+        $schema1->getSingular()
+    ));
+
+    cradle('global')->redirect($redirect);
 });
 
 /**
@@ -732,21 +1032,26 @@ $cradle->post('/admin/system/object/:schema/update/:id', function($request, $res
 
     //----------------------------//
     // 2. Prepare Data
+    //get schema data
+    $schema = SystemSchema::i($request->getStage('schema'));
+
+    //table_id, 1 for example
     $request->setStage(
-        $request->getStage('schema') . '_id',
+        $schema->getPrimaryFieldName(),
         $request->getStage('id')
     );
 
-    $schemaResponse = Response::i()->load();
-    cradle()->trigger('system-schema-detail', $request, $schemaResponse);
-    $schema = SystemSchema::i($schemaResponse->getResults());
-
+    //get all the schema field data
     $fields = $schema->getFields();
 
+    //these are invalid types to set
     $invalidTypes = ['none', 'active', 'created', 'updated'];
+    //get the required fields
     $requiredFields = $schema->getRequiredFieldNames();
 
+    //for each field
     foreach($fields as $name => $field) {
+        //if the field is invalid
         if(in_array($field['field']['type'], $invalidTypes)) {
             $request->removeStage($name);
             continue;
@@ -782,23 +1087,61 @@ $cradle->post('/admin/system/object/:schema/update/:id', function($request, $res
 
     //----------------------------//
     // 4. Interpret Results
+    //if the event returned an error
     if($response->isError()) {
-        $route = '/admin/system/object/'. $request->getStage('schema') .'/update/' . $request->getStage('id');
+        //determine route
+        $route = sprintf(
+            '/admin/system/object/%s/update/%s',
+            $request->getStage('schema'),
+            $request->getStage('id')
+        );
+
+        //this is for flexibility
+        if($request->hasStage('route')) {
+            $route = $request->getStage('route');
+        }
+
+        //let the form route handle the rest
         return cradle()->triggerRoute('get', $route, $request, $response);
     }
 
+    //it was good
+
     //record logs
-    cradle()->log($schema->getSingular() . ' #'. ucfirst($request->getStage('id')) . ' updated',
+    cradle()->log(
+        sprintf(
+            '%s #%s updated',
+            $schema->getSingular(),
+            $request->getStage('id')
+        ),
         $request,
         $response
     );
 
-    //it was good
-    //add a flash
-    cradle('global')->flash($schema->getSingular() . ' was Updated', 'success');
-
     //redirect
-    cradle('global')->redirect('/admin/system/object/'. $request->getStage('schema') .'/search');
+    $redirect = sprintf(
+        '/admin/system/object/%s/search',
+        $schema->getName()
+    );
+
+    //if there is a specified redirect
+    if($request->hasStage('redirect_uri')) {
+        //set the redirect
+        $redirect = $request->getStage('redirect_uri');
+    }
+
+    //if we dont want to redirect
+    if($redirect === 'false') {
+        return;
+    }
+
+    //add a flash
+    cradle('global')->flash(sprintf(
+        '%s was Updated', 'success',
+        $schema->getSingular()
+    ));
+
+    cradle('global')->redirect($redirect);
 });
 
 /**
@@ -815,14 +1158,14 @@ $cradle->get('/admin/system/object/:schema/remove/:id', function($request, $resp
 
     //----------------------------//
     // 2. Prepare Data
+    //get schema data
+    $schema = SystemSchema::i($request->getStage('schema'));
+
+    //table_id, 1 for example
     $request->setStage(
-        $request->getStage('schema') . '_id',
+        $schema->getPrimaryFieldName(),
         $request->getStage('id')
     );
-
-    $schemaResponse = Response::i()->load();
-    cradle()->trigger('system-schema-detail', $request, $schemaResponse);
-    $schema = SystemSchema::i($schemaResponse->getResults());
 
     //----------------------------//
     // 3. Process Request
@@ -830,6 +1173,23 @@ $cradle->get('/admin/system/object/:schema/remove/:id', function($request, $resp
 
     //----------------------------//
     // 4. Interpret Results
+    //redirect
+    $redirect = sprintf(
+        '/admin/system/object/%s/search',
+        $schema->getName()
+    );
+
+    //if there is a specified redirect
+    if($request->hasStage('redirect_uri')) {
+        //set the redirect
+        $redirect = $request->getStage('redirect_uri');
+    }
+
+    //if we dont want to redirect
+    if($redirect === 'false') {
+        return;
+    }
+
     if($response->isError()) {
         //add a flash
         cradle('global')->flash($response->getMessage(), 'error');
@@ -839,16 +1199,18 @@ $cradle->get('/admin/system/object/:schema/remove/:id', function($request, $resp
         cradle('global')->flash($message, 'success');
 
         //record logs
-        cradle()->log($schema->getSingular() . ' #' .
-            $request->getStage('id') . ' removed.',
+        cradle()->log(
+            sprintf(
+                '%s #%s removed',
+                $schema->getSingular(),
+                $request->getStage('id')
+            ),
             $request,
             $response
         );
     }
 
-
-    //redirect
-    cradle('global')->redirect('/admin/system/object/'. $request->getStage('schema') .'/search');
+    cradle('global')->redirect($redirect);
 });
 
 /**
@@ -865,14 +1227,14 @@ $cradle->get('/admin/system/object/:schema/restore/:id', function($request, $res
 
     //----------------------------//
     // 2. Prepare Data
+    //get schema data
+    $schema = SystemSchema::i($request->getStage('schema'));
+
+    //table_id, 1 for example
     $request->setStage(
-        $request->getStage('schema') . '_id',
+        $schema->getPrimaryFieldName(),
         $request->getStage('id')
     );
-
-    $schemaResponse = Response::i()->load();
-    cradle()->trigger('system-schema-detail', $request, $schemaResponse);
-    $schema = SystemSchema::i($schemaResponse->getResults());
 
     //----------------------------//
     // 3. Process Request
@@ -880,6 +1242,23 @@ $cradle->get('/admin/system/object/:schema/restore/:id', function($request, $res
 
     //----------------------------//
     // 4. Interpret Results
+    //redirect
+    $redirect = sprintf(
+        '/admin/system/object/%s/search',
+        $schema->getName()
+    );
+
+    //if there is a specified redirect
+    if($request->hasStage('redirect_uri')) {
+        //set the redirect
+        $redirect = $request->getStage('redirect_uri');
+    }
+
+    //if we dont want to redirect
+    if($redirect === 'false') {
+        return;
+    }
+
     if($response->isError()) {
         //add a flash
         cradle('global')->flash($response->getMessage(), 'error');
@@ -889,16 +1268,18 @@ $cradle->get('/admin/system/object/:schema/restore/:id', function($request, $res
         cradle('global')->flash($message, 'success');
 
         //record logs
-        cradle()->log($schema->getSingular() . ' #' .
-            $request->getStage('id') . ' restored.',
+        cradle()->log(
+            sprintf(
+                '%s #%s restored.',
+                $schema->getSingular(),
+                $request->getStage('id')
+            ),
             $request,
             $response
         );
     }
 
-
-    //redirect
-    cradle('global')->redirect('/admin/system/object/'. $request->getStage('schema') .'/search');
+    cradle('global')->redirect($redirect);
 });
 
 /**
@@ -915,46 +1296,59 @@ $cradle->post('/admin/system/object/:schema/import', function($request, $respons
 
     //----------------------------//
     // 2. Prepare Data
-    $schemaResponse = Response::i()->load();
-    cradle()->trigger('system-schema-detail', $request, $schemaResponse);
-    $schema = SystemSchema::i($schemaResponse->getResults());
+    $schema = SystemSchema::i($request->getStage('schema'));
 
     //----------------------------//
     // 3. Process Request
+    //get schema data
     cradle()->trigger('system-object-import', $request, $response);
 
     //----------------------------//
     // 4. Interpret Results
+    //redirect
     $redirect = sprintf(
         '/admin/system/object/%s/search',
         $schema->getName()
     );
 
+    //if the import event returned errors
     if($response->isError()) {
         $errors = [];
+        //loop through each row
         foreach($response->getValidation() as $i => $validation) {
+            //and loop through each error
             foreach ($validation as $key => $error) {
+                //add the error
                 $errors[] = sprintf('ROW %s - %s: %s', $i, $key, $error);
             }
         }
 
+        //set the flash
         cradle('global')->flash(
             $response->getMessage(),
             'error',
             $errors
         );
 
+        //redirect
         cradle('global')->redirect($redirect);
     }
 
     //record logs
-    cradle()->log($schema->getPlural() . ' was Imported',
+    cradle()->log(
+        sprintf(
+            '%s was Imported',
+            $schema->getPlural()
+        ),
         $request,
         $response
     );
 
     //add a flash
-    $message = cradle('global')->translate($schema->getPlural() . ' was Imported');
+    $message = cradle('global')->translate(sprintf(
+        '%s was Imported',
+        $schema->getPlural()
+    ));
 
     cradle('global')->flash($message, 'success');
     cradle('global')->redirect($redirect);
@@ -974,13 +1368,8 @@ $cradle->get('/admin/system/object/:schema/export/:type', function($request, $re
 
     //----------------------------//
     // 2. Prepare Data
-    if(!$request->hasStage('range')) {
-        $request->setStage('range', 50);
-    }
-
-    $schemaResponse = Response::i()->load();
-    cradle()->trigger('system-schema-detail', $request, $schemaResponse);
-    $schema = SystemSchema::i($schemaResponse->getResults());
+    //get schema data
+    $schema = SystemSchema::i($request->getStage('schema'));
 
     //filter possible filter options
     //we do this to prevent SQL injections
@@ -1009,85 +1398,120 @@ $cradle->get('/admin/system/object/:schema/export/:type', function($request, $re
     //trigger job
     cradle()->trigger('system-object-search', $request, $response);
 
+    //get the output type
     $type = $request->getStage('type');
+    //get the rows
     $rows = $response->getResults('rows');
+    //determine the filename
     $filename = $schema->getPlural() . '-' . date('Y-m-d');
 
     //record logs
-    cradle()->log($schema->getPlural() . ' was Exported',
+    cradle()->log(
+        sprintf(
+            '%s was Exported',
+            $schema->getPlural()
+        ),
         $request,
         $response
     );
 
+    //if the output type is csv
     if($type === 'csv') {
+        //if there are no rows
         if(empty($rows)) {
+            //at least give the headers
             $rows = [array_keys($schema->getFields())];
         } else {
+            //add the headers
             array_unshift($rows, array_keys($rows[0]));
         }
 
+        //set the output headers
         $response
             ->addHeader('Content-Encoding', 'UTF-8')
             ->addHeader('Content-Type', 'text/csv; charset=UTF-8')
             ->addHeader('Content-Disposition', 'attachment; filename=' . $filename . '.csv');
 
+        //open a tmp file
         $file = tmpfile();
+        //for each row
         foreach($rows as $row) {
+            //add it to the tmp file as a csv
             fputcsv($file, array_values($row));
         }
 
+        //this is the final output
         $contents = '';
 
+        //rewind the file pointer
         rewind($file);
+        //and set all the contents
         while (!feof($file)) {
             $contents .= fread($file, 8192);
         }
 
+        //close the tmp file
         fclose($file);
 
+        //set contents
         return $response->setContent($contents);
     }
 
+    //if the output type is xml
     if($type === 'xml') {
+        //recursive xml parser
         $toXml = function($array, $xml) use (&$toXml) {
+            //for each array
             foreach($array as $key => $value) {
+                //if the value is an array
                 if(is_array($value)) {
+                    //if the key is not a number
                     if(!is_numeric($key)) {
+                        //send it out for further processing (recursive)
                         $toXml($value, $xml->addChild($key));
-                        print_r($value);
                         continue;
                     }
 
+                    //send it out for further processing (recursive)
                     $toXml($value, $xml->addChild('item'));
                     continue;
                 }
 
+                //add the value
                 $xml->addChild($key, htmlspecialchars($value));
             }
 
             return $xml;
         };
 
+        //set up the xml template
         $root = sprintf(
             "<?xml version=\"1.0\"?>\n<%s></%s>",
             $schema->getName(),
             $schema->getName()
         );
 
+        //set the output headers
         $response
             ->addHeader('Content-Encoding', 'UTF-8')
             ->addHeader('Content-Type', 'text/xml; charset=UTF-8')
             ->addHeader('Content-Disposition', 'attachment; filename=' . $filename . '.xml');
 
+        //get the contents
         $contents = $toXml($rows, new SimpleXMLElement($root))->asXML();
 
+        //set the contents
         return $response->setContent($contents);
     }
 
+    //json maybe?
+
+    //set the output headers
     $response
         ->addHeader('Content-Encoding', 'UTF-8')
         ->addHeader('Content-Type', 'text/json; charset=UTF-8')
         ->addHeader('Content-Disposition', 'attachment; filename=' . $filename . '.json');
 
+    //set content
     $response->set('json', $rows);
 });

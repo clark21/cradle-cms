@@ -1411,13 +1411,21 @@ select.form-control {
     overflow: auto;
 }
 
+.table-overflow th {
+    white-space: nowrap;
+}
+
 .table-bulk-checkbox {
     width: 1px;
 }
 
+.table-actions {
+    white-space: nowrap;
+}
+
 .table-actions a {
     display: inline-block;
-    margin-left: 10px;
+    margin-left: 5px;
 }
 
 .table-actions a:first-child {

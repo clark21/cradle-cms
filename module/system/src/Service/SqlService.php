@@ -120,8 +120,8 @@ class SqlService
         $queries[] = (string) $query;
 
         //determine the relation schema
-        foreach($data['relations'] as $relation) {
-            $query = $this->resource->getCreateQuery($relation['name']);
+        foreach($data['relations'] as $table => $relation) {
+            $query = $this->resource->getCreateQuery($table);
 
             $query->addPrimaryKey($relation['primary1']);
             $query->addField($relation['primary1'], [
@@ -137,7 +137,7 @@ class SqlService
                 'attribute' => 'UNSIGNED'
             ]);
 
-            $queries[] = 'DROP TABLE IF EXISTS `'. $relation['name'] . '`;';
+            $queries[] = 'DROP TABLE IF EXISTS `'. $table . '`;';
             $queries[] = (string) $query;
         }
 
@@ -194,17 +194,17 @@ class SqlService
                 $queries[] = 'RENAME TABLE `' . $data['name'] . '` TO `_' . $data['name'] . '`;';
 
                 //determine the relation schema
-                foreach($data['relations'] as $relation) {
-                    $queries[] = 'RENAME TABLE `' . $relation['name'] . '` TO `_' . $relation['name'] . '`;';
+                foreach($data['relations'] as $table => $relation) {
+                    $queries[] = 'RENAME TABLE `' . $table . '` TO `_' . $table . '`;';
                 }
             } else {
                 $queries[] = 'DROP TABLE IF EXISTS `' . $data['name'] . '`;';
                 $queries[] = 'DROP TABLE IF EXISTS `_' . $data['name'] . '`;';
 
                 //determine the relation schema
-                foreach($data['relations'] as $relation) {
-                    $queries[] = 'DROP TABLE IF EXISTS `'. $relation['name'] . '`;';
-                    $queries[] = 'DROP TABLE IF EXISTS `_'. $relation['name'] . '`;';
+                foreach($data['relations'] as $table => $relation) {
+                    $queries[] = 'DROP TABLE IF EXISTS `'. $table . '`;';
+                    $queries[] = 'DROP TABLE IF EXISTS `_'. $table . '`;';
                 }
             }
         }
@@ -254,8 +254,8 @@ class SqlService
         $queries[] = 'RENAME TABLE `_' . $data['name'] . '` TO `' . $data['name'] . '`;';
 
         //determine the relation schema
-        foreach($data['relations'] as $relation) {
-            $queries[] = 'RENAME TABLE `_' . $relation['name'] . '` TO `' . $relation['name'] . '`;';
+        foreach($data['relations'] as $table => $relation) {
+            $queries[] = 'RENAME TABLE `_' . $table . '` TO `' . $table . '`;';
         }
 
         //execute queries
@@ -427,13 +427,13 @@ class SqlService
         }
 
         //determine the relation tables that need to be added
-        foreach($data['relations'] as $relation) {
+        foreach($data['relations'] as $table => $relation) {
             //install if it's installed
             if (in_array($relation['name'], $installed)) {
                 continue;
             }
 
-            $query = $this->resource->getCreateQuery($relation['name']);
+            $query = $this->resource->getCreateQuery($table);
 
             $query->addPrimaryKey($relation['primary1']);
             $query->addField($relation['primary1'], [
@@ -449,7 +449,7 @@ class SqlService
                 'attribute' => 'UNSIGNED'
             ]);
 
-            $queries[] = 'DROP TABLE IF EXISTS `'. $relation['name'] . '`;';
+            $queries[] = 'DROP TABLE IF EXISTS `'. $table . '`;';
             $queries[] = (string) $query;
         }
 

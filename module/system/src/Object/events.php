@@ -616,3 +616,161 @@ $cradle->on('system-object-import', function ($request, $response) {
 
     $response->setError(false)->setResults($results);
 });
+
+/**
+ * Links object to relation
+ *
+ * @param Request $request
+ * @param Response $response
+ */
+$cradle->on('system-object-link', function ($request, $response) {
+    //----------------------------//
+    // 1. Get Data
+    //get data from stage
+    $data = [];
+    if ($request->hasStage()) {
+        $data = $request->getStage();
+    }
+
+    if(!isset($data['schema1'], $data['schema2'])) {
+        throw SystemException::forNoSchema();
+    }
+
+    $schema1 = SystemSchema::i($data['schema1']);
+    $schema2 = SystemSchema::i($data['schema2']);
+
+    $schema1Primary = $schema1->getPrimaryFieldName();
+    $schema2Primary = $schema2->getPrimaryFieldName();
+
+    //----------------------------//
+    // 2. Validate Data
+    if (!isset($data[$schema1Primary], $data[$schema2Primary])) {
+        return $response->setError(true, 'No ID provided');
+    }
+
+    //----------------------------//
+    // 3. Process Data
+    //this/these will be used a lot
+    $objectSql = $schema1->model()->service('sql');
+    $objectRedis = $schema1->model()->service('redis');
+    $objectElastic = $schema1->model()->service('elastic');
+
+    $results = $objectSql->link(
+        $data['schema2'],
+        $data[$schema1Primary],
+        $data[$schema2Primary]
+    );
+
+    //index post
+    $objectElastic->update($data[$schema1Primary]);
+
+    //invalidate cache
+    $objectRedis->removeSearch();
+
+    //return response format
+    $response->setError(false)->setResults($results);
+});
+
+/**
+ * Uninks object to relation
+ *
+ * @param Request $request
+ * @param Response $response
+ */
+$cradle->on('system-object-unlink', function ($request, $response) {
+    //----------------------------//
+    // 1. Get Data
+    //get data from stage
+    $data = [];
+    if ($request->hasStage()) {
+        $data = $request->getStage();
+    }
+
+    if(!isset($data['schema1'], $data['schema2'])) {
+        throw SystemException::forNoSchema();
+    }
+
+    $schema1 = SystemSchema::i($data['schema1']);
+    $schema2 = SystemSchema::i($data['schema2']);
+
+    $schema1Primary = $schema1->getPrimaryFieldName();
+    $schema2Primary = $schema2->getPrimaryFieldName();
+
+    //----------------------------//
+    // 2. Validate Data
+    if (!isset($data[$schema1Primary], $data[$schema2Primary])) {
+        return $response->setError(true, 'No ID provided');
+    }
+
+    //----------------------------//
+    // 3. Process Data
+    //this/these will be used a lot
+    $objectSql = $schema1->model()->service('sql');
+    $objectRedis = $schema1->model()->service('redis');
+    $objectElastic = $schema1->model()->service('elastic');
+
+    $results = $objectSql->unlink(
+        $data['schema2'],
+        $data[$schema1Primary],
+        $data[$schema2Primary]
+    );
+
+    //index post
+    $objectElastic->update($data[$schema1Primary]);
+
+    //invalidate cache
+    $objectRedis->removeSearch();
+
+    //return response format
+    $response->setError(false)->setResults($results);
+});
+
+/**
+ * Unlinks all object from relation
+ *
+ * @param Request $request
+ * @param Response $response
+ */
+$cradle->on('system-object-unlinkall', function ($request, $response) {
+    //----------------------------//
+    // 1. Get Data
+    //get data from stage
+    $data = [];
+    if ($request->hasStage()) {
+        $data = $request->getStage();
+    }
+
+    if(!isset($data['schema1'], $data['schema2'])) {
+        throw SystemException::forNoSchema();
+    }
+
+    $schema = SystemSchema::i($data['schema1']);
+    $primary = $schema->getPrimaryFieldName();
+
+    //----------------------------//
+    // 2. Validate Data
+    if (!isset($data[$primary])) {
+        return $response->setError(true, 'No ID provided');
+    }
+
+    //----------------------------//
+    // 3. Process Data
+    //this/these will be used a lot
+    $objectSql = $schema->model()->service('sql');
+    $objectRedis = $schema->model()->service('redis');
+    $objectElastic = $schema->model()->service('elastic');
+
+    $results = $objectSql->unlinkAll(
+        $data['schema2'],
+        $data[$primary]
+    );
+
+    //index post
+    $objectElastic->update($data[$primary]);
+
+    //invalidate cache
+    $objectRedis->removeSearch();
+
+    //return response format
+    $response->setError(false)->setResults($results);
+});

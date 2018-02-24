@@ -302,6 +302,31 @@ class SqlService
                 );
         }
 
+        $reverseRelations = $this->schema->getReverseRelations(2);
+
+        //cutomer_project but the main schema is project for example
+        foreach($reverseRelations as $table => $relation) {
+            if (//if filter customer is not set
+                !isset($filter[$relation['primary1']])
+                //project_customer vs cutomer_project
+                || isset($relations[$relation['name'] . '_' . $relation['source']])
+            )
+            {
+                //no need to join
+                continue;
+            }
+
+            $search
+                ->innerJoinUsing(
+                    $table,
+                    $relation['primary2']
+                )
+                ->innerJoinUsing(
+                    $relation['source'],
+                    $relation['primary1']
+                );
+        }
+
         //add filters
         foreach ($filter as $column => $value) {
             if (preg_match('/^[a-zA-Z0-9-_]+$/', $column)) {

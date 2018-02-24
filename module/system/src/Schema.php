@@ -13,6 +13,9 @@ use Cradle\Module\System\Object\Model as ObjectModel;
 use Cradle\Data\Registry;
 use Cradle\Helper\InstanceTrait;
 
+use Cradle\Http\Request;
+use Cradle\Http\Response;
+
 /**
  * Object Schema Manager. This was made
  * take advantage of pass-by-ref
@@ -305,11 +308,12 @@ class Schema extends Registry
             $results[$name] = [];
 
             try {
-                $results[$name] = (new Schema($relation['name']))->getAll(false);
+                $results[$name] = Schema::i($relation['name'])->getAll(false);
             } catch(Exception $e) {}
 
             $results[$name]['primary1'] = $primary;
-            $results[$name]['primary2'] = $results[$name]['primary'];
+            //kasi what do we do with user and auth?
+            $results[$name]['primary2'] = $relation['name'] . '_id';
             $results[$name]['many'] = $relation['many'];
         }
 
@@ -340,6 +344,49 @@ class Schema extends Registry
                     $results[] = $name;
                 }
             }
+        }
+
+        return $results;
+    }
+
+    /**
+     * Returns reverse relational data
+     *
+     * @param int $many
+     *
+     * @return array
+     */
+    public function getReverseRelations($many = -1)
+    {
+        $results = [];
+        $name = $this->getName();
+
+        $response = Response::i()->load();
+        $request = Request::i()->load();
+
+        cradle()->trigger('system-schema-search', $request, $response);
+        $rows = $response->getResults('rows');
+
+        if(empty($rows)) {
+            return $results;
+        }
+
+        foreach($rows as $row) {
+            $schema = Schema::i($row['name']);
+            $table = $row['name'] . '_' . $name;
+            $relations = $schema->getRelations();
+            if(!isset($relations[$table]['many'])
+                || (
+                    $many != -1
+                    && $many != $relations[$table]['many']
+                )
+            )
+            {
+                continue;
+            }
+
+            $results[$table] = $relations[$table];
+            $results[$table]['source'] = $row['name'];
         }
 
         return $results;

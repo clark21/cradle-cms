@@ -5,11 +5,29 @@
                 <i class="fas fa-home"></i> Admin
             </a>
         </li>
-        <li class="breadcrumb-item">
-            <a href="/admin/system/object/{{schema.name}}/search">
-                <i class="fas fa-{{schema.icon}}"></i> {{schema.plural}}
-            </a>
-        </li>
+        {{#if relation.suggestion}}
+            <li class="breadcrumb-item">
+                <a href="/admin/system/object/{{relation.schema.name}}/search">
+                    <i class="{{relation.schema.icon}}"></i> {{relation.schema.plural}}
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="/admin/system/object/{{relation.schema.name}}/update/{{key relation.schema.primary relation.data}}">
+                    {{relation.suggestion}}
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="/admin/system/object/{{schema.name}}/search/{{relation.schema.name}}/{{key relation.schema.primary relation.data}}">
+                    <i class="fas fa-{{schema.icon}}"></i> {{schema.plural}}
+                </a>
+            </li>
+        {{else}}
+            <li class="breadcrumb-item">
+                <a href="/admin/system/object/{{schema.name}}/search">
+                    <i class="fas fa-{{schema.icon}}"></i> {{schema.plural}}
+                </a>
+            </li>
+        {{/if}}
         <li class="breadcrumb-item active" aria-current="page">
             <i class="fas fa-plus"></i> {{title}}
         </li>
@@ -17,6 +35,13 @@
 </nav>
 
 <div class="main-padding">
+    {{#if relation.suggestion}}
+        <h3 class="main-title">
+            <i class="{{relation.schema.icon}}"></i>
+            {{relation.suggestion}}
+        </h3>
+    {{/if}}
+
     <form
         class="box"
         method="post"
@@ -71,9 +96,9 @@
                                 data-target-value="input.suggestion-value-{{name}}"
                                 data-value="{{primary2}}"
                                 {{#in table 'user,auth'}}
-                                    data-url="/admin/{{name}}/search?q={QUERY}&json=1"
+                                    data-url="/admin/{{name}}/search?q={QUERY}&render=false"
                                 {{else}}
-                                    data-url="/admin/system/object/{{name}}/search?q={QUERY}&json=1"
+                                    data-url="/admin/system/object/{{name}}/search?q={QUERY}&render=false"
                                 {{/in}}
                             ></div>
                             {{#has primary2 ../errors}}
