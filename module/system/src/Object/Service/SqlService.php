@@ -62,9 +62,9 @@ class SqlService
             throw SystemException::forNoSchema();
         }
 
-        $table = $this->schema->getTableName();
-        $created = $this->schema->getCreated($data);
-        $updated = $this->schema->getUpdated($data);
+        $table = $this->schema->getName();
+        $created = $this->schema->getCreatedFieldName($data);
+        $updated = $this->schema->getUpdatedFieldName($data);
 
         if($created) {
             $data[$created] = date('Y-m-d H:i:s');
@@ -79,6 +79,27 @@ class SqlService
             ->model($data)
             ->save($table)
             ->get();
+    }
+
+    /**
+     * Checks to see if unique.0 already exists
+     *
+     * @param *string $objectKey
+     *
+     * @return bool
+     */
+    public function exists($object, $key, $value)
+    {
+        if(is_null($this->schema)) {
+            throw SystemException::forNoSchema();
+        }
+
+        $search = $this
+            ->resource
+            ->search($this->schema->getName())
+            ->addFilter($key . ' = %s', $value);
+
+        return !!$search->getRow();
     }
 
     /**
@@ -97,7 +118,7 @@ class SqlService
 
         $search = $this
             ->resource
-            ->search($this->schema->getTableName())
+            ->search($this->schema->getName())
             ->addFilter($key . ' = %s', $id);
 
         //get 1:1 relations
@@ -106,11 +127,11 @@ class SqlService
         foreach($relations as $table => $relation) {
             $search
                 ->innerJoinUsing(
-                    $relation['name'],
+                    $table,
                     $relation['primary1']
                 )
                 ->innerJoinUsing(
-                    $table,
+                    $relation['name'],
                     $relation['primary2']
                 );
         }
@@ -121,7 +142,7 @@ class SqlService
             return $results;
         }
 
-        $fields = $this->schema->getJsonFields();
+        $fields = $this->schema->getJsonFieldNames();
 
         foreach($fields as $field) {
             if(isset($results[$field]) && $results[$field]) {
@@ -136,8 +157,8 @@ class SqlService
         foreach($relations as $table => $relation) {
             $results[$table] = $this
                 ->resource
-                ->search($relation['name'])
-                ->innerJoinUsing($table, $relation['primary2'])
+                ->search($table)
+                ->innerJoinUsing($relation['name'], $relation['primary2'])
                 ->addFilter($relation['primary1'] . ' = %s', $id)
                 ->getRow();
         }
@@ -147,8 +168,8 @@ class SqlService
         foreach($relations as $table => $relation) {
             $results[$table] = $this
                 ->resource
-                ->search($relation['name'])
-                ->innerJoinUsing($table, $relation['primary2'])
+                ->search($table)
+                ->innerJoinUsing($relation['name'], $relation['primary2'])
                 ->addFilter($relation['primary1'] . ' = %s', $id)
                 ->getRows();
         }
@@ -167,6 +188,38 @@ class SqlService
     }
 
     /**
+     * Links table to another table
+     *
+     * @param *string $relation
+     * @param *int    $primary1
+     * @param *int    $primary2
+     *
+     * @return array
+     */
+    public function link($relation, $primary1, $primary2)
+    {
+        if(is_null($this->schema)) {
+            throw SystemException::forNoSchema();
+        }
+
+        $name = $this->schema->getName();
+        $relations = $this->schema->getRelations();
+        $table = $name . '_' . $relation;
+
+        if(!isset($relations[$table])) {
+            throw SystemException::forNoRelation($name, $relation);
+        }
+
+        $relation = $relations[$table];
+
+        $model = $this->resource->model();
+        $model[$relation['primary1']] = $primary1;
+        $model[$relation['primary2']] = $primary2;
+
+        return $model->insert($table);
+    }
+
+    /**
      * Remove from database
      * PLEASE BECAREFUL USING THIS !!!
      * It's here for clean up scripts
@@ -180,8 +233,8 @@ class SqlService
             throw SystemException::forNoSchema();
         }
 
-        $table = $this->schema->getTableName();
-        $primary = $this->schema->getPrimary();
+        $table = $this->schema->getName();
+        $primary = $this->schema->getPrimaryFieldName();
         //please rely on SQL CASCADING ON DELETE
         $model = $this->resource->model();
         $model[$primary] = $id;
@@ -224,13 +277,13 @@ class SqlService
             $order = $data['order'];
         }
 
-        $active = $this->schema->getActive();
+        $active = $this->schema->getActiveFieldName();
         if ($active && !isset($filter[$active])) {
             $filter[$active] = 1;
         }
 
         $search = $this->resource
-            ->search($this->schema->getTableName())
+            ->search($this->schema->getName())
             ->setStart($start)
             ->setRange($range);
 
@@ -240,11 +293,11 @@ class SqlService
         foreach($relations as $table => $relation) {
             $search
                 ->innerJoinUsing(
-                    $relation['name'],
+                    $table,
                     $relation['primary1']
                 )
                 ->innerJoinUsing(
-                    $table,
+                    $relation['name'],
                     $relation['primary2']
                 );
         }
@@ -257,7 +310,7 @@ class SqlService
         }
 
         //keyword?
-        $searchable = $this->schema->getSearchable(1);
+        $searchable = $this->schema->getSearchableFieldNames(1);
 
         if(!empty($searchable)) {
             $keywords = [];
@@ -289,7 +342,7 @@ class SqlService
         }
 
         $rows = $search->getRows();
-        $fields = $this->schema->getJsonFields();
+        $fields = $this->schema->getJsonFieldNames();
 
         foreach($rows as $i => $results) {
             foreach($fields as $field) {
@@ -322,6 +375,38 @@ class SqlService
     }
 
     /**
+     * Unlinks table to another table
+     *
+     * @param *string $relation
+     * @param *int    $primary1
+     * @param *int    $primary2
+     *
+     * @return array
+     */
+    public function unlink($relation, $primary1, $primary2)
+    {
+        if(is_null($this->schema)) {
+            throw SystemException::forNoSchema();
+        }
+
+        $name = $this->schema->getName();
+        $relations = $this->schema->getRelations();
+        $table = $name . '_' . $relation;
+
+        if(!isset($relations[$table])) {
+            throw SystemException::forNoRelation($name, $relation);
+        }
+
+        $relation = $relations[$table];
+
+        $model = $this->resource->model();
+        $model[$relation['primary1']] = $primary1;
+        $model[$relation['primary2']] = $primary2;
+
+        return $model->remove($table);
+    }
+
+    /**
      * Update to database
      *
      * @param array $data
@@ -334,8 +419,8 @@ class SqlService
             throw SystemException::forNoSchema();
         }
 
-        $table = $this->schema->getTableName();
-        $updated = $this->schema->getUpdated();
+        $table = $this->schema->getName();
+        $updated = $this->schema->getUpdatedFieldName();
 
         if($updated) {
             $data[$updated] = date('Y-m-d H:i:s');
@@ -346,26 +431,5 @@ class SqlService
             ->model($data)
             ->save($table)
             ->get();
-    }
-
-    /**
-     * Checks to see if unique.0 already exists
-     *
-     * @param *string $objectKey
-     *
-     * @return bool
-     */
-    public function exists($object, $key, $value)
-    {
-        if(is_null($this->schema)) {
-            throw SystemException::forNoSchema();
-        }
-
-        $search = $this
-            ->resource
-            ->search($this->schema->getTableName())
-            ->addFilter($key . ' = %s', $value);
-
-        return !!$search->getRow();
     }
 }

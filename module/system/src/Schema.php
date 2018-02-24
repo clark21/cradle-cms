@@ -10,6 +10,7 @@ namespace Cradle\Module\System;
 
 use Cradle\Module\System\Object\Model as ObjectModel;
 
+use Cradle\Data\Registry;
 use Cradle\Helper\InstanceTrait;
 
 /**
@@ -21,15 +22,8 @@ use Cradle\Helper\InstanceTrait;
  * @author   John Doe <john@acme.com>
  * @standard PSR-2
  */
-class Schema
+class Schema extends Registry
 {
-    use InstanceTrait;
-
-    /**
-     * @var array $data
-     */
-    protected $data = [];
-
     /**
      * Sets up the schema
      *
@@ -50,23 +44,13 @@ class Schema
     }
 
     /**
-     * Returns data
-     *
-     * @return string|false
-     */
-    public function get()
-    {
-        return $this->data;
-    }
-
-    /**
      * Returns active field
      *
      * @param *array $this->data
      *
      * @return string|false
      */
-    public function getActive()
+    public function getActiveFieldName()
     {
         if(!isset($this->data['fields'])
             || empty($this->data['fields'])
@@ -85,11 +69,44 @@ class Schema
     }
 
     /**
+     * Returns all processed functions
+     *
+     * @param *array
+     *
+     * @return string|false
+     */
+    public function getAll($relations = true)
+    {
+        $results = array_merge($this->data, [
+            'active' => $this->getActiveFieldName(),
+            'created' => $this->getCreatedFieldName(),
+            'filterable' => $this->getFilterableFieldNames(),
+            'fields' => $this->getFields(),
+            'files' => $this->getFileFieldNames(),
+            'json' => $this->getJsonFieldNames(),
+            'listable' => $this->getListableFieldNames(),
+            'primary' => $this->getPrimaryFieldName(),
+            'required' => $this->getRequiredFieldNames(),
+            'searchable' => $this->getSearchableFieldNames(),
+            'slugable' => $this->getSlugableFieldNames(),
+            'sortable' => $this->getSortableFieldNames(),
+            'unique' => $this->getUniqueFieldNames(),
+            'updated' => $this->getUpdatedFieldName()
+        ]);
+
+        if ($relations) {
+            $results['relations'] = $this->getRelations();
+        }
+
+        return $results;
+    }
+
+    /**
      * Returns created field
      *
      * @return string|false
      */
-    public function getCreated()
+    public function getCreatedFieldName()
     {
         if(!isset($this->data['fields']) || empty($this->data['fields'])) {
             return false;
@@ -110,7 +127,7 @@ class Schema
      *
      * @return array
      */
-    public function getFilterable()
+    public function getFilterableFieldNames()
     {
         $results = [];
         if(!isset($this->data['fields']) || empty($this->data['fields'])) {
@@ -156,7 +173,7 @@ class Schema
      *
      * @return array
      */
-    public function getFiles()
+    public function getFileFieldNames()
     {
         $results = [];
         if(!isset($this->data['fields'])
@@ -188,21 +205,11 @@ class Schema
     }
 
     /**
-     * Returns icon
-     *
-     * @return string
-     */
-    public function getIcon()
-    {
-        return $this->data['icon'];
-    }
-
-    /**
      * Returns JSON fields
      *
      * @return array
      */
-    public function getJsonFields()
+    public function getJsonFieldNames()
     {
         $results = [];
         if(!isset($this->data['fields']) || empty($this->data['fields'])) {
@@ -238,7 +245,7 @@ class Schema
      *
      * @return string
      */
-    public function getListable()
+    public function getListableFieldNames()
     {
         $results = [];
         if(!isset($this->data['fields']) || empty($this->data['fields'])) {
@@ -264,9 +271,9 @@ class Schema
      *
      * @return string
      */
-    public function getPrimary()
+    public function getPrimaryFieldName()
     {
-        return $this->getTableName() . '_id';
+        return $this->getName() . '_id';
     }
 
     /**
@@ -285,112 +292,28 @@ class Schema
             return $results;
         }
 
-        $table = $this->getTableName();
-        $primary = $this->getPrimary();
+        $table = $this->getName();
+        $primary = $this->getPrimaryFieldName();
 
         foreach($this->data['relations'] as $relation) {
-            $relation = [
-                'table' => $relation['name'],
-                'name' => $table . '_' . $relation['name'],
-                'primary1' => $primary,
-                'primary2' => $relation['name'] . '_id',
-                'many' => $relation['many']
-            ];
-
-            if($many === -1 || $many === $relation['many']) {
-                $results[$relation['name']] = $relation;
+            if($many != -1 && $many != $relation['many']) {
                 continue;
             }
+
+            $name = $table . '_' . $relation['name'];
+
+            $results[$name] = [];
+
+            try {
+                $results[$name] = (new Schema($relation['name']))->getAll(false);
+            } catch(Exception $e) {}
+
+            $results[$name]['primary1'] = $primary;
+            $results[$name]['primary2'] = $results[$name]['primary'];
+            $results[$name]['many'] = $relation['many'];
         }
 
         return $results;
-    }
-
-    /**
-     * Returns searchable fields
-     *
-     * @return array
-     */
-    public function getSearchable()
-    {
-        $results = [];
-        if(!isset($this->data['fields']) || empty($this->data['fields'])) {
-            return $results;
-        }
-
-        $table = $this->data['name'];
-        foreach($this->data['fields'] as $field) {
-            $name = $table . '_' . $field['name'];
-            if(isset($field['searchable']) && $field['searchable']) {
-                $results[] = $name;
-            }
-        }
-
-        return $results;
-    }
-
-    /**
-     * Returns slug fields
-     *
-     * @param string|false $primary
-     *
-     * @return array
-     */
-    public function getSlugs($primary = false)
-    {
-        $results = [];
-        if($primary) {
-            $results[] = $primary;
-        }
-
-        if(!isset($this->data['fields']) || empty($this->data['fields'])) {
-            return $results;
-        }
-
-        $table = $this->data['name'];
-        foreach($this->data['fields'] as $field) {
-            $name = $table . '_' . $field['name'];
-            if (isset($field['type'])) {
-                if($field['type'] === 'slug') {
-                    $results[] = $name;
-                }
-            }
-        }
-
-        return $results;
-    }
-
-    /**
-     * Returns sortable fields
-     *
-     * @return array
-     */
-    public function getSortable()
-    {
-        $results = [];
-        if(!isset($this->data['fields']) || empty($this->data['fields'])) {
-            return $results;
-        }
-
-        $table = $this->data['name'];
-        foreach($this->data['fields'] as $field) {
-            $name = $table . '_' . $field['name'];
-            if(isset($field['sortable']) && $field['sortable']) {
-                $results[] = $name;
-            }
-        }
-
-        return $results;
-    }
-
-    /**
-     * Returns plural name
-     *
-     * @return string
-     */
-    public function getPlural()
-    {
-        return $this->data['plural'];
     }
 
     /**
@@ -398,7 +321,7 @@ class Schema
      *
      * @return array
      */
-    public function getRequired()
+    public function getRequiredFieldNames()
     {
         $results = [];
         if(!isset($this->data['fields']) || empty($this->data['fields'])) {
@@ -423,23 +346,98 @@ class Schema
     }
 
     /**
-     * Returns singular name
+     * Returns searchable fields
      *
-     * @return string
+     * @return array
      */
-    public function getSingular()
+    public function getSearchableFieldNames()
     {
-        return $this->data['singular'];
+        $results = [];
+        if(!isset($this->data['fields']) || empty($this->data['fields'])) {
+            return $results;
+        }
+
+        $table = $this->data['name'];
+        foreach($this->data['fields'] as $field) {
+            $name = $table . '_' . $field['name'];
+            if(isset($field['searchable']) && $field['searchable']) {
+                $results[] = $name;
+            }
+        }
+
+        return $results;
     }
 
     /**
-     * Returns table name
+     * Returns slug fields
+     *
+     * @param string|false $primary
+     *
+     * @return array
+     */
+    public function getSlugableFieldNames($primary = false)
+    {
+        $results = [];
+        if($primary) {
+            $results[] = $primary;
+        }
+
+        if(!isset($this->data['fields']) || empty($this->data['fields'])) {
+            return $results;
+        }
+
+        $table = $this->data['name'];
+        foreach($this->data['fields'] as $field) {
+            $name = $table . '_' . $field['name'];
+            if (isset($field['type'])) {
+                if($field['type'] === 'slug') {
+                    $results[] = $name;
+                }
+            }
+        }
+
+        return $results;
+    }
+
+    /**
+     * Based on the data will generate a suggestion format
+     *
+     * @param array
      *
      * @return string
      */
-    public function getTableName()
+    public function getSuggestionFormat(array $data)
     {
-        return $this->data['name'];
+        if (!isset($this->data['suggestion']) || !trim($this->data['suggestion'])) {
+            return null;
+        }
+
+        $template = cradle('global')->handlebars()->compile($this->data['suggestion']);
+
+        return $template($data);
+    }
+
+    /**
+     * Returns sortable fields
+     *
+     * @return array
+     */
+    public function getSortableFieldNames()
+    {
+        $results = [];
+        if(!isset($this->data['fields']) || empty($this->data['fields'])) {
+            return $results;
+        }
+
+        $table = $this->data['name'];
+        foreach($this->data['fields'] as $field) {
+            $name = $table . '_' . $field['name'];
+            if(isset($field['sortable']) && $field['sortable']) {
+                $results[] = $name;
+            }
+        }
+
+        return $results;
     }
 
     /**
@@ -447,7 +445,7 @@ class Schema
      *
      * @return array
      */
-    public function getUnique()
+    public function getUniqueFieldNames()
     {
         $results = [];
         if(!isset($this->data['fields']) || empty($this->data['fields'])) {
@@ -476,7 +474,7 @@ class Schema
      *
      * @return string|false
      */
-    public function getUpdated()
+    public function getUpdatedFieldName()
     {
         if(!isset($this->data['fields']) || empty($this->data['fields'])) {
             return false;
@@ -530,8 +528,8 @@ class Schema
     public function toSql()
     {
         $data = [
-            'name' => $this->getTableName(),
-            'primary' => $this->getPrimary(),
+            'name' => $this->getName(),
+            'primary' => $this->getPrimaryFieldName(),
             'columns' => [],
             'relations' => $this->getRelations()
         ];

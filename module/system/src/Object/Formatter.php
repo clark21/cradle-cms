@@ -52,7 +52,7 @@ class Formatter
      */
     public function formatData(array $data, $s3 = false, $upload = null) {
         $fields = $this->schema->getFields();
-        $table = $this->schema->getTableName();
+        $table = $this->schema->getName();
 
         foreach($fields as $field) {
             $name = $table . '_' . $field['name'];

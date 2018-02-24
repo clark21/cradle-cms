@@ -54,12 +54,12 @@ class Validator
     {
         $object = [];
         $fields = $this->schema->getFields();
-        $table = $this->schema->getTableName();
-        foreach($fields as $field) {
+        $table = $this->schema->getName();
+        foreach ($fields as $field) {
             $name = $table . '_' . $field['name'];
             if (isset($field['validation'])) {
-                foreach($field['validation'] as $validation) {
-                    if($validation['method'] === 'required'
+                foreach ($field['validation'] as $validation) {
+                    if ($validation['method'] === 'required'
                         && (!isset($data[$name]) || empty($data[$name]))
                     ) {
                         $errors[$name] = $validation['message'];
@@ -67,6 +67,18 @@ class Validator
                 }
             }
         }
+
+        $relations = $this->schema->getRelations();
+        foreach ($relations as $relation) {
+            if($relation['many'] != 1) {
+                continue;
+            }
+
+            if (!isset($data[$relation['primary2']]) || !is_numeric($data[$relation['primary2']])) {
+                $errors[$relation['primary2']] = sprintf('%s should be valid', $relation['singular']);
+            }
+        }
+
         return self::getOptionalErrors($data, $errors);
     }
 
@@ -81,8 +93,8 @@ class Validator
     public function getUpdateErrors(array $data, array $errors = [])
     {
         $fields = $this->schema->getFields();
-        $table = $this->schema->getTableName();
-        $primary = $this->schema->getPrimary();
+        $table = $this->schema->getName();
+        $primary = $this->schema->getPrimaryFieldName();
 
         if(!isset($data[$primary]) || !is_numeric($data[$primary])) {
             $errors[$primary] = 'Invalid ID';
@@ -120,8 +132,8 @@ class Validator
     public function getOptionalErrors(array $data, array $errors = [])
     {
         $fields = $this->schema->getFields();
-        $table = $this->schema->getTableName();
-        $primary = $this->schema->getPrimary();
+        $table = $this->schema->getName();
+        $primary = $this->schema->getPrimaryFieldName();
 
         foreach($fields as $field) {
             $name = $table . '_' . $field['name'];

@@ -53,7 +53,7 @@ $cradle->on('system-schema-create', function ($request, $response) {
     //----------------------------//
     // 4. Process Data
     $schema = SystemSchema::i($data);
-    $table = $schema->getTableName();
+    $table = $schema->getName();
 
     //create table
     $schema->service('sql')->create($data);
@@ -141,7 +141,7 @@ $cradle->on('system-schema-remove', function ($request, $response) {
     //----------------------------//
     // 4. Process Data
     $schema = SystemSchema::i($data);
-    $table = $schema->getTableName();
+    $table = $schema->getName();
     //this/these will be used a lot
     $systemSql = $schema->service('sql');
 
@@ -195,7 +195,7 @@ $cradle->on('system-schema-restore', function ($request, $response) {
     //----------------------------//
     // 4. Process Data
     $schema = SystemSchema::i($data);
-    $table = $schema->getTableName();
+    $table = $schema->getName();
     //this/these will be used a lot
     $systemSql = $schema->service('sql');
 
@@ -329,7 +329,7 @@ $cradle->on('system-schema-update', function ($request, $response) {
     //----------------------------//
     // 4. Process Data
     $schema = SystemSchema::i($data);
-    $table = $schema->getTableName();
+    $table = $schema->getName();
     //this/these will be used a lot
     $systemSql = $schema->service('sql');
     //update table

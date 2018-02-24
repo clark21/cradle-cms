@@ -42,6 +42,21 @@ class Exception extends BaseException
     const ERROR_SCHEMA_ARCHIVE_EXISTS = 'Unable to archive %s, an archive of the schema already exists.';
 
     /**
+     * @const string ERROR_SCHEMA_NO_RELATION
+     */
+    const ERROR_SCHEMA_NO_RELATION = '%s has no relation to %s';
+
+    /**
+     * Create a new exception for missing Schema
+     *
+     * @return Exception
+     */
+    public static function forNoRelation($name, $relation): Exception
+    {
+        return new static(sprintf(static::ERROR_SCHEMA_NO_RELATION, $name, $relation));
+    }
+
+    /**
      * Create a new exception for missing Schema
      *
      * @return Exception
@@ -58,7 +73,7 @@ class Exception extends BaseException
      *
      * @return ObjectException
      */
-    public static function forSchemaNotFound(string $name): ObjectException
+    public static function forSchemaNotFound($name): ObjectException
     {
         $message = sprintf(static::ERROR_SCHEMA_NOT_FOUND, $name);
         return new static($message);
@@ -66,9 +81,9 @@ class Exception extends BaseException
 
     /**
      * Create a new exception if schema already exists
-     * 
+     *
      * @param *string $name
-     * 
+     *
      * @return ObjectException
      */
     public static function forSchemaAlreadyExists(string $name)
@@ -80,9 +95,9 @@ class Exception extends BaseException
     /**
      * Create a new exception if an archived of the
      * given schema already exists.
-     * 
+     *
      * @param *string $name
-     * 
+     *
      * @return ObjectException
      */
     public static function forSchemaArchiveExists(string $name)

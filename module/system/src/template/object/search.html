@@ -236,10 +236,10 @@
                                         <td><img src="{{value}}" width="{{parameters.0}}" height="{{parameters.1}}" /></td>
                                     {{/when}}
                                     {{#when format '===' 'email'}}
-                                        <td><a href="mailto:{{value}}">{{parameters}}</a></td>
+                                        <td><a href="mailto:{{value}}">{{compile parameters ../this}}</a></td>
                                     {{/when}}
                                     {{#when format '===' 'phone'}}
-                                        <td><a href="tel:{{value}}">{{parameters}}</a></td>
+                                        <td><a href="tel:{{value}}">{{compile parameters ../this}}</a></td>
                                     {{/when}}
                                     {{#when format '===' 'comma'}}
                                         <td>{{implode value ','}}</td>

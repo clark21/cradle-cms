@@ -44,7 +44,7 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
     //filter possible filter options
     //we do this to prevent SQL injections
     if(is_array($request->getStage('filter'))) {
-        $filterable = $schema->getFilterable();
+        $filterable = $schema->getFilterableFieldNames();
 
         foreach($request->getStage('filter') as $key => $value) {
             if(!in_array($key, $filterable)) {
@@ -56,7 +56,7 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
     //filter possible sort options
     //we do this to prevent SQL injections
     if(is_array($request->getStage('order'))) {
-        $sortable = $schema->getSortable();
+        $sortable = $schema->getSortableFieldNames();
 
         foreach($request->getStage('order') as $key => $value) {
             if(!in_array($key, $sortable)) {
@@ -67,19 +67,13 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
 
     //trigger job
     cradle()->trigger('system-object-search', $request, $response);
+
+    if($request->getStage('json')) {
+        return;
+    }
+
     $data = array_merge($request->getStage(), $response->getResults());
-    $data['schema'] = [
-        'name' => $schema->getTableName(),
-        'icon' => $schema->getIcon(),
-        'singular' => $schema->getSingular(),
-        'plural' => $schema->getPlural(),
-        'primary' => $schema->getPrimary(),
-        'active' => $schema->getActive(),
-        'listable' => $schema->getListable(),
-        'fields' => $schema->getFields(),
-        'sortable' => $schema->getSortable(),
-        'filterable' => $schema->getFilterable(),
-    ];
+    $data['schema'] = $schema->getAll();
 
     if($data['schema']['active']) {
         foreach($data['schema']['filterable'] as $i => $filter) {
@@ -199,7 +193,8 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
         ->setContent($body);
 
     //render page
-}, 'render-admin-page');
+    cradle()->trigger('render-admin-page', $request, $response);
+});
 
 /**
  * Render the System Object Create Page
@@ -226,15 +221,7 @@ $cradle->get('/admin/system/object/:schema/create', function($request, $response
     cradle()->trigger('system-schema-detail', $request, $schemaResponse);
     $schema = SystemSchema::i($schemaResponse->getResults());
 
-    $data['schema'] = [
-        'name' => $schema->getTableName(),
-        'icon' => $schema->getIcon(),
-        'singular' => $schema->getSingular(),
-        'plural' => $schema->getPlural(),
-        'fields' => $schema->getFields(),
-        'files' => $schema->getFiles(),
-        'relations' => $schema->getRelations()
-    ];
+    $data['schema'] = $schema->getAll();
 
     //add CSRF
     cradle()->trigger('csrf-load', $request, $response);
@@ -244,6 +231,11 @@ $cradle->get('/admin/system/object/:schema/create', function($request, $response
         //add CDN
         $config = $this->package('global')->service('s3-main');
         $data['cdn_config'] = File::getS3Client($config);
+    }
+
+    //add suggestions field for each relation
+    foreach ($data['schema']['relations'] as $name => $relation) {
+        $data['schema']['relations'][$name]['suggestion_name'] = '_' . $relation['primary2'];
     }
 
     //----------------------------//
@@ -450,14 +442,7 @@ $cradle->get('/admin/system/object/:schema/update/:id', function($request, $resp
     cradle()->trigger('system-schema-detail', $request, $schemaResponse);
     $schema = SystemSchema::i($schemaResponse->getResults());
 
-    $data['schema'] = [
-        'name' => $schema->getTableName(),
-        'icon' => $schema->getIcon(),
-        'singular' => $schema->getSingular(),
-        'plural' => $schema->getPlural(),
-        'fields' => $schema->getFields(),
-        'files' => $schema->getFiles()
-    ];
+    $data['schema'] = $schema->getAll();
 
     //add CSRF
     cradle()->trigger('csrf-load', $request, $response);
@@ -467,6 +452,17 @@ $cradle->get('/admin/system/object/:schema/update/:id', function($request, $resp
         //add CDN
         $config = $this->package('global')->service('s3-main');
         $data['cdn_config'] = File::getS3Client($config);
+    }
+
+    //add suggestions field for each relation
+    foreach ($data['schema']['relations'] as $name => $relation) {
+        $suggestion = '_' . $relation['primary2'];
+        $data['schema']['relations'][$name]['suggestion_name'] = $suggestion;
+
+        try {
+            $data['item'][$suggestion] = SystemSchema::i($relation['name'])
+                ->getSuggestionFormat($data['item']);
+        } catch(Exception $e) {}
     }
 
     //----------------------------//
@@ -653,7 +649,7 @@ $cradle->post('/admin/system/object/:schema/create', function($request, $respons
     $fields = $schema->getFields();
 
     $invalidTypes = ['none', 'active', 'created', 'updated'];
-    $requiredFields = $schema->getRequired();
+    $requiredFields = $schema->getRequiredFieldNames();
 
     foreach($fields as $name => $field) {
         if(in_array($field['field']['type'], $invalidTypes)) {
@@ -685,12 +681,13 @@ $cradle->post('/admin/system/object/:schema/create', function($request, $respons
         }
     }
 
-    if(//special shot out to user
-        in_array('user', $schema->getRelations())
-        && !$request->hasStage('user_id')
-    ) {
-        $request->setStage('user_id', $request->getSession('me', 'user_id'));
-    }
+    //TODO make a better way of doing this
+    //if(//special shot out to user
+    //    in_array('user', $schema->getRelations())
+    //    && !$request->hasStage('user_id')
+    //) {
+    //    $request->setStage('user_id', $request->getSession('me', 'user_id'));
+    //}
 
     //----------------------------//
     // 3. Process Request
@@ -747,7 +744,7 @@ $cradle->post('/admin/system/object/:schema/update/:id', function($request, $res
     $fields = $schema->getFields();
 
     $invalidTypes = ['none', 'active', 'created', 'updated'];
-    $requiredFields = $schema->getRequired();
+    $requiredFields = $schema->getRequiredFieldNames();
 
     foreach($fields as $name => $field) {
         if(in_array($field['field']['type'], $invalidTypes)) {
@@ -930,7 +927,7 @@ $cradle->post('/admin/system/object/:schema/import', function($request, $respons
     // 4. Interpret Results
     $redirect = sprintf(
         '/admin/system/object/%s/search',
-        $schema->getTableName()
+        $schema->getName()
     );
 
     if($response->isError()) {
@@ -988,7 +985,7 @@ $cradle->get('/admin/system/object/:schema/export/:type', function($request, $re
     //filter possible filter options
     //we do this to prevent SQL injections
     if(is_array($request->getStage('filter'))) {
-        $filterable = $schema->getFilterable();
+        $filterable = $schema->getFilterableFieldNames();
 
         foreach($request->getStage('filter') as $key => $value) {
             if(!in_array($key, $filterable)) {
@@ -1000,7 +997,7 @@ $cradle->get('/admin/system/object/:schema/export/:type', function($request, $re
     //filter possible sort options
     //we do this to prevent SQL injections
     if(is_array($request->getStage('order'))) {
-        $sortable = $schema->getSortable();
+        $sortable = $schema->getSortableFieldNames();
 
         foreach($request->getStage('order') as $key => $value) {
             if(!in_array($key, $sortable)) {
@@ -1073,8 +1070,8 @@ $cradle->get('/admin/system/object/:schema/export/:type', function($request, $re
 
         $root = sprintf(
             "<?xml version=\"1.0\"?>\n<%s></%s>",
-            $schema->getTableName(),
-            $schema->getTableName()
+            $schema->getName(),
+            $schema->getName()
         );
 
         $response
@@ -1093,90 +1090,4 @@ $cradle->get('/admin/system/object/:schema/export/:type', function($request, $re
         ->addHeader('Content-Disposition', 'attachment; filename=' . $filename . '.json');
 
     $response->set('json', $rows);
-});
-
-/**
- * Render System Object Suggestions
- *
- * @param Request $request
- * @param Response $response
- */
-$cradle->get('/admin/system/object/:schema/suggestions', function($request, $response) {
-    //----------------------------//
-    // 1. Route Permissions
-    //only for admin
-    cradle('global')->requireLogin('admin');
-
-    //----------------------------//
-    // 2. Prepare Data
-    if(!$request->hasStage('range')) {
-        $request->setStage('range', 50);
-    }
-
-    $schemaResponse = Response::i()->load();
-    cradle()->trigger('system-schema-detail', $request, $schemaResponse);
-    $schema = SystemSchema::i($schemaResponse->getResults());
-
-    //filter possible filter options
-    //we do this to prevent SQL injections
-    if(is_array($request->getStage('filter'))) {
-        $filterable = $schema->getFilterable();
-
-        foreach($request->getStage('filter') as $key => $value) {
-            if(!in_array($key, $filterable)) {
-                $request->removeStage('filter', $key);
-            }
-        }
-    }
-
-    //filter possible sort options
-    //we do this to prevent SQL injections
-    if(is_array($request->getStage('order'))) {
-        $sortable = $schema->getSortable();
-
-        foreach($request->getStage('order') as $key => $value) {
-            if(!in_array($key, $sortable)) {
-                $request->removeStage('order', $key);
-            }
-        }
-    }
-
-    //trigger job
-    cradle()->trigger('system-object-search', $request, $response);
-
-    //find all searchable
-    $primary = $schema->getPrimary();
-    $searchable = $schema->getSearchable();
-    $field = $schema->getFields();
-    $results = $response->getResults('rows');
-
-    foreach($results as $i => $result) {
-        $label = [];
-        foreach($searchable as $name) {
-            if(isset($result[$name])
-                && trim($result[$name])
-                && !in_array(
-                    $field[$name]['field']['type'],
-                    [
-                        'textarea',
-                        'wysiwyg',
-                        'markdown',
-                        'code'
-                    ]
-                )
-            )
-            {
-                $label[] = $result[$name];
-            }
-        }
-
-        $results[$i] = [
-            'label' => implode(', ', $label),
-            'value' => $result[$primary]
-        ];
-    }
-
-    //----------------------------//
-    // 3. Render Template
-    $response->set('json', $results);
 });

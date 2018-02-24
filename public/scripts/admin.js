@@ -115,22 +115,31 @@ jQuery(function($) {
 
             var searching = false,
                 prevent = false,
-                label = target.attr('data-label'),
                 value = target.attr('data-value'),
+                format = target.attr('data-format'),
+                targetLabel = target.attr('data-target-label'),
+                targetValue = target.attr('data-target-value'),
                 url = target.attr('data-url')
                 template = '<li class="suggestion-item">{VALUE}</li>';
 
-            if(!label || !value || !url) {
+            if(!targetLabel || !targetValue || !format || !url || !value) {
                 return;
             }
 
-            label = $(label);
-            value = $(value);
+            targetLabel = $(targetLabel);
+            targetValue = $(targetValue);
 
             var loadSuggestions = function(list, callback) {
                 container.html('');
 
                 list.forEach(function(item) {
+                    var compiled = Handlebars.compile(format);
+
+                    item = {
+                        label: compiled(item),
+                        value: item[value]
+                    };
+
                     var row = template.replace('{VALUE}', item.label);
 
                     row = $(row).click(function() {
@@ -148,13 +157,20 @@ jQuery(function($) {
                 }
             };
 
-            label
+            targetLabel
                 .keypress(function(e) {
+                    //if enter
                     if(e.keyCode == 13 && prevent) {
                         e.preventDefault();
                     }
                 })
                 .keydown(function(e) {
+                    //if backspace
+                    if(e.keyCode == 8) {
+                        //undo the value
+                        targetValue.val('');
+                    }
+
                     prevent = false;
                     if(!target.hasClass('d-none')) {
                         switch(e.keyCode) {
@@ -195,32 +211,30 @@ jQuery(function($) {
                     }
 
                     setTimeout(function() {
-                        if (label.val() == '') {
+                        if (targetLabel.val() == '') {
                             return;
                         }
 
                         searching = true;
 
                         $.ajax({
-                            url : url.replace('{QUERY}', label.val()),
+                            url : url.replace('{QUERY}', targetLabel.val()),
                             type : 'GET',
                             success : function(response) {
                                 var list = [];
 
-                                if(typeof response === 'string' || typeof response === 'number') {
-                                    response = [response];
-                                }
-
-                                if(response instanceof Array) {
-                                    response.forEach(function(item) {
-                                        list.push(item);
-                                    });
+                                if(typeof response.results !== 'undefined'
+                                    && typeof response.results.rows !== 'undefined'
+                                    && response.results.rows instanceof Array
+                                ) {
+                                    list = response.results.rows;
                                 }
 
                                 loadSuggestions(list, function(item) {
-                                    value.val(item.value);
-                                    label.val(item.label).trigger('keyup');
+                                    targetValue.val(item.value);
+                                    targetLabel.val(item.label).trigger('keyup');
                                 });
+
                                 searching = false;
                             }, error : function() {
                                 searching = false;

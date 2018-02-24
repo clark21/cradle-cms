@@ -96,7 +96,7 @@
                                 {{#if item.icon}}
                                     <i class="{{item.icon}}"></i>
                                 {{else}}
-                                    ?
+                                    <i class="fas fa-question fa-fw"></i>
                                 {{/if}}
                             </div>
                         </div>
@@ -106,7 +106,7 @@
                             data-target="#icon-options"
                             data-toggle="collapse"
                             name="icon"
-                            placeholder="fas fa-square"
+                            placeholder="fas fa-question"
                             type="text"
                             value="{{item.icon}}"
                         />
@@ -137,25 +137,6 @@
                     <div class="invalid-feedback">
                         {{errors.detail}}
                     </div>
-                    {{/if}}
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="control-label">Suggestion Format</label>
-                <div>
-                    <input
-                        class="form-control schema-suggestion {{#if errors.plural}}is-invalid{{/if}}"
-                        name="suggestion"
-                        value="{{item.suggestion}}"
-                        placeholder="{\{table_column}} - {\{table_column}}"
-                        type="text"
-                    />
-
-                    {{#if errors.suggestion}}
-                        <div class="invalid-feedback">
-                            {{errors.suggestion}}
-                        </div>
                     {{/if}}
                 </div>
             </div>
@@ -271,6 +252,25 @@
                     >
                         Add Relation
                     </button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label">Suggestion Format</label>
+                <div>
+                    <input
+                        class="form-control schema-suggestion {{#if errors.plural}}is-invalid{{/if}}"
+                        name="suggestion"
+                        value="{{item.suggestion}}"
+                        placeholder="{\{keyword_field}} - {\{keyword_field}}"
+                        type="text"
+                    />
+
+                    {{#if errors.suggestion}}
+                        <div class="invalid-feedback">
+                            {{errors.suggestion}}
+                        </div>
+                    {{/if}}
                 </div>
             </div>
 

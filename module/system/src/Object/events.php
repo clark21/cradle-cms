@@ -72,17 +72,15 @@ $cradle->on('system-object-create', function ($request, $response) {
     $results = $objectSql->create($data);
 
     //get the primary value
-    $primary = $results[$schema->getPrimary()];
-
-    $table = $schema->getTableName();
+    $primary = $results[$schema->getPrimaryFieldName()];
     $relations = $schema->getRelations();
 
     //loop through relations
-    foreach ($relations as $name => $relation) {
+    foreach ($relations as $table => $relation) {
         //link relations
         if(isset($data[$relation['primary2']])) {
             $objectSql->link(
-                $table,
+                $relation['name'],
                 $primary,
                 $data[$relation['primary2']]
             );
@@ -120,7 +118,7 @@ $cradle->on('system-object-detail', function ($request, $response) {
     $schema = SystemSchema::i($data['schema']);
 
     $id = $key = null;
-    $slugs = $schema->getSlugs($schema->getPrimary());
+    $slugs = $schema->getSlugableFieldNames($schema->getPrimaryFieldName());
 
     foreach($slugs as $slug) {
         if(isset($data[$slug])) {
@@ -210,8 +208,8 @@ $cradle->on('system-object-remove', function ($request, $response) {
 
     $schema = SystemSchema::i($request->getStage('schema'));
 
-    $primary = $schema->getPrimary();
-    $active = $schema->getActive();
+    $primary = $schema->getPrimaryFieldName();
+    $active = $schema->getActiveFieldName();
 
     //----------------------------//
     // 4. Process Data
@@ -235,7 +233,7 @@ $cradle->on('system-object-remove', function ($request, $response) {
     $objectElastic->remove($data[$primary]);
 
     //invalidate cache
-    $slugs = $schema->getSlugs($primary);
+    $slugs = $schema->getSlugableFieldNames($primary);
     foreach($slugs as $slug) {
         if(isset($data[$slug])) {
             $objectRedis->removeDetail($data[$slug]);
@@ -275,8 +273,8 @@ $cradle->on('system-object-restore', function ($request, $response) {
 
     $schema = SystemSchema::i($request->getStage('schema'));
 
-    $primary = $schema->getPrimary();
-    $active = $schema->getActive();
+    $primary = $schema->getPrimaryFieldName();
+    $active = $schema->getActiveFieldName();
 
     //----------------------------//
     // 4. Process Data
@@ -420,9 +418,6 @@ $cradle->on('system-object-update', function ($request, $response) {
             $this->package('global')->path('upload')
         );
 
-    //get the primary value
-    $primary = $schema->getPrimary();
-
     //----------------------------//
     // 4. Process Data
     //this/these will be used a lot
@@ -433,11 +428,63 @@ $cradle->on('system-object-update', function ($request, $response) {
     //save object to database
     $results = $objectSql->update($data);
 
+    //get the primary value
+    $primary = $schema->getPrimaryFieldName();
+    $relations = $schema->getRelations();
+
+    //loop through relations
+    foreach ($relations as $table => $relation) {
+        //if 1:N, skip
+        if($relation['many'] > 1) {
+            continue;
+        }
+
+        $lastId = $response->getResults($relation['primary2']);
+
+        //if 0:1 and no primary
+        if ($relation['many'] === 0
+            && (
+                !isset($data[$relation['primary2']])
+                || !is_numeric($data[$relation['primary2']])
+            )
+        )
+        {
+            //remove last id
+            $objectSql->unlink(
+                $relation['name'],
+                $primary,
+                $lastId
+            );
+
+            continue;
+        }
+
+        if(isset($data[$relation['primary2']])
+            && is_numeric($data[$relation['primary2']])
+            && $lastId != $data[$relation['primary2']]
+        )
+        {
+            //remove last id
+            $objectSql->unlink(
+                $relation['name'],
+                $results[$primary],
+                $lastId
+            );
+
+            //link current id
+            $objectSql->link(
+                $relation['name'],
+                $results[$primary],
+                $data[$relation['primary2']]
+            );
+        }
+    }
+
     //index object
     $objectElastic->update($results[$primary]);
 
     //invalidate cache
-    $slugs = $schema->getSlugs($primary);
+    $slugs = $schema->getSlugableFieldNames($primary);
     foreach($slugs as $slug) {
         if(isset($data[$slug])) {
             $objectRedis->removeDetail($data[$slug]);
@@ -501,12 +548,12 @@ $cradle->on('system-object-import', function ($request, $response) {
     // There is no error,
     // So proceed on adding/updating the items one by one
     foreach ($data['rows'] as $i => $row) {
-        $created = $schema->getCreated();
+        $created = $schema->getCreatedFieldName();
         if($created && isset($row[$created])) {
             unset($row[$created]);
         }
 
-        $updated = $schema->getUpdated();
+        $updated = $schema->getUpdatedFieldName();
         if($updated && isset($row[$updated])) {
             unset($row[$updated]);
         }

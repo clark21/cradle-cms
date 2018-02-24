@@ -63,6 +63,15 @@ return function ($request, $response) {
         return $options['inverse']();
     });
 
+    $handlebars->registerHelper('compile', function(
+        $template,
+        $variables,
+        $options
+    ) use ($handlebars) {
+        $template = $handlebars->compile($template);
+        return $template($variables);
+    });
+
     $handlebars->registerHelper('error_exist', function($arr, $val, $scheme, $options) {
         $name = $scheme . "_" . $val;
 
