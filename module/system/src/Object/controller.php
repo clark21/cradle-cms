@@ -205,16 +205,6 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
 
     //render page
     cradle()->trigger('render-admin-page', $request, $response);
-
-    //record logs
-    cradle()->log(
-        sprintf(
-            'View %s listing',
-            $schema->getSingular()
-        ),
-        $request,
-        $response
-    );
 });
 
 /**
@@ -1404,16 +1394,6 @@ $cradle->get('/admin/system/object/:schema/export/:type', function($request, $re
     $rows = $response->getResults('rows');
     //determine the filename
     $filename = $schema->getPlural() . '-' . date('Y-m-d');
-
-    //record logs
-    cradle()->log(
-        sprintf(
-            '%s was Exported',
-            $schema->getPlural()
-        ),
-        $request,
-        $response
-    );
 
     //if the output type is csv
     if($type === 'csv') {

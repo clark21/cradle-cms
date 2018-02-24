@@ -19,12 +19,6 @@ $cradle->get('/admin/system/schema/search', function($request, $response) {
     //only for admin
     cradle('global')->requireLogin('admin');
 
-    //record logs
-    cradle()->log('View schema listing',
-        $request,
-        $response
-    );
-
     //----------------------------//
     // 2. Prepare Data
     if(!$request->hasStage()) {
@@ -85,27 +79,7 @@ $cradle->get('/admin/system/schema/create', function($request, $response) {
             }
 
             return $option['inverse']();
-        })
-        ->registerHelper('get_icons', function($options) {
-            function array_delete($array, $element) {
-                return (is_array($element)) ? array_values(array_diff($array, $element)) : array_values(array_diff($array, array($element)));
-            }
-
-            $icons_file = "components/fontawesome5-webfont/css/fontawesome-all.min.css";
-            $parsed_file = file_get_contents($icons_file);
-            preg_match_all("/fa\-([a-zA-z0-9\-]+[^\:\.\,\s])/", $parsed_file, $matches);
-            $exclude_icons = array("fa-lg", "fa-lg{", "fa-2x", "fa-2x{", "fa-3x", "fa-3x{", "fa-4x", "fa-4x{", "fa-5x", "fa-5x{", "fa-ul", "fa-ul{", "fa-ul>", "fa-li", "fa-li{", "fa-fw", "fa-fw{", "fa-border", "fa-pulse", "fa-rotate-90", "fa-rotate-90{", "fa-rotate-180", "fa-rotate-180{", "fa-rotate-270", "fa-rotate-270{", "fa-spin", "fa-flip-horizontal", "fa-flip-vertical", "fa-stack", "fa-stack{", "fa-stack-1x", "fa-stack-1x{", "fa-stack-2x", "fa-stack-2x{", "fa-inverse", "fa-pull-left", "fa-pull-right");
-            $icons = array("icons" => array_delete($matches[0], $exclude_icons));
-
-            $columns = [];
-
-            foreach($icons['icons'] as $key => $value) {
-                $columns[] = $options['fn'](["value" => 'fas ' . $value]);
-            }
-
-            return implode('', $columns);
-        })
-        ;
+        });
 
     $body = cradle('/module/system')->template(
         'form',
@@ -185,27 +159,7 @@ $cradle->get('/admin/system/schema/update/:name', function($request, $response) 
             }
 
             return $option['inverse']();
-        })
-        ->registerHelper('get_icons', function($options) {
-            function array_delete($array, $element) {
-                return (is_array($element)) ? array_values(array_diff($array, $element)) : array_values(array_diff($array, array($element)));
-            }
-
-            $icons_file = "components/fontawesome5-webfont/css/fontawesome-all.min.css";
-            $parsed_file = file_get_contents($icons_file);
-            preg_match_all("/fa\-([a-zA-z0-9\-]+[^\:\.\,\s])/", $parsed_file, $matches);
-            $exclude_icons = array("fa-lg", "fa-lg{", "fa-2x", "fa-2x{", "fa-3x", "fa-3x{", "fa-4x", "fa-4x{", "fa-5x", "fa-5x{", "fa-ul", "fa-ul{", "fa-ul>", "fa-li", "fa-li{", "fa-fw", "fa-fw{", "fa-border", "fa-pulse", "fa-rotate-90", "fa-rotate-90{", "fa-rotate-180", "fa-rotate-180{", "fa-rotate-270", "fa-rotate-270{", "fa-spin", "fa-flip-horizontal", "fa-flip-vertical", "fa-stack", "fa-stack{", "fa-stack-1x", "fa-stack-1x{", "fa-stack-2x", "fa-stack-2x{", "fa-inverse", "fa-pull-left", "fa-pull-right");
-            $icons = array("icons" => array_delete($matches[0], $exclude_icons));
-
-            $columns = [];
-
-            foreach($icons['icons'] as $key => $value) {
-                $columns[] = $options['fn'](["value" => 'fa ' . $value]);
-            }
-
-            return implode('', $columns);
-        })
-        ;
+        });
 
     $body = cradle('/module/system')->template(
         'form',
@@ -273,12 +227,20 @@ $cradle->post('/admin/system/schema/create', function($request, $response) {
     //----------------------------//
     // 4. Interpret Results
     if($response->isError()) {
-        return cradle()->triggerRoute('get', '/admin/system/schema/create', $request, $response);
+        return cradle()->triggerRoute(
+            'get',
+            '/admin/system/schema/create',
+            $request,
+            $response
+        );
     }
 
     //record logs
-    $data = $request->getStage();
-    cradle()->log(ucfirst($data['name']) . ' schema created',
+    cradle()->log(
+        sprintf(
+            '%s schema created',
+            ucfirst($request->getStage('name'))
+        ),
         $request,
         $response
     );
@@ -328,14 +290,19 @@ $cradle->post('/admin/system/schema/update/:name', function($request, $response)
     //----------------------------//
     // 4. Interpret Results
     if($response->isError()) {
-        $route = '/admin/system/schema/update/' . $request->getStage('name');
+        $route = sprintf(
+            '/admin/system/schema/update/%s',
+            $request->getStage('name')
+        );
         return cradle()->triggerRoute('get', $route, $request, $response);
     }
 
     //record logs
-    $data = $request->getStage();
-    $data = $request->getStage();
-    cradle()->log(ucfirst($data['name']) . ' schema updated',
+    cradle()->log(
+        sprintf(
+            '%s schema updated',
+            ucfirst($request->getStage('name'))
+        ),
         $request,
         $response
     );
@@ -378,8 +345,11 @@ $cradle->get('/admin/system/schema/remove/:name', function($request, $response) 
         cradle('global')->flash($message, 'success');
 
         //record logs
-        $data = $request->getStage();
-        cradle()->log(ucfirst($data['name']) . ' schema removed',
+        cradle()->log(
+            sprintf(
+                '%s schema removed',
+                ucfirst($request->getStage('name'))
+            ),
             $request,
             $response
         );
@@ -419,8 +389,11 @@ $cradle->get('/admin/system/schema/restore/:name', function($request, $response)
         cradle('global')->flash($message, 'success');
 
         //record logs
-        $data = $request->getStage();
-        cradle()->log(ucfirst($data['name']) . ' schema restored',
+        cradle()->log(
+            sprintf(
+                '%s schema restored',
+                ucfirst($request->getStage('name'))
+            ),
             $request,
             $response
         );
@@ -429,7 +402,6 @@ $cradle->get('/admin/system/schema/restore/:name', function($request, $response)
 
     cradle('global')->redirect('/admin/system/schema/search');
 });
-
 
 /**
  * Render Template Actions
@@ -447,7 +419,7 @@ $cradle->get('/admin/system/template/:action', function($request, $response) {
 
     //----------------------------//
     // 2. Render Template
-    $class = 'page-admin-system-template-' . $action . ' page-admin';
+    $class = sprintf('page-admin-system-template-%s page-admin', $action);
     $data['title'] = cradle('global')->translate('System Template ' . ucfirst($action));
     $body = cradle('/module/system')->template('template/' . $action, $data);
 
