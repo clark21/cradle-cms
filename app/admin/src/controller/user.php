@@ -47,6 +47,12 @@ $cradle->get('/admin/user/search', function($request, $response) {
 
     //trigger job
     cradle()->trigger('user-search', $request, $response);
+
+    //if we only want the raw data
+    if($request->getStage('render') === 'false') {
+        return;
+    }
+
     $data = array_merge($request->getStage(), $response->getResults());
 
     //----------------------------//
@@ -61,8 +67,14 @@ $cradle->get('/admin/user/search', function($request, $response) {
         ->setPage('class', $class)
         ->setContent($body);
 
+    //if we only want the body
+    if($request->getStage('render') === 'body') {
+        return;
+    }
+
     //render page
-}, 'render-admin-page');
+    cradle()->trigger('render-admin-page', $request, $response);
+});
 
 /**
  * Render the User Create Page
@@ -333,4 +345,3 @@ $cradle->get('/admin/user/restore/:user_id', function($request, $response) {
 
     cradle('global')->redirect('/admin/user/search');
 });
-

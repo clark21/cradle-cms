@@ -324,6 +324,13 @@ $cradle->get('/admin/system/object/:schema/create', function($request, $response
         $data['relation'] = $request->getStage('relation');
     }
 
+    //determine valid relations
+    $data['valid_relations'] = [];
+    cradle()->trigger('system-schema-search', $request, $response);
+    foreach($response->getResults('rows') as $relation) {
+        $data['valid_relations'][] = $relation['name'];
+    }
+
     //----------------------------//
     // 3. Render Template
     //set the class name
@@ -633,6 +640,13 @@ $cradle->get('/admin/system/object/:schema/update/:id', function($request, $resp
     //pass suggestion title field for each relation to the template
     foreach ($data['schema']['relations'] as $name => $relation) {
         $data['schema']['relations'][$name]['suggestion_name'] = '_' . $relation['primary2'];
+    }
+
+    //determine valid relations
+    $data['valid_relations'] = [];
+    cradle()->trigger('system-schema-search', $request, $response);
+    foreach($response->getResults('rows') as $relation) {
+        $data['valid_relations'][] = $relation['name'];
     }
 
     //----------------------------//

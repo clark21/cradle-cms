@@ -61,7 +61,7 @@ $cradle->get('/admin/system/schema/create', function($request, $response) {
     $data = ['item' => $request->getPost()];
 
     if ($response->isError()) {
-        $response->setFlash($response->getMessage(), 'danger');
+        $response->setFlash($response->getMessage(), 'error');
         $data['errors'] = $response->getValidation();
     }
 
@@ -133,7 +133,7 @@ $cradle->get('/admin/system/schema/update/:name', function($request, $response) 
         //can we update ?
         if($response->isError()) {
             //add a flash
-            cradle('global')->flash($response->getMessage(), 'danger');
+            cradle('global')->flash($response->getMessage(), 'error');
             return cradle('global')->redirect('/admin/system/schema/search');
         }
 
@@ -141,7 +141,7 @@ $cradle->get('/admin/system/schema/update/:name', function($request, $response) 
     }
 
     if($response->isError()) {
-        $response->setFlash($response->getMessage(), 'danger');
+        $response->setFlash($response->getMessage(), 'error');
         $data['errors'] = $response->getValidation();
     }
 
@@ -348,7 +348,7 @@ $cradle->get('/admin/system/schema/remove/:name', function($request, $response) 
     // 4. Interpret Results
     if($response->isError()) {
         //add a flash
-        cradle('global')->flash($response->getMessage(), 'danger');
+        cradle('global')->flash($response->getMessage(), 'error');
     } else {
         //add a flash
         $message = cradle('global')->translate('System Schema was Removed');
@@ -392,7 +392,7 @@ $cradle->get('/admin/system/schema/restore/:name', function($request, $response)
     // 4. Interpret Results
     if($response->isError()) {
         //add a flash
-        cradle('global')->flash($response->getMessage(), 'danger');
+        cradle('global')->flash($response->getMessage(), 'error');
     } else {
         //add a flash
         $message = cradle('global')->translate('System Schema was Restored');

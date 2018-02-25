@@ -108,6 +108,23 @@ class Validator
             $errors['name'] = 'Keyword must only have letters, numbers, dashes';
         }
 
+        if (isset($data['relations'])) {
+            $relations = [];
+            foreach ($data['relations'] as $i => $relation) {
+                if (in_array($relation['name'], $relations)) {
+                    $errors['relations'] = 'Duplicate Relations';
+                    break;
+                }
+
+                if (!trim($relation['name'])) {
+                    $errors['relations'] = 'Empty relation name';
+                    break;
+                }
+
+                $relations[] = $relation['name'];
+            }
+        }
+
         return $errors;
     }
 }

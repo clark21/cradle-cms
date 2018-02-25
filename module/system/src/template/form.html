@@ -242,6 +242,11 @@
                             />
                         </div>
                     {{/each}}
+
+                    {{#if errors.relations}}
+                        <div class="help-text">{{errors.relations}}</div>
+                    {{/if}}
+
                     <button
                         class="relation-add btn btn-info"
                         data-default="??"

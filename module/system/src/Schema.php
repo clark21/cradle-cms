@@ -309,11 +309,17 @@ class Schema extends Registry
 
             try {
                 $results[$name] = Schema::i($relation['name'])->getAll(false);
-            } catch(Exception $e) {}
+            } catch(Exception $e) {
+                //this is not a registered schema
+                //lets make a best guess
+                $results[$name]['name'] = $relation['name'];
+                $results[$name]['singular'] = ucfirst($relation['name']);
+                $results[$name]['plural'] = $results[$name]['singular'] . 's';
+                $results[$name]['primary'] =  $relation['name'] . '_id';
+            }
 
             $results[$name]['primary1'] = $primary;
-            //kasi what do we do with user and auth?
-            $results[$name]['primary2'] = $relation['name'] . '_id';
+            $results[$name]['primary2'] = $results[$name]['primary'];
             $results[$name]['many'] = $relation['many'];
         }
 

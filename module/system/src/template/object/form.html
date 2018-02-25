@@ -94,12 +94,12 @@
                                 data-format="{{suggestion}}"
                                 data-target-label="input.suggestion-label-{{name}}"
                                 data-target-value="input.suggestion-value-{{name}}"
-                                data-value="{{primary2}}"
-                                {{#in table 'user,auth'}}
-                                    data-url="/admin/{{name}}/search?q={QUERY}&render=false"
-                                {{else}}
+                                {{#in table ../valid_relations}}
                                     data-url="/admin/system/object/{{name}}/search?q={QUERY}&render=false"
+                                {{else}}
+                                    data-url="/admin/{{name}}/search?q={QUERY}&render=false"
                                 {{/in}}
+                                data-value="{{primary2}}"
                             ></div>
                             {{#has primary2 ../errors}}
                                 <span class="help-text">{{key primary2 ../errors}}</span>

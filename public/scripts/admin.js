@@ -122,7 +122,7 @@ jQuery(function($) {
                 url = target.attr('data-url')
                 template = '<li class="suggestion-item">{VALUE}</li>';
 
-            if(!targetLabel || !targetValue || !format || !url || !value) {
+            if(!targetLabel || !targetValue || !url || !value) {
                 return;
             }
 
@@ -133,13 +133,39 @@ jQuery(function($) {
                 container.html('');
 
                 list.forEach(function(item) {
-                    var compiled = Handlebars.compile(format);
+                    var label = '';
+                    //if there is a format, yay.
+                    if (format) {
+                        label = Handlebars.compile(format)(item);
+                    //otherwise best guess?
+                    } else {
+                        for (var key in item) {
+                            if(
+                                //if it is not a string
+                                typeof item[key] !== 'string'
+                                //it's a string but is like a number
+                                || !isNaN(parseFloat(item[key]))
+                                //it's a string and is not like a number
+                                // but the first character is like a number
+                                || !isNaN(parseFloat(item[key][0]))
+                            ) {
+                                continue;
+                            }
 
-                    item = {
-                        label: compiled(item),
-                        value: item[value]
-                    };
+                            label = item[key];
+                        }
+                    }
 
+                    //if still no label
+                    if(!label.length) {
+                        //just get the first one, i guess.
+                        for (var key in item) {
+                            label = item[key];
+                            break;
+                        }
+                    }
+
+                    item = { label: label, value: item[value] };
                     var row = template.replace('{VALUE}', item.label);
 
                     row = $(row).click(function() {
