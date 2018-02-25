@@ -36,6 +36,10 @@ return function ($request, $response) {
         return $value;
     });
 
+    $handlebars->registerHelper('toucfirst', function ($value) {
+        return ucfirst($value);
+    });
+
     $handlebars->registerHelper('ucwords', function ($value) {
         return ucwords($value);
     });

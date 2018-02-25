@@ -1,0 +1,78 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="/admin">
+                <i class="fas fa-home"></i> Admin
+            </a>
+        </li>
+        <li class="breadcrumb-item" aria-current="page">
+            <i class="fas fa-user-secret"></i> Roles
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+             Create
+        </li>
+    </ol>
+</nav>
+
+<div class="main-padding">
+    <h3 class="main-title"><i class="fa fa-user-secret"></i> Role Create</h3>
+    <form enctype="multipart/form-data" method="post">
+        <div class="form-group">
+            <label class="control-label">Role Name</label>
+            <input
+                class="form-control {{#if errors.role_name}}is-invalid{{/if}}"
+                placeholder="Super Admin"
+                name="role_name"
+                value="{{item.role_name}}"
+                type="text">
+            {{#if errors.role_name}}
+            <div class="invalid-feedback">
+                {{errors.role_name}}
+            </div>
+            {{/if}}
+        </div>
+        <div class="clearfix roles-wrapper {{#if errors.role_permissions}}is-invalid{{/if}}">
+            {{#each roles}}
+            <div class="card">
+                <div class="card-header">{{toucfirst @key}}</div>
+                <div class="card-body">
+                    <ul class="page">
+                        <li class="has-child">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" data-do="role-check-all" data-on="change" data-target="{{@key}}">
+                                <label class="form-check-label">All</label>
+                            </div>
+                            <ul class="actions" data-id="{{@key}}">
+                                {{#each actions}}
+                                <li>
+                                    <div class="form-check">
+                                        <input
+                                            type="checkbox"
+                                            class="form-check-input"
+                                            name="role_permissions[{{role}}]"
+                                            {{#if checked}}
+                                            checked="checked"
+                                            {{/if}}>
+                                        <label class="form-check-label">{{toucfirst action}}</label>
+                                    </div>
+                                </li>
+                                {{/each}}
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+        {{#if errors.role_permissions}}
+        <div class="invalid-feedback">
+            {{errors.role_permissions}}
+        </div>
+        {{/if}}
+        <div class="clear form-group">
+            <hr/>
+            <input type="hidden" name="csrf" value="" />
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </form>
+</div>

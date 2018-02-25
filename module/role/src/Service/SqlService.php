@@ -7,7 +7,7 @@
  * distributed with this package.
  */
 
-namespace Cradle\Module\Auth\Service;
+namespace Cradle\Module\Role\Service;
 
 use PDO as Resource;
 use Cradle\Sql\SqlFactory;
@@ -16,10 +16,10 @@ use Cradle\Module\Utility\Service\SqlServiceInterface;
 use Cradle\Module\Utility\Service\AbstractSqlService;
 
 /**
- * Auth SQL Service
+ * Role SQL Service
  *
  * @vendor   Acme
- * @package  auth
+ * @package  role
  * @author   John Doe <john@acme.com>
  * @standard PSR-2
  */
@@ -28,7 +28,7 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
     /**
      * @const TABLE_NAME
      */
-    const TABLE_NAME = 'auth';
+    const TABLE_NAME = 'role';
 
     /**
      * Registers the resource for use
@@ -51,9 +51,9 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
     {
         return $this->resource
             ->model($data)
-            ->setAuthCreated(date('Y-m-d H:i:s'))
-            ->setAuthUpdated(date('Y-m-d H:i:s'))
-            ->save('auth')
+            ->setRoleCreated(date('Y-m-d H:i:s'))
+            ->setRoleUpdated(date('Y-m-d H:i:s'))
+            ->save('role')
             ->get();
     }
 
@@ -66,18 +66,10 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
      */
     public function get($id)
     {
-        $search = $this->resource->search('auth');
-
-        $search->innerJoinUsing('auth_user', 'auth_id');
-        $search->innerJoinUsing('user', 'user_id');
-        $search->leftJoinUsing('auth_role', 'auth_id');
-        $search->leftJoinUsing('role', 'role_id');
-
-        if (is_numeric($id)) {
-            $search->filterByAuthId($id);
-        } else if (isset($data['auth_slug'])) {
-            $search->filterByAuthSlug($id);
-        }
+        $search = $this->resource->search('role');
+        
+        
+        $search->filterByRoleId($id);
 
         $results = $search->getRow();
 
@@ -89,18 +81,6 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
             $results['role_permissions'] = json_decode($results['role_permissions'], true);
         } else {
             $results['role_permissions'] = [];
-        }
-
-        if($results['user_meta']) {
-            $results['user_meta'] = json_decode($results['user_meta'], true);
-        } else {
-            $results['user_meta'] = [];
-        }
-
-        if($results['user_files']) {
-            $results['user_files'] = json_decode($results['user_files'], true);
-        } else {
-            $results['user_files'] = [];
         }
 
         return $results;
@@ -118,8 +98,8 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
         //please rely on SQL CASCADING ON DELETE
         return $this->resource
             ->model()
-            ->setAuthId($id)
-            ->remove('auth');
+            ->setRoleId($id)
+            ->remove('role');
     }
 
     /**
@@ -136,7 +116,9 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
         $start = 0;
         $order = [];
         $count = 0;
-
+        
+        $keywords = null;
+        
         if (isset($data['filter']) && is_array($data['filter'])) {
             $filter = $data['filter'];
         }
@@ -153,24 +135,29 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
             $order = $data['order'];
         }
 
+        
+        if (isset($data['q'])) {
+            $keywords = $data['q'];
 
-
-
-        if (!isset($filter['auth_active'])) {
-            $filter['auth_active'] = 1;
+            if(!is_array($keywords)) {
+                $keywords = [$keywords];
+            }
         }
+        
 
+        
+        if (!isset($filter['role_active'])) {
+            $filter['role_active'] = 1;
+        }
+        
 
         $search = $this->resource
-            ->search('auth')
+            ->search('role')
             ->setStart($start)
             ->setRange($range);
 
-
-        //join user
-        $search->innerJoinUsing('auth_user', 'auth_id');
-        $search->innerJoinUsing('user', 'user_id');
-
+        
+        
 
         //add filters
         foreach ($filter as $column => $value) {
@@ -179,7 +166,20 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
             }
         }
 
+        
+        //keyword?
+        if (isset($keywords)) {
+            foreach ($keywords as $keyword) {
+                $or = [];
+                $where = [];
+                $where[] = 'LOWER(role_name) LIKE %s';
+                $or[] = '%' . strtolower($keyword) . '%';
+                array_unshift($or, '(' . implode(' OR ', $where) . ')');
 
+                call_user_func([$search, 'addFilter'], ...$or);
+            }
+        }
+        
 
         //add sorting
         foreach ($order as $sort => $direction) {
@@ -189,19 +189,13 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
         $rows = $search->getRows();
 
         foreach($rows as $i => $results) {
-
-            if($results['user_meta']) {
-                $rows[$i]['user_meta'] = json_decode($results['user_meta'], true);
+            
+            if($results['role_permissions']) {
+                $rows[$i]['role_permissions'] = json_decode($results['role_permissions'], true);
             } else {
-                $rows[$i]['user_meta'] = [];
+                $rows[$i]['role_permissions'] = [];
             }
-
-            if($results['user_files']) {
-                $rows[$i]['user_files'] = json_decode($results['user_files'], true);
-            } else {
-                $rows[$i]['user_files'] = [];
-            }
-
+            
         }
 
         //return response format
@@ -222,55 +216,52 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
     {
         return $this->resource
             ->model($data)
-            ->setAuthUpdated(date('Y-m-d H:i:s'))
-            ->save('auth')
+            ->setRoleUpdated(date('Y-m-d H:i:s'))
+            ->save('role')
             ->get();
     }
-
     /**
-     * Checks to see if unique.0 already exists
+     * Links history
      *
-     * @param *string $authSlug
-     *
-     * @return bool
+     * @param *int $rolePrimary
+     * @param *int $historyPrimary
      */
-    public function exists($authSlug)
-    {
-        $search = $this->resource
-            ->search('auth')
-            ->filterByAuthSlug($authSlug);
-
-        return !!$search->getRow();
-    }
-
-    /**
-     * Links user
-     *
-     * @param *int $authPrimary
-     * @param *int $userPrimary
-     */
-    public function linkUser($authPrimary, $userPrimary)
+    public function linkHistory($rolePrimary, $historyPrimary)
     {
         return $this->resource
             ->model()
-            ->setAuthId($authPrimary)
-            ->setUserId($userPrimary)
-            ->insert('auth_user');
+            ->setRoleId($rolePrimary)
+            ->setHistoryId($historyPrimary)
+            ->insert('role_history');
     }
 
     /**
-     * Unlinks user
+     * Unlinks history
      *
-     * @param *int $authPrimary
-     * @param *int $userPrimary
+     * @param *int $rolePrimary
+     * @param *int $historyPrimary
      */
-    public function unlinkUser($authPrimary, $userPrimary)
+    public function unlinkHistory($rolePrimary, $historyPrimary)
     {
         return $this->resource
             ->model()
-            ->setAuthId($authPrimary)
-            ->setUserId($userPrimary)
-            ->remove('auth_user');
+            ->setRoleId($rolePrimary)
+            ->setHistoryId($historyPrimary)
+            ->remove('role_history');
     }
 
+    /**
+    * Unlinks All history
+    *
+    * @param *int $rolePrimary
+    * @param *int $historyPrimary
+    */
+    public function unlinkAllHistory($rolePrimary)
+    {
+        return $this->resource
+            ->model()
+            ->setRoleId($rolePrimary)
+            ->remove('role_history');
+    }
+    
 }

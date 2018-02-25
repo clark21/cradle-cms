@@ -32,6 +32,7 @@
     "autoload": {
         "psr-4": {
             "Cradle\\Module\\History\\": "module/history/src/",
+            "Cradle\\Module\\Role\\": "module/role/src/",
             "Cradle\\Module\\System\\": "module/system/src/",
             "Cradle\\Module\\User\\": "module/user/src/",
             "Cradle\\Module\\Auth\\": "module/auth/src/",
