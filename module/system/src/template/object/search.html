@@ -61,7 +61,13 @@
                 <div class="box-body box-padding">
                         <div class="form-group">
                             <label for="q">Search</label>
-                            <input class="form-control" name="q" placeholder="Enter Search Terms" type="search" />
+                            <input
+                                class="form-control"
+                                name="q"
+                                placeholder="Enter Search Terms"
+                                type="search"
+                                value="{{q}}"
+                            />
                         </div>
 
                         {{#if schema.filterable.length}}

@@ -429,7 +429,7 @@ class SqlService
         //determine the relation tables that need to be added
         foreach($data['relations'] as $table => $relation) {
             //install if it's installed
-            if (in_array($relation['name'], $installed)) {
+            if (in_array($table, $installed)) {
                 continue;
             }
 
