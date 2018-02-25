@@ -19,11 +19,6 @@ return function () {
             return;
         }
 
-        if(!isset($session['role_permissions'])
-            && !empty($session['role_permissions'])) {
-            return true;
-        }
-
         // get permissions
         $permissions = $session['role_permissions'];
 
