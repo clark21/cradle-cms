@@ -308,7 +308,7 @@ class File
     /**
      * @var array $mimeTypes static list of extensions to mime
      */
-    private static $mimeTypes = array(
+    private static $mimeTypes = [
         'ai'        => 'application/postscript',        'aif'       => 'audio/x-aiff',
         'aifc'      => 'audio/x-aiff',                  'aiff'      => 'audio/x-aiff',
         'asc'       => 'text/plain',                    'atom'      => 'application/atom+xml',
@@ -394,5 +394,19 @@ class File
         'xpm'       => 'image/x-xpixmap',               'xsl'       => 'application/xml',
         'xslt'      => 'application/xslt+xml',          'xul'       => 'application/vnd.mozilla.xul+xml',
         'xwd'       => 'image/x-xwindowdump',           'xyz'       => 'chemical/x-xyz',
-        'zip'       => 'application/zip');
+        'zip'       => 'application/zip',
+        'docm' => 'application/vnd.ms-word.document.macroEnabled.12',
+        'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'dotm' => 'application/vnd.ms-word.template.macroEnabled.12',
+        'dotx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.template',
+        'ppsm' => 'application/vnd.ms-powerpoint.slideshow.macroEnabled.12',
+        'ppsx' => 'application/vnd.openxmlformats-officedocument.presentationml.slideshow',
+        'pptm' => 'application/vnd.ms-powerpoint.presentation.macroEnabled.12',
+        'pptx' => 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+        'xlsb' => 'application/vnd.ms-excel.sheet.binary.macroEnabled.12',
+        'xlsm' => 'application/vnd.ms-excel.sheet.macroEnabled.12',
+        'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'xps' => 'application/vnd.ms-xpsdocument',
+        'unknown'   => 'does it matter?'
+    ];
 }

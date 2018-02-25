@@ -547,7 +547,7 @@ jQuery(function($) {
                     var extension = file.name.split('.').pop();
 
                     if(file.name.indexOf('.') === -1) {
-                        extension = '???';
+                        extension = 'unknown';
                     }
 
                     var preview = template.previewFile.replace('{EXTENSION}', extension);
@@ -575,8 +575,12 @@ jQuery(function($) {
                             $('input[type="hidden"]', row).val(data);
                         });
                     }
-                };
 
+                    //add mime type
+                    if(typeof mimeExtensions[file.type] !== 'string') {
+                        mimeExtensions[file.type] = extension;
+                    }
+                };
             };
 
             file.change(function() {
@@ -1052,6 +1056,18 @@ jQuery(function($) {
             'application/vnd.wap.wbxml': 'wbmxl',
             'application/vnd.wap.wmlc': 'wmlc',
             'application/vnd.wap.wmlscriptc': 'wmlsc',
+            'application/vnd.ms-word.document.macroEnabled.12': 'docm',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx',
+            'application/vnd.ms-word.template.macroEnabled.12': 'dotm',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.template': 'dotx',
+            'application/vnd.ms-powerpoint.slideshow.macroEnabled.12': 'ppsm',
+            'application/vnd.openxmlformats-officedocument.presentationml.slideshow': 'ppsx',
+            'application/vnd.ms-powerpoint.presentation.macroEnabled.12': 'pptm',
+            'application/vnd.openxmlformats-officedocument.presentationml.presentation': 'pptx',
+            'application/vnd.ms-excel.sheet.binary.macroEnabled.12': 'xlsb',
+            'application/vnd.ms-excel.sheet.macroEnabled.12': 'xlsm',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'xslx',
+            'application/vnd.ms-xpsdocument': 'xps',
             'application/voicexml+xml': 'vxml',
             'application/x-javascript': 'js',
             'application/x-shockwave-flash': 'swf',

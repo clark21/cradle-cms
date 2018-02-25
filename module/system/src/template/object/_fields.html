@@ -387,10 +387,10 @@
                 </tr>
                 <tr class="file-field-item" data-index="{INDEX}">
                     <td class="file-field-preview">
-                        {{#fileinfo this}}
+                        {{#fileinfo value}}
                             {{#in extension 'jpg,jpeg,png,gif'}}
                                 <div class="file-field-preview-container">
-                                    <img src="{{../this}}" height="50" />
+                                    <img src="{{../value}}" height="50" />
                                 </div>
                             {{else}}
                                 <div class="file-field-preview-container">
@@ -401,21 +401,8 @@
                         {{/fileinfo}}
                     </td>
                     <td class="file-field-name">
-                        {{this}}
-                        <input name="{{../@key}}" type="hidden" value="{{this}}" />
-                    </td>
-                    <td class="file-field-actions">
-                        <a class="text-info file-field-move-up" href="javascript:void(0)">
-                            <i class="fas fa-arrow-up"></i>
-                        </a>
-                        &nbsp;&nbsp;&nbsp;'
-                        <a class="text-info file-field-move-down" href="javascript:void(0)">
-                            <i class="fas fa-arrow-down"></i>
-                        </a>
-                        &nbsp;&nbsp;&nbsp;'
-                        <a class="btn btn-danger file-field-remove" href="javascript:void(0)">
-                            <i class="fas fa-times"></i>
-                        </a>
+                        {{value}}
+                        <input name="{{../@key}}" type="hidden" value="{{value}}" />
                     </td>
                 </tr>
             {{else}}
@@ -466,10 +453,10 @@
                 </tr>
                 <tr class="file-field-item" data-index="{INDEX}">
                     <td class="file-field-preview">
-                        {{#fileinfo this}}
+                        {{#fileinfo value}}
                             {{#in extension 'jpg,jpeg,png,gif'}}
                                 <div class="file-field-preview-container">
-                                    <img src="{{../this}}" height="50" />
+                                    <img src="{{../value}}" height="50" />
                                 </div>
                             {{else}}
                                 <div class="file-field-preview-container">
@@ -480,8 +467,8 @@
                         {{/fileinfo}}
                     </td>
                     <td class="file-field-name">
-                        {{this}}
-                        <input name="{{../@key}}" type="hidden" value="{{this}}" />
+                        {{value}}
+                        <input name="{{../@key}}" type="hidden" value="{{value}}" />
                     </td>
                     <td class="file-field-actions">
                         <a class="text-info file-field-move-up" href="javascript:void(0)">
@@ -544,10 +531,10 @@
                 </tr>
                 <tr class="file-field-item" data-index="{INDEX}">
                     <td class="file-field-preview">
-                        {{#fileinfo this}}
+                        {{#fileinfo value}}
                             {{#in extension 'jpg,jpeg,png,gif'}}
                                 <div class="file-field-preview-container">
-                                    <img src="{{../this}}" height="50" />
+                                    <img src="{{../value}}" height="50" />
                                 </div>
                             {{else}}
                                 <div class="file-field-preview-container">
@@ -558,21 +545,8 @@
                         {{/fileinfo}}
                     </td>
                     <td class="file-field-name">
-                        {{this}}
-                        <input name="{{../@key}}" type="hidden" value="{{this}}" />
-                    </td>
-                    <td class="file-field-actions">
-                        <a class="text-info file-field-move-up" href="javascript:void(0)">
-                            <i class="fas fa-arrow-up"></i>
-                        </a>
-                        &nbsp;&nbsp;&nbsp;'
-                        <a class="text-info file-field-move-down" href="javascript:void(0)">
-                            <i class="fas fa-arrow-down"></i>
-                        </a>
-                        &nbsp;&nbsp;&nbsp;'
-                        <a class="btn btn-danger file-field-remove" href="javascript:void(0)">
-                            <i class="fas fa-times"></i>
-                        </a>
+                        {{value}}
+                        <input name="{{../@key}}" type="hidden" value="{{value}}" />
                     </td>
                 </tr>
             {{else}}
@@ -624,10 +598,10 @@
                 </tr>
                 <tr class="file-field-item" data-index="{INDEX}">
                     <td class="file-field-preview">
-                        {{#fileinfo this}}
+                        {{#fileinfo value}}
                             {{#in extension 'jpg,jpeg,png,gif'}}
                                 <div class="file-field-preview-container">
-                                    <img src="{{../this}}" height="50" />
+                                    <img src="{{../value}}" height="50" />
                                 </div>
                             {{else}}
                                 <div class="file-field-preview-container">
@@ -638,8 +612,8 @@
                         {{/fileinfo}}
                     </td>
                     <td class="file-field-name">
-                        {{this}}
-                        <input name="{{../@key}}" type="hidden" value="{{this}}" />
+                        {{value}}
+                        <input name="{{../@key}}" type="hidden" value="{{value}}" />
                     </td>
                     <td class="file-field-actions">
                         <a class="text-info file-field-move-up" href="javascript:void(0)">

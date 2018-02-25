@@ -1,4 +1,7 @@
 <?php //-->
+
+use Cradle\Module\Utility\File;
+
 return function ($request, $response) {
     //get handlebars
     $handlebars = $this->package('global')->handlebars();
@@ -57,7 +60,12 @@ return function ($request, $response) {
 
     $handlebars->registerHelper('scope', function($array, $key, $options) {
         if (isset($array[$key])) {
-            return $options['fn']($array[$key]);
+            $value = $array[$key];
+            if(!is_array($value)) {
+                $value = ['value' => $value];
+            }
+
+            return $options['fn']($value);
         }
 
         return $options['inverse']();
