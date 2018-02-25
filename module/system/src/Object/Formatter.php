@@ -89,13 +89,19 @@ class Formatter
                 case 'created':
                 case 'updated':
                 case 'datetime':
-                    $data[$name] = date('Y-m-d H:i:s', strtotime($data[$name]));
+                    if (trim($data[$name])) {
+                        $data[$name] = date('Y-m-d H:i:s', strtotime($data[$name]));
+                    }
                     break;
                 case 'date':
-                    $data[$name] = date('Y-m-d', strtotime($data[$name]));
+                    if (trim($data[$name])) {
+                        $data[$name] = date('Y-m-d', strtotime($data[$name]));
+                    }
                     break;
                 case 'time':
-                    $data[$name] = date('H:i:s', strtotime($data[$name]));
+                    if (trim($data[$name])) {
+                        $data[$name] = date('H:i:s', strtotime($data[$name]));
+                    }
                     break;
                 case 'password':
                 case 'md5':

@@ -187,11 +187,17 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
                     continue;
                 }
 
+                $field['list']['name'] = $name;
                 $field['list']['value'] = $row[$name];
                 $columns[] = $options['fn']($field['list']);
             }
 
             return implode('', $columns);
+        })
+        ->registerHelper('filtertoquery', function($key = null, $value = '') {
+            $query = $_GET;
+            $query['filter'][$key] = $value;
+            return http_build_query($query);
         });
 
     //render the body
@@ -1001,14 +1007,19 @@ $cradle->post('/admin/system/object/:schema/create', function($request, $respons
 
     //these are invalid types to set
     $invalidTypes = ['none', 'active', 'created', 'updated'];
-    //get the required fields
-    $requiredFields = $schema->getRequiredFieldNames();
 
     //for each field
     foreach($fields as $name => $field) {
         //if the field is invalid
         if(in_array($field['field']['type'], $invalidTypes)) {
             $request->removeStage($name);
+            continue;
+        }
+
+        //if no value
+        if($request->hasStage($name) && !$request->getStage($name)) {
+            //make it null
+            $request->setStage($name, null);
             continue;
         }
 
@@ -1019,19 +1030,12 @@ $cradle->post('/admin/system/object/:schema/create', function($request, $respons
             && $request->hasStage($name)
             && !$request->getStage($name)
         ) {
+            if(strtoupper($field['default']) === 'NOW()') {
+                $field['default'] = date('Y-m-d H:i:s');
+            }
+
             //set the default
             $request->setStage($name, $field['default']);
-            continue;
-        }
-
-        if(//if this field is required
-            in_array($name, $requiredFields)
-            // and there's no stage
-            && $request->hasStage($name)
-            && !$request->getStage($name)
-        ) {
-            //set the default
-            $request->setStage($name, null);
             continue;
         }
     }
@@ -1214,14 +1218,19 @@ $cradle->post('/admin/system/object/:schema/update/:id', function($request, $res
 
     //these are invalid types to set
     $invalidTypes = ['none', 'active', 'created', 'updated'];
-    //get the required fields
-    $requiredFields = $schema->getRequiredFieldNames();
 
     //for each field
     foreach($fields as $name => $field) {
         //if the field is invalid
         if(in_array($field['field']['type'], $invalidTypes)) {
             $request->removeStage($name);
+            continue;
+        }
+
+        //if no value
+        if($request->hasStage($name) && !$request->getStage($name)) {
+            //make it null
+            $request->setStage($name, null);
             continue;
         }
 
@@ -1232,19 +1241,12 @@ $cradle->post('/admin/system/object/:schema/update/:id', function($request, $res
             && $request->hasStage($name)
             && !$request->getStage($name)
         ) {
+            if(strtoupper($field['default']) === 'NOW()') {
+                $field['default'] = date('Y-m-d H:i:s');
+            }
+
             //set the default
             $request->setStage($name, $field['default']);
-            continue;
-        }
-
-        if(//if this field is required
-            in_array($name, $requiredFields)
-            // and there's no stage
-            && $request->hasStage($name)
-            && !$request->getStage($name)
-        ) {
-            //set the default
-            $request->setStage($name, null);
             continue;
         }
     }

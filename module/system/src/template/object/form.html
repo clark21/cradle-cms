@@ -94,7 +94,7 @@
                                 data-format="{{suggestion}}"
                                 data-target-label="input.suggestion-label-{{name}}"
                                 data-target-value="input.suggestion-value-{{name}}"
-                                {{#in table ../valid_relations}}
+                                {{#in name ../valid_relations}}
                                     data-url="/admin/system/object/{{name}}/search?q={QUERY}&render=false"
                                 {{else}}
                                     data-url="/admin/{{name}}/search?q={QUERY}&render=false"
