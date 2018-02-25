@@ -10,6 +10,10 @@ return [
         'user' => [
             'primary' => 'user_id',
             'many' => false
+        ],
+        'role' => [
+            'primary' => 'role_id',
+            'many' => false
         ]
     ],
     'fields' => [
@@ -132,6 +136,7 @@ return [
         [
             'auth_id' => 1,
             'user_id' => 1,
+            'role_id' => 1,
             'auth_slug' => 'john@doe.com',
             'auth_password' => '202cb962ac59075b964b07152d234b70',
             'auth_type' => 'admin',

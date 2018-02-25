@@ -128,5 +128,12 @@
 			<file>module/object/test/Service/ElasticServiceTest.php</file>
 			<file>module/object/test/EventTest.php</file>
 		</testsuite>
+		<testsuite name="Role Test Suite">
+			<file>module/role/test/ValidatorTest.php</file>
+			<file>module/role/test/ServiceTest.php</file>
+			<file>module/role/test/Service/SqlServiceTest.php</file>
+			<file>module/role/test/Service/ElasticServiceTest.php</file>
+			<file>module/role/test/EventTest.php</file>
+		</testsuite>
 	</testsuites>
 </phpunit>

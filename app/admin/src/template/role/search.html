@@ -1,0 +1,76 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="/admin">
+                <i class="fas fa-home"></i> Admin
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <i class="fas fa-user-secret"></i> Roles
+        </li>
+    </ol>
+</nav>
+
+<div class="main-padding">
+
+    <h3 class="main-title"><i class="fa fa-user-secret"></i> Role Search Example</h3>
+
+    <div class="clearfix mb-4 search-actions">
+        <div class="btn-group" role="group" aria-label="...">
+            <a class="btn btn-primary" href="?filter[role_active]=1">
+                Active
+            </a>
+            <a class="btn btn-danger" href="?filter[role_active]=0">
+                Inactive
+            </a>
+        </div>
+
+        <div class="float-right">
+            <a class="btn btn-success" href="/admin/role/create">
+                <i class="fas fa-plus"></i> Create Role
+            </a>
+        </div>
+    </div>
+
+    <form method="post">
+        <div class="table-overflow">
+        {{#if rows}}
+            <!-- START: TABLE -->
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Actions</th>
+                        <th>Roles</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each rows}}
+                        <tr data-id="{{role_id}}">
+                            <td>
+                                {{#if ../filter.role_active}}
+                                    <a class="text-info" title="Edit" href="/admin/role/update/{{role_id}}">
+                                    <i class="fas fa-edit"></i></a>
+                                    &nbsp;
+                                    <a class="text-danger" title="Remove" href="/admin/role/remove/{{role_id}}"
+                                    class="text-danger remove"><i class="fas fa-times"></i></a>
+                                {{else}}
+                                    <a title="Restore" href="/admin/role/restore/{{role_id}}" class="text-success restore">
+                                    <i class="fas fa-external-link-alt"></i></a>
+                                {{/if}}
+                            </td>
+                            <td>
+                                <a href="/admin/role/update/{{role_id}}"><i class="{{icon}}"></i> {{role_name}}</a>
+                            </td>
+                        </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+            <!-- END: TABLE -->
+        {{else}}
+            <!-- START: NO RESULTS -->
+            <div class="well no-results">No Results Found</div>
+            <!-- END: NO RESULTS -->
+        {{/if}}
+        </table>
+    </form>
+</div>
