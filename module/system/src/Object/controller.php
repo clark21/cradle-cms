@@ -30,6 +30,13 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
     //get schema data
     $schema = SystemSchema::i($request->getStage('schema'));
 
+    //if this is a return back from processing
+    //this form and it's because of an error
+    if ($response->isError()) {
+        //pass the error messages to the template
+        $response->setFlash($response->getMessage(), 'error');
+    }
+
     //set a default range
     if(!$request->hasStage('range')) {
         $request->setStage('range', 50);
@@ -802,6 +809,163 @@ $cradle->get('/admin/system/object/:schema/update/:id', function($request, $resp
 });
 
 /**
+ * Process the System Object Search Actions
+ *
+ * @param Request $request
+ * @param Response $response
+ */
+$cradle->post('/admin/system/object/:schema/search', function($request, $response) {
+    //----------------------------//
+    // 1. Route Permissions
+    //only for admin
+    cradle('global')->requireLogin('admin');
+
+    //----------------------------//
+    // 2. Prepare Data
+    //get schema data
+    $schema = SystemSchema::i($request->getStage('schema'));
+
+    //determine route
+    $route = sprintf(
+        '/admin/system/object/%s/search',
+        $request->getStage('schema')
+    );
+
+    //this is for flexibility
+    if($request->hasStage('route')) {
+        $route = $request->getStage('route');
+    }
+
+    $action = $request->getStage('bulk-action');
+    $ids = $request->getStage($schema->getPrimaryFieldName());
+
+    if (empty($ids)) {
+        $response->setError(true, 'No IDs chosen');
+        //let the form route handle the rest
+        return cradle()->triggerRoute('get', $route, $request, $response);
+    }
+
+    //----------------------------//
+    // 3. Process Request
+    $errors = [];
+    foreach ($ids as $id) {
+        //table_id, 1 for example
+        $request->setStage($schema->getPrimaryFieldName(), $id);
+
+        //case for actions
+        switch ($action) {
+            case 'remove':
+                cradle()->trigger('system-object-remove', $request, $response);
+                break;
+            case 'restore':
+                cradle()->trigger('system-object-restore', $request, $response);
+                break;
+            default:
+                //set an error
+                $response->setError(true, 'No valid action chosen');
+                //let the search route handle the rest
+                return cradle()->triggerRoute('get', $route, $request, $response);
+        }
+
+        if($response->isError()) {
+            $errors[] = $response->getMessage();
+        } else {
+            cradle()->log(
+                sprintf(
+                    '%s #%s %s',
+                    $schema->getSingular(),
+                    $id,
+                    $action
+                ),
+                $request,
+                $response
+            );
+        }
+    }
+
+    //----------------------------//
+    // 4. Interpret Results
+    //redirect
+    $redirect = sprintf(
+        '/admin/system/object/%s/search',
+        $schema->getName()
+    );
+
+    //if there is a specified redirect
+    if($request->hasStage('redirect_uri')) {
+        //set the redirect
+        $redirect = $request->getStage('redirect_uri');
+    }
+
+    //if we dont want to redirect
+    if($redirect === 'false') {
+        return;
+    }
+
+    //add a flash
+    if (!empty($errors)) {
+        cradle('global')->flash(
+            'Some items could not be processed',
+            'error',
+            $errors
+        );
+    } else {
+        cradle('global')->flash(
+            sprintf(
+                'Bulk action %s successful',
+                $action
+            ),
+            'success'
+        );
+    }
+
+    cradle('global')->redirect($redirect);
+});
+
+/**
+ * Process the System Object Search Page Filtered by Relation
+ *
+ * @param Request $request
+ * @param Response $response
+ */
+$cradle->post('/admin/system/object/:schema1/search/:schema2/:id', function($request, $response) {
+    //variable list
+    $id = $request->getStage('id');
+    $schema1 = SystemSchema::i($request->getStage('schema1'));
+    $schema2 = SystemSchema::i($request->getStage('schema2'));
+
+    //setup the redirect now, kasi we will change it later
+    $redirect = sprintf(
+        '/admin/system/object/%s/search/%s/%s',
+        $schema1->getName(),
+        $schema2->getName(),
+        $id
+    );
+
+    //if there is a specified redirect
+    if($request->hasStage('redirect_uri')) {
+        //set the redirect
+        $redirect = $request->getStage('redirect_uri');
+    }
+
+    //pass all the relational data we collected
+    $request
+        ->setStage('route', $redirect)
+        ->setStage('redirect_uri', $redirect);
+
+    //now let the original create take over
+    cradle()->triggerRoute(
+        'post',
+        sprintf(
+            '/admin/system/object/%s/search',
+            $schema1->getName()
+        ),
+        $request,
+        $response
+    );
+});
+
+/**
  * Process the System Object Create Page
  *
  * @param Request $request
@@ -928,7 +1092,7 @@ $cradle->post('/admin/system/object/:schema/create', function($request, $respons
 });
 
 /**
- * Process the System Object Search Page Filtered by Relation
+ * Process the System Object Create Page Filtered by Relation
  *
  * @param Request $request
  * @param Response $response

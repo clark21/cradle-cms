@@ -8,6 +8,7 @@ body {
     font-size: 14px;
     font-style: normal;
     font-weight: normal;
+    height: 100%;
 }
 
 .hidden {
@@ -1196,6 +1197,7 @@ select.form-control {
 /* Body
 ------------------------------*/
 .body {
+    height: 100%;
     padding: 0;
 }
 

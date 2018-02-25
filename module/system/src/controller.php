@@ -279,8 +279,18 @@ $cradle->post('/admin/system/schema/update/:name', function($request, $response)
     }
 
     //if validation has no value make it an array
-    if ($request->hasStage('validation') && !$request->getStage('validation')) {
-        $request->setStage('validation', []);
+    foreach($request->getStage('fields') as $i => $field) {
+        if ($request->hasStage('fields', $i, 'validation')
+            && !$request->getStage('fields', $i, 'validation')
+        )
+        {
+            $request->setStage('fields', $i, 'validation', []);
+        }
+    }
+
+    //if relations has no value make it an array
+    if ($request->hasStage('relations') && !$request->getStage('relations')) {
+        $request->setStage('relations', []);
     }
 
     //----------------------------//
