@@ -44,7 +44,13 @@ return function ($request, $response) {
      *
      * @param *string $path
      */
-    ->addMethod('requireLogin', function ($type = null) {
+    ->addMethod('requireLogin', function ($type = null) use ($request) {
+        // TEMPORARY UNTIL I GOT THE
+        // OAUTH PROCESS WORKING
+        if($request->getStage('session') === 'false') {
+            return;
+        }
+
         if (!isset($_SESSION['me']['auth_id'])) {
             $redirect = urlencode($_SERVER['REQUEST_URI']);
             return cradle()->getDispatcher()->redirect('/login?redirect_uri=' . $redirect);

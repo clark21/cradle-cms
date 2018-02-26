@@ -2,8 +2,11 @@
 include_once __DIR__ . '/src/controller.php';
 include_once __DIR__ . '/src/events.php';
 
-include_once __DIR__ . '/src/Object/controller.php';
-include_once __DIR__ . '/src/Object/events.php';
+include_once __DIR__ . '/src/Object/admin/controller.php';
+include_once __DIR__ . '/src/Object/admin/events.php';
+
+include_once __DIR__ . '/src/Object/rest/controller.php';
+include_once __DIR__ . '/src/Object/rest/events.php';
 
 use Cradle\Module\System\Service as SystemService;
 use Cradle\Module\System\Object\Service as ObjectService;
