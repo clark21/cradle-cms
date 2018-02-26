@@ -321,6 +321,12 @@ class Schema extends Registry
             $results[$name]['primary1'] = $primary;
             $results[$name]['primary2'] = $results[$name]['primary'];
             $results[$name]['many'] = $relation['many'];
+
+            //case for relating to itself ie. post_post
+            if($table === $relation['name']) {
+                $results[$name]['primary1'] .= '_1';
+                $results[$name]['primary2'] .= '_2';
+            }
         }
 
         return $results;

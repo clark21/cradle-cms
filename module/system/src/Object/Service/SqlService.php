@@ -166,10 +166,27 @@ class SqlService
         //get 1:N relations
         $relations = $this->schema->getRelations(2);
         foreach($relations as $table => $relation) {
+            $schema = $this->schema;
             $results[$table] = $this
                 ->resource
                 ->search($table)
-                ->innerJoinUsing($relation['name'], $relation['primary2'])
+                ->when(
+                    //we need to case for post_post for example
+                    $relation['name'] === $this->schema->getName(),
+                    //this is the post_post way
+                    function() use (&$schema, &$relation) {
+                        $on = sprintf(
+                            '%s = %s',
+                            $schema->getPrimaryFieldName(),
+                            $relation['primary2']
+                        );
+                        $this->innerJoinOn($relation['name'], $on);
+                    },
+                    //this is the normal way
+                    function() use (&$relation) {
+                        $this->innerJoinUsing($relation['name'], $relation['primary2']);
+                    }
+                )
                 ->addFilter($relation['primary1'] . ' = %s', $id)
                 ->getRows();
         }
@@ -304,6 +321,8 @@ class SqlService
 
         $reverseRelations = $this->schema->getReverseRelations(2);
 
+        $schema = $this->schema;
+
         //cutomer_project but the main schema is project for example
         foreach($reverseRelations as $table => $relation) {
             if (//if filter customer is not set
@@ -317,13 +336,34 @@ class SqlService
             }
 
             $search
-                ->innerJoinUsing(
-                    $table,
-                    $relation['primary2']
-                )
-                ->innerJoinUsing(
-                    $relation['source'],
-                    $relation['primary1']
+                ->when(
+                    //we need to case for post_post for example
+                    $relation['source'] === $this->schema->getName(),
+                    //this is the post_post way
+                    function() use ($table, $schema, &$relation) {
+                        //TODO: I need help with this section
+                        echo $table.' '.$relation['primary2'];exit;
+                        $on = sprintf(
+                            '%s = %s',
+                            $schema->getPrimaryFieldName(),
+                            $relation['primary2']
+                        );
+
+                        $this->innerJoinOn($table, $on);
+
+                        $on = sprintf(
+                            '%s = %s',
+                            $schema->getPrimaryFieldName(),
+                            $relation['primary1'].'_not_sure'
+                        );
+
+                        $this->innerJoinOn($relation['source'], $on);
+                    },
+                    //this is the normal way
+                    function() use ($table, &$relation) {
+                        $this->innerJoinUsing($table, $relation['primary2']);
+                        $this->innerJoinUsing($relation['source'], $relation['primary1']);
+                    }
                 );
         }
 
