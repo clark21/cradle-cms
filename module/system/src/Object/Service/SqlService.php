@@ -326,12 +326,20 @@ class SqlService
         //cutomer_project but the main schema is project for example
         foreach($reverseRelations as $table => $relation) {
             if (//if filter customer is not set
-                !isset($filter[$relation['primary1']])
+                !isset($filter[str_replace('_1', '', $relation['primary1'])])
                 //project_customer vs cutomer_project
                 || isset($relations[$relation['name'] . '_' . $relation['source']])
             )
             {
                 //no need to join
+                //add filters
+                foreach ($filter as $column => $value) {
+                    if (preg_match('/^[a-zA-Z0-9-_]+$/', $column)) {
+                        $search->addFilter($column . ' = %s', $value);
+                    }
+                }
+
+                //then skip
                 continue;
             }
 
@@ -340,38 +348,51 @@ class SqlService
                     //we need to case for post_post for example
                     $relation['source'] === $this->schema->getName(),
                     //this is the post_post way
-                    function() use ($table, $schema, &$relation) {
+                    function() use ($table, $schema, $filter, &$relation) {
                         //TODO: I need help with this section
-                        echo $table.' '.$relation['primary2'];exit;
+                        //Used aliases
                         $on = sprintf(
                             '%s = %s',
                             $schema->getPrimaryFieldName(),
-                            $relation['primary2']
+                            $relation['primary1']
                         );
 
                         $this->innerJoinOn($table, $on);
 
                         $on = sprintf(
                             '%s = %s',
-                            $schema->getPrimaryFieldName(),
-                            $relation['primary1'].'_not_sure'
+                            $relation['source']. '2.' .$schema->getPrimaryFieldName(),
+                            $relation['primary2']
                         );
 
-                        $this->innerJoinOn($relation['source'], $on);
+                        $source = sprintf(
+                            '%s as %s',
+                            $relation['source'],
+                            $relation['source'] . '2'
+                        );
+
+                        $this->innerJoinOn($source, $on);
+
+                        //add filter for table with alias
+                        foreach ($filter as $column => $value) {
+                            if (preg_match('/^[a-zA-Z0-9-_]+$/', $column)) {
+                                $this->addFilter($relation['source'] . '.' . $column . ' = %s', $value);
+                            }
+                        }
                     },
                     //this is the normal way
-                    function() use ($table, &$relation) {
+                    function() use ($table, $filter, &$relation) {
                         $this->innerJoinUsing($table, $relation['primary2']);
                         $this->innerJoinUsing($relation['source'], $relation['primary1']);
+
+                        //add filters the normal way
+                        foreach ($filter as $column => $value) {
+                            if (preg_match('/^[a-zA-Z0-9-_]+$/', $column)) {
+                                $this->addFilter($column . ' = %s', $value);
+                            }
+                        }
                     }
                 );
-        }
-
-        //add filters
-        foreach ($filter as $column => $value) {
-            if (preg_match('/^[a-zA-Z0-9-_]+$/', $column)) {
-                $search->addFilter($column . ' = %s', $value);
-            }
         }
 
         //keyword?
