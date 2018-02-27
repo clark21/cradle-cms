@@ -252,7 +252,7 @@ $cradle->get('/admin/system/object/:schema/create', function($request, $response
     }
 
     //for ?copy=1 functionality
-    if (is_numeric($request->getStage('copy'))) {
+    if (empty($data['item']) && is_numeric($request->getStage('copy'))) {
         //table_id, 1 for example
         $request->setStage(
             $schema->getPrimaryFieldName(),
@@ -264,20 +264,12 @@ $cradle->get('/admin/system/object/:schema/create', function($request, $response
 
         //can we update ?
         if($response->isError()) {
-            //redirect
-            $redirect = sprintf(
-                '/admin/system/object/%s/search',
-                $request->getStage('schema')
-            );
-
-            //this is for flexibility
-            if($request->hasStage('redirect_uri')) {
-                $redirect = $request->getStage('redirect_uri');
-            }
-
             //add a flash
             cradle('global')->flash($response->getMessage(), 'error');
-            return cradle('global')->redirect($redirect);
+            return cradle('global')->redirect(sprintf(
+                '/admin/system/schema/%s/search',
+                $request->getStage('schema')
+            ));
         }
 
         //pass the item to the template
