@@ -240,6 +240,9 @@ $cradle->get('/admin/system/object/:schema/create', function($request, $response
     //pass the item with only the post data
     $data = ['item' => $request->getPost()];
 
+    //also pass the schema to the template
+    $data['schema'] = $schema->getAll();
+
     //if this is a return back from processing
     //this form and it's because of an error
     if ($response->isError()) {
@@ -289,9 +292,6 @@ $cradle->get('/admin/system/object/:schema/create', function($request, $response
             } catch(Exception $e) {}
         }
     }
-
-    //also pass the schema to the template
-    $data['schema'] = $schema->getAll();
 
     //add CSRF
     cradle()->trigger('csrf-load', $request, $response);
