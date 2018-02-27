@@ -248,6 +248,48 @@ $cradle->get('/admin/system/object/:schema/create', function($request, $response
         $data['errors'] = $response->getValidation();
     }
 
+    //for ?copy=1 functionality
+    if (is_numeric($request->getStage('copy'))) {
+        //table_id, 1 for example
+        $request->setStage(
+            $schema->getPrimaryFieldName(),
+            $request->getStage('copy')
+        );
+
+        //get the original table row
+        cradle()->trigger('system-object-detail', $request, $response);
+
+        //can we update ?
+        if($response->isError()) {
+            //redirect
+            $redirect = sprintf(
+                '/admin/system/object/%s/search',
+                $request->getStage('schema')
+            );
+
+            //this is for flexibility
+            if($request->hasStage('redirect_uri')) {
+                $redirect = $request->getStage('redirect_uri');
+            }
+
+            //add a flash
+            cradle('global')->flash($response->getMessage(), 'error');
+            return cradle('global')->redirect($redirect);
+        }
+
+        //pass the item to the template
+        $data['item'] = $response->getResults();
+
+        //add suggestion value for each relation
+        foreach ($data['schema']['relations'] as $name => $relation) {
+            $suggestion = '_' . $relation['primary2'];
+            try {
+                $data['item'][$suggestion] = SystemSchema::i($relation['name'])
+                    ->getSuggestionFormat($data['item']);
+            } catch(Exception $e) {}
+        }
+    }
+
     //also pass the schema to the template
     $data['schema'] = $schema->getAll();
 
@@ -497,12 +539,20 @@ $cradle->get('/admin/system/object/:schema/update/:id', function($request, $resp
 
         //can we update ?
         if($response->isError()) {
-            //add a flash
-            cradle('global')->flash($response->getMessage(), 'error');
-            return cradle('global')->redirect(sprintf(
+            //redirect
+            $redirect = sprintf(
                 '/admin/system/object/%s/search',
                 $request->getStage('schema')
-            ));
+            );
+
+            //this is for flexibility
+            if($request->hasStage('redirect_uri')) {
+                $redirect = $request->getStage('redirect_uri');
+            }
+
+            //add a flash
+            cradle('global')->flash($response->getMessage(), 'error');
+            return cradle('global')->redirect($redirect);
         }
 
         //pass the item to the template
