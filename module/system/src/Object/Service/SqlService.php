@@ -342,28 +342,48 @@ class SqlService
                 foreach ($filter as $column => $value) {
                     if (isset($relation['fields'][$column])) {
                         //add alias
-                        $filter[$relation['source'] . '2.' . $column] = $value;
+                        $newCol = sprintf('%s.%s',
+                            $relation['source'] . '2',
+                            $column
+                        );
+
+                        $filter[$newCol] = $value;
 
                         //then remove old
                         unset($filter[$column]);
 
                         //add fields filter
                         if (!empty($value)) {
-                            $search->addFilter($relation['source'] . '2.' . $column . ' = %s', $value);
+                            $statement = sprintf('%s = \'%s\'',
+                                $newCol,
+                                $value
+                            );
+
+                            $search->addFilter($statement);
                         }
                     }
 
                     //for primary
                     if ($column === $schema->getPrimaryFieldName()) {
                         //add alias
-                        $filter[$relation['source'] . '.' . $column] = $value;
+                        $newCol = sprintf('%s.%s',
+                            $relation['source'],
+                            $column
+                        );
+
+                        $filter[$newCol] = $value;
 
                         //then remove old
                         unset($filter[$column]);
 
                         //add primary filter
                         if (!empty($value)) {
-                            $search->addFilter($relation['source'] . '.' . $column . ' = %s', $value);
+                            $statement = sprintf('%s = %s',
+                                $newCol,
+                                $value
+                            );
+
+                            $search->addFilter($statement);
                         }
                     }
                 }
@@ -372,7 +392,12 @@ class SqlService
                 if(!empty($searchable)) {
                     foreach($searchable as $key => $name) {
                         if (isset($relation['fields'][$name])) {
-                            $searchable[$key] = $relation['source'] . '2.' . $name;
+                            $newCol = sprintf('%s.%s',
+                                $relation['source'] . '2',
+                                $name
+                            );
+
+                            $searchable[$key] = $newCol;
                         }
                     }
                 }
@@ -381,7 +406,12 @@ class SqlService
                 foreach ($order as $sort => $direction) {
                     if (isset($relation['fields'][$sort])) {
                         //add alias
-                        $order[$relation['source'] . '2.' . $sort] = $direction;
+                        $newCol = sprintf('%s.%s',
+                            $relation['source'] . '2',
+                            $sort
+                        );
+
+                        $order[$newCol] = $direction;
 
                         //remove the old
                         unset($order[$sort]);
