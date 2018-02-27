@@ -642,6 +642,11 @@ $cradle->on('system-object-link', function ($request, $response) {
     $schema1Primary = $schema1->getPrimaryFieldName();
     $schema2Primary = $schema2->getPrimaryFieldName();
 
+    if ($schema1Primary == $schema2Primary) {
+        $schema1Primary = sprintf('%s_1', $schema1Primary);
+        $schema2Primary = sprintf('%s_2', $schema2Primary);
+    }
+
     //----------------------------//
     // 2. Validate Data
     if (!isset($data[$schema1Primary], $data[$schema2Primary])) {

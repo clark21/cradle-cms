@@ -323,16 +323,100 @@ class SqlService
 
         $schema = $this->schema;
 
+        $searchable = $this->schema->getSearchableFieldNames(1);
+
         //cutomer_project but the main schema is project for example
         foreach($reverseRelations as $table => $relation) {
             if (//if filter customer is not set
-                !isset($filter[$relation['primary1']])
+                !isset($filter[str_replace('_1', '', $relation['primary1'])])
                 //project_customer vs cutomer_project
                 || isset($relations[$relation['name'] . '_' . $relation['source']])
             )
             {
-                //no need to join
+                //then skip
                 continue;
+            }
+
+            //adjust filter, order and searchable for cases like post_post
+            if ($relation['source'] === $this->schema->getName()) {
+                foreach ($filter as $column => $value) {
+                    if (isset($relation['fields'][$column])) {
+                        //add alias
+                        $newCol = sprintf('%s.%s',
+                            $relation['source'] . '2',
+                            $column
+                        );
+
+                        $filter[$newCol] = $value;
+
+                        //then remove old
+                        unset($filter[$column]);
+
+                        //add fields filter
+                        if (!empty($value)) {
+                            $statement = sprintf('%s = \'%s\'',
+                                $newCol,
+                                $value
+                            );
+
+                            $search->addFilter($statement);
+                        }
+                    }
+
+                    //for primary
+                    if ($column === $schema->getPrimaryFieldName()) {
+                        //add alias
+                        $newCol = sprintf('%s.%s',
+                            $relation['source'],
+                            $column
+                        );
+
+                        $filter[$newCol] = $value;
+
+                        //then remove old
+                        unset($filter[$column]);
+
+                        //add primary filter
+                        if (!empty($value)) {
+                            $statement = sprintf('%s = %s',
+                                $newCol,
+                                $value
+                            );
+
+                            $search->addFilter($statement);
+                        }
+                    }
+                }
+
+                //add alias on searchable
+                if(!empty($searchable)) {
+                    foreach($searchable as $key => $name) {
+                        if (isset($relation['fields'][$name])) {
+                            $newCol = sprintf('%s.%s',
+                                $relation['source'] . '2',
+                                $name
+                            );
+
+                            $searchable[$key] = $newCol;
+                        }
+                    }
+                }
+
+                //add alias on order
+                foreach ($order as $sort => $direction) {
+                    if (isset($relation['fields'][$sort])) {
+                        //add alias
+                        $newCol = sprintf('%s.%s',
+                            $relation['source'] . '2',
+                            $sort
+                        );
+
+                        $order[$newCol] = $direction;
+
+                        //remove the old
+                        unset($order[$sort]);
+                    }
+                }
             }
 
             $search
@@ -340,27 +424,33 @@ class SqlService
                     //we need to case for post_post for example
                     $relation['source'] === $this->schema->getName(),
                     //this is the post_post way
-                    function() use ($table, $schema, &$relation) {
+                    function() use ($table, $schema, $filter, &$relation) {
                         //TODO: I need help with this section
-                        echo $table.' '.$relation['primary2'];exit;
+                        //Used aliases
                         $on = sprintf(
                             '%s = %s',
                             $schema->getPrimaryFieldName(),
-                            $relation['primary2']
+                            $relation['primary1']
                         );
 
                         $this->innerJoinOn($table, $on);
 
                         $on = sprintf(
                             '%s = %s',
-                            $schema->getPrimaryFieldName(),
-                            $relation['primary1'].'_not_sure'
+                            $relation['source']. '2.' .$schema->getPrimaryFieldName(),
+                            $relation['primary2']
                         );
 
-                        $this->innerJoinOn($relation['source'], $on);
+                        $source = sprintf(
+                            '%s as %s',
+                            $relation['source'],
+                            $relation['source'] . '2'
+                        );
+
+                        $this->innerJoinOn($source, $on);
                     },
                     //this is the normal way
-                    function() use ($table, &$relation) {
+                    function() use ($table, $filter, &$relation) {
                         $this->innerJoinUsing($table, $relation['primary2']);
                         $this->innerJoinUsing($relation['source'], $relation['primary1']);
                     }
@@ -369,14 +459,14 @@ class SqlService
 
         //add filters
         foreach ($filter as $column => $value) {
-            if (preg_match('/^[a-zA-Z0-9-_]+$/', $column)) {
-                $search->addFilter($column . ' = %s', $value);
+            if (!empty($value)) {
+                if (preg_match('/^[a-zA-Z0-9-_]+$/', $column)) {
+                    $search->addFilter($column . ' = %s', $value);
+                }
             }
         }
 
         //keyword?
-        $searchable = $this->schema->getSearchableFieldNames(1);
-
         if(!empty($searchable)) {
             $keywords = [];
 

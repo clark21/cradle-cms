@@ -994,6 +994,7 @@ $cradle->post('/admin/system/object/:schema/create', function($request, $respons
     cradle('global')->redirect($redirect);
 });
 
+
 /**
  * Process the System Object Update Page
  *

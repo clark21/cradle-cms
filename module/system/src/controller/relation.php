@@ -236,6 +236,11 @@ $cradle->post('/admin/system/object/:schema1/create/:schema2/:id', function($req
     $primary1 = $schema1->getPrimaryFieldName();
     $primary2 = $schema2->getPrimaryFieldName();
 
+    if ($primary1 == $primary2) {
+        $primary1 = sprintf('%s_2', $primary1);
+        $primary2 = sprintf('%s_1', $primary2);
+    }
+
     //set the stage to link
     $request
         ->setStage('schema2', $schema1->getName())
