@@ -250,3 +250,167 @@ $cradle->post('/admin/system/object/:schema1/create/:schema2/:id', function($req
 
     cradle('global')->redirect($redirect);
 });
+
+/**
+ * Link object to object
+ *
+ * @param Request $request
+ * @param Response $response
+ */
+$cradle->get('/admin/system/object/:schema1/:id1/link/:schema2/:id2', function($request, $response) {
+    //----------------------------//
+    // 1. Route Permissions
+    //only for admin
+    cradle('global')->requireLogin('admin');
+
+    //----------------------------//
+    // 2. Prepare Data
+    $schema1 = SystemSchema::i($request->getStage('schema1'));
+    $schema2 = SystemSchema::i($request->getStage('schema2'));
+
+    $schema1Primary = $schema1->getPrimaryFieldName();
+    $schema2Primary = $schema2->getPrimaryFieldName();
+
+    //case for post_post
+    if ($schema1Primary === $schema2Primary) {
+        $schema1Primary .= '_1';
+        $schema2Primary .= '_2';
+    }
+
+    $request->setStage($schema1Primary, $request->getStage('id1'));
+    $request->setStage($schema2Primary, $request->getStage('id2'));
+
+    //----------------------------//
+    // 3. Process Request
+    cradle()->trigger('system-object-link', $request, $response);
+
+    //----------------------------//
+    // 4. Interpret Results
+    //redirect
+    $redirect = sprintf(
+        '/admin/system/object/%s/search',
+        $schema1->getName()
+    );
+
+    //if there is a specified redirect
+    if($request->hasStage('redirect_uri')) {
+        //set the redirect
+        $redirect = $request->getStage('redirect_uri');
+    }
+
+    //if we dont want to redirect
+    if($redirect === 'false') {
+        return;
+    }
+
+    if($response->isError()) {
+        //add a flash
+        cradle('global')->flash($response->getMessage(), 'error');
+    } else {
+        //add a flash
+        $message = cradle('global')->translate(
+            '%s was linked to %s',
+            $schema1->getSingular(),
+            $schema2->getSingular()
+        );
+
+        cradle('global')->flash($message, 'success');
+
+        //record logs
+        cradle()->log(
+            sprintf(
+                '%s #%s linked to %s #%s',
+                $schema1->getSingular(),
+                $request->getStage('id1'),
+                $schema2->getSingular(),
+                $request->getStage('id2')
+            ),
+            $request,
+            $response
+        );
+    }
+
+    cradle('global')->redirect($redirect);
+});
+
+/**
+ * Unlink object from object
+ *
+ * @param Request $request
+ * @param Response $response
+ */
+$cradle->get('/admin/system/object/:schema1/:id1/unlink/:schema2/:id2', function($request, $response) {
+    //----------------------------//
+    // 1. Route Permissions
+    //only for admin
+    cradle('global')->requireLogin('admin');
+
+    //----------------------------//
+    // 2. Prepare Data
+    $schema1 = SystemSchema::i($request->getStage('schema1'));
+    $schema2 = SystemSchema::i($request->getStage('schema2'));
+
+    $schema1Primary = $schema1->getPrimaryFieldName();
+    $schema2Primary = $schema2->getPrimaryFieldName();
+
+    //case for post_post
+    if ($schema1Primary === $schema2Primary) {
+        $schema1Primary .= '_1';
+        $schema2Primary .= '_2';
+    }
+
+    $request->setStage($schema1Primary, $request->getStage('id1'));
+    $request->setStage($schema2Primary, $request->getStage('id2'));
+
+    //----------------------------//
+    // 3. Process Request
+    cradle()->trigger('system-object-unlink', $request, $response);
+
+    //----------------------------//
+    // 4. Interpret Results
+    //redirect
+    $redirect = sprintf(
+        '/admin/system/object/%s/search',
+        $schema1->getName()
+    );
+
+    //if there is a specified redirect
+    if($request->hasStage('redirect_uri')) {
+        //set the redirect
+        $redirect = $request->getStage('redirect_uri');
+    }
+
+    //if we dont want to redirect
+    if($redirect === 'false') {
+        return;
+    }
+
+    if($response->isError()) {
+        //add a flash
+        cradle('global')->flash($response->getMessage(), 'error');
+    } else {
+        //add a flash
+        $message = cradle('global')->translate(
+            '%s was unlinked from %s',
+            $schema1->getSingular(),
+            $schema2->getSingular()
+        );
+
+        cradle('global')->flash($message, 'success');
+
+        //record logs
+        cradle()->log(
+            sprintf(
+                '%s #%s linked from %s #%s',
+                $schema1->getSingular(),
+                $request->getStage('id1'),
+                $schema2->getSingular(),
+                $request->getStage('id2')
+            ),
+            $request,
+            $response
+        );
+    }
+
+    cradle('global')->redirect($redirect);
+});

@@ -560,6 +560,11 @@ $cradle->get('/admin/system/object/:schema/update/:id', function($request, $resp
         }
     }
 
+    //if we only want the raw data
+    if($request->getStage('render') === 'false') {
+        return;
+    }
+
     //add CSRF
     cradle()->trigger('csrf-load', $request, $response);
     $data['csrf'] = $response->getResults('csrf');
