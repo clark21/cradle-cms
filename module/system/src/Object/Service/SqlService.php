@@ -323,6 +323,8 @@ class SqlService
 
         $schema = $this->schema;
 
+        $searchable = $this->schema->getSearchableFieldNames(1);
+
         //cutomer_project but the main schema is project for example
         foreach($reverseRelations as $table => $relation) {
             if (//if filter customer is not set
@@ -331,16 +333,60 @@ class SqlService
                 || isset($relations[$relation['name'] . '_' . $relation['source']])
             )
             {
-                //no need to join
-                //add filters
+                //then skip
+                continue;
+            }
+
+            //adjust filter, order and searchable for cases like post_post
+            if ($relation['source'] === $this->schema->getName()) {
                 foreach ($filter as $column => $value) {
-                    if (preg_match('/^[a-zA-Z0-9-_]+$/', $column)) {
-                        $search->addFilter($column . ' = %s', $value);
+                    if (isset($relation['fields'][$column])) {
+                        //add alias
+                        $filter[$relation['source'] . '2.' . $column] = $value;
+
+                        //then remove old
+                        unset($filter[$column]);
+
+                        //add fields filter
+                        if (!empty($value)) {
+                            $search->addFilter($relation['source'] . '2.' . $column . ' = %s', $value);
+                        }
+                    }
+
+                    //for primary
+                    if ($column === $schema->getPrimaryFieldName()) {
+                        //add alias
+                        $filter[$relation['source'] . '.' . $column] = $value;
+
+                        //then remove old
+                        unset($filter[$column]);
+
+                        //add primary filter
+                        if (!empty($value)) {
+                            $search->addFilter($relation['source'] . '.' . $column . ' = %s', $value);
+                        }
                     }
                 }
 
-                //then skip
-                continue;
+                //add alias on searchable
+                if(!empty($searchable)) {
+                    foreach($searchable as $key => $name) {
+                        if (isset($relation['fields'][$name])) {
+                            $searchable[$key] = $relation['source'] . '2.' . $name;
+                        }
+                    }
+                }
+
+                //add alias on order
+                foreach ($order as $sort => $direction) {
+                    if (isset($relation['fields'][$sort])) {
+                        //add alias
+                        $order[$relation['source'] . '2.' . $sort] = $direction;
+
+                        //remove the old
+                        unset($order[$sort]);
+                    }
+                }
             }
 
             $search
@@ -372,32 +418,25 @@ class SqlService
                         );
 
                         $this->innerJoinOn($source, $on);
-
-                        //add filter for table with alias
-                        foreach ($filter as $column => $value) {
-                            if (preg_match('/^[a-zA-Z0-9-_]+$/', $column)) {
-                                $this->addFilter($relation['source'] . '.' . $column . ' = %s', $value);
-                            }
-                        }
                     },
                     //this is the normal way
                     function() use ($table, $filter, &$relation) {
                         $this->innerJoinUsing($table, $relation['primary2']);
                         $this->innerJoinUsing($relation['source'], $relation['primary1']);
-
-                        //add filters the normal way
-                        foreach ($filter as $column => $value) {
-                            if (preg_match('/^[a-zA-Z0-9-_]+$/', $column)) {
-                                $this->addFilter($column . ' = %s', $value);
-                            }
-                        }
                     }
                 );
         }
 
-        //keyword?
-        $searchable = $this->schema->getSearchableFieldNames(1);
+        //add filters
+        foreach ($filter as $column => $value) {
+            if (!empty($value)) {
+                if (preg_match('/^[a-zA-Z0-9-_]+$/', $column)) {
+                    $search->addFilter($column . ' = %s', $value);
+                }
+            }
+        }
 
+        //keyword?
         if(!empty($searchable)) {
             $keywords = [];
 

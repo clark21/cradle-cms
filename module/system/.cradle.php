@@ -1,12 +1,12 @@
 <?php //-->
-include_once __DIR__ . '/src/controller.php';
-include_once __DIR__ . '/src/events.php';
+include_once __DIR__ . '/src/event/schema.php';
+include_once __DIR__ . '/src/event/object.php';
+include_once __DIR__ . '/src/event/rest.php';
 
-include_once __DIR__ . '/src/Object/admin/controller.php';
-include_once __DIR__ . '/src/Object/admin/events.php';
-
-include_once __DIR__ . '/src/Object/rest/controller.php';
-include_once __DIR__ . '/src/Object/rest/events.php';
+include_once __DIR__ . '/src/controller/schema.php';
+include_once __DIR__ . '/src/controller/object.php';
+include_once __DIR__ . '/src/controller/relation.php';
+include_once __DIR__ . '/src/controller/rest.php';
 
 use Cradle\Module\System\Service as SystemService;
 use Cradle\Module\System\Object\Service as ObjectService;

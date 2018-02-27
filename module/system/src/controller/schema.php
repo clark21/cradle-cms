@@ -65,6 +65,21 @@ $cradle->get('/admin/system/schema/create', function($request, $response) {
         $data['errors'] = $response->getValidation();
     }
 
+    //for ?copy=1 functionality
+    if (empty($data['item']) && $request->hasStage('copy')) {
+        $request->setStage('schema', $request->getStage('copy'));
+        cradle()->trigger('system-schema-detail', $request, $response);
+
+        //can we update ?
+        if($response->isError()) {
+            //add a flash
+            cradle('global')->flash($response->getMessage(), 'error');
+            return cradle('global')->redirect('/admin/system/schema/search');
+        }
+
+        $data['item'] = $response->getResults();
+    }
+
     //----------------------------//
     // 3. Render Template
     $class = 'page-admin-system-schema-create page-admin';

@@ -191,6 +191,18 @@
                                     </label>
                                 </td>
                                 <td class="table-actions">
+                                    <a
+                                        class="text-purple"
+                                        {{#if ../relation.suggestion}}
+                                            href="/admin/system/object/{{../schema.name}}/create/{{../relation.schema.name}}/{{key ../relation.schema.primary ../relation.data}}?copy={{key ../schema.primary this}}"
+                                        {{else}}
+                                            href="/admin/system/object/{{../schema.name}}/create?copy={{key ../schema.primary this}}"
+                                        {{/if}}
+                                        title="Copy {{../schema.singular}}"
+                                    >
+                                        <i class="fa fa-copy"></i>
+                                    </a>
+
                                     {{#is_active this ../schema}}
                                         <a
                                             class="text-grey"
