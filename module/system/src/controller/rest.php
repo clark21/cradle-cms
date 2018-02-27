@@ -364,7 +364,29 @@ $cradle->get('/rest/system/object/:schema/restore/:id', function($request, $resp
  * @param Response $response
  */
 $cradle->post('/rest/system/object/:schema/import', function($request, $response) {
-    
+    //----------------------------//
+    // 1. Route Permissions
+    cradle()->trigger('system-rest-permitted', $request, $response);
+
+    //----------------------------//
+    // 2. Prepare Data
+
+    // disable session
+    $request->setStage('session', 'false');
+    // don't redirect
+    $request->setStage('redirect_uri', 'false');
+
+    //----------------------------//
+    // 3. Render Request
+    return cradle()->triggerRoute(
+        'post',
+        sprintf(
+            '/admin/system/object/%s/import',
+            $request->getStage('schema')     
+        ),
+        $request,
+        $response
+    );
 });
 
 /**
@@ -374,5 +396,26 @@ $cradle->post('/rest/system/object/:schema/import', function($request, $response
  * @param Response $response
  */
 $cradle->get('/rest/system/object/:schema/export/:type', function($request, $response) {
-    
+    //----------------------------//
+    // 1. Route Permissions
+    cradle()->trigger('system-rest-permitted', $request, $response);
+
+    //----------------------------//
+    // 2. Prepare Data
+
+    // disable session
+    $request->setStage('session', 'false');
+
+    //----------------------------//
+    // 3. Render Request
+    return cradle()->triggerRoute(
+        'get',
+        sprintf(
+            '/admin/system/object/%s/export/%s',
+            $request->getStage('schema'),
+            $request->getStage('type')    
+        ),
+        $request,
+        $response
+    );
 });

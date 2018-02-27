@@ -1262,11 +1262,11 @@ $cradle->get('/admin/system/object/:schema/restore/:id', function($request, $res
  * @param Request $request
  * @param Response $response
  */
-$cradle->post('/admin/system/object/:schema/import', function($request, $response) {
+$cradle->post('/admin/system/object/:schema/import', function($request, $response) {        
     //----------------------------//
     // 1. Route Permissions
     //only for store
-    cradle('global')->requireLogin('admin');
+    cradle('global')->requireLogin('admin');    
 
     //----------------------------//
     // 2. Prepare Data
@@ -1275,7 +1275,7 @@ $cradle->post('/admin/system/object/:schema/import', function($request, $respons
     //----------------------------//
     // 3. Process Request
     //get schema data
-    cradle()->trigger('system-object-import', $request, $response);
+    cradle()->trigger('system-object-import', $request, $response);    
 
     //----------------------------//
     // 4. Interpret Results
@@ -1284,6 +1284,17 @@ $cradle->post('/admin/system/object/:schema/import', function($request, $respons
         '/admin/system/object/%s/search',
         $schema->getName()
     );
+
+    //if there is a specified redirect
+    if($request->hasStage('redirect_uri')) {
+        //set the redirect
+        $redirect = $request->getStage('redirect_uri');
+    }
+
+    //if we dont want to redirect
+    if($redirect === 'false') {
+        return;
+    }
 
     //if the import event returned errors
     if($response->isError()) {
