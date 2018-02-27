@@ -196,14 +196,23 @@ $cradle->post('/admin/system/object/:schema1/create/:schema2/:id', function($req
         $redirect = $request->getStage('redirect_uri');
     }
 
+    // setup the route
+    $route = sprintf(
+        '/admin/system/object/%s/create/%s/%s',
+        $schema1->getName(),
+        $schema2->getName(),
+        $id
+    );
+
+    //if there is a specified route
+    if ($request->hasStage('route')) {
+        //set the route
+        $route = $request->getStage('route');
+    }
+
     //pass all the relational data we collected
     $request
-        ->setStage('route', sprintf(
-            '/admin/system/object/%s/create/%s/%s',
-            $schema1->getName(),
-            $schema2->getName(),
-            $id
-        ))
+        ->setStage('route', $route)
         ->setStage('redirect_uri', 'false');
 
     //now let the original create take over

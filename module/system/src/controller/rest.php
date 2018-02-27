@@ -124,7 +124,42 @@ $cradle->post('/rest/system/object/:schema/search', function($request, $response
  * @param Response $response
  */
 $cradle->post('/rest/system/object/:schema1/search/:schema2/:id', function($request, $response) {
+    //----------------------------//
+    // 1. Route Permissions
+    cradle()->trigger('system-rest-permitted', $request, $response);
 
+    //----------------------------//
+    // 2. Prepare Data
+
+    // disable session
+    $request->setStage('session', 'false');
+    // don't redirect
+    $request->setStage('redirect_uri', 'false');
+
+    // rest route
+    $route = sprintf(
+        '/rest/system/object/%s/search/%s/%s',
+        $request->getStage('schema1'),
+        $request->getStage('schema2'),
+        $request->getStage('id')
+    );
+
+    // set route
+    $request->setStage('route', $route);
+
+    //----------------------------//
+    // 3. Render Request
+    return cradle()->triggerRoute(
+        'post',
+        sprintf(
+            '/admin/system/object/%s/search/%s/%s',
+            $request->getStage('schema1'),
+            $request->getStage('schema2'),
+            $request->getStage('id')
+        ),
+        $request,
+        $response
+    );
 });
 
 /**
@@ -134,7 +169,38 @@ $cradle->post('/rest/system/object/:schema1/search/:schema2/:id', function($requ
  * @param Response $response
  */
 $cradle->post('/rest/system/object/:schema/create', function($request, $response) {
+    //----------------------------//
+    // 1. Route Permissions
+    cradle()->trigger('system-rest-permitted', $request, $response);
 
+    //----------------------------//
+    // 2. Prepare Data
+
+    // disable session
+    $request->setStage('session', 'false');
+    // don't redirect
+    $request->setStage('redirect_uri', 'false');
+
+    // rest route
+    $route = sprintf(
+        '/rest/system/object/%s/create',
+        $request->getStage('schema')
+    );
+
+    // set route
+    $request->setStage('route', $route);
+
+    //----------------------------//
+    // 3. Render Request
+    return cradle()->triggerRoute(
+        'post',
+        sprintf(
+            '/admin/system/object/%s/create',
+            $request->getStage('schema')
+        ),
+        $request,
+        $response
+    );
 });
 
 /**
@@ -144,7 +210,42 @@ $cradle->post('/rest/system/object/:schema/create', function($request, $response
  * @param Response $response
  */
 $cradle->post('/rest/system/object/:schema1/create/:schema2/:id', function($request, $response) {
+    //----------------------------//
+    // 1. Route Permissions
+    cradle()->trigger('system-rest-permitted', $request, $response);
 
+    //----------------------------//
+    // 2. Prepare Data
+
+    // disable session
+    $request->setStage('session', 'false');
+    // don't redirect
+    $request->setStage('redirect_uri', 'false');
+
+    // rest route
+    $route = sprintf(
+        '/rest/system/object/%s/create/%s/%s',
+        $request->getStage('schema1'),
+        $request->getStage('schema2'),
+        $request->getStage('id')
+    );
+
+    // set route
+    $request->setStage('route', $route);
+
+    //----------------------------//
+    // 3. Render Request
+    return cradle()->triggerRoute(
+        'post',
+        sprintf(
+            '/admin/system/object/%s/create/%s/%s',
+            $request->getStage('schema1'),
+            $request->getStage('schema2'),
+            $request->getStage('id')
+        ),
+        $request,
+        $response
+    );
 });
 
 /**
@@ -154,7 +255,40 @@ $cradle->post('/rest/system/object/:schema1/create/:schema2/:id', function($requ
  * @param Response $response
  */
 $cradle->post('/rest/system/object/:schema/update/:id', function($request, $response) {
+    //----------------------------//
+    // 1. Route Permissions
+    cradle()->trigger('system-rest-permitted', $request, $response);
 
+    //----------------------------//
+    // 2. Prepare Data
+
+    // disable session
+    $request->setStage('session', 'false');
+    // don't redirect
+    $request->setStage('redirect_uri', 'false');
+
+    // rest route
+    $route = sprintf(
+        '/rest/system/object/%s/update/%s',
+        $request->getStage('schema'),
+        $request->getStage('id')
+    );
+
+    // set route
+    $request->setStage('route', $route);
+
+    //----------------------------//
+    // 3. Render Request
+    return cradle()->triggerRoute(
+        'post',
+        sprintf(
+            '/admin/system/object/%s/update/%s',
+            $request->getStage('schema'),
+            $request->getStage('id')            
+        ),
+        $request,
+        $response
+    );
 });
 
 /**
@@ -164,7 +298,30 @@ $cradle->post('/rest/system/object/:schema/update/:id', function($request, $resp
  * @param Response $response
  */
 $cradle->get('/rest/system/object/:schema/remove/:id', function($request, $response) {
+    //----------------------------//
+    // 1. Route Permissions
+    cradle()->trigger('system-rest-permitted', $request, $response);
 
+    //----------------------------//
+    // 2. Prepare Data
+
+    // disable session
+    $request->setStage('session', 'false');
+    // don't redirect
+    $request->setStage('redirect_uri', 'false');
+
+    //----------------------------//
+    // 3. Render Request
+    return cradle()->triggerRoute(
+        'get',
+        sprintf(
+            '/admin/system/object/%s/remove/%s',
+            $request->getStage('schema'),
+            $request->getStage('id')            
+        ),
+        $request,
+        $response
+    );
 });
 
 /**
@@ -174,7 +331,30 @@ $cradle->get('/rest/system/object/:schema/remove/:id', function($request, $respo
  * @param Response $response
  */
 $cradle->get('/rest/system/object/:schema/restore/:id', function($request, $response) {
-    
+    //----------------------------//
+    // 1. Route Permissions
+    cradle()->trigger('system-rest-permitted', $request, $response);
+
+    //----------------------------//
+    // 2. Prepare Data
+
+    // disable session
+    $request->setStage('session', 'false');
+    // don't redirect
+    $request->setStage('redirect_uri', 'false');
+
+    //----------------------------//
+    // 3. Render Request
+    return cradle()->triggerRoute(
+        'get',
+        sprintf(
+            '/admin/system/object/%s/restore/%s',
+            $request->getStage('schema'),
+            $request->getStage('id')            
+        ),
+        $request,
+        $response
+    );
 });
 
 /**
