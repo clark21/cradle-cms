@@ -245,7 +245,7 @@ $cradle->post('/admin/system/object/:schema1/create/:schema2/:id', function($req
     $request
         ->setStage('schema2', $schema1->getName())
         ->setStage('schema1', $schema2->getName())
-        ->setStage($primary1, $response->getResults($primary1))
+        ->setStage($primary1, $response->getResults($schema1->getPrimaryFieldName()))
         ->setStage($primary2, $id);
 
     //now link it
