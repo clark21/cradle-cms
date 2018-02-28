@@ -150,8 +150,10 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
             }
 
             if(is_null($value)) {
+                unset($query['order']);
                 $query['order'][$key] = 'ASC';
             } else if($value === 'ASC') {
+                unset($query['order']);
                 $query['order'][$key] = 'DESC';
             } else if($value === 'DESC') {
                 unset($query['order'][$key]);
