@@ -97,4 +97,7 @@ $cradle->on('system-rest-permitted', function($request, $response) {
           ->set('json', 'token', $signResponse->getResults('token'));
       }
     }
+
+    // set decoded token data
+    $request->setStage('jwt', $decoded);
 });

@@ -40,7 +40,8 @@ $cradle->on('auth-jwt-sign', function ($request, $response) {
     // auto refresh the token expiration
     // on every request, if this is set
     // every successful request will return
-    // a newly generated token
+    // a newly signed token, whitelisted url's
+    // will skip token refresh process
     $autoRefresh = false;
 
     // if auto refresh

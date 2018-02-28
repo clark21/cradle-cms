@@ -63,6 +63,7 @@ $cradle->post('/rest/system/auth', function ($request, $response) {
 
     // create the signing data
     $data = [
+        'auth_id'       => $auth['auth_id'],
         'auth_slug'     => $auth['auth_slug'],
         'auth_password' => $auth['auth_password'],
         'auth_type'     => $auth['auth_type'],
