@@ -1,8 +1,10 @@
 <?php //-->
+include_once __DIR__ . '/src/event/auth.php';
 include_once __DIR__ . '/src/event/schema.php';
 include_once __DIR__ . '/src/event/object.php';
 include_once __DIR__ . '/src/event/rest.php';
 
+include_once __DIR__ . '/src/controller/auth.php';
 include_once __DIR__ . '/src/controller/schema.php';
 include_once __DIR__ . '/src/controller/object.php';
 include_once __DIR__ . '/src/controller/relation.php';

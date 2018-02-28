@@ -7,6 +7,9 @@
  * distributed with this package.
  */
 
+use Cradle\Module\System\Service as SystemService;
+use Firebase\JWT\JWT;
+
  /**
   * System Rest Permitted Job
   *
@@ -14,5 +17,84 @@
   * @param Response $response
   */
 $cradle->on('system-rest-permitted', function($request, $response) {
-    
+    // laod config
+    $config = cradle('global')->config('jwt');
+
+    // get the whitelist config
+    $whitelist = $config['whitelist'];
+
+    // get the request uri
+    $uri = $request->getServer('REQUEST_URI');
+
+    // get path only
+    $path = explode('?', $uri)[0];
+
+    // is it on our whitelist?
+    if (in_array($path, $whitelist)) {
+      return;
+    }
+
+    // is token set?
+    if (!$request->hasStage('__token')) {
+      return $response
+        ->setError(true, 'Unauthorized Request');
+    }
+
+    try {
+      // decode the token
+      $decoded = JWT::decode(
+        $request->getStage('__token'),
+        $config['secret'],
+        array('HS256')
+      );
+    } catch(\Exception $e) {
+      // expired token?
+      if($e->getMessage() === 'Expired token') {
+        // throw some error
+        return $response->setError(true, 'Invalid Token or is expired');
+      }
+
+      // throw some error
+      return $response->setError(true, 'An error occured while processing request');
+    }
+
+    // cast decoded token
+    $decoded = (array) $decoded;
+
+    // set the data to stage
+    $data = (array) $decoded['data'];
+
+    // get the auth data
+    $auth = SystemService::get('sql')
+      ->getResource()
+      ->search('auth')
+      ->filterByAuthSlug($data['auth_slug'])
+      ->filterByAuthPassword($data['auth_password'])
+      ->filterByAuthType($data['auth_type'])
+      ->filterByAuthActive($data['auth_active'])
+      ->getRow();
+
+    // auto refresh token?
+    if ($decoded['autoref']) {
+      // sign request
+      $signRequest = \Cradle\Http\Request::i();
+      // sign response
+      $signResponse = \Cradle\Http\Response::i();
+
+      // trigger data signing again
+      cradle()->trigger('auth-jwt-sign', $signRequest, $signResponse);
+
+      // do we have error?
+      if ($signResponse->isError()) {
+        // set token response
+        $response
+          ->set('json', 'token', [
+            'validation' => 'Unable to sign and refresh token'
+          ]);
+      } else {
+        // set encoded token
+        $response
+          ->set('json', 'token', $signResponse->getResults('token'));
+      }
+    }
 });
