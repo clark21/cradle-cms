@@ -179,6 +179,12 @@
                                     {{/in}}
                                 {{/in}}
                             {{/each}}
+
+                            {{#each schema.relations}}
+                                {{#when many '==' 1}}
+                                    <th>{{singular}}</th>
+                                {{/when}}
+                            {{/each}}
                         </tr>
                     </thead>
                     <tbody>
@@ -364,6 +370,12 @@
                                         </td>
                                     {{/when}}
                                 {{/get_format}}
+
+                                {{#each ../schema.relations}}
+                                    {{#when many '==' 1}}
+                                        <td>{{#get_suggestion this ../this}}{{/get_suggestion}}</td>
+                                    {{/when}}
+                                {{/each}}
                             </tr>
                         {{/each}}
                     </tbody>

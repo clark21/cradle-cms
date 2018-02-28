@@ -196,6 +196,9 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
 
             return implode('', $columns);
         })
+        ->registerHelper('get_suggestion', function($schema, $data) {
+            return SystemSchema::i($schema)->getSuggestionFormat($data);
+        })
         ->registerHelper('filtertoquery', function($key = null, $value = '') {
             $query = $_GET;
             $query['filter'][$key] = $value;
