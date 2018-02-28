@@ -430,3 +430,50 @@ $cradle->on('history-unlink-user', function ($request, $response) {
     //return response format
     $response->setError(false)->setResults($results);
 });
+
+/**
+ * History Mark Logs as read Job
+ *
+ * @param Request $request
+ * @param Response $response
+ */
+$cradle->on('history-mark-as-read', function ($request, $response) {
+    //----------------------------//
+    // 1. Get Data
+    $request->setStage('filter', 'history_flag', 0);
+    cradle()->trigger('history-search', $request, $response);
+
+    $logs = $response->getResults();
+
+    if (empty($logs['rows'])) {
+        return $response->setError(true, 'No new notification');
+    }
+
+    //----------------------------//
+    // 2. Validate Data
+
+    //----------------------------//
+    // 3. Prepare Data
+
+    //----------------------------//
+    // 4. Process Data
+    //this/these will be used a lot
+    $historySql = HistoryService::get('sql');
+    $historyRedis = HistoryService::get('redis');
+    $historyElastic = HistoryService::get('elastic');
+
+    $results = [];
+
+    //save to database
+    foreach ($logs['rows'] as $key => $log) {
+        $results[] = $historySql->update([
+            'history_id' => $log['history_id'],
+            'history_flag' => 1
+        ]);
+    }
+
+    //invalidate cache
+    $historyRedis->removeSearch();
+
+    $response->setError(false)->setResults($results);
+});

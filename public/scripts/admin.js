@@ -87,6 +87,93 @@ jQuery(function($) {
             });
         });
 
+        /**
+         * Search table check all
+         */
+        $(window).on('show-notif-init', function(e, trigger) {
+            var target = $(trigger);
+
+            $.ajax({
+                url: '/ajax/admin/history/get/notification',
+                type: 'post',
+                // form data
+                data: {},
+                // disable cache
+                cache: false,
+                // do not set content type
+                contentType: false,
+                // do not proccess data
+                processData: false,
+                // on error
+                error: function(xhr, status, message) {
+                },
+                // on success
+                success : function(res) {
+                    res = eval('('+res+')');
+
+                    var rows = res.results.rows;
+                    rows.forEach(function(log, key) {
+                        $('div.dropdown-menu #logs').append('<a class="dropdown-item" href="#">' +
+                                '<img class="rounded-circle" src="/images/default-avatar.png" />' +
+                                '<span class="notification-info">' +
+                                    '<span class="notification-message">' + log.history_activity + '</span>' +
+                                    '<em class="notification-time">' + log.ago + '</em>' +
+                                '</span>' +
+                            '</a>'
+                        );
+
+                        if (key == 4) {
+                            $('div.dropdown-menu #logs').addClass('notif-scroll');
+                        }
+                    });
+
+                    if (rows.length === 0) {
+                        $('div.dropdown-menu #logs').html('<a class="dropdown-item text-center" href="#">' +
+                                '<span class="notification-info">' +
+                                    '<span class="notification-message">No New Notification</span>' +
+                                '</span>' +
+                            '</a>'
+                        );
+
+                        //add class
+                        $('.notification-info').addClass('no-notification');
+
+                        //remove doon
+                        $('a.nav-link.dropdown-toggle').removeAttr('data-do');
+                        $('a.nav-link.dropdown-toggle').removeAttr('data-on');
+                    }
+
+                    $('span#notification').html(res.results.total);
+                }
+            });
+        });
+
+        /**
+         * Search table check all
+         */
+        $(window).on('show-notif-click', function(e, trigger) {
+            var target = $(trigger);
+            $.ajax({
+                url: '/ajax/admin/history/read/notification',
+                type: 'post',
+                // form data
+                data: {},
+                // disable cache
+                cache: false,
+                // do not set content type
+                contentType: false,
+                // do not proccess data
+                processData: false,
+                // on error
+                error: function(xhr, status, message) {
+                },
+                // on success
+                success : function(res) {
+                    $('span#notification').html(0);
+                }
+            });
+        });
+
 
         /**
          * Importer tool
