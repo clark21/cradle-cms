@@ -26,34 +26,17 @@
                     data-toggle="dropdown"
                     aria-haspopup="true"
                     aria-expanded="false"
+                    data-do="show-notif"
+                    data-on="click"
                 >
                     <i class="fas fa-bell"></i>
-                    <span class="badge badge-danger">55</span>
+                    <span class="badge badge-danger" id="notification">0</span>
                 </a>
                 <div class="dropdown-menu">
-                    <a class="dropdown-item" href="#">
-                        <img class="rounded-circle" src="/images/default-avatar.png" />
-                        <span class="notification-info">
-                            <span class="notification-message">has deleted everything.</span>
-                            <em class="notification-time">2 hours ago</em>
-                        </span>
-                    </a>
-                    <a class="dropdown-item" href="#">
-                        <img class="rounded-circle" src="/images/default-avatar.png" />
-                        <span class="notification-info">
-                            <span class="notification-message">has deleted everything.</span>
-                            <em class="notification-time">2 hours ago</em>
-                        </span>
-                    </a>
-                    <a class="dropdown-item" href="#">
-                        <img class="rounded-circle" src="/images/default-avatar.png" />
-                        <span class="notification-info">
-                            <span class="notification-message">has deleted everything.</span>
-                            <em class="notification-time">2 hours ago</em>
-                        </span>
-                    </a>
+                    <div id="logs">
+                    </div>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#">Mark all as Read</a>
+                    <a class="dropdown-item" href="/admin/history/search">Show All</a>
                 </div>
             </li>
             <li class="nav-item dropdown nav-profile">

@@ -19,12 +19,6 @@ $cradle->get('/admin/user/search', function($request, $response) {
     //only for admin
     cradle('global')->requireLogin('admin');
 
-    //record logs
-    cradle()->log('View user listing',
-        $request,
-        $response
-    );
-
     //----------------------------//
     // 2. Prepare Data
     if(!$request->hasStage('range')) {

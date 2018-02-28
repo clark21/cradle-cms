@@ -1180,9 +1180,19 @@ select.form-control {
     padding-left: 40px;
 }
 
+.head .nav-notifications .no-notification {
+    padding-left: 0 !important;
+}
+
 .head .nav-notifications .notification-time {
     display: block;
     font-size: 12px;
+}
+
+.head .nav-notifications .notif-scroll {
+    height: 240px;
+    position: relative;
+    overflow-y: scroll;
 }
 
 /* Foot

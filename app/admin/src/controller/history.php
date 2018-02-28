@@ -80,3 +80,100 @@ $cradle->get('/admin/history/search', function($request, $response) {
 
     //render page
 }, 'render-admin-page');
+
+/**
+ * Show/Read Notification
+ * based on the given data.
+ *
+ * @param Request $request
+ * @param Response $response
+ */
+$cradle->post('/ajax/admin/history/:action/notification', function ($request, $response) {
+
+    if (!$request->hasStage('action')) {
+        //Set JSON Content
+        return $response->setContent(json_encode([
+            'error'      => true,
+            'message'    => 'Invalid Notification Action',
+        ]));
+    }
+
+    $data = $request->getStage();
+
+    switch (strtolower($data['action'])) {
+        case 'get':
+            $request->setStage('filter', 'history_flag', 0);
+            $request->setStage('order', 'history_created', 'DESC');
+
+            cradle()->trigger('history-search', $request, $response);
+
+            $results = $response->getResults();
+
+            if ($response->isError()) {
+                //Set JSON Content
+                return $response->setContent(json_encode([
+                    'error'      => true,
+                    'message'    => $response->getMessage(),
+                    'validation' => $response->getValidation()
+                ]));
+            }
+
+            //process data
+            foreach ($results['rows'] as $key => $value) {
+                $timestamp = strtotime($value['history_created']);
+
+                $strTime = array("second", "minute", "hour", "day", "month", "year");
+                $length = array("60","60","24","30","12","10");
+
+                $currentTime = time();
+                if($currentTime >= $timestamp) {
+                    $diff     = time()- $timestamp;
+                    for($i = 0; $diff >= $length[$i] && $i < count($length)-1; $i++) {
+                        $diff = $diff / $length[$i];
+                    }
+
+                    $diff = round($diff);
+                    $results['rows'][$key]['ago'] = $diff . " " . $strTime[$i] . "(s) ago ";
+                }
+            }
+
+            //set message
+            $data['message'] = 'New notification loaded';
+
+            break;
+        case 'read':
+            //mark all unread logs to read
+            cradle()->trigger('history-mark-as-read', $request, $response);
+
+            $results = $response->getResults();
+
+            if ($response->isError()) {
+                //Set JSON Content
+                return $response->setContent(json_encode([
+                    'error'      => true,
+                    'message'    => $response->getMessage(),
+                ]));
+            }
+
+            //set message
+            $data['message'] = 'All new notification marked as read';
+
+            break;
+        default:
+            if ($response->isError()) {
+                //Set JSON Content
+                return $response->setContent(json_encode([
+                    'error'      => true,
+                    'message'    => 'Invalid Notification Action',
+                ]));
+            }
+            break;
+    }
+
+    //Set JSON Content
+    return $response->setContent(json_encode([
+        'error' => false,
+        'message' => $data['message'],
+        'results' => $results
+    ]));
+});
