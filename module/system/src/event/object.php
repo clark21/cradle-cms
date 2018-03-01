@@ -523,6 +523,26 @@ $cradle->on('system-object-import', function ($request, $response) {
     }
 
     $schema = SystemSchema::i($data['schema']);
+    $schema2 = [];
+
+    //check if relation exists
+    if ($request->hasStage('relation')) {
+        $reverserRelations = $schema->getReverseRelations(2);
+        $relation = key($request->getStage('relation'));
+        $possibleRelation = sprintf('%s_%s', $relation, $schema->getName());
+
+        //check if relation exists
+        if (array_key_exists($possibleRelation, $reverserRelations)) {
+            $schema2 = SystemSchema::i($relation);
+        }
+
+        //return if empty
+        if (empty($schema2)) {
+            return $response
+                ->setError(true, 'Invalid Schema Relation');
+        }
+    }
+
     //----------------------------//
     // 2. Validate Data
     //validate data
@@ -610,6 +630,33 @@ $cradle->on('system-object-import', function ($request, $response) {
             'row' => $rowResponse->getResults(),
             'error' => false
         ];
+
+        if (!empty($schema2)) {
+            //for linking relation
+            $linkRequest = Request::i()
+                ->setStage('schema2', $schema->getName())
+                ->setStage('schema1', $schema2->getName());
+
+            $linkResponse = Response::i()->load();
+
+            //so it must have been successful
+            //lets link the tables now
+            $primary1 = $schema->getPrimaryFieldName();
+            $primary2 = $schema2->getPrimaryFieldName();
+
+            if ($primary1 == $primary2) {
+                $primary1 = sprintf('%s_2', $primary1);
+                $primary2 = sprintf('%s_1', $primary2);
+            }
+
+            //set the stage to link
+            $linkRequest
+                ->setStage($primary1, $rowResponse->getResults($schema->getPrimaryFieldName()))
+                ->setStage($primary2, $request->getStage('relation', $schema2->getName()));
+
+            //now link it
+            cradle()->trigger('system-object-link', $linkRequest, $linkResponse);
+        }
 
         $results['new'] ++;
     }

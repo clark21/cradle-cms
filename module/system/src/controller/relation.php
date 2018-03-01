@@ -428,3 +428,61 @@ $cradle->get('/admin/system/object/:schema1/:id1/unlink/:schema2/:id2', function
 
     cradle('global')->redirect($redirect);
 });
+
+/**
+ * Process Object Exporting Filtered by Relation
+ *
+ * @param Request $request
+ * @param Response $response
+ */
+$cradle->get('/admin/system/object/:schema1/export/:schema2/:id/:type', function($request, $response) {
+    //variable list
+    $id = $request->getStage('id');
+    $schema1 = $request->getStage('schema1');
+    $schema2 = SystemSchema::i($request->getStage('schema2'));
+    $request->setStage('filter', $schema2->getPrimaryFieldName(), $id);
+
+    //remove the data from stage
+    //because we wont need it anymore
+    $request
+        ->removeStage('id')
+        ->removeStage('schema1')
+        ->removeStage('schema2');
+
+    //get the schema detail
+    $detailRequest = Request::i()->load();
+    $detailResponse = Response::i()->load();
+
+    $detailRequest
+        //let the event know what schema we are using
+        ->setStage('schema', $schema2->getName())
+        //table_id, 1 for example
+        ->setStage($schema2->getPrimaryFieldName(), $id);
+
+    //now get the actual table row
+    cradle()->trigger('system-object-detail', $detailRequest, $detailResponse);
+
+    //get the table row
+    $results = $detailResponse->getResults();
+    //and determine the title of the table row
+    //this will be used on the breadcrumbs and title for example
+    $suggestion = $schema2->getSuggestionFormat($results);
+
+    //pass all the relational data we collected
+    $request
+        ->setStage('relation', 'schema', $schema2->getAll())
+        ->setStage('relation', 'data', $results)
+        ->setStage('relation', 'suggestion', $suggestion);
+
+    //now let the original export take over
+    cradle()->triggerRoute(
+        'get',
+        sprintf(
+            '/admin/system/object/%s/export/%s',
+            $schema1,
+            $request->getStage('type')
+        ),
+        $request,
+        $response
+    );
+});

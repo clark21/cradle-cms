@@ -273,6 +273,7 @@ class SqlService
         }
 
         $filter = [];
+        $span  = [];
         $range = 50;
         $start = 0;
         $order = [];
@@ -280,6 +281,10 @@ class SqlService
 
         if (isset($data['filter']) && is_array($data['filter'])) {
             $filter = $data['filter'];
+        }
+
+        if (isset($data['span']) && is_array($data['span'])) {
+            $span = $data['span'];
         }
 
         if (isset($data['range']) && is_numeric($data['range'])) {
@@ -462,6 +467,27 @@ class SqlService
             if (!empty($value)) {
                 if (preg_match('/^[a-zA-Z0-9-_]+$/', $column)) {
                     $search->addFilter($column . ' = %s', $value);
+                }
+            }
+        }
+
+        //add spans
+        foreach ($span as $column => $value) {
+            if (!empty($value)) {
+                if (!preg_match('/^[a-zA-Z0-9-_]+$/', $column)) {
+                    continue;
+                }
+
+                // minimum?
+                if(isset($value[0]) && !empty($value[0])) {
+                    $search
+                        ->addFilter($column . ' >= %s', $value[0]);
+                }
+
+                // maximum?
+                if(isset($value[1]) && !empty($value[0])) {
+                    $search
+                        ->addFilter($column . ' <= %s', $value[1]);
                 }
             }
         }
