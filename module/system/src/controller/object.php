@@ -1310,6 +1310,19 @@ $cradle->post('/admin/system/object/:schema/import', function($request, $respons
         $schema->getName()
     );
 
+    //redirect to relation object search
+    if ($request->hasStage('relation')) {
+        $relation_schema = key($request->getStage('relation'));
+        $relation = SystemSchema::i($relation_schema);
+
+        $redirect = sprintf(
+            '/admin/system/object/%s/search/%s/%s',
+            $schema->getName(),
+            $relation->getName(),
+            $request->getStage('relation', $relation->getName())
+        );
+    }
+
     //if there is a specified redirect
     if($request->hasStage('redirect_uri')) {
         //set the redirect
@@ -1381,10 +1394,20 @@ $cradle->get('/admin/system/object/:schema/export/:type', function($request, $re
     //get schema data
     $schema = SystemSchema::i($request->getStage('schema'));
 
+    //if exist get schema
+    if ($request->hasStage('relation')) {
+        $relation = $request->getStage('relation');
+    }
+
     //filter possible filter options
     //we do this to prevent SQL injections
     if(is_array($request->getStage('filter'))) {
         $filterable = $schema->getFilterableFieldNames();
+
+        //allow relation primary
+        if (isset($relation['schema']['primary'])) {
+            $filterable[] = $relation['schema']['primary'];
+        }
 
         foreach($request->getStage('filter') as $key => $value) {
             if(!in_array($key, $filterable)) {

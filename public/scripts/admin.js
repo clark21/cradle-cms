@@ -180,6 +180,13 @@ jQuery(function($) {
          */
         $(window).on('import-click', function(e, trigger) {
             var url = $(trigger).attr('data-url');
+            var schema = $(trigger).attr('data-schema');
+            var relation = $(trigger).attr('data-relation');
+            var relation_id = $(trigger).attr('data-relation-id');
+
+            //complete url
+            url = '/admin/system/object/' + schema + '/' + url;
+
             //make a file
             $('<input type="file" />')
                 .attr(
@@ -217,6 +224,17 @@ jQuery(function($) {
                                             .appendTo(form);
                                     }
                                 });
+
+                                //if relation exists
+                                if (typeof relation !== 'undefined' && typeof relation_id !== 'undefined') {
+                                    var relationField = 'relation[' + relation + ']';
+
+                                    $('<input>')
+                                        .attr('type', 'hidden')
+                                        .attr('name', relationField)
+                                        .attr('value', relation_id)
+                                        .appendTo(form);
+                                }
 
                                 form.hide().appendTo(document.body).submit();
                             },
