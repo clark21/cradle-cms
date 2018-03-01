@@ -531,7 +531,7 @@ $cradle->on('system-object-import', function ($request, $response) {
         $relation = key($request->getStage('relation'));
         $possibleRelation = sprintf('%s_%s', $relation, $schema->getName());
 
-        //check if possibleRelation exists
+        //check if relation exists
         if (array_key_exists($possibleRelation, $reverserRelations)) {
             $schema2 = SystemSchema::i($relation);
         }

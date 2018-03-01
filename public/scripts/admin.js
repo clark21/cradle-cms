@@ -1018,6 +1018,28 @@ jQuery(function($) {
         });
 
         /**
+         * Object Range Change
+         */
+        $(window).on('object-range-change', function(e, target) {
+            var target = $(target);
+
+            var form = $('<form>')
+                .attr('method', 'get');
+
+            //if relation exists
+            if (typeof target.val() !== 'undefined' && target.val() !== '') {
+                $('<input>')
+                    .attr('type', 'hidden')
+                    .attr('name', 'range')
+                    .attr('value', target.val())
+                    .appendTo(form);
+            }
+
+            form.hide().appendTo(document.body).submit();
+
+        });
+
+        /**
          * Direct CDN Upload
          */
         $(window).on('cdn-upload-submit', function(e, target) {
