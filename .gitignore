@@ -1,6 +1,7 @@
 bin
 vendor
 
+config/jwt.php
 config/services.php
 config/settings.php
 config/roles.php

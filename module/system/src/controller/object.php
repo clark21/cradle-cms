@@ -97,6 +97,13 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
         $data['schema']['filterable'] = array_values($data['schema']['filterable']);
     }
 
+    //determine valid relations
+    $data['valid_relations'] = [];
+    cradle()->trigger('system-schema-search', $request, $response);
+    foreach($response->getResults('rows') as $relation) {
+        $data['valid_relations'][] = $relation['name'];
+    }
+
     //----------------------------//
     // 3. Render Template
     //set the class name
@@ -195,6 +202,9 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
             }
 
             return implode('', $columns);
+        })
+        ->registerHelper('get_suggestion', function($schema, $data) {
+            return SystemSchema::i($schema)->getSuggestionFormat($data);
         })
         ->registerHelper('filtertoquery', function($key = null, $value = '') {
             $query = $_GET;

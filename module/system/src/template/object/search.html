@@ -83,6 +83,46 @@
                             </div>
 
                             <div id="filter-options" class="collapse">
+                                {{#each schema.relations}}
+                                    {{#in many '0,1'}}
+                                        <div class="form-group{{#has primary2 ../errors}} has-error{{/has}}">
+                                            <label class="control-label">{{singular}}</label>
+                                            <div>
+                                                <input
+                                                    autocomplete="off"
+                                                    class="form-control suggestion-label-{{name}}"
+                                                    name="{{suggestion_name}}"
+                                                    placeholder="Enter {{singular}}"
+                                                    type="text"
+                                                    value="{{key suggestion_name ../item}}"
+                                                />
+                                                <input
+                                                    class="suggestion-value-{{name}}"
+                                                    name="filter[{{primary2}}]"
+                                                    type="hidden"
+                                                    value="{{key primary2 ../item}}"
+                                                />
+                                                <div
+                                                    class="input-suggestion d-none"
+                                                    data-do="suggestion-field"
+                                                    data-format="{{suggestion}}"
+                                                    data-target-label="input.suggestion-label-{{name}}"
+                                                    data-target-value="input.suggestion-value-{{name}}"
+                                                    {{#in name ../valid_relations}}
+                                                        data-url="/admin/system/object/{{name}}/search?q={QUERY}&render=false"
+                                                    {{else}}
+                                                        data-url="/admin/{{name}}/search?q={QUERY}&render=false"
+                                                    {{/in}}
+                                                    data-value="{{primary2}}"
+                                                ></div>
+                                                {{#has primary2 ../errors}}
+                                                    <span class="help-text">{{key primary2 ../errors}}</span>
+                                                {{/has}}
+                                            </div>
+                                        </div>
+                                    {{/in}}
+                                {{/each}}
+
                                 {{> object_filters}}
                                 <div class="form-group">
                                     <label for="save">Save Filters</label>
@@ -173,6 +213,11 @@
                             </th>
                             <th>Actions</th>
                             <th>ID</th>
+                            {{#each schema.relations}}
+                                {{#when many '==' 1}}
+                                    <th>{{singular}}</th>
+                                {{/when}}
+                            {{/each}}
                             {{#each schema.fields}}
                                 {{#in @key ../schema.listable}}
                                     {{#in @key ../schema.sortable}}
@@ -257,6 +302,11 @@
                                     {{/is_active}}
                                 </td>
                                 <td>{{key ../schema.primary this}}</td>
+                                {{#each ../schema.relations}}
+                                    {{#when many '==' 1}}
+                                        <td>{{#get_suggestion this ../this}}{{/get_suggestion}}</td>
+                                    {{/when}}
+                                {{/each}}
                                 {{#get_format this ../schema}}
                                     {{#when format '===' 'none'}}
                                         {{#in name ../../schema.filterable}}
