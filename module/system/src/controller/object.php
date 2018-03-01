@@ -748,6 +748,14 @@ $cradle->get('/admin/system/object/:schema/update/:id', function($request, $resp
 
             return implode('', $buffer);
         })
+        ->registerHelper('get_suggestion', function($schema, $data) {
+            return SystemSchema::i($schema)->getSuggestionFormat($data);
+        })
+        ->registerHelper('relation_primary', function($relation, $data) {
+            if(isset($data[$relation['primary']])) {
+                return $data[$relation['primary']];
+            }
+        })
         ->registerHelper('has', function($value, $array, $options) {
             if(!is_array($array)) {
                 return $options['inverse']();
