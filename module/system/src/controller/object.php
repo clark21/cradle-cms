@@ -206,11 +206,18 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
         ->registerHelper('get_suggestion', function($schema, $data) {
             return SystemSchema::i($schema)->getSuggestionFormat($data);
         })
+        ->registerHelper('relation_primary', function($relation, $data) {
+            if(isset($data[$relation['primary']])) {
+                return $data[$relation['primary']];
+            }
+        })
         ->registerHelper('filtertoquery', function($key = null, $value = '') {
             $query = $_GET;
             $query['filter'][$key] = $value;
             return http_build_query($query);
         });
+
+    // cradle()->inspect($data['schema']['relations']);exit;
 
     //render the body
     $body = cradle('/module/system')->template('object/search', $data, [
