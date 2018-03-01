@@ -316,7 +316,14 @@
                                 <td>{{key ../schema.primary this}}</td>
                                 {{#each ../schema.relations}}
                                     {{#when many '==' 1}}
-                                        <td>{{#get_suggestion this ../this}}{{/get_suggestion}}</td>
+                                        <td>
+                                            <a 
+                                                href="/admin/system/object/{{name}}/update/{{#relation_primary this ../this}}{{/relation_primary}}" 
+                                                target="_blank"
+                                            >
+                                                {{#get_suggestion this ../this}}{{/get_suggestion}}
+                                            </a>
+                                        </td>
                                     {{/when}}
                                 {{/each}}
                                 {{#get_format this ../schema}}
