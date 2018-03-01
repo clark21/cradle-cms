@@ -47,47 +47,6 @@ jQuery(function($) {
         });
 
         /**
-         * Role check all
-         */
-        $(window).on('role-check-all-init', function(e, target) {
-            // get target element
-            var target = $(target);
-            // get target action
-            var action = target.attr('data-target');
-
-            // get all checkboxes
-            var checkboxes = $('ul[data-id="' + action + '"]').find('input:checkbox');
-
-            checkboxes.each(function(index, element) {
-                if ($(element).is(':checked')) {
-                    target.prop('checked', true);
-                }
-            });
-        });
-
-        /**
-         * Role change
-         */
-        $(window).on('role-check-all-change', function(e, target) {
-            // get target element
-            var target = $(target);
-            // get target action
-            var action = target.attr('data-target');
-
-            // get all checkboxes
-            var checkboxes = $('ul[data-id="' + action + '"]').find('input:checkbox');
-
-            checkboxes.each(function(index, element) {
-                if (target.is(':checked')) {
-                    $(element).prop('checked', true);
-                    return true;
-                }
-
-                $(element).prop('checked', false);
-            });
-        });
-
-        /**
          * Search table check all
          */
         $(window).on('show-notif-init', function(e, trigger) {
@@ -395,7 +354,6 @@ jQuery(function($) {
                         }
 
                         searching = true;
-
                         $.ajax({
                             url : url.replace('{QUERY}', targetLabel.val()),
                             type : 'GET',

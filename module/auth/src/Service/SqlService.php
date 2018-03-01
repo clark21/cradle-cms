@@ -70,8 +70,6 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
 
         $search->innerJoinUsing('auth_user', 'auth_id');
         $search->innerJoinUsing('user', 'user_id');
-        $search->leftJoinUsing('auth_role', 'auth_id');
-        $search->leftJoinUsing('role', 'role_id');
 
         if (is_numeric($id)) {
             $search->filterByAuthId($id);

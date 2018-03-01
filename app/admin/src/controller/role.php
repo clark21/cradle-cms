@@ -6,6 +6,7 @@
  * Copyright and license information can be found at LICENSE.txt
  * distributed with this package.
  */
+ use Cradle\Module\Role\Validator as RoleValidator;
 
 /**
  * Render the Role Search Page
@@ -46,6 +47,12 @@ $cradle->get('/admin/role/search', function($request, $response) {
 
     //trigger job
     cradle()->trigger('role-search', $request, $response);
+
+    //if we only want the raw data
+    if($request->getStage('render') === 'false') {
+        return;
+    }
+
     $data = array_merge($request->getStage(), $response->getResults());
 
     //----------------------------//
@@ -61,7 +68,8 @@ $cradle->get('/admin/role/search', function($request, $response) {
         ->setContent($body);
 
     //render page
-}, 'render-admin-page');
+    cradle()->trigger('render-admin-page', $request, $response);
+});
 
 /**
  * Render the Role Create Page
@@ -72,20 +80,25 @@ $cradle->get('/admin/role/search', function($request, $response) {
 $cradle->get('/admin/role/create', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
+
     //only for admin
-    cradle('global')->requireLogin('admin');
-
-    // check permissions
-    if(!cradle('global')->role('role:create', $request)) {
-        // set flash
-        cradle('global')->flash('Request not Permitted', 'error');
-
-        // set content
-        return cradle('global')->redirect('/admin/role/search');
-    }
+    // if(!cradle('/module/role')->hasPermissions($request)) {
+    //     return cradle('global')->redirect('/admin/role/search');
+    // }
 
     //----------------------------//
     // 2. Prepare Data
+    // get path file
+    $path = $this->package('global')->path('config') . '/permissions.php';
+
+    // check if file
+    if(!is_file($path)) {
+        file_put_contents(
+            $path,
+            '<?php //-->' . "\n return [];"
+        );
+    }
+
     $data = ['item' => $request->getPost()];
 
     if ($response->isError()) {
@@ -93,49 +106,26 @@ $cradle->get('/admin/role/create', function($request, $response) {
         $data['errors'] = $response->getValidation();
     }
 
-    // get post stored as item
-    $data['item'] = $request->getPost();
+    $permissions = cradle('global')->config('permissions');
 
-    // if not empty item
-    if (isset($data['item']) && !empty($data['item'])) {
-        // get permissions key
-        if (isset($data['item']['role_permissions'])) {
-            $data['item']['role_permissions'] = array_keys($data['item']['role_permissions']);
+    $data['permissions'] = $permissions;
+
+    if(isset($data['item']['role_permissions'])) {
+        $rolePermissions = array_keys($data['item']['role_permissions']);
+
+        // loop through data
+        foreach($rolePermissions as $permission) {
+            $key = array_search($permission, array_column($data['permissions'], 'label'));
+            if(is_int($key)) {
+                $data['permissions'][$key]['checked'] = true;
+            }
         }
     }
-
-    // get roles settings
-    $roles = cradle()->package('global')->config('roles');
-
-    // if not set role permissions
-    if (!isset($data['item']['role_permissions'])) {
-        $data['item']['role_permissions'] = [];
-    }
-
-    // define group role variable
-    $groups = [];
-
-    // loop roles
-    foreach($roles as $key => $role) {
-        // get by part
-        $parts = explode(':', $role);
-        // set action
-        $action = $role;
-        // collect group roles
-        $groups[$parts[0]]['actions'][] = [
-            'action' => $parts[1],
-            'role' => $action,
-            'checked' => in_array($action, $data['item']['role_permissions']) ? 1 : 0
-        ];
-    }
-
-    // set grouped roles
-    $data['roles'] = $groups;
 
     //----------------------------//
     // 3. Render Template
     $class = 'page-developer-role-create page-admin';
-    $data['title'] = cradle('global')->translate('Create Role');
+    $data['title'] = 'Create Role';
     $body = cradle('/app/admin')->template('role/form', $data);
 
     //set content
@@ -157,28 +147,31 @@ $cradle->get('/admin/role/update/:role_id', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     //only for admin
-    cradle('global')->requireLogin('admin');
-
-    // check permissions
-    if(!cradle('global')->role('role:update', $request)) {
-        // set flash
-        cradle('global')->flash('Request not Permitted', 'error');
-
-        // set content
-        return cradle('global')->redirect('/admin/role/search');
-    }
+    //only for admin
+    // if(!cradle('/module/role')->hasPermissions($request)) {
+    //     return cradle('global')->redirect('/admin/role/search');
+    // }
 
     //----------------------------//
     // 2. Prepare Data
-    $data = ['item' => $request->getPost()];
-
-    $roles = cradle('global')->config('roles');
-
     // trigger role detail
     cradle()->trigger('role-detail', $request, $response);
 
     // get role details
     $data['item'] = $response->getResults();
+
+    // premissions
+    $permissions = cradle('global')->config('permissions');
+
+    $data['permissions'] = $permissions;
+
+    // loop through data
+    foreach($data['item']['role_permissions'] as $permission) {
+        $key = array_search($permission['label'], array_column($data['permissions'], 'label'));
+        if(is_int($key)) {
+            $data['permissions'][$key]['checked'] = true;
+        }
+    }
 
     if (!empty($request->getPost())) {
         // get post stored as item
@@ -187,45 +180,23 @@ $cradle->get('/admin/role/update/:role_id', function($request, $response) {
         // get any errors
         $data['errors'] = $response->getValidation();
 
-        // if not empty item
-        if (isset($data['item']) && !empty($data['item'])) {
-            // get permissions key
-            if (isset($data['item']['role_permissions'])) {
-                $data['item']['role_permissions'] = array_keys($data['item']['role_permissions']);
+        if(isset($data['item']['role_permissions'])) {
+            $rolePermissions = array_keys($data['item']['role_permissions']);
+
+            // loop through data
+            foreach($rolePermissions as $permission) {
+                $key = array_search($permission, array_column($data['permissions'], 'label'));
+                if(is_int($key)) {
+                    $data['permissions'][$key]['checked'] = true;
+                }
             }
         }
     }
 
-
-    // if not set
-    if (!isset($data['item']['role_permissions'])) {
-        $data['item']['role_permissions'] = [];
-    }
-
-    // define group role variable
-    $groups = [];
-
-    // loop roles
-    foreach($roles as $key => $role) {
-        // get by part
-        $parts = explode(':', $role);
-        // set action
-        $action = $role;
-        // collect group roles
-        $groups[$parts[0]]['actions'][] = [
-            'action' => $parts[1],
-            'role' => $action,
-            'checked' => in_array($action, $data['item']['role_permissions']) ? 1 : 0
-        ];
-    }
-
-    // set grouped roles
-    $data['roles'] = $groups;
-
     //----------------------------//
     // 3. Render Template
     $class = 'page-developer-role-update page-admin';
-    $data['title'] = 'Update Roles';
+    $data['title'] = 'Update Role';
     $body = cradle('/app/admin')->template('role/form', $data);
 
     //Set Content
@@ -253,6 +224,8 @@ $cradle->post('/admin/role/create', function($request, $response) {
     // 2. Prepare Data
     $data = $request->getStage();
 
+    $permissions = cradle('global')->config('permissions');
+
     // get roles
     if (isset($data['role_permissions'])) {
         // return all keys of role permissions
@@ -260,9 +233,6 @@ $cradle->post('/admin/role/create', function($request, $response) {
         // set to request role permissions
         $request->setStage('role_permissions', $data['role_permissions']);
     }
-
-    // set role type admin
-    $request->setStage('role_type', 'admin');
 
     //----------------------------//
     // 3. Process Request
@@ -272,7 +242,7 @@ $cradle->post('/admin/role/create', function($request, $response) {
     // 4. Interpret Results
     if($response->isError()) {
         //add a flash
-        cradle('global')->flash('Invalid Data', 'success');
+        cradle('global')->flash('Invalid Data', 'error');
         return cradle()->triggerRoute('get', '/admin/role/create', $request, $response);
     }
 
@@ -299,6 +269,8 @@ $cradle->post('/admin/role/update/:role_id', function($request, $response) {
     //----------------------------//
     // 2. Prepare Data
     $data = $request->getStage();
+
+    $permissions = cradle('global')->config('permissions');
 
     // get roles
     if (isset($data['role_permissions'])) {
@@ -409,4 +381,127 @@ $cradle->get('/admin/role/restore/:role_id', function($request, $response) {
     }
 
     cradle('global')->redirect('/admin/role/search');
+});
+
+/**
+ * Render the Role Auth Search
+ *
+ * @param Request $request
+ * @param Response $response
+ */
+$cradle->get('/admin/role/auth/search', function($request, $response) {
+    //----------------------------//
+    // 1. Route Permissions
+    //only for admin
+    //only for admin
+    // if(!cradle('/module/role')->hasPermissions($request)) {
+    //     return cradle('global')->redirect('/admin/role/search');
+    // }
+
+    //----------------------------//
+    // 2. Prepare Data
+    // trigger role detail
+    $data = $request->getStage();
+
+    if(!$request->hasStage('filter')) {
+        $request->setStage('filter', 'role_active', 1);
+    }
+
+    if(!$request->hasStage('range')) {
+        $request->setStage('range', 50);
+    }
+
+    $request->setStage('auth', true);
+
+    //trigger job
+    cradle()->trigger('role-search', $request, $response);
+
+    $data = array_merge($request->getStage(), $response->getResults());
+
+    //----------------------------//
+    // 3. Render Template
+    $class = 'page-developer-role-auth-search page-admin';
+    $data['title'] = 'Roles/Auth Search Page';
+    $body = cradle('/app/admin')->template('role/auth/search', $data);
+
+    //Set Content
+    $response
+        ->setPage('title', $data['title'])
+        ->setPage('class', $class)
+        ->setContent($body);
+
+    //Render page
+}, 'render-admin-page');
+
+
+/**
+ * Render the Role Auth Create
+ *
+ * @param Request $request
+ * @param Response $response
+ */
+$cradle->get('/admin/role/auth/create', function($request, $response) {
+    //----------------------------//
+    // 1. Route Permissions
+    //only for admin
+    //only for admin
+    // if(!cradle('/module/role')->hasPermissions($request)) {
+    //     return cradle('global')->redirect('/admin/role/search');
+    // }
+
+    //----------------------------//
+    // 2. Prepare Data
+    // trigger role detail
+    $data = ['item' => $request->getPost()];
+
+    if ($response->isError()) {
+        $response->setFlash($response->getMessage(), 'danger');
+        $data['errors'] = $response->getValidation();
+    }
+
+    //----------------------------//
+    // 3. Render Template
+    $class = 'page-developer-role-update page-admin';
+    $data['title'] = 'Roles/Auth Create';
+    $body = cradle('/app/admin')->template('role/auth/form', $data);
+
+    //Set Content
+    $response
+        ->setPage('title', $data['title'])
+        ->setPage('class', $class)
+        ->setContent($body);
+
+    //Render page
+}, 'render-admin-page');
+
+/**
+ * Process the Role Auth Create
+ *
+ * @param Request $request
+ * @param Response $response
+ */
+$cradle->post('/admin/role/auth/create', function($request, $response) {
+    //----------------------------//
+    // 1. Route Permissions
+    //only for admin
+    cradle('global')->requireLogin('admin');
+
+    //----------------------------//
+    // 2. Prepare Data
+    $data = $request->getStage();
+
+    cradle()->trigger('role-auth-link', $request, $response);
+
+    //----------------------------//
+    // 4. Interpret Results
+    if($response->isError()) {
+        return cradle()->triggerRoute('get', '/admin/role/auth/create', $request, $response);
+    }
+
+    //it was good
+    //add a flash
+    cradle('global')->flash('Role Auth was Added', 'success');
+
+    //redirect
+    cradle('global')->redirect('/admin/role/auth/search');
 });

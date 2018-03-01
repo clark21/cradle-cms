@@ -6,16 +6,16 @@
             </a>
         </li>
         <li class="breadcrumb-item" aria-current="page">
-            <i class="fas fa-user-secret"></i> Roles
+            <i class="fas fa-user-plus"></i> Roles
         </li>
         <li class="breadcrumb-item active" aria-current="page">
-             Create
+             {{title}}
         </li>
     </ol>
 </nav>
 
 <div class="main-padding">
-    <h3 class="main-title"><i class="fa fa-user-secret"></i> Role Create</h3>
+    <h3 class="main-title"><i class="fa fa-user-plus"></i> {{title}}</h3>
     <form enctype="multipart/form-data" method="post">
         <div class="form-group">
             <label class="control-label">Role Name</label>
@@ -31,48 +31,63 @@
             </div>
             {{/if}}
         </div>
-        <div class="clearfix roles-wrapper {{#if errors.role_permissions}}is-invalid{{/if}}">
-            {{#each roles}}
-            <div class="card">
-                <div class="card-header">{{toucfirst @key}}</div>
-                <div class="card-body">
-                    <ul class="page">
-                        <li class="has-child">
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" data-do="role-check-all" data-on="change" data-target="{{@key}}">
-                                <label class="form-check-label">All</label>
-                            </div>
-                            <ul class="actions" data-id="{{@key}}">
-                                {{#each actions}}
-                                <li>
-                                    <div class="form-check">
-                                        <input
-                                            type="checkbox"
-                                            class="form-check-input"
-                                            name="role_permissions[{{role}}]"
-                                            {{#if checked}}
-                                            checked="checked"
-                                            {{/if}}>
-                                        <label class="form-check-label">{{toucfirst action}}</label>
-                                    </div>
-                                </li>
-                                {{/each}}
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
+        <div class="table-overflow {{#if errors.role_permissions}}form-control is-invalid{{/if}}">
+            {{#if permissions}}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>
+                            <label class="checkbox checkbox-1">
+                                <input type="checkbox" data-do="table-checkall">
+                                <span></span>
+                            </label>
+                        </th>
+                        <th>Label</th>
+                        <th>Method</th>
+                        <th>Path</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {{#each permissions}}
+                    <tr>
+                        <td>
+                            <label class="checkbox checkbox-1">
+                                <input
+                                    type="checkbox"
+                                    name="role_permissions[{{label}}]"
+                                    {{#if checked}}
+                                    checked="checked"
+                                    {{/if}}>
+                                <span></span>
+                            </label>
+                        </td>
+                        <td>{{label}}</td>
+                        <td>{{method}}</td>
+                        <td>{{path}}</td>
+                    </tr>
+                {{/each}}
+                </tbody>
+            </table>
+            {{else}}
+            <!-- START: NO RESULTS -->
+            <div class="alert alert-info no-results">
+                <center>No Results Found.</center>
+                <center>Go to this <a href="/admin/permission/create">link</a> to create permissions.</center>
             </div>
-            {{/each}}
+            <!-- END: NO RESULTS -->
+            {{/if}}
         </div>
         {{#if errors.role_permissions}}
         <div class="invalid-feedback">
             {{errors.role_permissions}}
         </div>
         {{/if}}
+        {{#if permissions}}
         <div class="clear form-group">
             <hr/>
             <input type="hidden" name="csrf" value="" />
             <button type="submit" class="btn btn-primary">Submit</button>
         </div>
+        {{/if}}
     </form>
 </div>

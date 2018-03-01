@@ -6,14 +6,14 @@
             </a>
         </li>
         <li class="breadcrumb-item active" aria-current="page">
-            <i class="fas fa-user-secret"></i> Roles
+            <i class="fas fa-user-plus"></i> Roles
         </li>
     </ol>
 </nav>
 
 <div class="main-padding">
 
-    <h3 class="main-title"><i class="fa fa-user-secret"></i> Role Search Example</h3>
+    <h3 class="main-title"><i class="fa fa-user-plus"></i> Role Search Example</h3>
 
     <div class="clearfix mb-4 search-actions">
         <div class="btn-group" role="group" aria-label="...">
@@ -68,9 +68,15 @@
             <!-- END: TABLE -->
         {{else}}
             <!-- START: NO RESULTS -->
-            <div class="well no-results">No Results Found</div>
+            <div class="alert alert-info no-results">
+                <center>No Results Found.</center>
+            </div>
             <!-- END: NO RESULTS -->
         {{/if}}
-        </table>
+        <ul class="pagination">
+            {{#pager total range}}
+            <li class="page-item {{#if active}}active{{/if}}"><a class="page-link" href="?{{href}}">{{page}}</a></li>
+            {{/pager}}
+        </ul>
     </form>
 </div>
