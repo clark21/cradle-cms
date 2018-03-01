@@ -47,6 +47,12 @@ $cradle->get('/admin/auth/search', function($request, $response) {
 
     //trigger job
     cradle()->trigger('auth-search', $request, $response);
+
+    //if we only want the raw data
+    if($request->getStage('render') === 'false') {
+        return;
+    }
+
     $data = array_merge($request->getStage(), $response->getResults());
 
     //----------------------------//
@@ -62,7 +68,8 @@ $cradle->get('/admin/auth/search', function($request, $response) {
         ->setContent($body);
 
     //render page
-}, 'render-admin-page');
+    cradle()->trigger('render-admin-page', $request, $response);
+});
 
 /**
  * Render the Auth Create Page
@@ -330,4 +337,3 @@ $cradle->get('/admin/auth/restore/:auth_id', function($request, $response) {
 
     cradle('global')->redirect('/admin/auth/search');
 });
-

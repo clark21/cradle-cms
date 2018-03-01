@@ -67,8 +67,8 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
     public function get($id)
     {
         $search = $this->resource->search('role');
-        
-        
+
+
         $search->filterByRoleId($id);
 
         $results = $search->getRow();
@@ -116,9 +116,9 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
         $start = 0;
         $order = [];
         $count = 0;
-        
+
         $keywords = null;
-        
+
         if (isset($data['filter']) && is_array($data['filter'])) {
             $filter = $data['filter'];
         }
@@ -135,7 +135,7 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
             $order = $data['order'];
         }
 
-        
+
         if (isset($data['q'])) {
             $keywords = $data['q'];
 
@@ -143,21 +143,23 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
                 $keywords = [$keywords];
             }
         }
-        
 
-        
+
+
         if (!isset($filter['role_active'])) {
             $filter['role_active'] = 1;
         }
-        
+
 
         $search = $this->resource
             ->search('role')
             ->setStart($start)
             ->setRange($range);
 
-        
-        
+        if(isset($data['auth'])) {
+            $search->innerJoinUsing('role_auth', 'role_id');
+            $search->innerJoinUsing('auth', 'auth_id');
+        }
 
         //add filters
         foreach ($filter as $column => $value) {
@@ -166,7 +168,7 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
             }
         }
 
-        
+
         //keyword?
         if (isset($keywords)) {
             foreach ($keywords as $keyword) {
@@ -179,7 +181,7 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
                 call_user_func([$search, 'addFilter'], ...$or);
             }
         }
-        
+
 
         //add sorting
         foreach ($order as $sort => $direction) {
@@ -189,13 +191,13 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
         $rows = $search->getRows();
 
         foreach($rows as $i => $results) {
-            
+
             if($results['role_permissions']) {
                 $rows[$i]['role_permissions'] = json_decode($results['role_permissions'], true);
             } else {
                 $rows[$i]['role_permissions'] = [];
             }
-            
+
         }
 
         //return response format
@@ -203,6 +205,23 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
             'rows' => $rows,
             'total' => $search->getTotal()
         ];
+    }
+
+    /**
+     * Checks to see if data already exists
+     *
+     * @param *string $roleName
+     * @param *string $field
+     *
+     * @return bool
+     */
+    public function exists($roleName)
+    {
+        $search = $this->resource
+            ->search('role')
+            ->filterByRoleName($roleName);
+
+        return !!$search->getRow();
     }
 
     /**
@@ -236,6 +255,36 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
     }
 
     /**
+     * Links auth
+     *
+     * @param *int $rolePrimary
+     * @param *int $authPrimary
+     */
+    public function linkAuth($rolePrimary, $authPrimary)
+    {
+        return $this->resource
+            ->model()
+            ->setRoleId($rolePrimary)
+            ->setAuthId($authPrimary)
+            ->insert('role_auth');
+    }
+
+    /**
+     * Unlinks auth
+     *
+     * @param *int $rolePrimary
+     * @param *int $authPrimary
+     */
+    public function unlinkAuth($rolePrimary, $authPrimary)
+    {
+         return $this->resource
+             ->model()
+             ->setRoleId($rolePrimary)
+             ->setAuthId($authPrimary)
+             ->remove('role_auth');
+    }
+
+    /**
      * Unlinks history
      *
      * @param *int $rolePrimary
@@ -263,5 +312,5 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
             ->setRoleId($rolePrimary)
             ->remove('role_history');
     }
-    
+
 }
