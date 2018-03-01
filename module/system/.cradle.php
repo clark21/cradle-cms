@@ -9,6 +9,8 @@ include_once __DIR__ . '/src/controller/schema.php';
 include_once __DIR__ . '/src/controller/object.php';
 include_once __DIR__ . '/src/controller/relation.php';
 include_once __DIR__ . '/src/controller/rest.php';
+include_once __DIR__ . '/src/controller/menu.php';
+include_once __DIR__ . '/src/controller/static.php';
 
 use Cradle\Module\System\Service as SystemService;
 use Cradle\Module\System\Object\Service as ObjectService;

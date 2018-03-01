@@ -6,6 +6,7 @@ config/services.php
 config/settings.php
 config/roles.php
 config/test.php
+config/menu.php
 config/schema/*.php
 config/schema/*.csv
 

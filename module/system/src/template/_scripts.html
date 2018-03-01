@@ -747,19 +747,6 @@
         reindexRelations();
     });
 
-    $(window).on('icon-field-init', function(e, target) {
-        var target = $(target);
-
-        $('i', target.attr('data-target')).click(function() {
-            target.val(this.className.replace(' fa-fw', ''));
-            target.parent().find('i')[0].className = this.className;
-
-            $(target.attr('data-target')).removeClass('show');
-
-            target.focus();
-        });
-    });
-
     var reindexFields = function() {
         var format = {
             disable: 'fields[{INDEX}][disable]',
