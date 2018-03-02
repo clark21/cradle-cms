@@ -1,0 +1,105 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="/admin">
+                <i class="fas fa-home"></i> Admin
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <a href="/admin/roles/search">
+                <i class="fas fa-user-plus"></i> Roles
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <a href="/admin/role/auth/search">
+                <i class="fas fa-lock"></i> Role/Auth
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            Create Role/Auth
+        </li>
+    </ol>
+</nav>
+<div class="main-padding">
+    <h3 class="main-title"><i class="fa fa-user-secret"></i> {{title}}</h3>
+    <form class="box" method="post">
+        <div class="box-head box-success">
+            <div class="box-title">
+                <i class="fa fa-plus"></i> Create Role/Auth
+            </div>
+        </div>
+        <div class="box-body box-padding">
+            <div class="form-group">
+                <label class="control-label">Role</label>
+                <div>
+                    <input
+                        autocomplete="off"
+                        class="form-control suggestion-label-role {{#if errors.role_id}}is-invalid{{/if}}"
+                        name="_role_id"
+                        placeholder="Enter Role"
+                        type="text"
+                        value="{{item._role_id}}"
+                    />
+                    {{#if errors.role_id}}
+                    <div class="invalid-feedback">
+                        {{errors.role_id}}
+                    </div>
+                    {{/if}}
+                    <input
+                        class="suggestion-value-role"
+                        name="role_id"
+                        type="hidden"
+                        value="{{item.role_id}}"
+                    />
+                    <div
+                        class="input-suggestion d-none"
+                        data-do="suggestion-field"
+                        data-format="{{role_name}}"
+                        data-target-label="input.suggestion-label-role"
+                        data-target-value="input.suggestion-value-role"
+                        data-url="/admin/role/search?q={QUERY}&render=false"
+                        data-value="role_id"
+                    ></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Auth</label>
+                <div>
+                    <input
+                        autocomplete="off"
+                        class="form-control suggestion-label-auth {{#if errors.auth_id}}is-invalid{{/if}}"
+                        name="_auth_id"
+                        placeholder="Enter Auth"
+                        type="text"
+                        value="{{item._auth_id}}"
+                    />
+                    {{#if errors.auth_id}}
+                    <div class="invalid-feedback">
+                        {{errors.auth_id}}
+                    </div>
+                    {{/if}}
+                    <input
+                        class="suggestion-value-auth"
+                        name="auth_id"
+                        type="hidden"
+                        value="{{item.auth_id}}"
+                    />
+                    <div
+                        class="input-suggestion d-none"
+                        data-do="suggestion-field"
+                        data-format="{{auth_slug}}"
+                        data-target-label="input.suggestion-label-auth"
+                        data-target-value="input.suggestion-value-auth"
+                        data-url="/admin/auth/search?q={QUERY}&render=false"
+                        data-value="auth_id"
+                    ></div>
+                </div>
+            </div>
+        </div>
+        <div class="box-foot box-light">
+            <div class="box-left">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,67 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="/admin">
+                <i class="fas fa-home"></i> Admin
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <a href="/admin/roles/search">
+                <i class="fas fa-user-plus"></i> Roles
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <i class="fas fa-lock"></i> Role/Auth
+        </li>
+    </ol>
+</nav>
+
+<div class="main-padding">
+    <h3 class="main-title"><i class="fa fa-user-plus"></i> {{title}}</h3>
+    <div class="clearfix mb-4 search-actions">
+        <div class="float-right">
+            <a class="btn btn-success" href="/admin/role/auth/create">
+                <i class="fas fa-plus"></i> Create Role / Auth
+            </a>
+        </div>
+    </div>
+    <form method="post">
+        <div class="table-overflow">
+            {{#if rows}}
+                <!-- START: TABLE -->
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Action</th>
+                            <th>Role</th>
+                            <th>Auth</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each rows}}
+                            <tr data-id="{{role_id}}">
+                                <td>
+                                    <a class="text-danger" title="Remove" href="#"
+                                    class="text-danger remove"><i class="fas fa-times"></i></a>
+                                </td>
+                                <td>
+                                    <a href="">{{role_name}}</a>
+                                </td>
+                                <td>
+                                    {{auth_slug}}
+                                </td>
+                            </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+                <!-- END: TABLE -->
+            {{else}}
+                <!-- START: NO RESULTS -->
+                <div class="alert alert-info no-results">
+                    <center>No Results Found.</center>
+                </div>
+                <!-- END: NO RESULTS -->
+            {{/if}}
+        </table>
+    </form>
+</div>

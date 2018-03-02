@@ -1,0 +1,89 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="/admin">
+                <i class="fas fa-home"></i> Admin
+            </a>
+        </li>
+        <li class="breadcrumb-item" aria-current="page">
+            <a href="/admin/permission/search">
+                <i class="fas fa-user-secret"></i> Permissions
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+             {{title}}
+        </li>
+    </ol>
+</nav>
+
+<div class="main-padding">
+    <h3 class="main-title"><i class="fa fa-user-secret"></i> {{title}}</h3>
+    <form class="box" method="post">
+        <div class="box-head box-success">
+            <div class="box-title">
+                <i class="fa fa-plus"></i> Create Permission
+            </div>
+        </div>
+        <div class="box-body box-padding">
+            <div class="form-group">
+                <label class="control-label">Label</label>
+                <div>
+                    <input
+                        autocomplete="title"
+                        class="form-control {{#if errors.permission_label}}is-invalid{{/if}}"
+                        name="permission_label"
+                        value="{{item.permission_label}}"
+                        type="text"
+                        placeholder="Access to Users">
+                    {{#if errors.permission_label}}
+                    <div class="invalid-feedback">
+                        {{errors.permission_label}}
+                    </div>
+                    {{/if}}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Method</label>
+                <div>
+                    <select
+                        class="form-control {{#if errors.permission_method}}is-invalid{{/if}}"
+                        name="permission_method">
+                        <option value="">Choose Method</option>
+                        <option value="get" {{#when item.permission_method '==' 'get'}}selected="selected"{{/when}}>GET</option>
+                        <option value="post" {{#when item.permission_method '==' 'post'}}selected="selected"{{/when}}>POST</option>
+                        <option value="put" {{#when item.permission_method '==' 'put'}}selected="selected"{{/when}}>PUT</option>
+                        <option value="delete" {{#when item.permission_method '==' 'delete'}}selected="selected"{{/when}}>DELETE</option>
+                        <option value="all" {{#when item.permission_method '==' 'all'}}selected="selected"{{/when}}>ALL</option>
+                    </select>
+                    {{#if errors.permission_method}}
+                    <div class="invalid-feedback">
+                        {{errors.permission_method}}
+                    </div>
+                    {{/if}}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Url</label>
+                <div>
+                    <input
+                        autocomplete="title"
+                        class="form-control {{#if errors.permission_path}}is-invalid{{/if}}"
+                        name="permission_path"
+                        value="{{item.permission_path}}"
+                        type="text"
+                        placeholder="/admin/user/*">
+                    {{#if errors.permission_path}}
+                    <div class="invalid-feedback">
+                        {{errors.permission_path}}
+                    </div>
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+        <div class="box-foot box-light">
+            <div class="box-left">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+    </form>
+</div>
