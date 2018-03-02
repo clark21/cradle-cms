@@ -412,7 +412,7 @@ $cradle->get('/admin/role/auth/search', function($request, $response) {
     //----------------------------//
     // 3. Render Template
     $class = 'page-developer-role-auth-search page-admin';
-    $data['title'] = 'Roles/Auth Search Page';
+    $data['title'] = 'Access';
     $body = cradle('/module/role')->template('auth/search', $data);
 
     //Set Content
@@ -453,7 +453,7 @@ $cradle->get('/admin/role/auth/create', function($request, $response) {
     //----------------------------//
     // 3. Render Template
     $class = 'page-developer-role-update page-admin';
-    $data['title'] = 'Roles/Auth Create';
+    $data['title'] = 'Access Create';
     $body = cradle('/module/role')->template('auth/form', $data);
 
     //Set Content
