@@ -344,7 +344,7 @@
                                         </td>
                                     {{/when}}
                                 {{/each}}
-                                {{#get_format this ../schema}}                 
+                                {{#get_format this ../schema}}
                                     {{#when format '===' 'none'}}
                                         {{#in name ../../schema.filterable}}
                                             <td>
@@ -509,6 +509,9 @@
                 {{#if relation.suggestion}}
                     <a class="btn btn-purple" href="/admin/system/object/{{schema.name}}/export/{{relation.schema.name}}/{{key relation.schema.primary relation.data}}/csv?{{toquery}}" target="_blank">
                         <i class="fas fa-download"></i> Export
+                    </a>
+                    <a class="btn btn-yellow" href="/admin/system/object/{{relation.schema.name}}/{{key relation.schema.primary relation.data}}/link/{{schema.name}}">
+                        <i class="fas fa-link"></i> {{_ 'Link %s' schema.singular}}
                     </a>
                     <a class="btn btn-success" href="/admin/system/object/{{schema.name}}/create/{{relation.schema.name}}/{{key relation.schema.primary relation.data}}">
                         <i class="fas fa-plus"></i> {{_ 'Create %s' schema.singular}}
