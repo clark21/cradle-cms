@@ -16,11 +16,3 @@ KEY `auth_type` (`auth_type`));
 DROP TABLE IF EXISTS `auth_user`;
 
 CREATE TABLE `auth_user` (`auth_id` int(10) UNSIGNED NOT NULL, `user_id` int(10) UNSIGNED NOT NULL, PRIMARY KEY (`auth_id`, `user_id`));
-
---
--- Table structure for table `auth_role`
---
-
-DROP TABLE IF EXISTS `auth_role`;
-
-CREATE TABLE `auth_role` (`auth_id` int(10) UNSIGNED NOT NULL, `role_id` int(10) UNSIGNED NOT NULL, PRIMARY KEY (`auth_id`, `role_id`));

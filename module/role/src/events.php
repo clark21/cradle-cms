@@ -37,9 +37,19 @@ $cradle->on('role-create', function ($request, $response) {
 
     //----------------------------//
     // 3. Prepare Data
-    if(isset($data['role_permissions'])) {
-        $data['role_permissions'] = json_encode($data['role_permissions']);
+    $permissions = cradle('global')->config('permissions');
+
+    $rolePermissions = [];
+
+    // loop through data
+    foreach($data['role_permissions'] as $permission) {
+        $key = array_search($permission, array_column($permissions, 'label'));
+        if(is_int($key)) {
+            $rolePermissions[] = $permissions[$key];
+        }
     }
+
+    $data['role_permissions'] = json_encode($rolePermissions);
 
     //----------------------------//
     // 4. Process Data
@@ -316,10 +326,19 @@ $cradle->on('role-update', function ($request, $response) {
 
     //----------------------------//
     // 3. Prepare Data
+    $permissions = cradle('global')->config('permissions');
 
-    if(isset($data['role_permissions'])) {
-        $data['role_permissions'] = json_encode($data['role_permissions']);
+    $rolePermissions = [];
+
+    // loop through data
+    foreach($data['role_permissions'] as $permission) {
+        $key = array_search($permission, array_column($permissions, 'label'));
+        if(is_int($key)) {
+            $rolePermissions[] = $permissions[$key];
+        }
     }
+
+    $data['role_permissions'] = json_encode($rolePermissions);
 
     //----------------------------//
     // 4. Process Data
@@ -460,6 +479,72 @@ $cradle->on('role-unlinkall-history', function ($request, $response) {
 
     //invalidate cache
     $roleRedis->removeSearch();
+
+    //return response format
+    $response->setError(false)->setResults($results);
+});
+
+
+/**
+ * Role Auth Link Job
+ *
+ * @param Request $request
+ * @param Response $response
+ */
+$cradle->on('role-auth-link', function ($request, $response) {
+    //----------------------------//
+    // 1. Get Data
+    $data = [];
+    if ($request->hasStage()) {
+        $data = $request->getStage();
+    }
+
+    //----------------------------//
+    // 2. Validate Data
+    $errors = RoleValidator::getRoleAuthErrors($data);
+
+    //if there are errors
+    if (!empty($errors)) {
+        return $response
+            ->setError(true, 'Invalid Parameters')
+            ->set('json', 'validation', $errors);
+    }
+
+    //----------------------------//
+    // 3. Process Data
+    //this/these will be used a lot
+    $roleSql = RoleService::get('sql');
+    $roleRedis = RoleService::get('redis');
+    $roleElastic = RoleService::get('elastic');
+
+    $results = $roleSql->linkAuth($data['role_id'], $data['auth_id']);
+
+    //return response format
+    $response->setError(false)->setResults($results);
+});
+
+/**
+ * Role Auth Unlink Job
+ *
+ * @param Request $request
+ * @param Response $response
+ */
+$cradle->on('role-auth-unlink', function ($request, $response) {
+    //----------------------------//
+    // 1. Get Data
+    $data = [];
+    if ($request->hasStage()) {
+        $data = $request->getStage();
+    }
+
+    //----------------------------//
+    // 2. Process Data
+    //this/these will be used a lot
+    $roleSql = RoleService::get('sql');
+    $roleRedis = RoleService::get('redis');
+    $roleElastic = RoleService::get('elastic');
+
+    $results = $roleSql->unlinkAuth($data['role_id'], $data['auth_id']);
 
     //return response format
     $response->setError(false)->setResults($results);

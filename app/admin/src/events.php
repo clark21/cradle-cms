@@ -17,16 +17,7 @@ use Cradle\Http\Response;
  * @param Response $response
  */
 $cradle->on('render-admin-page', function ($request, $response) {
-    $navigationRequest = (new Request())->load();
-    $navigationResponse = new Response();
-
-    cradle()->trigger(
-        'system-schema-search',
-        $navigationRequest,
-        $navigationResponse
-    );
-
-    $navigation = $navigationResponse->getResults();
+    $navigation = cradle('global')->config('admin/menu');
 
     $navMatch = function(...$args) use ($request) {
         //$haystack, $needle, $options
@@ -58,7 +49,8 @@ $cradle->on('render-admin-page', function ($request, $response) {
         array(
             'head',
             'foot',
-            'side'
+            'side',
+            'menu'
         )
     );
 

@@ -8,7 +8,7 @@
  */
 
 /**
- * Render Template Actions
+ * Render Menu Builder
  *
  * @param Request $request
  * @param Response $response
@@ -24,6 +24,7 @@ $cradle->get('/admin/system/menu', function($request, $response) {
     cradle()->trigger('system-schema-search', $request, $response);
 
     $data = [
+        'item' => cradle('global')->config('admin/menu'),
         'schemas' => $response->getResults('rows')
     ];
 
@@ -43,4 +44,45 @@ $cradle->get('/admin/system/menu', function($request, $response) {
         ->setContent($body);
 
     cradle()->trigger('render-admin-page', $request, $response);
+});
+
+/**
+ * Process Menu Builder
+ *
+ * @param Request $request
+ * @param Response $response
+ */
+$cradle->post('/admin/system/menu', function($request, $response) {
+    //----------------------------//
+    // 1. Route Permissions
+    //only for admin
+    cradle('global')->requireLogin('admin');
+
+    //----------------------------//
+    // 2. Prepare Data
+    //nothing to prepare
+    //----------------------------//
+    // 3. Process Request
+    //just add it to menu?
+    $path = cradle('global')->path('config') . '/admin/menu.php';
+
+    if(!file_exists($path)) {
+        touch($path);
+        chmod($path, 0777);
+    }
+
+    file_put_contents(
+        $path,
+        '<?php //-->' . "\n return " .
+        var_export($request->getPost('item'), true) . ';'
+    );
+
+    //----------------------------//
+    // 4. Interpret Results
+    //it was good
+    //add a flash
+    cradle('global')->flash('Menu was built', 'success');
+
+    //redirect
+    cradle('global')->redirect('/admin/system/menu');
 });

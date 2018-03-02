@@ -84,6 +84,16 @@ return function ($request, $response) {
         return $template($variables);
     });
 
+    $handlebars->registerHelper('partial', function(
+        $name,
+        $variables,
+        $option
+    ) use ($handlebars) {
+        $partial = $handlebars->getPartial($name);
+        $template = $handlebars->compile($partial);
+        return $template($variables);
+    });
+
     $handlebars->registerHelper('error_exist', function($arr, $val, $scheme, $options) {
         $name = $scheme . "_" . $val;
 

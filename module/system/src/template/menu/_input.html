@@ -1,35 +1,42 @@
 <div class="menu-builder-input input-group">
     <div class="input-group-prepend">
-        <button class="menu-builder-handle btn btn-default">
+        <button class="menu-builder-handle btn btn-default" type="button">
             <i
-                class="fas fa-question fa-fw"
+                {{#if icon}}
+                    class="{{icon}}"
+                {{else}}
+                    class="fas fa-question fa-fw"
+                {{/if}}
                 data-do="icon-field"
                 data-target-parent="3"
             ></i>
             <input
                 class="form-control"
-                name="icon"
+                data-name="icon"
                 type="hidden"
+                value="{{icon}}"
             />
         </button>
     </div>
     <input
         class="form-control"
-        name="icon"
+        data-name="label"
         placeholder="Menu Title"
         type="text"
+        value="{{label}}"
     />
     <input
         class="form-control"
-        name="icon"
+        data-name="path"
         placeholder="/some/path"
         type="text"
+        value="{{path}}"
     />
     <div class="input-group-append">
-        <button class="btn btn-success">
+        <button class="btn btn-success menu-builder-action-add" type="button">
             <i class="fas fa-plus"></i>
         </button>
-        <button class="btn btn-danger">
+        <button class="btn btn-danger menu-builder-action-remove" type="button">
             <i class="fas fa-times"></i>
         </button>
     </div>
