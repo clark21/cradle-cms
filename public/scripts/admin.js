@@ -2258,7 +2258,9 @@ jQuery(function($) {
                     listen(this).doon();
                 });
 
-            reindex($('ol.menu-builder-list:first'), 1);
+            var root = $('ol.menu-builder-list:first').sortable();
+
+            reindex(root, 1);
         });
     })();
 
