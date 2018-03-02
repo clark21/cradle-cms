@@ -161,7 +161,7 @@ $cradle->get('/admin/role/update/:role_id', function($request, $response) {
     $data['item'] = $response->getResults();
 
     // premissions
-    $permissions = cradle('global')->config('permissions');
+    $permissions = cradle('global')->config('admin/permissions');
 
     $data['permissions'] = $permissions;
 
