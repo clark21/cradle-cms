@@ -70,12 +70,12 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
 
         $search->innerJoinUsing('auth_user', 'auth_id');
         $search->innerJoinUsing('user', 'user_id');
-        $search->leftJoinUsing('auth_role', 'auth_id');
+        $search->leftJoinUsing('role_auth', 'auth_id');
         $search->leftJoinUsing('role', 'role_id');
 
         if (is_numeric($id)) {
             $search->filterByAuthId($id);
-        } else if (isset($data['auth_slug'])) {
+        } else {
             $search->filterByAuthSlug($id);
         }
 
@@ -153,8 +153,13 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
             $order = $data['order'];
         }
 
+        if (isset($data['q'])) {
+            $keywords = $data['q'];
 
-
+            if(!is_array($keywords)) {
+                $keywords = [$keywords];
+            }
+        }
 
         if (!isset($filter['auth_active'])) {
             $filter['auth_active'] = 1;
@@ -179,7 +184,20 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
             }
         }
 
+        //keyword?
+        if (isset($keywords)) {
+            foreach ($keywords as $keyword) {
+                $or = [];
+                $where = [];
+                $where[] = 'LOWER(auth_slug) LIKE %s';
+                $or[] = '%' . strtolower($keyword) . '%';
+                $where[] = 'LOWER(user_name) LIKE %s';
+                $or[] = '%' . strtolower($keyword) . '%';
+                array_unshift($or, '(' . implode(' OR ', $where) . ')');
 
+                call_user_func([$search, 'addFilter'], ...$or);
+            }
+        }
 
         //add sorting
         foreach ($order as $sort => $direction) {

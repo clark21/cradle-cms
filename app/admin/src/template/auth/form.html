@@ -1,11 +1,32 @@
-<div class="panel panel-default clear" >
-    <div class="panel-heading brand">
-        <div class="panel-title">{{title}}</div>
-    </div>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="/admin">
+                <i class="fas fa-home"></i> Admin
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="/admin/user/search">
+                <i class="fas fa-lock"></i> Auth
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <i class="fas fa-plus"></i> {{title}}
+        </li>
+    </ol>
+</nav>
 
-    <div class="panel-body" >
-        <form enctype="multipart/form-data" method="post">
-            
+<div class="main-padding">
+    <form
+        class="box"
+        method="post"
+    >
+        <div class="box-head box-success">
+            <div class="box-title">
+                <i class="fa fa-plus"></i> {{title}}
+            </div>
+        </div>
+        <div class="box-body box-padding">
             <div class="form-group{{#if errors.auth_slug}} has-error{{/if}}">
                 <label class="control-label">Email</label>
                 <div>
@@ -16,7 +37,7 @@
                     {{/if}}
                 </div>
             </div>
-            
+
             <div class="form-group{{#if errors.auth_password}} has-error{{/if}}">
                 <label class="control-label">Password</label>
                 <div>
@@ -27,13 +48,18 @@
                     {{/if}}
                 </div>
             </div>
-            
+            <div class="form-group{{#if errors.confirm}} has-error{{/if}}">
+                <label class="control-label">Confirm Password</label>
+                <div>
+                    <input name="confirm" value="{{item.confirm}}" placeholder="Enter a password" type="password" class="form-control" />
 
+                    {{#if errors.confirm}}
+                    <span class="help-text">{{errors.confirm}}</span>
+                    {{/if}}
+                </div>
+            </div>
             <div class="clear form-group">
-                <input type="hidden" name="csrf" value="" />
                 <button type="submit" class="btn btn-primary">Submit</button>
             </div>
         </form>
-    </div>
 </div>
-<script type="text/javascript" src="/scripts/cropper.js"></script>

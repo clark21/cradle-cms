@@ -139,8 +139,13 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
             $order = $data['order'];
         }
 
-        
+        if (isset($data['q'])) {
+            $keywords = $data['q'];
 
+            if(!is_array($keywords)) {
+                $keywords = [$keywords];
+            }
+        }
         
         if (!isset($filter['user_active'])) {
             $filter['user_active'] = 1;
@@ -152,9 +157,6 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
             ->setStart($start)
             ->setRange($range);
 
-        
-        
-
         //add filters
         foreach ($filter as $column => $value) {
             if (preg_match('/^[a-zA-Z0-9-_]+$/', $column)) {
@@ -162,7 +164,20 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
             }
         }
 
-        
+        //keyword?
+        if (isset($keywords)) {
+            foreach ($keywords as $keyword) {
+                $or = [];
+                $where = [];
+                $where[] = 'LOWER(user_name) LIKE %s';
+                $or[] = '%' . strtolower($keyword) . '%';
+                $where[] = 'LOWER(user_slug) LIKE %s';
+                $or[] = '%' . strtolower($keyword) . '%';
+                array_unshift($or, '(' . implode(' OR ', $where) . ')');
+
+                call_user_func([$search, 'addFilter'], ...$or);
+            }
+        }
 
         //add sorting
         foreach ($order as $sort => $direction) {

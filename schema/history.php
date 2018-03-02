@@ -52,8 +52,9 @@ return [
         ],
         'history_page' => [
             'sql' => [
-                'type' => 'varchar',
-                'length' => 255,
+                'type' => 'text',
+                'length' => 1000,
+                'attribute' => 'CHARACTER SET utf8 COLLATE utf8_unicode_ci',
                 'default' => null,
                 'key' => true
             ],

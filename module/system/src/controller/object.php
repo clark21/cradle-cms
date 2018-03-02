@@ -22,8 +22,16 @@ use Cradle\Http\Response;
 $cradle->get('/admin/system/object/:schema/search', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
-    //only for admin
-    cradle('global')->requireLogin('admin');
+    if(
+        !cradle('/module/role')->hasPermissions(
+            $request->getSession('me', 'auth_id'),
+            $request->getSession('me', 'role_permissions')
+        )
+    )
+    {
+        cradle('global')->flash('Request not Permitted', 'error');
+        return cradle('global')->redirect('/');
+    }
 
     //----------------------------//
     // 2. Prepare Data
@@ -251,8 +259,16 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
 $cradle->get('/admin/system/object/:schema/create', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
-    //only for admin
-    cradle('global')->requireLogin('admin');
+    if(
+        !cradle('/module/role')->hasPermissions(
+            $request->getSession('me', 'auth_id'),
+            $request->getSession('me', 'role_permissions')
+        )
+    )
+    {
+        cradle('global')->flash('Request not Permitted', 'error');
+        return cradle('global')->redirect('/admin/system/object/' . $request->getStage('schema') . '/search');
+    }
 
     //----------------------------//
     // 2. Prepare Data
@@ -512,16 +528,16 @@ $cradle->get('/admin/system/object/:schema/create', function($request, $response
         'object_fields'
     ]);
 
-    //if we only want the body
-    if($request->getStage('render') === 'body') {
-        return;
-    }
-
     //set content
     $response
         ->setPage('title', $data['title'])
         ->setPage('class', $class)
         ->setContent($body);
+
+    //if we only want the body
+    if($request->getStage('render') === 'body') {
+        return;
+    }
 
     //render page
     cradle()->trigger('render-admin-page', $request, $response);
@@ -536,8 +552,16 @@ $cradle->get('/admin/system/object/:schema/create', function($request, $response
 $cradle->get('/admin/system/object/:schema/update/:id', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
-    //only for admin
-    cradle('global')->requireLogin('admin');
+    if(
+        !cradle('/module/role')->hasPermissions(
+            $request->getSession('me', 'auth_id'),
+            $request->getSession('me', 'role_permissions')
+        )
+    )
+    {
+        cradle('global')->flash('Request not Permitted', 'error');
+        return cradle('global')->redirect('/admin/system/object/' . $request->getStage('schema') . '/search');
+    }
 
     //----------------------------//
     // 2. Prepare Data
@@ -836,8 +860,16 @@ $cradle->get('/admin/system/object/:schema/update/:id', function($request, $resp
 $cradle->post('/admin/system/object/:schema/search', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
-    //only for admin
-    cradle('global')->requireLogin('admin');
+    if(
+        !cradle('/module/role')->hasPermissions(
+            $request->getSession('me', 'auth_id'),
+            $request->getSession('me', 'role_permissions')
+        )
+    )
+    {
+        cradle('global')->flash('Request not Permitted', 'error');
+        return cradle('global')->redirect('/admin/system/object/' . $request->getStage('schema') . '/search');
+    }
 
     //----------------------------//
     // 2. Prepare Data
@@ -950,8 +982,16 @@ $cradle->post('/admin/system/object/:schema/search', function($request, $respons
 $cradle->post('/admin/system/object/:schema/create', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
-    //only for admin
-    cradle('global')->requireLogin('admin');
+    if(
+        !cradle('/module/role')->hasPermissions(
+            $request->getSession('me', 'auth_id'),
+            $request->getSession('me', 'role_permissions')
+        )
+    )
+    {
+        cradle('global')->flash('Request not Permitted', 'error');
+        return cradle('global')->redirect('/admin/system/object/' . $request->getStage('schema') . '/search');
+    }
 
     //----------------------------//
     // 2. Prepare Data
@@ -1074,8 +1114,16 @@ $cradle->post('/admin/system/object/:schema/create', function($request, $respons
 $cradle->post('/admin/system/object/:schema/update/:id', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
-    //only for admin
-    cradle('global')->requireLogin('admin');
+    if(
+        !cradle('/module/role')->hasPermissions(
+            $request->getSession('me', 'auth_id'),
+            $request->getSession('me', 'role_permissions')
+        )
+    )
+    {
+        cradle('global')->flash('Request not Permitted', 'error');
+        return cradle('global')->redirect('/admin/system/object/' . $request->getStage('schema') . '/search');
+    }
 
     //----------------------------//
     // 2. Prepare Data
@@ -1198,8 +1246,16 @@ $cradle->post('/admin/system/object/:schema/update/:id', function($request, $res
 $cradle->get('/admin/system/object/:schema/remove/:id', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
-    //only for admin
-    cradle('global')->requireLogin('admin');
+    if(
+        !cradle('/module/role')->hasPermissions(
+            $request->getSession('me', 'auth_id'),
+            $request->getSession('me', 'role_permissions')
+        )
+    )
+    {
+        cradle('global')->flash('Request not Permitted', 'error');
+        return cradle('global')->redirect('/admin/system/object/' . $request->getStage('schema') . '/search');
+    }
 
     //----------------------------//
     // 2. Prepare Data
@@ -1267,8 +1323,16 @@ $cradle->get('/admin/system/object/:schema/remove/:id', function($request, $resp
 $cradle->get('/admin/system/object/:schema/restore/:id', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
-    //only for admin
-    cradle('global')->requireLogin('admin');
+    if(
+        !cradle('/module/role')->hasPermissions(
+            $request->getSession('me', 'auth_id'),
+            $request->getSession('me', 'role_permissions')
+        )
+    )
+    {
+        cradle('global')->flash('Request not Permitted', 'error');
+        return cradle('global')->redirect('/admin/system/object/' . $request->getStage('schema') . '/search');
+    }
 
     //----------------------------//
     // 2. Prepare Data
@@ -1336,8 +1400,16 @@ $cradle->get('/admin/system/object/:schema/restore/:id', function($request, $res
 $cradle->post('/admin/system/object/:schema/import', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
-    //only for store
-    cradle('global')->requireLogin('admin');
+    if(
+        !cradle('/module/role')->hasPermissions(
+            $request->getSession('me', 'auth_id'),
+            $request->getSession('me', 'role_permissions')
+        )
+    )
+    {
+        cradle('global')->flash('Request not Permitted', 'error');
+        return cradle('global')->redirect('/admin/system/object/' . $request->getStage('schema') . '/search');
+    }
 
     //----------------------------//
     // 2. Prepare Data
@@ -1432,8 +1504,16 @@ $cradle->post('/admin/system/object/:schema/import', function($request, $respons
 $cradle->get('/admin/system/object/:schema/export/:type', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
-    //only for store
-    cradle('global')->requireLogin('admin');
+    if(
+        !cradle('/module/role')->hasPermissions(
+            $request->getSession('me', 'auth_id'),
+            $request->getSession('me', 'role_permissions')
+        )
+    )
+    {
+        cradle('global')->flash('Request not Permitted', 'error');
+        return cradle('global')->redirect('/admin/system/object/' . $request->getStage('schema') . '/search');
+    }
 
     //----------------------------//
     // 2. Prepare Data

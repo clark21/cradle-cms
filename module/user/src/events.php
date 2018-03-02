@@ -10,6 +10,9 @@
 use Cradle\Module\User\Service as UserService;
 use Cradle\Module\User\Validator as UserValidator;
 
+use Cradle\Http\Request;
+use Cradle\Http\Response;
+
 /**
  * User Create Job
  *
@@ -364,5 +367,114 @@ $cradle->on('user-update', function ($request, $response) {
     $userRedis->removeSearch();
 
     //return response format
+    $response->setError(false)->setResults($results);
+});
+
+/**
+ * User Import Job
+ *
+ * @param Request $request
+ * @param Response $response
+ */
+$cradle->on('user-import', function ($request, $response) {
+    //----------------------------//
+    // 1. Get Data
+    $data = [];
+    if ($request->hasStage()) {
+        $data = $request->getStage();
+    }
+
+    //set counter
+    $results = [
+        'data' => [],
+        'new' => 0,
+        'old' => 0
+    ];
+
+    //----------------------------//
+    // 2. Validate Data
+    //validate data
+    $errors = [];
+    foreach ($data['rows'] as $i => $row) {
+        $error = UserValidator::getCreateErrors($row);
+
+        //if there are errors
+        if (!empty($error)) {
+            $errors[$i] = $error;
+        }
+    }
+
+    if (!empty($errors)) {
+        return $response
+            ->setError(true, 'Invalid Row/s')
+            ->set('json', 'validation', $errors);
+    }
+
+    // There is no error,
+    // So proceed on adding/updating the items one by one
+    foreach ($data['rows'] as $i => $row) {
+        if(isset($row['user_created'])) {
+            unset($row['user_created']);
+        }
+
+        if(isset($row['user_updated'])) {
+            unset($row['user_updated']);
+        }
+
+        $rowRequest = Request::i()
+            ->setStage($row);
+
+        $rowResponse = Response::i()->load();
+
+        cradle()->trigger('user-detail', $rowRequest, $rowResponse);
+
+        if ($rowResponse->hasResults()) {
+            // trigger single object update event
+            cradle()->trigger('user-update', $rowRequest, $rowResponse);
+
+            // check response if there is an error
+            if ($rowResponse->isError()) {
+                $results['data'][$i] = [
+                    'action' => 'update',
+                    'row' => [],
+                    'error' => $rowResponse->getMessage()
+                ];
+                continue;
+            }
+
+            //increment old counter
+            $results['data'][$i] = [
+                'action' => 'update',
+                'row' => $rowResponse->getResults(),
+                'error' => false
+            ];
+
+            $results['old'] ++;
+            continue;
+        }
+
+        // trigger single object update event
+        cradle()->trigger('user-create', $rowRequest, $rowResponse);
+
+        // check response if there is an error
+        if ($rowResponse->isError()) {
+            $results['data'][$i] = [
+                'action' => 'create',
+                'row' => [],
+                'error' => $rowResponse->getMessage()
+            ];
+            continue;
+        }
+
+        //increment old counter
+        $results['data'][$i] = [
+            'action' => 'create',
+            'row' => $rowResponse->getResults(),
+            'error' => false
+        ];
+
+        $results['new'] ++;
+    }
+
     $response->setError(false)->setResults($results);
 });

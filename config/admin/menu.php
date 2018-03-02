@@ -14,8 +14,29 @@
   ),
   2 => 
   array (
-    'icon' => 'fas fa-user-secret',
+    'icon' => 'fas fa-key',
     'label' => 'Roles',
-    'path' => '/admin/role/search',
+    'path' => '/admin/role',
+    'children' => 
+    array (
+      0 => 
+      array (
+        'icon' => 'fas fa-search',
+        'label' => 'Role Search',
+        'path' => '/admin/role/search',
+      ),
+      1 => 
+      array (
+        'icon' => 'fas fa-handshake',
+        'label' => 'Permissions',
+        'path' => '/admin/permission/search',
+      ),
+      2 => 
+      array (
+        'icon' => 'fas fa-lock-open',
+        'label' => 'Access',
+        'path' => '/admin/role/auth/search',
+      ),
+    ),
   ),
 );

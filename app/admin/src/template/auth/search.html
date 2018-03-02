@@ -1,93 +1,235 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="/admin">
+                <i class="fas fa-home"></i> fAdmin
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <i class="fas fa-lock"></i> Auths
+        </li>
+    </ol>
+</nav>
 
-{{#when filter.auth_active '===' '0'}}
-    <h3>
-        {{number total}} Inactive {{title}}
-        {{#if q.0}}
-            matching {{q.0}}
-        {{/if}}
-    </h3>
-{{else}}
-    <h3>
-        {{number total}} {{title}}
-        {{#if q.0}}
-            matching {{q.0}}
-        {{/if}}
-    </h3>
-{{/when}}
-
-<div class="clearfix">
-    <!-- START: SEARCH FORM -->
-    <form class="pull-right search form-inline" method="get">
-        <div class="form-group">
-            <input name="q[]" placeholder="Search" type="text"
-            value="{{q.0}}" class="form-control" />
-        </div>
-        <button class="btn"><i class="fa fa-search"></i></button>
-    </form>
-    <!-- END: SEARCH FORM -->
-
-    <div class="btn-group" role="group" aria-label="...">
-        <a class="btn btn-primary" href="?filter[auth_active]=1">
-            Active
-        </a>
-        <a class="btn btn-danger" href="?filter[auth_active]=0">
-            Inactive
-        </a>
-    </div>
-    <span>
-        <a class="btn btn-success" href="/admin/auth/create">
-            <i class="fa fa-plus"></i>
-            Create New Auth
-        </a>
-    </span>
-</div>
-
-<!-- START: BULK FORM -->
-<form method="post" class="form-inline bulk-form pad-vertical">
-    <div class="panel panel-default clear">
-        <div class="panel-body" >
-            {{#if rows}}
-                <div class="table-overflow">
-                    <!-- START: TABLE -->
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {{#each rows}}
-                            <tr data-id="{{auth_id}}">
-                                <td>
-                                    {{#when auth_active '==' 1}}
-                                    <a title="Edit" href="/admin/auth/update/{{auth_id}}">
-                                    <i class="fa fa-edit"></i></a>
-                                    &nbsp;
-                                    <a title="Remove" href="/admin/auth/remove/{{auth_id}}"
-                                    class="text-danger remove"><i class="fa fa-times"></i></a>
-                                    {{/when}}
-                                    {{#when auth_active '==' 0}}
-                                    <a title="Restore" href="/admin/auth/restore/{{auth_id}}" class="text-success restore">
-                                    <i class="fa fa-external-link"></i></a>
-                                    {{/when}}
-                                </td>
-                            </tr>
-                            {{/each}}
-                        </tbody>
-                    </table>
-                    <!-- END: TABLE -->
-                </div>
-            {{else}}
-                <!-- START: NO RESULTS -->
-                <div class="well no-results">No Results Found</div>
-                <!-- END: NO RESULTS -->
+<div class="main-padding">
+    {{#when filter.auth_active '===' '0'}}
+        <h3 class="main-title">
+            <i class="fa fa-lock"></i>
+            {{number total}} Inactive {{title}}
+            {{#if q.0}}
+                matching {{q.0}}
             {{/if}}
-        </div>
-    </div>
+        </h3>
+    {{else}}
+        <h3 class="main-title">
+            <i class="fa fa-lock"></i>
+            {{number total}} {{title}}
+            {{#if q.0}}
+                matching {{q.0}}
+            {{/if}}
+        </h3>
+    {{/when}}
 
-    <ul class="pagination">
-        {{#pager total range}}
-        <li{{#if active}} class="active"{{/if}}><a href="?{{href}}">{{page}}</a></li>
-        {{/pager}}
-    </ul>
-</form>
+    {{#if rows.length}}
+        <div class="box search-filters">
+            <div class="box-head box-default">
+                <h3 class="box-title">Filters</h3>
+            </div>
+            <form method="get">
+                <div class="box-body box-padding">
+                        <div class="form-group">
+                            <label for="q">Search</label>
+                            <input
+                                class="form-control"
+                                name="q"
+                                placeholder="Enter Search Auths"
+                                type="search"
+                                value="{{q}}"
+                            />
+                        </div>
+                </div>
+                <div class="box-foot box-light">
+                    <div class="box-left">
+                        <button class="btn btn-danger" type="reset">Reset</button>
+                    </div>
+                    <div class="box-right">
+                        <button class="btn btn-primary">Search</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <form method="post">
+            <div class="clearfix mb-4 search-actions">
+                <div class="float-left mr-2">
+                    <div class="input-group">
+                        <select class="form-control" name="range" data-do="object-range" data-on="change">
+                            <option value="25" {{#when range '==' '25'}}selected{{/when}}>Show 25</option>
+                            <option value="50" {{#when range '==' '50'}}selected{{/when}}>Show 50</option>
+                            <option value="100" {{#when range '==' '100'}}selected{{/when}}>Show 100</option>
+                            <option value="200" {{#when range '==' '200'}}selected{{/when}}>Show 200</option>
+                            <option value="0" {{#when range '==' '0'}}selected{{/when}}>Show All</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="float-left mr-2">
+                    <div class="input-group">
+                        <select class="form-control" name="bulk-action">
+                            <option value="remove">Remove</option>
+                            <option value="restore">Restore</option>
+                        </select>
+                        <button class="btn btn-secondary">Apply</button>
+                    </div>
+                </div>
+
+                <div class="btn-group" role="group" aria-label="...">
+                    <a class="btn btn-primary" href="?filter[auth_active]=1">
+                        Active
+                    </a>
+                    <a class="btn btn-danger" href="?filter[auth_active]=0">
+                        Inactive
+                    </a>
+                </div>
+
+                <div class="float-right">
+                    <a
+                        class="btn btn-pink"
+                        data-do="import"
+                        data-on="click"
+                        data-url="import"
+                        data-schema="auth"
+                        data-non-object="1"
+                        href="javascript:void(0)"
+                    >
+                        <i class="fas fa-upload"></i> Import
+                    </a>
+                    <a class="btn btn-purple" href="export/csv?{{toquery}}" target="_blank">
+                        <i class="fas fa-download"></i> Export
+                    </a>
+                    <a class="btn btn-success" href="/admin/auth/create">
+                        <i class="fas fa-plus"></i> {{_ 'Create %s' 'Auth'}}
+                    </a>
+                </div>
+            </div>
+
+            <div class="table-overflow">
+                <table class="table table-responsive-sm table-striped table-data">
+                    <thead>
+                        <tr>
+                            <th class="table-bulk-checkbox">
+                                <label class="checkbox checkbox-1">
+                                    <input
+                                        data-do="table-checkall"
+                                        type="checkbox"
+                                    />
+                                    <span></span>
+                                </label>
+                            </th>
+                            <th>Actions</th>
+                            <th>ID</th>
+                            <th>
+                                <a href="?{{sorturl auth_name}}">
+                                    Email
+                                    {{{sortcaret auth_name}}}
+                                </a>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each rows}}
+                            <tr data-id="{{authid}}">
+                                <td class="table-bulk-checkbox">
+                                    <label class="checkbox checkbox-1">
+                                        <input type="checkbox" name="auth_id[]" value="{{auth_id}}" />
+                                        <span></span>
+                                    </label>
+                                </td>
+                                <td class="table-actions">
+                                    <a
+                                        class="text-purple"
+                                            href="/admin/auth/create?copy={{auth_id}}"
+                                        title="Copy Auth"
+                                    >
+                                        <i class="fa fa-copy"></i>
+                                    </a>
+
+                                    {{#if auth_active}}
+                                        <a
+                                            class="text-grey"
+                                            href="/admin/auth/update/{{auth_id}}"
+                                            title="Edit Auth"
+                                        >
+                                            <i class="fa fa-edit"></i>
+                                        </a>
+                                        <a
+                                            class="text-danger remove"
+                                            href="/admin/auth/remove/{{auth_id}}"
+                                            title="Remove Auth"
+                                        >
+                                            <i class="fa fa-times"></i>
+                                        </a>
+                                    {{else}}
+                                        <a
+                                            class="text-success restore"
+                                            href="/admin/auth/restore/{{auth_id}}"
+                                            title="Restore Auth"
+                                        >
+                                            <i class="fas fa-external-link-alt"></i>
+                                        </a>
+                                    {{/if}}
+                                </td>
+                                <td>{{auth_id}}</td>
+                                <td>{{auth_slug}}</td>
+                            </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+            </div>
+        </form>
+
+        <ul class="pagination">
+            {{#pager total range}}
+                <li class="page-item{{#if active}} active{{/if}}">
+                    <a class="page-link" href="?{{href}}">{{page}}</a>
+                </li>
+            {{/pager}}
+        </ul>
+    {{else}}
+        <div class="clearfix mb-4 search-actions">
+            <div class="btn-group" role="group" aria-label="...">
+                <a class="btn btn-primary" href="?filter[auth_active]=1">
+                    Active
+                </a>
+                <a class="btn btn-danger" href="?filter[auth_active]=0">
+                    Inactive
+                </a>
+            </div>
+
+            <div class="float-right">
+                <a
+                    class="btn btn-pink"
+                    data-do="admin-import"
+                    data-on="click"
+                    data-url="import"
+                    data-schema="Auth"
+                    href="javascript:void(0)"
+                >
+                    <i class="fas fa-upload"></i> Import
+                </a>
+                <a class="btn btn-purple" href="export/csv?{{toquery}}" target="_blank">
+                    <i class="fas fa-download"></i> Export
+                </a>
+                <a class="btn btn-success" href="/admin/auth/create">
+                    <i class="fas fa-plus"></i> {{_ 'Create %s' 'Auth'}}
+                </a>
+            </div>
+        </div>
+
+        <!-- START: NO RESULTS -->
+        <div class="alert alert-info no-results">
+            <center>No Results Found.</center>
+        </div>
+        <!-- END: NO RESULTS -->
+    {{/if}}
+</div>

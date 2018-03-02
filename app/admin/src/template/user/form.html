@@ -1,11 +1,31 @@
-<div class="panel panel-default clear" >
-    <div class="panel-heading brand">
-        <div class="panel-title">{{title}}</div>
-    </div>
-
-    <div class="panel-body" >
-        <form enctype="multipart/form-data" method="post">
-            
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="/admin">
+                <i class="fas fa-home"></i> Admin
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="/admin/user/search">
+                <i class="fas fa-user"></i> User
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <i class="fas fa-plus"></i> {{title}}
+        </li>
+    </ol>
+</nav>
+<div class="main-padding">
+    <form
+        class="box"
+        method="post"
+    >
+        <div class="box-head box-success">
+            <div class="box-title">
+                <i class="fa fa-plus"></i> {{title}}
+            </div>
+        </div>
+        <div class="box-body box-padding">
             <div class="form-group{{#if errors.user_name}} has-error{{/if}}">
                 <label class="control-label">Name</label>
                 <div>
@@ -49,13 +69,13 @@
                     {{/if}}
                 </div>
             </div>
-            
-
-            <div class="clear form-group">
-                <input type="hidden" name="csrf" value="" />
+        </div>
+        <div class="box-foot box-light">
+            <div class="box-left">
+                <input type="hidden" name="csrf" value="{{csrf}}" />
                 <button type="submit" class="btn btn-primary">Submit</button>
             </div>
-        </form>
-    </div>
+        </div>
+    </form>
 </div>
 <script type="text/javascript" src="/scripts/cropper.js"></script>
