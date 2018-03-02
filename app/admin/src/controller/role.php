@@ -80,6 +80,8 @@ $cradle->get('/admin/role/search', function($request, $response) {
 $cradle->get('/admin/role/create', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
+    // set redirect
+    $request->setStage('redirect', '/admin/role/search');
     if (!cradle('/module/role')->hasPermissions($request, $response)) {
         return;
     }
@@ -144,6 +146,8 @@ $cradle->get('/admin/role/create', function($request, $response) {
 $cradle->get('/admin/role/update/:role_id', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
+    // set redirect
+    $request->setStage('redirect', '/admin/role/search');
     if (!cradle('/module/role')->hasPermissions($request, $response)) {
         return;
     }
@@ -213,6 +217,8 @@ $cradle->get('/admin/role/update/:role_id', function($request, $response) {
 $cradle->post('/admin/role/create', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
+    // set redirect
+    $request->setStage('redirect', '/admin/role/search');
     if (!cradle('/module/role')->hasPermissions($request, $response)) {
         return;
     }
@@ -260,6 +266,8 @@ $cradle->post('/admin/role/create', function($request, $response) {
 $cradle->post('/admin/role/update/:role_id', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
+    // set redirect
+    $request->setStage('redirect', '/admin/role/search');
     if (!cradle('/module/role')->hasPermissions($request, $response)) {
         return;
     }
@@ -306,6 +314,8 @@ $cradle->post('/admin/role/update/:role_id', function($request, $response) {
 $cradle->get('/admin/role/remove/:role_id', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
+    // set redirect
+    $request->setStage('redirect', '/admin/role/search');
     if (!cradle('/module/role')->hasPermissions($request, $response)) {
         return;
     }
@@ -340,6 +350,8 @@ $cradle->get('/admin/role/remove/:role_id', function($request, $response) {
 $cradle->get('/admin/role/restore/:role_id', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
+    // set redirect
+    $request->setStage('redirect', '/admin/role/search');
     if (!cradle('/module/role')->hasPermissions($request, $response)) {
         return;
     }
@@ -422,6 +434,8 @@ $cradle->get('/admin/role/auth/search', function($request, $response) {
 $cradle->get('/admin/role/auth/create', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
+    // set redirect
+    $request->setStage('redirect', '/admin/role/search');
     if (!cradle('/module/role')->hasPermissions($request, $response)) {
         return;
     }
@@ -460,6 +474,11 @@ $cradle->get('/admin/role/auth/create', function($request, $response) {
 $cradle->post('/admin/role/auth/create', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
+    // set redirect
+    $request->setStage('redirect', '/admin/role/search');
+    if (!cradle('/module/role')->hasPermissions($request, $response)) {
+        return;
+    }
 
     //----------------------------//
     // 2. Prepare Data
@@ -491,6 +510,11 @@ $cradle->post('/admin/role/auth/create', function($request, $response) {
 $cradle->get('/admin/role/auth/:role_id/:auth_id/remove', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
+    // set redirect
+    $request->setStage('redirect', '/admin/role/search');
+    if (!cradle('/module/role')->hasPermissions($request, $response)) {
+        return;
+    }
 
     //----------------------------//
     // 2. Prepare Data
