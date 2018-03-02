@@ -38,7 +38,7 @@ class Schema extends Registry
         if(!is_array($this->data)) {
             $this->data = cradle()
                 ->package('global')
-                ->config('schema/' . $name);
+                ->config('admin/schema/' . $name);
         }
 
         if(!$this->data || empty($this->data)) {

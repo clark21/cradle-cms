@@ -7,9 +7,9 @@ config/settings.php
 config/roles.php
 config/permissions.php
 config/test.php
-config/menu.php
-config/schema/*.php
-config/schema/*.csv
+config/admin/menu.php
+config/admin/schema/*.php
+config/admin/schema/*.csv
 
 public/bower_components
 public/components

@@ -107,7 +107,7 @@ $cradle->on('system-schema-detail', function ($request, $response) {
     //no preparation needed
     //----------------------------//
     // 4. Process Data
-    $results = $this->package('global')->config('schema/' . $id);
+    $results = $this->package('global')->config('admin/schema/' . $id);
 
     if (!$results) {
         return $response->setError(true, 'Not Found');
@@ -153,13 +153,13 @@ $cradle->on('system-schema-remove', function ($request, $response) {
     }
 
     $path = $this->package('global')->path('config')
-        . '/schema/'
+        . '/admin/schema/'
         . $table
         . '.php';
 
     if(file_exists($path)) {
         $new = $this->package('global')->path('config')
-            . '/schema/_'
+            . '/admin/schema/_'
             . $table
             . '.php';
 
@@ -207,13 +207,13 @@ $cradle->on('system-schema-restore', function ($request, $response) {
     }
 
     $path = $this->package('global')->path('config')
-        . '/schema/_'
+        . '/admin/schema/_'
         . $table
         . '.php';
 
     if(file_exists($path)) {
         $new = $this->package('global')->path('config')
-            . '/schema/'
+            . '/admin/schema/'
             . $table
             . '.php';
 
@@ -245,7 +245,7 @@ $cradle->on('system-schema-search', function ($request, $response) {
     //no preparation needed
     //----------------------------//
     // 4. Process Data
-    $path = $this->package('global')->path('config') . '/schema/';
+    $path = $this->package('global')->path('config') . '/admin/schema/';
 
     $files = scandir($path);
 
@@ -267,7 +267,7 @@ $cradle->on('system-schema-search', function ($request, $response) {
             continue;
         }
 
-        $results[] = $this->package('global')->config('schema/' . substr($file, 0, -4));
+        $results[] = $this->package('global')->config('admin/schema/' . substr($file, 0, -4));
     }
 
     //set response format
@@ -318,7 +318,7 @@ $cradle->on('system-schema-update', function ($request, $response) {
     if(isset($data['relations'])) {
         // filter out empty relations
         $data['relations'] = array_filter(
-            $data['relations'], 
+            $data['relations'],
             function($relation) {
                 // make sure we have relation name
                 return $relation['name'] !== '' ? true : false;
