@@ -46,7 +46,7 @@ $cradle->get('/admin/permission/search', function($request, $response) {
     // 3. Render Template
     $class = 'page-admin-permission-search page-admin';
     $data['title'] = cradle('global')->translate('Permissions');
-    $body = cradle('/app/admin')->template('permission/search', $data);
+    $body = cradle('/module/role')->template('permission/search', $data);
 
     //set content
     $response
@@ -66,6 +66,7 @@ $cradle->get('/admin/permission/search', function($request, $response) {
 $cradle->get('/admin/permission/create', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
+    // set redirect
     $request->setStage('redirect', '/admin/permission/search');
     if (!cradle('/module/role')->hasPermissions($request, $response)) {
         return;
@@ -76,7 +77,7 @@ $cradle->get('/admin/permission/create', function($request, $response) {
     $data = ['item' => $request->getPost()];
 
     if ($response->isError()) {
-        $response->setFlash($response->getMessage(), 'danger');
+        $response->setFlash($response->getMessage(), 'error');
         $data['errors'] = $response->getValidation();
     }
 
@@ -84,7 +85,7 @@ $cradle->get('/admin/permission/create', function($request, $response) {
     // 3. Render Template
     $class = 'page-developer-permission-create page-admin';
     $data['title'] = cradle('global')->translate('Create Permission');
-    $body = cradle('/app/admin')->template('permission/form', $data);
+    $body = cradle('/module/role')->template('permission/form', $data);
 
     //set content
     $response
@@ -124,7 +125,7 @@ $cradle->get('/admin/permission/update/:permission_key', function($request, $res
     $class = 'page-developer-permission-update page-admin';
     $data['title'] = 'Update Permissions';
     $data['action'] = 'Updating Permissions';
-    $body = cradle('/app/admin')->template('permission/form', $data);
+    $body = cradle('/module/role')->template('permission/form', $data);
 
     //Set Content
     $response
@@ -229,7 +230,7 @@ $cradle->get('/admin/permission/remove/:permission_key', function($request, $res
     // 2. Prepare Data
     // no data to prepare
     // get permissions
-    $data['permissions'] = $this->package('global')->config('permissions');
+    $data['permissions'] = $this->package('global')->config('admin/permissions');
 
     //----------------------------//
     // 3. Process Request
@@ -239,7 +240,7 @@ $cradle->get('/admin/permission/remove/:permission_key', function($request, $res
     // 4. Interpret Results
     if($response->isError()) {
         //add a flash
-        cradle('global')->flash($response->getMessage(), 'danger');
+        cradle('global')->flash($response->getMessage(), 'error');
     } else {
         //add a flash
         $message = cradle('global')->translate('Permission was Removed');
@@ -274,7 +275,7 @@ $cradle->get('/admin/permission/restore/:role_id', function($request, $response)
     // 4. Interpret Results
     if($response->isError()) {
         //add a flash
-        cradle('global')->flash($response->getMessage(), 'danger');
+        cradle('global')->flash($response->getMessage(), 'error');
     } else {
         //add a flash
         $message = cradle('global')->translate('Permission was Restored');

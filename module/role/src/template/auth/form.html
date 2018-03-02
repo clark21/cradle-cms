@@ -35,10 +35,10 @@
                     <input
                         autocomplete="off"
                         class="form-control suggestion-label-role {{#if errors.role_id}}is-invalid{{/if}}"
-                        name="_role_id"
+                        name="role[_role_id]"
                         placeholder="Enter Role"
                         type="text"
-                        value="{{item._role_id}}"
+                        value="{{item.role._role_id}}"
                     />
                     {{#if errors.role_id}}
                     <div class="invalid-feedback">
@@ -47,9 +47,9 @@
                     {{/if}}
                     <input
                         class="suggestion-value-role"
-                        name="role_id"
+                        name="role[role_id]"
                         type="hidden"
-                        value="{{item.role_id}}"
+                        value="{{item.role.role_id}}"
                     />
                     <div
                         class="input-suggestion d-none"
@@ -68,10 +68,10 @@
                     <input
                         autocomplete="off"
                         class="form-control suggestion-label-auth {{#if errors.auth_id}}is-invalid{{/if}}"
-                        name="_auth_id"
+                        name="role[_auth_id]"
                         placeholder="Enter Auth"
                         type="text"
-                        value="{{item._auth_id}}"
+                        value="{{item.role._auth_id}}"
                     />
                     {{#if errors.auth_id}}
                     <div class="invalid-feedback">
@@ -80,9 +80,9 @@
                     {{/if}}
                     <input
                         class="suggestion-value-auth"
-                        name="auth_id"
+                        name="role[auth_id]"
                         type="hidden"
-                        value="{{item.auth_id}}"
+                        value="{{item.role.auth_id}}"
                     />
                     <div
                         class="input-suggestion d-none"

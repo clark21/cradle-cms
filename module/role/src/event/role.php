@@ -328,8 +328,6 @@ $cradle->on('role-update', function ($request, $response) {
     // 3. Prepare Data
     $permissions = cradle('global')->config('admin/permissions');
 
-    $rolePermissions = [];
-
     // loop through data
     foreach($data['role_permissions'] as $permission) {
         $key = array_search($permission, array_column($permissions, 'label'));
@@ -339,6 +337,7 @@ $cradle->on('role-update', function ($request, $response) {
     }
 
     $data['role_permissions'] = json_encode($rolePermissions);
+
 
     //----------------------------//
     // 4. Process Data
