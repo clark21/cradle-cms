@@ -78,7 +78,9 @@ $cradle->on('system-object-create', function ($request, $response) {
     //loop through relations
     foreach ($relations as $table => $relation) {
         //link relations
-        if(isset($data[$relation['primary2']])) {
+        if(isset($data[$relation['primary2']])
+            && is_numeric($data[$relation['primary2']])
+        )
             $objectSql->link(
                 $relation['name'],
                 $primary,

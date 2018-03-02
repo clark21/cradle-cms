@@ -46,7 +46,8 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
     //we do this to prevent SQL injections
     if(is_array($request->getStage('filter'))) {
         foreach($request->getStage('filter') as $key => $value) {
-            if(!preg_match('/^[a-zA-Z0-9_]+$/', $key)) {
+            //if invalid key format or there is no value
+            if(!preg_match('/^[a-zA-Z0-9_]+$/', $key) || !strlen($value)) {
                 $request->removeStage('filter', $key);
             }
         }
@@ -103,6 +104,8 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
     foreach($response->getResults('rows') as $relation) {
         $data['valid_relations'][] = $relation['name'];
     }
+
+    $data['redirect'] = urlencode($request->getServer('REQUEST_URI'));
 
     //----------------------------//
     // 3. Render Template
@@ -296,10 +299,23 @@ $cradle->get('/admin/system/object/:schema/create', function($request, $response
 
         //add suggestion value for each relation
         foreach ($data['schema']['relations'] as $name => $relation) {
+            if($relation['many'] == 2) {
+                continue;
+            }
+
             $suggestion = '_' . $relation['primary2'];
+
+            $suggestionData = $data['item'];
+            if($relation['many'] == 0) {
+                $suggestionData = $data['item'][$relation['name']];
+                if(!$suggestionData) {
+                    continue;
+                }
+            }
+
             try {
                 $data['item'][$suggestion] = SystemSchema::i($relation['name'])
-                    ->getSuggestionFormat($data['item']);
+                    ->getSuggestionFormat($suggestionData);
             } catch(Exception $e) {}
         }
     }
@@ -571,10 +587,23 @@ $cradle->get('/admin/system/object/:schema/update/:id', function($request, $resp
 
         //add suggestion value for each relation
         foreach ($data['schema']['relations'] as $name => $relation) {
+            if($relation['many'] == 2) {
+                continue;
+            }
+
             $suggestion = '_' . $relation['primary2'];
+
+            $suggestionData = $data['item'];
+            if($relation['many'] == 0) {
+                $suggestionData = $data['item'][$relation['name']];
+                if(!$suggestionData) {
+                    continue;
+                }
+            }
+
             try {
                 $data['item'][$suggestion] = SystemSchema::i($relation['name'])
-                    ->getSuggestionFormat($data['item']);
+                    ->getSuggestionFormat($suggestionData);
             } catch(Exception $e) {}
         }
     }
@@ -1026,7 +1055,6 @@ $cradle->post('/admin/system/object/:schema/create', function($request, $respons
     cradle('global')->redirect($redirect);
 });
 
-
 /**
  * Process the System Object Update Page
  *
@@ -1295,11 +1323,11 @@ $cradle->get('/admin/system/object/:schema/restore/:id', function($request, $res
  * @param Request $request
  * @param Response $response
  */
-$cradle->post('/admin/system/object/:schema/import', function($request, $response) {        
+$cradle->post('/admin/system/object/:schema/import', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     //only for store
-    cradle('global')->requireLogin('admin');    
+    cradle('global')->requireLogin('admin');
 
     //----------------------------//
     // 2. Prepare Data
@@ -1308,7 +1336,7 @@ $cradle->post('/admin/system/object/:schema/import', function($request, $respons
     //----------------------------//
     // 3. Process Request
     //get schema data
-    cradle()->trigger('system-object-import', $request, $response);    
+    cradle()->trigger('system-object-import', $request, $response);
 
     //----------------------------//
     // 4. Interpret Results
