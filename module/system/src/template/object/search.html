@@ -146,6 +146,16 @@
             <div class="clearfix mb-4 search-actions">
                 <div class="float-left mr-2">
                     <div class="input-group">
+                        <select class="form-control" name="bulk-action">
+                            <option value="remove">Remove</option>
+                            <option value="restore">Restore</option>
+                        </select>
+                        <button class="btn btn-secondary">Apply</button>
+                    </div>
+                </div>
+
+                <div class="float-left mr-2">
+                    <div class="input-group">
                         <select class="form-control" name="range" data-do="object-range" data-on="change">
                             <option value="25" {{#when range '==' '25'}}selected{{/when}}>Show 25</option>
                             <option value="50" {{#when range '==' '50'}}selected{{/when}}>Show 50</option>
@@ -153,16 +163,6 @@
                             <option value="200" {{#when range '==' '200'}}selected{{/when}}>Show 200</option>
                             <option value="0" {{#when range '==' '0'}}selected{{/when}}>Show All</option>
                         </select>
-                    </div>
-                </div>
-
-                <div class="float-left mr-2">
-                    <div class="input-group">
-                        <select class="form-control" name="bulk-action">
-                            <option value="remove">Remove</option>
-                            <option value="restore">Restore</option>
-                        </select>
-                        <button class="btn btn-secondary">Apply</button>
                     </div>
                 </div>
 
@@ -224,7 +224,12 @@
                                 </label>
                             </th>
                             <th>Actions</th>
-                            <th>ID</th>
+                            <th>
+                                <a href="?{{sorturl schema.primary}}">
+                                    ID
+                                    {{{sortcaret schema.primary}}}
+                                </a>
+                            </th>
                             {{#each schema.relations}}
                                 {{#when many '==' 1}}
                                     <th>{{singular}}</th>
@@ -259,9 +264,9 @@
                                     <a
                                         class="text-purple"
                                         {{#if ../relation.suggestion}}
-                                            href="/admin/system/object/{{../schema.name}}/create/{{../relation.schema.name}}/{{key ../relation.schema.primary ../relation.data}}?copy={{key ../schema.primary this}}"
+                                            href="/admin/system/object/{{../schema.name}}/create/{{../relation.schema.name}}/{{key ../relation.schema.primary ../relation.data}}?copy={{key ../schema.primary this}}&redirect_uri={{../redirect}}"
                                         {{else}}
-                                            href="/admin/system/object/{{../schema.name}}/create?copy={{key ../schema.primary this}}"
+                                            href="/admin/system/object/{{../schema.name}}/create?copy={{key ../schema.primary this}}&redirect_uri={{../redirect}}"
                                         {{/if}}
                                         title="Copy {{../schema.singular}}"
                                     >
@@ -271,7 +276,7 @@
                                     {{#is_active this ../schema}}
                                         <a
                                             class="text-grey"
-                                            href="/admin/system/object/{{../schema.name}}/update/{{key ../schema.primary this}}"
+                                            href="/admin/system/object/{{../schema.name}}/update/{{key ../schema.primary this}}?redirect_uri={{../redirect}}"
                                             title="Edit {{../schema.singular}}"
                                         >
                                             <i class="fa fa-edit"></i>
@@ -289,7 +294,7 @@
                                                 <a
                                                     class="text-success"
                                                     title="Create {{plural}}"
-                                                    href="/admin/system/object/{{name}}/create/{{../../schema.name}}/{{key ../../schema.primary ../this}}"
+                                                    href="/admin/system/object/{{name}}/create/{{../../schema.name}}/{{key ../../schema.primary ../this}}?redirect_uri={{../redirect}}"
                                                 >
                                                     <i class="{{icon}}"></i>
                                                 </a>
@@ -298,7 +303,7 @@
 
                                         <a
                                             class="text-danger remove"
-                                            href="/admin/system/object/{{../schema.name}}/remove/{{key ../schema.primary this}}"
+                                            href="/admin/system/object/{{../schema.name}}/remove/{{key ../schema.primary this}}?redirect_uri={{../redirect}}"
                                             title="Remove {{../schema.singular}}"
                                         >
                                             <i class="fa fa-times"></i>
@@ -306,7 +311,7 @@
                                     {{else}}
                                         <a
                                             class="text-success restore"
-                                            href="/admin/system/object/{{../schema.name}}/restore/{{key ../schema.primary this}}"
+                                            href="/admin/system/object/{{../schema.name}}/restore/{{key ../schema.primary this}}?redirect_uri={{../redirect}}"
                                             title="Restore {{../schema.singular}}"
                                         >
                                             <i class="fas fa-external-link-alt"></i>
@@ -317,8 +322,8 @@
                                 {{#each ../schema.relations}}
                                     {{#when many '==' 1}}
                                         <td>
-                                            <a 
-                                                href="/admin/system/object/{{name}}/update/{{#relation_primary this ../this}}{{/relation_primary}}" 
+                                            <a
+                                                href="/admin/system/object/{{name}}/update/{{#relation_primary this ../this}}{{/relation_primary}}"
                                                 target="_blank"
                                             >
                                                 {{#get_suggestion this ../this}}{{/get_suggestion}}

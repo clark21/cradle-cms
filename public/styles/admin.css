@@ -972,6 +972,51 @@ select.form-control {
     background: #ffe493;
 }
 
+
+/* Field - Icon
+-----------------------------*/
+.icon-field {
+    font-size: 30px;
+}
+
+.icon-field i {
+    border: 2px solid #FFFFFF;
+    cursor: pointer;
+    margin: 5px;
+    padding: 5px;
+}
+
+.icon-field i:hover {
+    border: 2px solid orange;
+}
+
+/* Widget - Menu Builder
+------------------------------*/
+.menu-builder {
+    margin-top: 10px;
+}
+
+.menu-builder > .btn {
+    margin-bottom: 10px;
+}
+
+.menu-builder-list {
+    list-style: none;
+    padding: 0;
+}
+
+.menu-builder-list .menu-builder-list {
+    padding-left: 36px;
+}
+
+.menu-builder-item {
+    width: 100%;
+}
+
+.menu-builder-input {
+    margin-bottom: 10px;
+}
+
 /* UI - Box
 ------------------------------*/
 .box {

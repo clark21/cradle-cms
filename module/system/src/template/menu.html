@@ -1,0 +1,113 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="/admin/system/schema/search">
+                <i class="fas fa-home"></i> Admin
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <i class="fas fa-bars"></i> Menu Builder
+        </li>
+    </ol>
+</nav>
+
+<div class="main-padding">
+    <h3 class="main-title">
+        <i class="fas fa-bars"></i> Menu Builder
+    </h3>
+
+    <div class="row">
+        <div class="col-sm-9">
+            <div class="menu-builder" data-do="menu-builder" data-depth="5">
+                <button class="btn btn-success">
+                    <i class="fas fa-plus"></i>
+                    Add Menu Item
+                </button>
+                <ol class="menu-builder-list">
+                    {{> menu_item}}
+                    {{> menu_item}}
+                </ol>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="box">
+                <div class="box-head box-default">
+                    <div class="box-title">Add a Menu Item</div>
+                </div>
+                <div class="box-body box-padding">
+                    <div class="form-group">
+                        <label>Icon</label>
+                        <div>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">
+                                        <i class="fas fa-question fa-fw"></i>
+                                    </div>
+                                </div>
+                                <input
+                                    class="form-control"
+                                    data-do="icon-field"
+                                    name="icon"
+                                    placeholder="fas fa-question"
+                                    type="text"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Path</label>
+                        <div>
+                            <input
+                                class="form-control"
+                                name="path"
+                                placeholder="/admin/path"
+                                type="text"
+                            />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Label</label>
+                        <div>
+                            <input
+                                class="form-control"
+                                name="label"
+                                placeholder="Menu Title"
+                                type="text"
+                            />
+                        </div>
+                    </div>
+                </div>
+                <div class="box-foot box-light">
+                    <div class="box-right">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="box">
+                <div class="box-head box-info">
+                    <div class="box-title">Use Schema</div>
+                </div>
+                <div class="box-body">
+                    {{#if schemas}}
+                        <ul class="list-group list-group-flush">
+                            {{#each schemas}}
+                                <li class="list-group-item">
+                                    <a href="javascript:void(0)">
+                                        <i class="{{icon}} fa-fw"></i>
+                                        <span>{{singular}}</span>
+                                    </a>
+                                </li>
+                            {{/each}}
+                        </ul>
+                    {{else}}
+                        <div class="alert alert-info">
+                            No Schemas Found
+                        </div>
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

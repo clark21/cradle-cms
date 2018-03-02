@@ -35,6 +35,45 @@
 </nav>
 
 <div class="main-padding">
+    <div class="relations-menu">
+        <div class="row">
+            <div class="col-sm">
+                {{#each schema.relations}}
+                    {{#when many '==' 1}}
+                    <span class="relation">
+                        <span class="font-weight-bold">{{singular}}:</span>
+                        <span>
+                            <a 
+                                href="/admin/system/object/{{name}}/update/{{#relation_primary this ../item}}{{/relation_primary}}" 
+                                target="_blank"
+                            >
+                                {{#get_suggestion this ../item}}{{/get_suggestion}}
+                            </a>
+                        </span>
+                        &nbsp;
+                    </span>
+                    {{/when}}
+                {{/each}}
+            </div>
+            <div class="col-sm text-right">
+                {{#each schema.relations}}
+                    {{#when many '==' 2}}
+                    <span class="relation">
+                        <span class="font-weight-bold">{{plural}}</span>
+                        <span>
+                            <a href="/admin/system/object/{{name}}/search/{{../schema.name}}/{{#relation_primary ../schema ../item}}{{/relation_primary}}" target="_blank">
+                                View All {{plural}}
+                            </a>
+                        </span>
+                    </span>
+                    {{/when}}
+                {{/each}}
+            </div>
+        </div>
+    </div>
+
+    <hr />
+
     {{#if relation.suggestion}}
         <h3 class="main-title">
             <i class="{{relation.schema.icon}}"></i>

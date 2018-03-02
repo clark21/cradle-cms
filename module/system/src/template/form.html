@@ -103,16 +103,11 @@
                         <input
                             class="form-control{{#if errors.icon}} is-invalid{{/if}}"
                             data-do="icon-field"
-                            data-target="#icon-options"
-                            data-toggle="collapse"
                             name="icon"
                             placeholder="fas fa-question"
                             type="text"
                             value="{{item.icon}}"
                         />
-                        <div id="icon-options" class="collapse input-suggestion icon-suggestion">
-                            {{> icon-options}}
-                        </div>
                     </div>
 
                     {{#if errors.icon}}
