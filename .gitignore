@@ -4,11 +4,8 @@ vendor
 config/services.php
 config/settings.php
 config/roles.php
-config/admin/permissions.php
 config/test.php
-config/admin/menu.php
-config/admin/schema/*.php
-config/admin/schema/*.csv
+config/admin/*
 config/rest/jwt.php
 
 public/bower_components

@@ -2261,7 +2261,18 @@ jQuery(function($) {
                     listen(this).doon();
                 });
 
-            var root = $('ol.menu-builder-list:first').sortable();
+            var root = $('ol.menu-builder-list:first');
+
+            root.sortable({
+                onDrop: function ($item, container, _super, event) {
+                    $item.removeClass(container.group.options.draggedClass).removeAttr('style');
+                    $('body').removeClass(container.group.options.bodyClass);
+
+                    setTimeout(function() {
+                        reindex(root, 1);
+                    }, 10);
+                }
+            });
 
             reindex(root, 1);
         });
