@@ -5,7 +5,7 @@ config/jwt.php
 config/services.php
 config/settings.php
 config/roles.php
-config/permissions.php
+config/admin/permissions.php
 config/test.php
 config/admin/menu.php
 config/admin/schema/*.php

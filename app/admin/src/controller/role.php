@@ -101,7 +101,7 @@ $cradle->get('/admin/role/create', function($request, $response) {
     //----------------------------//
     // 2. Prepare Data
     // get path file
-    $path = $this->package('global')->path('config') . '/permissions.php';
+    $path = $this->package('global')->path('config') . '/admin/permissions.php';
 
     // check if file
     if(!is_file($path)) {
@@ -118,7 +118,7 @@ $cradle->get('/admin/role/create', function($request, $response) {
         $data['errors'] = $response->getValidation();
     }
 
-    $permissions = cradle('global')->config('permissions');
+    $permissions = cradle('global')->config('admin/permissions');
 
     $data['permissions'] = $permissions;
 
