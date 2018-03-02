@@ -307,7 +307,12 @@ $cradle->get('/admin/system/object/:schema/create', function($request, $response
 
             $suggestionData = $data['item'];
             if($relation['many'] == 0) {
+                if(!isset($data['item'][$relation['name']])) {
+                    continue;
+                }
+
                 $suggestionData = $data['item'][$relation['name']];
+
                 if(!$suggestionData) {
                     continue;
                 }
@@ -595,7 +600,12 @@ $cradle->get('/admin/system/object/:schema/update/:id', function($request, $resp
 
             $suggestionData = $data['item'];
             if($relation['many'] == 0) {
+                if(!isset($data['item'][$relation['name']])) {
+                    continue;
+                }
+
                 $suggestionData = $data['item'][$relation['name']];
+
                 if(!$suggestionData) {
                     continue;
                 }
