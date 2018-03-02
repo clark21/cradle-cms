@@ -166,7 +166,7 @@ $cradle->on('permission-update', function ($request, $response) {
 });
 
 /**
- * Role Remove Job
+ * Permission Remove Job
  *
  * @param Request $request
  * @param Response $response
@@ -174,38 +174,38 @@ $cradle->on('permission-update', function ($request, $response) {
 $cradle->on('permission-remove', function ($request, $response) {
     //----------------------------//
     // 1. Get Data
-    //get the role detail
-    $this->trigger('role-detail', $request, $response);
+    //get the permission data
+    $data = [];
+    if ($request->hasStage()) {
+        $data = $request->getStage();
+    }
 
-    //----------------------------//
-    // 2. Validate Data
-    if ($response->isError()) {
-        return;
+    $id = null;
+    if (isset($data['permission_key'])) {
+        $id = $data['permission_key'];
     }
 
     //----------------------------//
-    // 3. Prepare Data
-    $data = $response->getResults();
+    // 2. Validate Data
+    //we need an id
+    if (is_null($id)) {
+        return $response->setError(true, 'Invalid ID');
+    }
 
     //----------------------------//
-    // 4. Process Data
-    //this/these will be used a lot
-    $roleSql = RoleService::get('sql');
-    $roleRedis = RoleService::get('redis');
-    $roleElastic = RoleService::get('elastic');
+    // 3. Process Data
+    $results['permissions'] = $this->package('global')->config('permissions');
+    if(isset($results['permissions'][$id])) {
+        unset($results['permissions'][$id]);
+    }
 
-    //save to database
-    $results = $roleSql->update([
-        'role_id' => $data['role_id'],
-        'role_active' => 0
-    ]);
+    $path = $this->package('global')->path('config') . '/permissions.php';
 
-    //remove from index
-    $roleElastic->remove($data['role_id']);
-
-    //invalidate cache
-    $roleRedis->removeDetail($data['role_id']);
-    $roleRedis->removeSearch();
+    file_put_contents(
+        $path,
+        '<?php //-->' . "\n return " .
+        var_export($results['permissions'], true) . ';'
+    );
 
     $response->setError(false)->setResults($results);
 });
