@@ -14,6 +14,8 @@ use Cradle\Module\System\Object\Schema as ObjectSchema;
 use Cradle\Module\System\Schema as SystemSchema;
 use Cradle\Module\System\Exception as SystemException;
 
+use Cradle\Sql\SqlException;
+
 use Cradle\Http\Request;
 use Cradle\Http\Response;
 
@@ -703,6 +705,10 @@ $cradle->on('system-object-link', function ($request, $response) {
         return $response->setError(true, 'No ID provided');
     }
 
+    if (!is_numeric($data[$schema1Primary]) || !is_numeric($data[$schema2Primary])) {
+        return $response->setError(true, 'Invalid Id provided');
+    }
+
     //----------------------------//
     // 3. Process Data
     //this/these will be used a lot
@@ -710,11 +716,15 @@ $cradle->on('system-object-link', function ($request, $response) {
     $objectRedis = $schema1->model()->service('redis');
     $objectElastic = $schema1->model()->service('elastic');
 
-    $results = $objectSql->link(
-        $data['schema2'],
-        $data[$schema1Primary],
-        $data[$schema2Primary]
-    );
+    try {
+        $results = $objectSql->link(
+            $data['schema2'],
+            $data[$schema1Primary],
+            $data[$schema2Primary]
+        );
+    } catch (SqlException $e) {
+        $results = [];
+    }
 
     //index post
     $objectElastic->update($data[$schema1Primary]);

@@ -196,6 +196,9 @@
                         <a class="btn btn-purple" href="/admin/system/object/{{schema.name}}/export/{{relation.schema.name}}/{{key relation.schema.primary relation.data}}/csv?{{toquery}}" target="_blank">
                             <i class="fas fa-download"></i> Export
                         </a>
+                        <a class="btn btn-yellow" href="/admin/system/object/{{relation.schema.name}}/{{key relation.schema.primary relation.data}}/link/{{schema.name}}">
+                            <i class="fas fa-link"></i> {{_ 'Link %s' schema.singular}}
+                        </a>
                         <a class="btn btn-success" href="/admin/system/object/{{schema.name}}/create/{{relation.schema.name}}/{{key relation.schema.primary relation.data}}">
                             <i class="fas fa-plus"></i> {{_ 'Create %s' schema.singular}}
                         </a>
@@ -300,6 +303,16 @@
                                                 </a>
                                             {{/when}}
                                         {{/each}}
+
+                                        {{#if ../relation.suggestion}}
+                                            <a
+                                                class="text-pink remove"
+                                                href="/admin/system/object/{{../relation.schema.name}}/{{key ../relation.schema.primary ../relation.data}}/unlink/{{../schema.name}}/{{key ../schema.primary this}}?redirect_uri={{../redirect}}"
+                                                title="Remove {{../schema.singular}}"
+                                            >
+                                                <i class="fa fa-unlink"></i>
+                                            </a>
+                                        {{/if}}
 
                                         <a
                                             class="text-danger remove"
