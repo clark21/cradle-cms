@@ -16,8 +16,10 @@
 $cradle->get('/admin/history/search', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
-    //only for admin
-    cradle('global')->requireLogin('admin');
+    // set redirect
+    if (!cradle('/module/role')->hasPermissions($request, $response)) {
+        return;
+    }
 
     //----------------------------//
     // 2. Prepare Data

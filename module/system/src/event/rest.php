@@ -18,7 +18,7 @@ use Firebase\JWT\JWT;
   */
 $cradle->on('system-rest-permitted', function($request, $response) {
     // laod config
-    $config = cradle('global')->config('jwt');
+    $config = cradle('global')->config('rest/jwt');
 
     // get the whitelist config
     $whitelist = $config['whitelist'];
@@ -48,14 +48,8 @@ $cradle->on('system-rest-permitted', function($request, $response) {
         array('HS256')
       );
     } catch(\Exception $e) {
-      // expired token?
-      if($e->getMessage() === 'Expired token') {
-        // throw some error
-        return $response->setError(true, 'Invalid Token or is expired');
-      }
-
       // throw some error
-      return $response->setError(true, 'An error occured while processing request');
+      return $response->setError(true, $e->getMessage());
     }
 
     // cast decoded token
@@ -72,7 +66,19 @@ $cradle->on('system-rest-permitted', function($request, $response) {
       ->filterByAuthPassword($data['auth_password'])
       ->filterByAuthType($data['auth_type'])
       ->filterByAuthActive($data['auth_active'])
+      ->innerJoinUsing('role_auth', 'auth_id')
+      ->innerJoinUsing('role', 'role_id')
       ->getRow();
+
+    // if auth is empty
+    if (!$auth) {
+      return $response->setError(true, 'Invalid token');
+    }
+
+    // set auth to stage for later checking
+    $request->setStage('auth_id', $auth['auth_id']);
+    // set permissions to stage for later checking
+    $request->setStage('role_permissions', $auth['role_permissions']);
 
     // auto refresh token?
     if ($decoded['autoref']) {
