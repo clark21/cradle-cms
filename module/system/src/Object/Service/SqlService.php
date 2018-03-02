@@ -155,7 +155,7 @@ class SqlService
         //get 1:0 relations
         $relations = $this->schema->getRelations(0);
         foreach($relations as $table => $relation) {
-            $results[$table] = $this
+            $results[$relation['name']] = $this
                 ->resource
                 ->search($table)
                 ->innerJoinUsing($relation['name'], $relation['primary2'])
@@ -167,7 +167,7 @@ class SqlService
         $relations = $this->schema->getRelations(2);
         foreach($relations as $table => $relation) {
             $schema = $this->schema;
-            $results[$table] = $this
+            $results[$relation['name']] = $this
                 ->resource
                 ->search($table)
                 ->when(
