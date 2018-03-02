@@ -7,41 +7,37 @@ use Cradle\Module\Utility\ServiceFactory;
 
 ServiceFactory::register('role', RoleService::class);
 
-$cradle->package('/module/role')->addMethod('hasPermissions', function($request) {
-    //get permissions
-        $permissions = $request->getSession('me');
+$cradle->package('/module/role')->addMethod('hasPermissions', function($authId, array $permissions = []) {
+    // allow auth id 1
+    if($authId === 1) {
+        return true;
+    }
 
-        /* Example Format: */
-        $permissions = [
-            [
-                'label' => 'Access to Users',
-                'method' => 'get',
-                'path' => '/admin/user/*'
-            ],
-            [
-                'label' => 'Access to Posts',
-                'method' => 'get',
-                'path' => '/admin/role/update/*'
-            ]
-        ];
+    // redirect to login
+    if(!$authId) {
+        return cradle('global')->redirect('/login');
+    }
 
-        $router = new \Cradle\Http\Router;
+    $router = new \Cradle\Http\Router;
 
-        foreach($permissions as $permission) {
-            $router->route($permission['method'], $permission['path'], function($request, $response) {
-                //if good, let's end checking
-                return false;
-            });
-        }
+    $request = cradle()->getRequest();
+    $response = cradle()->getResponse();
 
-        $router->process($request, $response);
+    foreach($permissions as $permission) {
+        $router->route($permission['method'], $permission['path'], function($request, $response) {
+            //if good, let's end checking
+            return false;
+        });
+    }
 
-        //let's interpret the results
-        if(!$router->getEventHandler()->getMeta()) {
-            //the role passes
-            return true;
-        }
+    $router->process($request, $response);
 
-        //if we are here, then let's throw an error
-        return false;
+    //let's interpret the results
+    if(!$router->getEventHandler()->getMeta()) {
+        //the role passes
+        return true;
+    }
+
+    //if we are here, then let's throw an error
+    return false;
 });

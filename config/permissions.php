@@ -8,8 +8,14 @@
   ),
   1 => 
   array (
-    'label' => 'Access to Customers',
+    'label' => 'Access to Customerss',
     'method' => 'post',
     'path' => '/admin/customers/*',
+  ),
+  2 => 
+  array (
+    'label' => 'Access to Expense',
+    'method' => 'post',
+    'path' => '/admin/system/object/expense/create',
   ),
 );
