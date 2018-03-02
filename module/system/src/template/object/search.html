@@ -336,15 +336,15 @@
                                     {{#when many '==' 1}}
                                         <td>
                                             <a
-                                                href="/admin/system/object/{{name}}/update/{{#relation_primary this ../this}}{{/relation_primary}}"
+                                                href="/admin/system/object/{{name}}/update/{{key primary ../this}}"
                                                 target="_blank"
                                             >
-                                                {{#get_suggestion this ../this}}{{/get_suggestion}}
+                                                {{get_suggestion this ../this}}
                                             </a>
                                         </td>
                                     {{/when}}
                                 {{/each}}
-                                {{#get_format this ../schema}}
+                                {{#get_format this ../schema}}                 
                                     {{#when format '===' 'none'}}
                                         {{#in name ../../schema.filterable}}
                                             <td>
@@ -456,6 +456,11 @@
                                             {{#each value}}
                                                 <div class="tag">{{this}}</div>
                                             {{/each}}
+                                        </td>
+                                    {{/when}}
+                                    {{#when format '===' 'formula'}}
+                                        <td>
+                                            {{formula parameters ../this}}
                                         </td>
                                     {{/when}}
                                 {{/get_format}}

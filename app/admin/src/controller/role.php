@@ -101,7 +101,7 @@ $cradle->get('/admin/role/create', function($request, $response) {
     //----------------------------//
     // 2. Prepare Data
     // get path file
-    $path = $this->package('global')->path('config') . '/permissions.php';
+    $path = $this->package('global')->path('config') . '/admin/permissions.php';
 
     // check if file
     if(!is_file($path)) {
@@ -118,7 +118,7 @@ $cradle->get('/admin/role/create', function($request, $response) {
         $data['errors'] = $response->getValidation();
     }
 
-    $permissions = cradle('global')->config('permissions');
+    $permissions = cradle('global')->config('admin/permissions');
 
     $data['permissions'] = $permissions;
 
@@ -352,15 +352,6 @@ $cradle->get('/admin/role/remove/:role_id', function($request, $response) {
         return cradle('global')->redirect('/admin/role/search');
     }
 
-    // check permissions
-    if(!cradle('global')->role('role:remove', $request)) {
-        // set flash
-        cradle('global')->flash('Request not Permitted', 'error');
-
-        // set content
-        return cradle('global')->redirect('/admin/role/search');
-    }
-
     //----------------------------//
     // 2. Prepare Data
     // no data to preapre
@@ -399,15 +390,6 @@ $cradle->get('/admin/role/restore/:role_id', function($request, $response) {
     )
     {
         cradle('global')->flash('Request not Permitted', 'error');
-        return cradle('global')->redirect('/admin/role/search');
-    }
-
-    // check permissions
-    if(!cradle('global')->role('role:restore', $request)) {
-        // set flash
-        cradle('global')->flash('Request not Permitted', 'error');
-
-        // set content
         return cradle('global')->redirect('/admin/role/search');
     }
 

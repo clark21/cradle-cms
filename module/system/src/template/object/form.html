@@ -44,10 +44,10 @@
                         <span class="font-weight-bold">{{singular}}:</span>
                         <span>
                             <a 
-                                href="/admin/system/object/{{name}}/update/{{#relation_primary this ../item}}{{/relation_primary}}" 
+                                href="/admin/system/object/{{name}}/update/{{key primary ../item}}" 
                                 target="_blank"
                             >
-                                {{#get_suggestion this ../item}}{{/get_suggestion}}
+                                {{get_suggestion this ../item}}
                             </a>
                         </span>
                         &nbsp;
@@ -61,7 +61,7 @@
                     <span class="relation">
                         <span class="font-weight-bold">{{plural}}</span>
                         <span>
-                            <a href="/admin/system/object/{{name}}/search/{{../schema.name}}/{{#relation_primary ../schema ../item}}{{/relation_primary}}" target="_blank">
+                            <a href="/admin/system/object/{{name}}/search/{{../schema.name}}/{{key primary ../item}}" target="_blank">
                                 View All {{plural}}
                             </a>
                         </span>

@@ -36,7 +36,7 @@ $cradle->get('/admin/permission/search', function($request, $response) {
     }
 
     // get path file
-    $path = $this->package('global')->path('config') . '/permissions.php';
+    $path = $this->package('global')->path('config') . '/admin/permissions.php';
 
     // check if file
     if(!is_file($path)) {
@@ -47,7 +47,7 @@ $cradle->get('/admin/permission/search', function($request, $response) {
     }
 
     // get permissions
-    $data['permissions'] = $this->package('global')->config('permissions');
+    $data['permissions'] = $this->package('global')->config('admin/permissions');
 
     //----------------------------//
     // 3. Render Template

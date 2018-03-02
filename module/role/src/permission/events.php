@@ -50,7 +50,7 @@ $cradle->on('permission-create', function ($request, $response) {
     $results['permissions'] = $this->package('global')->config('permissions');
     $results['permissions'][] = $permission;
 
-    $path = $this->package('global')->path('config') . '/permissions.php';
+    $path = $this->package('global')->path('config') . '/admin/permissions.php';
 
     file_put_contents(
         $path,
@@ -97,7 +97,7 @@ $cradle->on('permission-detail', function ($request, $response) {
     //----------------------------//
     // 4. Process Data
     //this/these will be used a lot
-    $permission = $this->package('global')->config('permissions')[$id];
+    $permission = $this->package('global')->config('admin/permissions')[$id];
 
     $results['row'] = [
         'permission_label'  => $permission['label'],
@@ -150,7 +150,7 @@ $cradle->on('permission-update', function ($request, $response) {
     $results['permissions'] = $this->package('global')->config('permissions');
     $results['permissions'][$id] = $permission;
 
-    $path = $this->package('global')->path('config') . '/permissions.php';
+    $path = $this->package('global')->path('config') . '/admin/permissions.php';
 
     file_put_contents(
         $path,
@@ -199,7 +199,7 @@ $cradle->on('permission-remove', function ($request, $response) {
         unset($results['permissions'][$id]);
     }
 
-    $path = $this->package('global')->path('config') . '/permissions.php';
+    $path = $this->package('global')->path('config') . '/admin/permissions.php';
 
     file_put_contents(
         $path,
