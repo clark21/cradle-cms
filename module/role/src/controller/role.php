@@ -59,7 +59,7 @@ $cradle->get('/admin/role/search', function($request, $response) {
     // 3. Render Template
     $class = 'page-admin-role-search page-admin';
     $data['title'] = cradle('global')->translate('Roles');
-    $body = cradle('/app/admin')->template('role/search', $data);
+    $body = cradle('/module/role')->template('role/search', $data);
 
     //set content
     $response
@@ -102,7 +102,7 @@ $cradle->get('/admin/role/create', function($request, $response) {
     $data = ['item' => $request->getPost()];
 
     if ($response->isError()) {
-        $response->setFlash($response->getMessage(), 'danger');
+        $response->setFlash($response->getMessage(), 'error');
         $data['errors'] = $response->getValidation();
     }
 
@@ -126,7 +126,7 @@ $cradle->get('/admin/role/create', function($request, $response) {
     // 3. Render Template
     $class = 'page-developer-role-create page-admin';
     $data['title'] = 'Create Role';
-    $body = cradle('/app/admin')->template('role/form', $data);
+    $body = cradle('/module/role')->template('role/form', $data);
 
     //set content
     $response
@@ -197,7 +197,7 @@ $cradle->get('/admin/role/update/:role_id', function($request, $response) {
     // 3. Render Template
     $class = 'page-developer-role-update page-admin';
     $data['title'] = 'Update Role';
-    $body = cradle('/app/admin')->template('role/form', $data);
+    $body = cradle('/module/role')->template('role/form', $data);
 
     //Set Content
     $response
@@ -331,7 +331,7 @@ $cradle->get('/admin/role/remove/:role_id', function($request, $response) {
     // 4. Interpret Results
     if($response->isError()) {
         //add a flash
-        cradle('global')->flash($response->getMessage(), 'danger');
+        cradle('global')->flash($response->getMessage(), 'error');
     } else {
         //add a flash
         $message = cradle('global')->translate('Role was Removed');
@@ -367,7 +367,7 @@ $cradle->get('/admin/role/restore/:role_id', function($request, $response) {
     // 4. Interpret Results
     if($response->isError()) {
         //add a flash
-        cradle('global')->flash($response->getMessage(), 'danger');
+        cradle('global')->flash($response->getMessage(), 'error');
     } else {
         //add a flash
         $message = cradle('global')->translate('Role was Restored');
@@ -413,7 +413,7 @@ $cradle->get('/admin/role/auth/search', function($request, $response) {
     // 3. Render Template
     $class = 'page-developer-role-auth-search page-admin';
     $data['title'] = 'Roles/Auth Search Page';
-    $body = cradle('/app/admin')->template('role/auth/search', $data);
+    $body = cradle('/module/role')->template('auth/search', $data);
 
     //Set Content
     $response
@@ -446,7 +446,7 @@ $cradle->get('/admin/role/auth/create', function($request, $response) {
     $data = ['item' => $request->getPost()];
 
     if ($response->isError()) {
-        $response->setFlash($response->getMessage(), 'danger');
+        $response->setFlash($response->getMessage(), 'error');
         $data['errors'] = $response->getValidation();
     }
 
@@ -454,7 +454,7 @@ $cradle->get('/admin/role/auth/create', function($request, $response) {
     // 3. Render Template
     $class = 'page-developer-role-update page-admin';
     $data['title'] = 'Roles/Auth Create';
-    $body = cradle('/app/admin')->template('role/auth/form', $data);
+    $body = cradle('/module/role')->template('auth/form', $data);
 
     //Set Content
     $response

@@ -145,7 +145,7 @@ $cradle->get('/admin/auth/create', function($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/auth/update/:auth_id', function($request, $response) {
+$cradle->get('/admin/auth/update/:id', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     // set redirect
@@ -157,6 +157,11 @@ $cradle->get('/admin/auth/update/:auth_id', function($request, $response) {
     //----------------------------//
     // 2. Prepare Data
     $data = ['item' => $request->getPost()];
+
+    // get auth id
+    $authId = $request->getStage('id');
+
+    $request->setStage('auth_id', $authId);
 
     //if no item
     if(empty($data['item'])) {
@@ -393,7 +398,7 @@ $cradle->post('/admin/auth/create', function($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->post('/admin/auth/update/:auth_id', function($request, $response) {
+$cradle->post('/admin/auth/update/:id', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     // set redirect
@@ -404,6 +409,10 @@ $cradle->post('/admin/auth/update/:auth_id', function($request, $response) {
 
     //----------------------------//
     // 2. Prepare Data
+    // get auth id
+    $authId = $request->getStage('id');
+
+    $request->setStage('auth_id', $authId);
 
     //if auth_password has no value make it null
     if ($request->hasStage('auth_password') && !$request->getStage('auth_password')) {
@@ -474,7 +483,7 @@ $cradle->post('/admin/auth/update/:auth_id', function($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/auth/remove/:auth_id', function($request, $response) {
+$cradle->get('/admin/auth/remove/:id', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     // set redirect
@@ -485,7 +494,10 @@ $cradle->get('/admin/auth/remove/:auth_id', function($request, $response) {
 
     //----------------------------//
     // 2. Prepare Data
-    // no data to preapre
+    // get auth id
+    $authId = $request->getStage('id');
+
+    $request->setStage('auth_id', $authId);
     //----------------------------//
     // 3. Process Request
     cradle()->trigger('auth-remove', $request, $response);
@@ -533,7 +545,7 @@ $cradle->get('/admin/auth/remove/:auth_id', function($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/auth/restore/:auth_id', function($request, $response) {
+$cradle->get('/admin/auth/restore/:id', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     if (!cradle('/module/role')->hasPermissions($request, $response)) {
@@ -542,7 +554,10 @@ $cradle->get('/admin/auth/restore/:auth_id', function($request, $response) {
 
     //----------------------------//
     // 2. Prepare Data
-    // no data to preapre
+    // get auth id
+    $authId = $request->getStage('id');
+
+    $request->setStage('auth_id', $authId);
     //----------------------------//
     // 3. Process Request
     cradle()->trigger('auth-restore', $request, $response);

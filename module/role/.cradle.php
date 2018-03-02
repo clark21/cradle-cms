@@ -1,6 +1,9 @@
 <?php //-->
-include_once __DIR__ . '/src/events.php';
-include_once __DIR__ . '/src/permission/events.php';
+include_once __DIR__ . '/src/event/role.php';
+include_once __DIR__ . '/src/event/permission.php';
+
+include_once __DIR__ . '/src/controller/permission.php';
+include_once __DIR__ . '/src/controller/role.php';
 
 use Cradle\Module\Role\Service as RoleService;
 use Cradle\Module\Utility\ServiceFactory;
@@ -43,11 +46,11 @@ $cradle->package('/module/role')->addMethod('hasPermissions', function($request,
             $response->setError(true, 'Invalid Permissions');
 
             return false;
-        } 
+        }
 
         // default redirect
         return cradle('global')->redirect($redirect);
-    }    
+    }
 
     // allow auth id 1
     if($authId == 1) {
@@ -62,8 +65,8 @@ $cradle->package('/module/role')->addMethod('hasPermissions', function($request,
     foreach($permissions as $permission) {
         // validate route
         $router->route(
-            $permission['method'], 
-            $permission['path'], 
+            $permission['method'],
+            $permission['path'],
             function($request, $response) {
             //if good, let's end checking
             return false;
@@ -80,7 +83,7 @@ $cradle->package('/module/role')->addMethod('hasPermissions', function($request,
     }
 
     // default redirect
-    $redirect = '/';    
+    $redirect = '/';
 
     // if redirect is set
     if ($request->hasStage('redirect')) {
@@ -95,10 +98,45 @@ $cradle->package('/module/role')->addMethod('hasPermissions', function($request,
 
         return false;
     }
-    
+
     // set flash
-    cradle('global')->flash('Request not Permitted', 'danger');
+    cradle('global')->flash('Request not Permitted', 'error');
 
     // redirect to default page
     cradle('global')->redirect($redirect);
+});
+
+
+$cradle->package('/module/role')->addMethod('template', function (
+    $path,
+    array $data = array(),
+    $partials = array()
+) {
+    // get the root directory
+    $root = __DIR__ . '/src/template/';
+
+    //render
+    $handlebars = cradle('global')->handlebars();
+
+    // check for partials
+    if (!is_array($partials)) {
+        $partials = array($partials);
+    }
+
+    foreach ($partials as $partial) {
+        //Sample: product_comment => product/_comment
+        //Sample: flash => _flash
+        $file = str_replace('_', '/_', $partial) . '.html';
+
+        if (strpos($file, '_') === false) {
+            $file = '_' . $file;
+        }
+
+        // register the partial
+        $handlebars->registerPartial($partial, file_get_contents($root . $file));
+    }
+
+    // set the main template
+    $template = $handlebars->compile(file_get_contents($root . $path . '.html'));
+    return $template($data);
 });

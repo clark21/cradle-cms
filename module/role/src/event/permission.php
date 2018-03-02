@@ -7,7 +7,7 @@
  * distributed with this package.
  */
 
-use Cradle\Module\Role\Permission\Validator as PermissionValidator;
+use Cradle\Module\Role\Validator as RoleValidator;
 
 /**
  * Permission Create Job
@@ -25,7 +25,7 @@ $cradle->on('permission-create', function ($request, $response) {
 
     //----------------------------//
     // 2. Validate Data
-    $errors = PermissionValidator::getCreateErrors($data);
+    $errors = RoleValidator::getPermissionCreateErrors($data);
 
     //if there are errors
     if (!empty($errors)) {
@@ -47,7 +47,7 @@ $cradle->on('permission-create', function ($request, $response) {
     //this/these will be used a lot
 
     // get permissions
-    $results['permissions'] = $this->package('global')->config('permissions');
+    $results['permissions'] = $this->package('global')->config('admin/permissions');
     $results['permissions'][] = $permission;
 
     $path = $this->package('global')->path('config') . '/admin/permissions.php';
@@ -194,9 +194,10 @@ $cradle->on('permission-remove', function ($request, $response) {
 
     //----------------------------//
     // 3. Process Data
-    $results['permissions'] = $this->package('global')->config('permissions');
+    $results['permissions'] = $this->package('global')->config('admin/permissions');
     if(isset($results['permissions'][$id])) {
         unset($results['permissions'][$id]);
+        $results['permissions'] = array_values($results['permissions']);
     }
 
     $path = $this->package('global')->path('config') . '/admin/permissions.php';
