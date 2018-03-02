@@ -65,7 +65,10 @@ $cradle->get('/admin/permission/search', function($request, $response) {
 $cradle->get('/admin/permission/create', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
-    //only for admin
+    if(!cradle('/module/role')->hasPermissions($request)) {
+        cradle('global')->flash('Request not Permitted', 'error');
+        return cradle('global')->redirect('/admin/permission/search');
+    }
 
     //----------------------------//
     // 2. Prepare Data
@@ -100,8 +103,10 @@ $cradle->get('/admin/permission/create', function($request, $response) {
 $cradle->get('/admin/permission/update/:permission_key', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
-    //only for admin
-    cradle('global')->requireLogin('admin');
+    if(!cradle('/module/role')->hasPermissions($request)) {
+        cradle('global')->flash('Request not Permitted', 'error');
+        return cradle('global')->redirect('/admin/permission/search');
+    }
 
     //----------------------------//
     // 2. Prepare Data
@@ -138,8 +143,10 @@ $cradle->get('/admin/permission/update/:permission_key', function($request, $res
 $cradle->post('/admin/permission/create', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
-    //only for admin
-    cradle('global')->requireLogin('admin');
+    if(!cradle('/module/role')->hasPermissions($request)) {
+        cradle('global')->flash('Request not Permitted', 'error');
+        return cradle('global')->redirect('/admin/permission/search');
+    }
 
     //----------------------------//
     // 2. Prepare Data

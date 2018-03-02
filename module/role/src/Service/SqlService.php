@@ -144,12 +144,9 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
             }
         }
 
-
-
         if (!isset($filter['role_active'])) {
             $filter['role_active'] = 1;
         }
-
 
         $search = $this->resource
             ->search('role')
@@ -157,9 +154,10 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
             ->setRange($range);
 
         if(isset($data['auth'])) {
-            $search->innerJoinUsing('role_auth', 'role_id');
-            $search->innerJoinUsing('auth', 'auth_id');
+            $search->innerJoinUsing('role_auth', 'role_id')
+                ->innerJoinUsing('auth', 'auth_id');
         }
+
 
         //add filters
         foreach ($filter as $column => $value) {
@@ -167,7 +165,6 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
                 $search->addFilter($column . ' = %s', $value);
             }
         }
-
 
         //keyword?
         if (isset($keywords)) {
@@ -282,6 +279,48 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
              ->setRoleId($rolePrimary)
              ->setAuthId($authPrimary)
              ->remove('role_auth');
+    }
+
+    /**
+     * Get auth role detail
+     *
+     * @param *string $authId
+     *
+     * @return bool
+     */
+    public function getRoleDetail($authId)
+    {
+        $search = $this->resource
+            ->search('auth')
+            ->innerJoinUsing('role_auth', 'auth_id')
+            ->innerJoinUsing('role', 'role_id')
+            ->filterByAuthId($authId);
+
+        $row = $search->getRow();
+
+        if($row['role_permissions']) {
+            $row['role_permissions'] = json_decode($row['role_permissions'], true);
+        } else {
+            $row['role_permissions'] = [];
+        }
+
+        return $row;
+    }
+
+    /**
+     * Checks to see if $authId already exists
+     *
+     * @param *string $authId
+     *
+     * @return bool
+     */
+    public function existsAuth($authId)
+    {
+        $search = $this->resource
+            ->search('role_auth')
+            ->filterByAuthId($authId);
+
+        return !!$search->getRow();
     }
 
     /**

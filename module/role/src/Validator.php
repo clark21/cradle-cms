@@ -97,6 +97,8 @@ class Validator
     {
         if(!isset($data['auth_id']) || empty($data['auth_id'])) {
             $errors['auth_id'] = 'Auth Id is required';
+        } else if (RoleService::get('sql')->existsAuth($data['auth_id'])) {
+            $errors['auth_id'] = 'Auth Exists';
         }
 
         if(!isset($data['role_id']) || empty($data['role_id'])) {
