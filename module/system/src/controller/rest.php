@@ -28,6 +28,8 @@ $cradle->get('/rest/system/object/:schema/search', function($request, $response)
     $request->setStage('session', 'false');
     // render raw data
     $request->setStage('render', 'false');
+    // disable redirect
+    $request->setStage('redirect', 'false');
 
     //----------------------------//
     // 3. Render Request

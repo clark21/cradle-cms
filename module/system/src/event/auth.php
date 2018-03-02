@@ -17,7 +17,7 @@ use Firebase\JWT\JWT;
  */
 $cradle->on('auth-jwt-sign', function ($request, $response) {
     // load jwt config
-    $config = cradle('global')->config('jwt');
+    $config = cradle('global')->config('rest/jwt');
 
     // get the issuer
     $issuer = $config['issuer'];
