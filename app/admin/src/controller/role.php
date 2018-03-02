@@ -352,15 +352,6 @@ $cradle->get('/admin/role/remove/:role_id', function($request, $response) {
         return cradle('global')->redirect('/admin/role/search');
     }
 
-    // check permissions
-    if(!cradle('global')->role('role:remove', $request)) {
-        // set flash
-        cradle('global')->flash('Request not Permitted', 'error');
-
-        // set content
-        return cradle('global')->redirect('/admin/role/search');
-    }
-
     //----------------------------//
     // 2. Prepare Data
     // no data to preapre
@@ -399,15 +390,6 @@ $cradle->get('/admin/role/restore/:role_id', function($request, $response) {
     )
     {
         cradle('global')->flash('Request not Permitted', 'error');
-        return cradle('global')->redirect('/admin/role/search');
-    }
-
-    // check permissions
-    if(!cradle('global')->role('role:restore', $request)) {
-        // set flash
-        cradle('global')->flash('Request not Permitted', 'error');
-
-        // set content
         return cradle('global')->redirect('/admin/role/search');
     }
 
