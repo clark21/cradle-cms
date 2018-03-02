@@ -1504,6 +1504,8 @@ $cradle->get('/admin/system/object/:schema/export/:type', function($request, $re
         }
     }
 
+    $request->setStage('range', 0);
+
     //trigger job
     cradle()->trigger('system-object-search', $request, $response);
 
