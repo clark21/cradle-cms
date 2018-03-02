@@ -486,7 +486,7 @@ $cradle->on('role-unlinkall-history', function ($request, $response) {
 
 
 /**
- * Role Create Job
+ * Role Auth Link Job
  *
  * @param Request $request
  * @param Response $response
@@ -518,6 +518,33 @@ $cradle->on('role-auth-link', function ($request, $response) {
     $roleElastic = RoleService::get('elastic');
 
     $results = $roleSql->linkAuth($data['role_id'], $data['auth_id']);
+
+    //return response format
+    $response->setError(false)->setResults($results);
+});
+
+/**
+ * Role Auth Unlink Job
+ *
+ * @param Request $request
+ * @param Response $response
+ */
+$cradle->on('role-auth-unlink', function ($request, $response) {
+    //----------------------------//
+    // 1. Get Data
+    $data = [];
+    if ($request->hasStage()) {
+        $data = $request->getStage();
+    }
+
+    //----------------------------//
+    // 2. Process Data
+    //this/these will be used a lot
+    $roleSql = RoleService::get('sql');
+    $roleRedis = RoleService::get('redis');
+    $roleElastic = RoleService::get('elastic');
+
+    $results = $roleSql->unlinkAuth($data['role_id'], $data['auth_id']);
 
     //return response format
     $response->setError(false)->setResults($results);

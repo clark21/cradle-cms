@@ -41,8 +41,11 @@
                         {{#each rows}}
                             <tr data-id="{{role_id}}">
                                 <td>
-                                    <a class="text-danger" title="Remove" href="#"
-                                    class="text-danger remove"><i class="fas fa-times"></i></a>
+                                    <a
+                                        class="text-danger remove"
+                                        title="Remove"
+                                        href="/admin/role/auth/{{role_id}}/{{auth_id}}/remove"
+                                    ><i class="fas fa-times"></i></a>
                                 </td>
                                 <td>
                                     <a href="/admin/role/update/{{role_id}}">{{role_name}}</a>

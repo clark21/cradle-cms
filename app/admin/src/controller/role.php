@@ -562,3 +562,34 @@ $cradle->post('/admin/role/auth/create', function($request, $response) {
     //redirect
     cradle('global')->redirect('/admin/role/auth/search');
 });
+
+
+/**
+ * Process the Role Auth Remove
+ *
+ * @param Request $request
+ * @param Response $response
+ */
+$cradle->get('/admin/role/auth/:role_id/:auth_id/remove', function($request, $response) {
+    //----------------------------//
+    // 1. Route Permissions
+
+    //----------------------------//
+    // 2. Prepare Data
+    $data = $request->getStage();
+
+    cradle()->trigger('role-auth-unlink', $request, $response);
+
+    //----------------------------//
+    // 4. Interpret Results
+    if($response->isError()) {
+        return cradle()->triggerRoute('get', '/admin/role/auth/search', $request, $response);
+    }
+
+    //it was good
+    //add a flash
+    cradle('global')->flash('Role Auth was Removed', 'success');
+
+    //redirect
+    cradle('global')->redirect('/admin/role/auth/search');
+});
