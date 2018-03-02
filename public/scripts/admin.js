@@ -1223,7 +1223,6 @@ jQuery(function($) {
             var notifier = $.notify(message + progress, 'info', 0);
             var bar = $('div.progress-bar', notifier);
         });
-
     })();
 
     /**

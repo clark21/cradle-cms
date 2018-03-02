@@ -23,6 +23,11 @@ use Aws\S3\PostObjectV4;
 class File
 {
     /**
+     * @var array $extensions static list of mime to extensions
+     */
+    public static $extensions = [];
+
+    /**
      * Uploads base64 based data
      * and sends it to S3
      *
@@ -303,9 +308,4 @@ class File
             'inputs' => $postObject->getFormInputs()
         ];
     }
-
-    /**
-     * @var array $mimeTypes static list of extensions to mime
-     */
-    public static $extensions = [];
 }
