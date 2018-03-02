@@ -128,6 +128,149 @@ $cradle->get('/admin/system/object/:schema1/create/:schema2/:id', function($requ
 });
 
 /**
+ * Render the System Object Link Page
+ *
+ * @param Request $request
+ * @param Response $response
+ */
+$cradle->get('/admin/system/object/:schema1/:id/link/:schema2', function($request, $response) {
+    //----------------------------//
+    // 1. Route Permissions
+    if(
+        !cradle('/module/role')->hasPermissions(
+            $request->getSession('me', 'auth_id'),
+            $request->getSession('me', 'role_permissions')
+        )
+    )
+    {
+        cradle('global')->flash('Request not Permitted', 'error');
+        return cradle('global')->redirect('/admin/system/object/' . $request->getStage('schema') . '/search');
+    }
+
+    //----------------------------//
+    // 2. Prepare Data
+    //get schema data
+    $schema = SystemSchema::i($request->getStage('schema1'));
+
+    //pass the item with only the post data
+    $data = ['item' => $request->getPost()];
+
+    //also pass the schema to the template
+    $data['schema'] = $schema->getAll();
+
+    //if this is a return back from processing
+    //this form and it's because of an error
+    if ($response->isError()) {
+        //pass the error messages to the template
+        $response->setFlash($response->getMessage(), 'error');
+        $data['errors'] = $response->getValidation();
+    }
+
+    //this next set will use redirect, so we need to find it out now
+    //redirect
+    $redirect = sprintf(
+        '/admin/system/object/%s/search/%s/%s',
+        $request->getStage('schema2'),
+        $request->getStage('schema1'),
+        $request->getStage('id')
+    );
+
+    //if there is a specified redirect
+    if($request->hasStage('redirect_uri')) {
+        //set the redirect
+        $redirect = $request->getStage('redirect_uri');
+    }
+
+    //pass the relation
+    $relation = $request->getStage('schema2');
+    $table = $data['schema']['name'] . '_' . $relation;
+    //if we can't find the relation
+    if (!isset($data['schema']['relations'][$table])) {
+        //set a message
+        $message = cradle('global')->translate('Relation does not exist');
+
+        //if we dont want to redirect
+        if($redirect === 'false') {
+            return $response->setError(true, $message);
+        }
+
+        cradle('global')->flash($message, 'error');
+        return cradle('global')->redirect($redirect);
+    }
+
+    //this is the main relation we are dealing with
+    $data['relation'] = $data['schema']['relations'][$table];
+
+    $request->setStage('schema', $request->getStage('schema1'));
+
+    //table_id, 1 for example
+    $request->setStage(
+        $schema->getPrimaryFieldName(),
+        $request->getStage('id')
+    );
+
+    //get the original table row
+    cradle()->trigger('system-object-detail', $request, $response);
+
+    //can we update ?
+    if($response->isError()) {
+        //add a flash
+        cradle('global')->flash($response->getMessage(), 'error');
+        return cradle('global')->redirect($redirect);
+    }
+
+    //pass the item to the template
+    $data['row'] = $response->getResults();
+
+    //make a suggestion
+    $data['row']['suggestion'] = $schema->getSuggestionFormat($data['row']);
+
+    //add CSRF
+    cradle()->trigger('csrf-load', $request, $response);
+    $data['csrf'] = $response->getResults('csrf');
+
+    //pass suggestion title field for each relation to the template
+    foreach ($data['schema']['relations'] as $name => $relation) {
+        $data['schema']['relations'][$name]['suggestion_name'] = '_' . $relation['primary2'];
+    }
+
+    //determine valid relations
+    $data['valid_relations'] = [];
+    cradle()->trigger('system-schema-search', $request, $response);
+    foreach($response->getResults('rows') as $relation) {
+        $data['valid_relations'][] = $relation['name'];
+    }
+
+    //----------------------------//
+    // 3. Render Template
+    //set the class name
+    $class = 'page-admin-system-object-link page-admin';
+
+    //determine the title
+    $data['title'] = cradle('global')->translate(
+        'Linking %s',
+        $data['relation']['singular']
+    );
+
+    //render the body
+    $body = cradle('/module/system')->template('object/link', $data);
+
+    //if we only want the body
+    if($request->getStage('render') === 'body') {
+        return;
+    }
+
+    //set content
+    $response
+        ->setPage('title', $data['title'])
+        ->setPage('class', $class)
+        ->setContent($body);
+
+    //render page
+    cradle()->trigger('render-admin-page', $request, $response);
+});
+
+/**
  * Process the System Object Search Page Filtered by Relation
  *
  * @param Request $request
@@ -271,7 +414,7 @@ $cradle->post('/admin/system/object/:schema1/create/:schema2/:id', function($req
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/system/object/:schema1/:id1/link/:schema2/:id2', function($request, $response) {
+$cradle->post('/admin/system/object/:schema1/:id/link/:schema2', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     //only for admin
@@ -288,11 +431,9 @@ $cradle->get('/admin/system/object/:schema1/:id1/link/:schema2/:id2', function($
     //case for post_post
     if ($schema1Primary === $schema2Primary) {
         $schema1Primary .= '_1';
-        $schema2Primary .= '_2';
     }
 
-    $request->setStage($schema1Primary, $request->getStage('id1'));
-    $request->setStage($schema2Primary, $request->getStage('id2'));
+    $request->setStage($schema1Primary, $request->getStage('id'));
 
     //----------------------------//
     // 3. Process Request
@@ -300,10 +441,31 @@ $cradle->get('/admin/system/object/:schema1/:id1/link/:schema2/:id2', function($
 
     //----------------------------//
     // 4. Interpret Results
+    //if the event returned an error
+    if($response->isError()) {
+        //determine route
+        $route = sprintf(
+            '/admin/system/object/%s/%s/link/%s',
+            $request->getStage('schema1'),
+            $request->getStage('id'),
+            $request->getStage('schema2')
+        );
+
+        //this is for flexibility
+        if($request->hasStage('route')) {
+            $route = $request->getStage('route');
+        }
+
+        //let the form route handle the rest
+        return cradle()->triggerRoute('get', $route, $request, $response);
+    }
+
     //redirect
     $redirect = sprintf(
-        '/admin/system/object/%s/search',
-        $schema1->getName()
+        '/admin/system/object/%s/search/%s/%s',
+        $request->getStage('schema2'),
+        $request->getStage('schema1'),
+        $request->getStage('id')
     );
 
     //if there is a specified redirect
@@ -317,32 +479,27 @@ $cradle->get('/admin/system/object/:schema1/:id1/link/:schema2/:id2', function($
         return;
     }
 
-    if($response->isError()) {
-        //add a flash
-        cradle('global')->flash($response->getMessage(), 'error');
-    } else {
-        //add a flash
-        $message = cradle('global')->translate(
-            '%s was linked to %s',
+    //add a flash
+    $message = cradle('global')->translate(
+        '%s was linked to %s',
+        $schema1->getSingular(),
+        $schema2->getSingular()
+    );
+
+    cradle('global')->flash($message, 'success');
+
+    //record logs
+    cradle()->log(
+        sprintf(
+            '%s #%s linked to %s #%s',
             $schema1->getSingular(),
-            $schema2->getSingular()
-        );
-
-        cradle('global')->flash($message, 'success');
-
-        //record logs
-        cradle()->log(
-            sprintf(
-                '%s #%s linked to %s #%s',
-                $schema1->getSingular(),
-                $request->getStage('id1'),
-                $schema2->getSingular(),
-                $request->getStage('id2')
-            ),
-            $request,
-            $response
-        );
-    }
+            $request->getStage('id1'),
+            $schema2->getSingular(),
+            $request->getStage('id2')
+        ),
+        $request,
+        $response
+    );
 
     cradle('global')->redirect($redirect);
 });
