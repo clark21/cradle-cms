@@ -61,6 +61,9 @@ $cradle->on('auth-create', function ($request, $response) {
 
     //create user
     if(!isset($data['user_id'])) {
+        // set user name
+        $request->setStage('user_name', $request->getStage('auth_slug'));
+
         cradle()->trigger('user-create', $request, $response);
 
         if($response->isError()) {
