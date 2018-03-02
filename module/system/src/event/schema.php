@@ -58,7 +58,7 @@ $cradle->on('system-schema-create', function ($request, $response) {
     //create table
     $schema->service('sql')->create($data);
 
-    $path = $this->package('global')->path('config') . '/schema';
+    $path = $this->package('global')->path('config') . '/admin/schema';
 
     if(!is_dir($path)) {
         mkdir($path, 0777);
@@ -335,7 +335,7 @@ $cradle->on('system-schema-update', function ($request, $response) {
     //update table
     $systemSql->update($data);
 
-    $path = $this->package('global')->path('config') . '/schema';
+    $path = $this->package('global')->path('config') . '/admin/schema';
 
     file_put_contents(
         $path . '/' . $table . '.php',

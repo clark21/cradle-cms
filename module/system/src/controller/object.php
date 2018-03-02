@@ -202,9 +202,14 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
         })
         ->registerHelper('get_format', function($row, $schema, $options) {
             $columns = [];
+
             foreach($schema['fields'] as $name => $field) {
                 if(!in_array($name, $schema['listable'])) {
                     continue;
+                }
+
+                if (!isset($row[$name])) {
+                    $row[$name] = null;
                 }
 
                 $field['list']['name'] = $name;
@@ -214,13 +219,26 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
 
             return implode('', $columns);
         })
-        ->registerHelper('get_suggestion', function($schema, $data) {
-            return SystemSchema::i($schema)->getSuggestionFormat($data);
-        })
-        ->registerHelper('relation_primary', function($relation, $data) {
-            if(isset($data[$relation['primary']])) {
-                return $data[$relation['primary']];
+        ->registerHelper('formula', function($parameter, $row) {
+            // extract data as variables
+            extract($row, EXTR_PREFIX_SAME, 'formula');
+
+            // create the expression
+            $expression = sprintf(
+                'return %s ;',
+                str_replace(['{{', '}}'], ['$', ''], $parameter)
+            );
+
+            // try to evaluate
+            try {
+                // i know that this is not safe but...
+                return eval($expression);
+            } catch(\Exception $e) {
+                return 0;
             }
+        })
+        ->registerHelper('get_suggestion', function($schema, $row) {
+            return SystemSchema::i($schema)->getSuggestionFormat($row);
         })
         ->registerHelper('filtertoquery', function($key = null, $value = '') {
             $query = $_GET;
@@ -228,7 +246,7 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
             return http_build_query($query);
         });
 
-    // cradle()->inspect($data['schema']['relations']);exit;
+    // cradle()->inspect($data['rows']);exit;
 
     //render the body
     $body = cradle('/module/system')->template('object/search', $data, [
@@ -813,11 +831,6 @@ $cradle->get('/admin/system/object/:schema/update/:id', function($request, $resp
         })
         ->registerHelper('get_suggestion', function($schema, $data) {
             return SystemSchema::i($schema)->getSuggestionFormat($data);
-        })
-        ->registerHelper('relation_primary', function($relation, $data) {
-            if(isset($data[$relation['primary']])) {
-                return $data[$relation['primary']];
-            }
         })
         ->registerHelper('has', function($value, $array, $options) {
             if(!is_array($array)) {
