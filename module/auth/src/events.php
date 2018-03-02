@@ -10,6 +10,9 @@
 use Cradle\Module\Auth\Service as AuthService;
 use Cradle\Module\Auth\Validator as AuthValidator;
 
+use Cradle\Http\Request;
+use Cradle\Http\Response;
+
 /**
  * Auth Create Job
  *
@@ -37,7 +40,6 @@ $cradle->on('auth-create', function ($request, $response) {
 
     //----------------------------//
     // 3. Prepare Data
-
     if(isset($data['auth_password'])) {
         $data['auth_password'] = md5(strtotime($data['auth_password']));
     }
@@ -51,9 +53,26 @@ $cradle->on('auth-create', function ($request, $response) {
 
     //save auth to database
     $results = $authSql->create($data);
+
     //link user
     if(isset($data['user_id'])) {
         $authSql->linkUser($results['auth_id'], $data['user_id']);
+    }
+
+    //create user
+    if(!isset($data['user_id'])) {
+        cradle()->trigger('user-create', $request, $response);
+
+        if($response->isError()) {
+            return;
+        }
+
+        $userResult = $response->getResults();
+
+        if(isset($userResult['user_id'])) {
+            $authSql->linkUser($results['auth_id'], $userResult['user_id']);
+        }
+
     }
 
     //index auth
@@ -763,4 +782,121 @@ $cradle->on('auth-verify-mail', function ($request, $response) {
 
     $swift = Swift_Mailer::newInstance($transport);
     $swift->send($message, $failures);
+});
+
+/**
+ * Auth Import Job
+ *
+ * @param Request $request
+ * @param Response $response
+ */
+$cradle->on('auth-import', function ($request, $response) {
+    //----------------------------//
+    // 1. Get Data
+    $data = [];
+    if ($request->hasStage()) {
+        $data = $request->getStage();
+    }
+
+    //set counter
+    $results = [
+        'data' => [],
+        'new' => 0,
+        'old' => 0
+    ];
+
+    //----------------------------//
+    // 2. Validate Data
+    //validate data
+    $errors = [];
+    foreach ($data['rows'] as $i => $row) {
+        $error = AuthValidator::getCreateErrors($row);
+
+        //if there are errors
+        if (!empty($error)) {
+            $errors[$i] = $error;
+        }
+    }
+
+    if (!empty($errors)) {
+        return $response
+            ->setError(true, 'Invalid Row/s')
+            ->set('json', 'validation', $errors);
+    }
+
+    // There is no error,
+    // So proceed on adding/updating the items one by one
+    foreach ($data['rows'] as $i => $row) {
+        if(isset($row['auth_created'])) {
+            unset($row['auth_created']);
+        }
+
+        if(isset($row['auth_updated'])) {
+            unset($row['auth_updated']);
+        }
+
+        if(isset($row['user_created'])) {
+            unset($row['user_created']);
+        }
+
+        if(isset($row['user_updated'])) {
+            unset($row['user_updated']);
+        }
+
+        $rowRequest = Request::i()
+            ->setStage($row);
+
+        $rowResponse = Response::i()->load();
+
+        cradle()->trigger('auth-detail', $rowRequest, $rowResponse);
+
+        if ($rowResponse->hasResults()) {
+            // trigger single object update event
+            cradle()->trigger('auth-update', $rowRequest, $rowResponse);
+
+            // check response if there is an error
+            if ($rowResponse->isError()) {
+                $results['data'][$i] = [
+                    'action' => 'update',
+                    'row' => [],
+                    'error' => $rowResponse->getMessage()
+                ];
+                continue;
+            }
+
+            //increment old counter
+            $results['data'][$i] = [
+                'action' => 'update',
+                'row' => $rowResponse->getResults(),
+                'error' => false
+            ];
+
+            $results['old'] ++;
+            continue;
+        }
+
+        // trigger single object update event
+        cradle()->trigger('auth-create', $rowRequest, $rowResponse);
+
+        // check response if there is an error
+        if ($rowResponse->isError()) {
+            $results['data'][$i] = [
+                'action' => 'create',
+                'row' => [],
+                'error' => $rowResponse->getMessage()
+            ];
+            continue;
+        }
+
+        //increment old counter
+        $results['data'][$i] = [
+            'action' => 'create',
+            'row' => $rowResponse->getResults(),
+            'error' => false
+        ];
+
+        $results['new'] ++;
+    }
+
+    $response->setError(false)->setResults($results);
 });

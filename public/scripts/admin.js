@@ -182,9 +182,16 @@ jQuery(function($) {
             var schema = $(trigger).attr('data-schema');
             var relation = $(trigger).attr('data-relation');
             var relation_id = $(trigger).attr('data-relation-id');
+            var non_object = $(trigger).attr('data-non-object');
 
-            //complete url
-            url = '/admin/system/object/' + schema + '/' + url;
+            //get commplete url
+            var route = '/admin/system/object/' + schema + '/' + url;
+
+            if (typeof non_object !== 'undefined') {
+                route = '/admin/' + schema + '/' + url;
+            }
+
+            url = route;
 
             //make a file
             $('<input type="file" />')

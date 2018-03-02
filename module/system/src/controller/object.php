@@ -512,16 +512,16 @@ $cradle->get('/admin/system/object/:schema/create', function($request, $response
         'object_fields'
     ]);
 
-    //if we only want the body
-    if($request->getStage('render') === 'body') {
-        return;
-    }
-
     //set content
     $response
         ->setPage('title', $data['title'])
         ->setPage('class', $class)
         ->setContent($body);
+
+    //if we only want the body
+    if($request->getStage('render') === 'body') {
+        return;
+    }
 
     //render page
     cradle()->trigger('render-admin-page', $request, $response);
