@@ -136,15 +136,9 @@ $cradle->get('/admin/system/object/:schema1/create/:schema2/:id', function($requ
 $cradle->get('/admin/system/object/:schema1/:id/link/:schema2', function($request, $response) {
     //----------------------------//
     // 1. Route Permissions
-    if(
-        !cradle('/module/role')->hasPermissions(
-            $request->getSession('me', 'auth_id'),
-            $request->getSession('me', 'role_permissions')
-        )
-    )
-    {
-        cradle('global')->flash('Request not Permitted', 'error');
-        return cradle('global')->redirect('/admin/system/object/' . $request->getStage('schema') . '/search');
+    $request->setStage('redirect', '/admin/system/object/' . $request->getStage('schema') . '/search');
+    if (!cradle('/module/role')->hasPermissions($request, $response)) {
+        return;
     }
 
     //----------------------------//
