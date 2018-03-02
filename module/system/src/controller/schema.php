@@ -27,7 +27,20 @@ $cradle->get('/admin/system/schema/search', function($request, $response) {
 
     //trigger job
     cradle()->trigger('system-schema-search', $request, $response);
-    $data = array_merge($request->getStage(), $response->getResults());
+
+    //if we only want the raw data
+    if($request->getStage('render') === 'false') {
+        return;
+    }
+
+    //form the data
+    $data = array_merge(
+        //we need to case for things like
+        //filter and sort on the template
+        $request->getStage(),
+        //this is from the search event
+        $response->getResults()
+    );
 
     //----------------------------//
     // 3. Render Template
@@ -41,8 +54,14 @@ $cradle->get('/admin/system/schema/search', function($request, $response) {
         ->setPage('class', $class)
         ->setContent($body);
 
+    //if we only want the body
+    if($request->getStage('render') === 'body') {
+        return;
+    }
+
     //render page
-}, 'render-admin-page');
+    cradle()->trigger('render-admin-page', $request, $response);
+});
 
 /**
  * Render the Object Create Page
@@ -60,7 +79,10 @@ $cradle->get('/admin/system/schema/create', function($request, $response) {
     // 2. Prepare Data
     $data = ['item' => $request->getPost()];
 
+    //if this is a return back from processing
+    //this form and it's because of an error
     if ($response->isError()) {
+        //pass the error messages to the template
         $response->setFlash($response->getMessage(), 'error');
         $data['errors'] = $response->getValidation();
     }
@@ -80,12 +102,22 @@ $cradle->get('/admin/system/schema/create', function($request, $response) {
         $data['item'] = $response->getResults();
     }
 
+    //add CSRF
+    cradle()->trigger('csrf-load', $request, $response);
+    $data['csrf'] = $response->getResults('csrf');
+
     //----------------------------//
     // 3. Render Template
+    //set the class name
     $class = 'page-admin-system-schema-create page-admin';
+
+    //determine the action
     $data['action'] = 'create';
+
+    //determine the title
     $data['title'] = cradle('global')->translate('Create System Schema');
 
+    //add custom page helpers
     cradle('global')
         ->handlebars()
         ->registerHelper('is_array', function($value, $option) {
@@ -96,6 +128,7 @@ $cradle->get('/admin/system/schema/create', function($request, $response) {
             return $option['inverse']();
         });
 
+    //render the body
     $body = cradle('/module/system')->template(
         'form',
         $data,
@@ -115,6 +148,11 @@ $cradle->get('/admin/system/schema/create', function($request, $response) {
             'icon-options'
         ]
     );
+
+    //if we only want the body
+    if($request->getStage('render') === 'body') {
+        return;
+    }
 
     //set content
     $response
@@ -139,33 +177,61 @@ $cradle->get('/admin/system/schema/update/:name', function($request, $response) 
 
     //----------------------------//
     // 2. Prepare Data
+    //pass the item with only the post data
     $data = ['item' => $request->getPost()];
+
+    //if this is a return back from processing
+    //this form and it's because of an error
+    if ($response->isError()) {
+        //pass the error messages to the template
+        $response->setFlash($response->getMessage(), 'error');
+        $data['errors'] = $response->getValidation();
+    }
 
     //if no item
     if(empty($data['item'])) {
+        //get the original schema row
         cradle()->trigger('system-schema-detail', $request, $response);
 
         //can we update ?
         if($response->isError()) {
+            //redirect
+            $redirect = '/admin/system/schema/search';
+
+            //this is for flexibility
+            if($request->hasStage('redirect_uri')) {
+                $redirect = $request->getStage('redirect_uri');
+            }
+
             //add a flash
             cradle('global')->flash($response->getMessage(), 'error');
-            return cradle('global')->redirect('/admin/system/schema/search');
+            return cradle('global')->redirect($redirect);
         }
 
         $data['item'] = $response->getResults();
     }
 
-    if($response->isError()) {
-        $response->setFlash($response->getMessage(), 'error');
-        $data['errors'] = $response->getValidation();
+    //if we only want the raw data
+    if($request->getStage('render') === 'false') {
+        return;
     }
+
+    //add CSRF
+    cradle()->trigger('csrf-load', $request, $response);
+    $data['csrf'] = $response->getResults('csrf');
 
     //----------------------------//
     // 3. Render Template
+    //set the class name
     $class = 'page-admin-system-schema-update page-admin';
+
+    //determine the action
     $data['action'] = 'update';
+
+    //determine the title
     $data['title'] = cradle('global')->translate('Updating System Schema');
 
+    //add custom page helpers
     cradle('global')
         ->handlebars()
         ->registerHelper('is_array', function($value, $option) {
@@ -176,6 +242,7 @@ $cradle->get('/admin/system/schema/update/:name', function($request, $response) 
             return $option['inverse']();
         });
 
+    //render the body
     $body = cradle('/module/system')->template(
         'form',
         $data,
@@ -196,14 +263,20 @@ $cradle->get('/admin/system/schema/update/:name', function($request, $response) 
         ]
     );
 
-    //Set Content
+    //if we only want the body
+    if($request->getStage('render') === 'body') {
+        return;
+    }
+
+    //set content
     $response
         ->setPage('title', $data['title'])
         ->setPage('class', $class)
         ->setContent($body);
 
-    //Render page
-}, 'render-admin-page');
+    //render page
+    cradle()->trigger('render-admin-page', $request, $response);
+});
 
 /**
  * Process the Object Create Page
@@ -219,7 +292,6 @@ $cradle->post('/admin/system/schema/create', function($request, $response) {
 
     //----------------------------//
     // 2. Prepare Data
-
     //if detail has no value make it null
     if ($request->hasStage('detail') && !$request->getStage('detail')) {
         $request->setStage('detail', null);
@@ -241,13 +313,31 @@ $cradle->post('/admin/system/schema/create', function($request, $response) {
 
     //----------------------------//
     // 4. Interpret Results
+    //if the event returned an error
     if($response->isError()) {
-        return cradle()->triggerRoute(
-            'get',
-            '/admin/system/schema/create',
-            $request,
-            $response
-        );
+        //determine route
+        $route = '/admin/system/schema/create';
+
+        //this is for flexibility
+        if($request->hasStage('route')) {
+            $route = $request->getStage('route');
+        }
+
+        return cradle()->triggerRoute('get', $route, $request, $response);
+    }
+
+    //redirect
+    $redirect = '/admin/system/schema/search';
+
+    //if there is a specified redirect
+    if($request->hasStage('redirect_uri')) {
+        //set the redirect
+        $redirect = $request->getStage('redirect_uri');
+    }
+
+    //if we dont want to redirect
+    if($redirect === 'false') {
+        return;
     }
 
     //record logs
@@ -265,7 +355,7 @@ $cradle->post('/admin/system/schema/create', function($request, $response) {
     cradle('global')->flash('System Schema was Created', 'success');
 
     //redirect
-    cradle('global')->redirect('/admin/system/schema/search');
+    cradle('global')->redirect($redirect);
 });
 
 /**
@@ -314,11 +404,20 @@ $cradle->post('/admin/system/schema/update/:name', function($request, $response)
 
     //----------------------------//
     // 4. Interpret Results
+    //if the event returned an error
     if($response->isError()) {
+        //determine route
         $route = sprintf(
             '/admin/system/schema/update/%s',
             $request->getStage('name')
         );
+
+        //this is for flexibility
+        if($request->hasStage('route')) {
+            $route = $request->getStage('route');
+        }
+
+        //let the form route handle the rest
         return cradle()->triggerRoute('get', $route, $request, $response);
     }
 
@@ -332,12 +431,26 @@ $cradle->post('/admin/system/schema/update/:name', function($request, $response)
         $response
     );
 
+    //redirect
+    $redirect = '/admin/system/schema/search';
+
+    //if there is a specified redirect
+    if($request->hasStage('redirect_uri')) {
+        //set the redirect
+        $redirect = $request->getStage('redirect_uri');
+    }
+
+    //if we dont want to redirect
+    if($redirect === 'false') {
+        return;
+    }
+
     //it was good
     //add a flash
     cradle('global')->flash('System Schema was Updated', 'success');
 
     //redirect
-    cradle('global')->redirect('/admin/system/schema/search');
+    cradle('global')->redirect($redirect);
 });
 
 /**
@@ -361,6 +474,20 @@ $cradle->get('/admin/system/schema/remove/:name', function($request, $response) 
 
     //----------------------------//
     // 4. Interpret Results
+    //redirect
+    $redirect = '/admin/system/schema/search';
+
+    //if there is a specified redirect
+    if($request->hasStage('redirect_uri')) {
+        //set the redirect
+        $redirect = $request->getStage('redirect_uri');
+    }
+
+    //if we dont want to redirect
+    if($redirect === 'false') {
+        return;
+    }
+
     if($response->isError()) {
         //add a flash
         cradle('global')->flash($response->getMessage(), 'error');
@@ -380,8 +507,7 @@ $cradle->get('/admin/system/schema/remove/:name', function($request, $response) 
         );
     }
 
-
-    cradle('global')->redirect('/admin/system/schema/search');
+    cradle('global')->redirect($redirect);
 });
 
 /**
@@ -405,6 +531,20 @@ $cradle->get('/admin/system/schema/restore/:name', function($request, $response)
 
     //----------------------------//
     // 4. Interpret Results
+    //redirect
+    $redirect = '/admin/system/schema/search';
+
+    //if there is a specified redirect
+    if($request->hasStage('redirect_uri')) {
+        //set the redirect
+        $redirect = $request->getStage('redirect_uri');
+    }
+
+    //if we dont want to redirect
+    if($redirect === 'false') {
+        return;
+    }
+
     if($response->isError()) {
         //add a flash
         cradle('global')->flash($response->getMessage(), 'error');
@@ -424,6 +564,5 @@ $cradle->get('/admin/system/schema/restore/:name', function($request, $response)
         );
     }
 
-
-    cradle('global')->redirect('/admin/system/schema/search');
+    cradle('global')->redirect($redirect);
 });

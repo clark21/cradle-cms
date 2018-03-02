@@ -2155,53 +2155,145 @@ jQuery(function($) {
      */
     (function() {
         $(window).on('menu-builder-init', function(e, target) {
-            var template =
-            '<li class="menu-builder-item">'
-                + '<div class="menu-builder-input input-group">'
-                    + '<div class="input-group-prepend">'
-                        + '<button class="menu-builder-handle btn btn-default">'
-                            + '<i '
-                                + 'class="fas fa-question fa-fw" '
-                                + 'data-do="icon-field" '
-                                + 'data-target-parent="3"'
-                            + '></i>'
-                            + '<input '
-                                + 'class="form-control" '
-                                + 'name="icon" '
-                                + 'type="hidden" '
-                            + '/>'
-                        + '</button>'
+            var itemTemplate =
+                '<li class="menu-builder-item" data-level="{LEVEL}">'
+                    + '<div class="menu-builder-input input-group">'
+                        + '<div class="input-group-prepend">'
+                            + '<button class="menu-builder-handle btn btn-default" type="button">'
+                                + '<i '
+                                    + 'class="fas fa-question fa-fw" '
+                                    + 'data-do="icon-field" '
+                                    + 'data-target-parent="3"'
+                                + '></i>'
+                                + '<input '
+                                    + 'class="form-control" '
+                                    + 'data-name="icon" '
+                                    + 'type="hidden" '
+                                + '/>'
+                            + '</button>'
+                        + '</div>'
+                        + '<input '
+                            + 'class="form-control" '
+                            + 'data-name="label" '
+                            + 'placeholder="Menu Title" '
+                            + 'type="text" '
+                        + '/>'
+                        + '<input '
+                            + 'class="form-control" '
+                            + 'data-name="path" '
+                            + 'placeholder="/some/path" '
+                            + 'type="text" '
+                        + '/>'
+                        + '<div class="input-group-append">'
+                            + '{ACTION_ADD}'
+                            + '<button class="btn btn-danger menu-builder-action-remove" type="button">'
+                                + '<i class="fas fa-times"></i>'
+                            + '</button>'
+                        + '</div>'
                     + '</div>'
-                    + '<input '
-                        + 'class="form-control" '
-                        + 'name="icon" '
-                        + 'placeholder="Menu Title" '
-                        + 'type="text" '
-                    + '/>'
-                    + '<input '
-                        + 'class="form-control" '
-                        + 'name="icon" '
-                        + 'placeholder="/some/path" '
-                        + 'type="text" '
-                    + '/>'
-                    + '<div class="input-group-append">'
-                        + '<button class="btn btn-success">'
-                            + '<i class="fas fa-plus"></i>'
-                        + '</button>'
-                        + '<button class="btn btn-danger">'
-                            + '<i class="fas fa-times"></i>'
-                        + '</button>'
-                    + '</div>'
-                + '</div>'
-                + '<ol class="menu-builder-list"></ol>'
-            + '</li>';
+                    + '<ol class="menu-builder-list"></ol>'
+                + '</li>';
+
+            var addTemplate =
+                '<button class="btn btn-success menu-builder-action-add" type="button">'
+                    + '<i class="fas fa-plus"></i>'
+                + '</button>';
 
             var depth = $(target).attr('data-depth') || 9;
+            var message = $(target).attr('data-error') || 'Some items were empty';
 
-            $('button.btn-success:first', target).click(function() {
-                $(template).appendTo($('ol:first', target));
-            });
+            var reindex = function(list, level, path) {
+                path = path || 'item';
+                path += '[{INDEX}]';
+                $(list).children('li.menu-builder-item').each(function(i) {
+                    var newPath = path.replace('{INDEX}', i);
+                    $('div.menu-builder-input:first', this).find('input').each(function() {
+                        var name = $(this).attr('data-name');
+                        if(!name.length) {
+                            return;
+                        }
 
+                        $(this).attr('name', newPath + '[' + name + ']');
+                    });
+
+                    reindex($('ol.menu-builder-list:first', this), level + 1, newPath + '[children]');
+                });
+            };
+
+            var listen = function(item, level) {
+                //by default level 1
+                level = level || 1;
+                item = $(item);
+
+                //on button add click
+                $('button.menu-builder-action-add:first', item).click(function() {
+                    //do we need the add action?
+                    var add = '';
+                    if(level < depth) {
+                        add = addTemplate;
+                    }
+
+                    //make the template
+                    var newItem = $(
+                        itemTemplate
+                            .replace('{LEVEL}', level)
+                            .replace('{ACTION_ADD}', add)
+                    ).doon();
+
+                    //append the template
+                    $('ol.menu-builder-list:first', item).append(newItem);
+
+                    //reindex the names
+                    reindex($('ol.menu-builder-list:first', target), level);
+
+                    //listen to the item
+                    listen(newItem, level + 1);
+                });
+
+                //on button remove click
+                $('button.menu-builder-action-remove:first', item).click(function() {
+                    $(this).closest('li.menu-builder-item').remove();
+
+                    //reindex the names
+                    reindex($('ol.menu-builder-list:first', target), level);
+                });
+
+                return item;
+            };
+
+            var checkForm = function(e) {
+                var errors = false;
+                $('input[data-name="label"]', target).each(function() {
+                    if(!$(this).val().trim().length) {
+                        $(this).parent().addClass('has-error');
+                        errors = true;
+                    }
+                });
+
+                $('input[data-name="path"]', target).each(function() {
+                    if(!$(this).val().trim().length) {
+                        $(this).parent().addClass('has-error');
+                        errors = true;
+                    }
+                });
+
+                if(errors) {
+                    $('span.help-text', target).html(message);
+                    e.preventDefault();
+                    return false;
+                }
+            };
+
+            //listen to the root
+            listen(target)
+                .submit(checkForm)
+                //find all the current elements
+                .find('li.menu-builder-item')
+                .each(function() {
+                    listen(this).doon();
+                });
+
+            reindex($('ol.menu-builder-list:first'), 1);
         });
     })();
 
