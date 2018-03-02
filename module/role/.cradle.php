@@ -7,15 +7,15 @@ use Cradle\Module\Utility\ServiceFactory;
 
 ServiceFactory::register('role', RoleService::class);
 
-$cradle->package('/module/role')->addMethod('hasPermissions', function($authId, array $permissions = []) {
-    // allow auth id 1
-    if($authId === 1) {
-        return true;
-    }
-
+$cradle->package('/module/role')->addMethod('hasPermissions', function($authId, $permissions = []) {
     // redirect to login
     if(!$authId) {
         return cradle('global')->redirect('/login');
+    }
+
+    // allow auth id 1
+    if($authId == 1) {
+        return true;
     }
 
     $router = new \Cradle\Http\Router;
