@@ -59,9 +59,9 @@
                                 type="checkbox"
                                 name="app_permissions[]"
                                 value="public_profile"
-                                {{#has item.app_permissions 'public_profile'}}
+                                {{#in item.app_permissions 'public_profile'}}
                                     checked
-                                {{/has}} />
+                                {{/in}} />
                                 Access to Profile Search
                         </label>
                     </div>
@@ -71,9 +71,9 @@
                                 type="checkbox"
                                 name="app_permissions[]"
                                 value="personal_profile"
-                                {{#has item.app_permissions 'personal_profile'}}
+                                {{#in item.app_permissions 'personal_profile'}}
                                     checked
-                                {{/has}} />
+                                {{/in}} />
                                 Manage My Profile
                         </label>
                     </div>
@@ -83,9 +83,9 @@
                                 type="checkbox"
                                 name="app_permissions[]"
                                 value="user_profile"
-                                {{#has item.app_permissions 'user_profile'}}
+                                {{#in item.app_permissions 'user_profile'}}
                                     checked
-                                {{/has}} />
+                                {{/in}} />
                                 Manage Another User's Profile
                         </label>
                     </div>

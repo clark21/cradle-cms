@@ -262,6 +262,8 @@ $handlebars->registerHelper('scope', function (...$args) {
         if (!$results) {
             return $scope['this'];
         }
+
+        return $results;
     }
 
     $scope['this'] = $scope;
@@ -504,6 +506,46 @@ $handlebars->registerHelper('otherwise', function ($value1, $operator, $value2, 
 });
 
 /**
+ * Determines whether the array has a given key
+ *
+ * @param *array
+ * @param mixed  value
+ *
+ * @return [BLOCK]
+ */
+$handlebars->registerHelper('has', function ($array, $key, $options) {
+    if (!is_array($array)) {
+        return $options['inverse']();
+    }
+
+    if (isset($array[$key])) {
+        return $options['fn']();
+    }
+
+    return $options['inverse']();
+});
+
+/**
+ * The opposite of the has helper above
+ *
+ * @param *array
+ * @param mixed  value
+ *
+ * @return [BLOCK]
+ */
+$handlebars->registerHelper('hasnt', function ($array, $key, $options) {
+    if (!is_array($array)) {
+        return $options['fn']();
+    }
+
+    if (isset($array[$key])) {
+        return $options['inverse']();
+    }
+
+    return $options['fn']();
+});
+
+/**
  * Determines whether the array has a given value
  *
  * @param *array
@@ -511,7 +553,7 @@ $handlebars->registerHelper('otherwise', function ($value1, $operator, $value2, 
  *
  * @return [BLOCK]
  */
-$handlebars->registerHelper('has', function ($array, $value, $options) {
+$handlebars->registerHelper('in', function ($array, $value, $options) {
     if (is_string($array)) {
         $array = explode(',', $array);
     }
@@ -528,14 +570,14 @@ $handlebars->registerHelper('has', function ($array, $value, $options) {
 });
 
 /**
- * The opposite of the has helper above
+ * The opposite of the in helper above
  *
  * @param *array
  * @param mixed  value
  *
  * @return [BLOCK]
  */
-$handlebars->registerHelper('hasnt', function ($array, $value, $options) {
+$handlebars->registerHelper('notin', function ($array, $value, $options) {
     if (is_string($array)) {
         $array = explode(',', $array);
     }

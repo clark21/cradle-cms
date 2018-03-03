@@ -34,11 +34,11 @@
                     data-format="{{suggestion}}"
                     data-target-label="input.suggestion-label-{{name}}"
                     data-target-value="input.suggestion-value-{{name}}"
-                    {{#has ../valid_relations name}}
+                    {{#in ../valid_relations name}}
                         data-url="/admin/system/object/{{name}}/search?q={QUERY}&render=false"
                     {{else}}
                         data-url="/admin/{{name}}/search?q={QUERY}&render=false"
-                    {{/has}}
+                    {{/in}}
                     data-value="{{primary2}}"
                 ></div>
                 {{#has ../errors primary2}}

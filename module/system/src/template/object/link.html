@@ -56,11 +56,11 @@
                         data-format="{{relation.suggestion}}"
                         data-target-label="input.suggestion-label-{{relation.name}}"
                         data-target-value="input.suggestion-value-{{relation.name}}"
-                        {{#has valid_relations relation.name}}
+                        {{#in valid_relations relation.name}}
                             data-url="/admin/system/object/{{relation.name}}/search?q={QUERY}&render=false"
                         {{else}}
                             data-url="/admin/{{relation.name}}/search?q={QUERY}&render=false"
-                        {{/has}}
+                        {{/in}}
                         data-value="{{relation.primary2}}"
                     ></div>
                     {{#has errors relation.primary2}}

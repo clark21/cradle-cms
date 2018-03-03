@@ -387,22 +387,22 @@
                 </tr>
                 <tr class="file-field-item" data-index="{INDEX}">
                     <td class="file-field-preview">
-                        {{#fileinfo value}}
-                            {{#has 'jpg,jpeg,png,gif' extension}}
+                        {{#fileinfo this}}
+                            {{#in 'jpg,jpeg,png,gif' extension}}
                                 <div class="file-field-preview-container">
-                                    <img src="{{../value}}" height="50" />
+                                    <img src="{{../this}}" height="50" />
                                 </div>
                             {{else}}
                                 <div class="file-field-preview-container">
                                     <i class="fas fa-file text-info"></i>
                                     <span class="file-field-extension">{{extension}}</span>
                                 </div>
-                            {{/has}}
+                            {{/in}}
                         {{/fileinfo}}
                     </td>
                     <td class="file-field-name">
-                        {{value}}
-                        <input name="{{../@key}}" type="hidden" value="{{value}}" />
+                        {{this}}
+                        <input name="{{../@key}}" type="hidden" value="{{this}}" />
                     </td>
                 </tr>
             {{else}}
@@ -453,22 +453,22 @@
                 </tr>
                 <tr class="file-field-item" data-index="{INDEX}">
                     <td class="file-field-preview">
-                        {{#fileinfo value}}
-                            {{#has 'jpg,jpeg,png,gif' extension}}
+                        {{#fileinfo this}}
+                            {{#in 'jpg,jpeg,png,gif' extension}}
                                 <div class="file-field-preview-container">
-                                    <img src="{{../value}}" height="50" />
+                                    <img src="{{../this}}" height="50" />
                                 </div>
                             {{else}}
                                 <div class="file-field-preview-container">
                                     <i class="fas fa-file text-info"></i>
                                     <span class="file-field-extension">{{extension}}</span>
                                 </div>
-                            {{/has}}
+                            {{/in}}
                         {{/fileinfo}}
                     </td>
                     <td class="file-field-name">
-                        {{value}}
-                        <input name="{{../@key}}" type="hidden" value="{{value}}" />
+                        {{this}}
+                        <input name="{{../@key}}" type="hidden" value="{{this}}" />
                     </td>
                     <td class="file-field-actions">
                         <a class="text-info file-field-move-up" href="javascript:void(0)">
@@ -531,22 +531,22 @@
                 </tr>
                 <tr class="file-field-item" data-index="{INDEX}">
                     <td class="file-field-preview">
-                        {{#fileinfo value}}
-                            {{#has 'jpg,jpeg,png,gif' extension}}
+                        {{#fileinfo this}}
+                            {{#in 'jpg,jpeg,png,gif' extension}}
                                 <div class="file-field-preview-container">
-                                    <img src="{{../value}}" height="50" />
+                                    <img src="{{../this}}" height="50" />
                                 </div>
                             {{else}}
                                 <div class="file-field-preview-container">
                                     <i class="fas fa-file text-info"></i>
                                     <span class="file-field-extension">{{extension}}</span>
                                 </div>
-                            {{/has}}
+                            {{/in}}
                         {{/fileinfo}}
                     </td>
                     <td class="file-field-name">
-                        {{value}}
-                        <input name="{{../@key}}" type="hidden" value="{{value}}" />
+                        {{this}}
+                        <input name="{{../@key}}" type="hidden" value="{{this}}" />
                     </td>
                 </tr>
             {{else}}
@@ -598,22 +598,22 @@
                 </tr>
                 <tr class="file-field-item" data-index="{INDEX}">
                     <td class="file-field-preview">
-                        {{#fileinfo value}}
-                            {{#has 'jpg,jpeg,png,gif' extension}}
+                        {{#fileinfo this}}
+                            {{#in 'jpg,jpeg,png,gif' extension}}
                                 <div class="file-field-preview-container">
-                                    <img src="{{../value}}" height="50" />
+                                    <img src="{{../this}}" height="50" />
                                 </div>
                             {{else}}
                                 <div class="file-field-preview-container">
                                     <i class="fas fa-file text-info"></i>
                                     <span class="file-field-extension">{{extension}}</span>
                                 </div>
-                            {{/has}}
+                            {{/in}}
                         {{/fileinfo}}
                     </td>
                     <td class="file-field-name">
-                        {{value}}
-                        <input name="{{../@key}}" type="hidden" value="{{value}}" />
+                        {{this}}
+                        <input name="{{../@key}}" type="hidden" value="{{this}}" />
                     </td>
                     <td class="file-field-actions">
                         <a class="text-info file-field-move-up" href="javascript:void(0)">

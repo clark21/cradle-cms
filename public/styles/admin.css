@@ -799,7 +799,12 @@ select.form-control {
     width: 100%;
 }
 
+.file-field .file-field-name {
+    vertical-align: middle;
+}
+
 .file-field .file-field-actions {
+    vertical-align: middle;
     white-space: nowrap;
 }
 

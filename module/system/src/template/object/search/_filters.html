@@ -1,9 +1,9 @@
 {{#each schema.fields}}
     {{#has ../schema.filterable @key}}
-        {{#hasnt 'password,files,images,textarea,wysiwyg,markdown,none,hide,active' field.type}}
+        {{#notin 'password,files,images,textarea,wysiwyg,markdown,none,hide,active' field.type}}
             <div class="form-group">
                 <label for="filter[{{@key}}]">{{label}}</label>
-                {{#has 'text,slug,file,image' field.type}}
+                {{#in 'text,slug,file,image' field.type}}
                     <input
                         class="form-control"
                         name="filter[{{@key}}]"
@@ -13,8 +13,8 @@
                             {{@key}}="{{this}}"
                         {{/each}}
                     />
-                {{/has}}
-                {{#has 'email,search,url,color,week,month' field.type}}
+                {{/in}}
+                {{#in 'email,search,url,color,week,month' field.type}}
                     <input
                         class="form-control"
                         name="filter[{{@key}}]"
@@ -24,7 +24,7 @@
                             {{@key}}="{{this}}"
                         {{/each}}
                     />
-                {{/has}}
+                {{/in}}
                 {{#when field.type '===' 'mask'}}
                     <input
                         class="form-control"
@@ -430,6 +430,6 @@
                     />
                 {{/when}}
             </div>
-        {{/hasnt}}
+        {{/notin}}
     {{/has}}
 {{/each}}

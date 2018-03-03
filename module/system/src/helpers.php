@@ -13,6 +13,12 @@ $handlebars->registerHelper('relations', function (...$args) {
     }
 
     $relations = Schema::i($schema)->getRelations($many);
+
+    //pass suggestion title field for each relation to the template
+    foreach ($relations as $name => $relation) {
+        $relations[$name]['suggestion_name'] = '_' . $relation['primary2'];
+    }
+
     $each = cradle('global')->handlebars()->getHelper('each');
 
     return $each($relations, $options);
