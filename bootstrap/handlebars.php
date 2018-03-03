@@ -1,106 +1,55 @@
 <?php //-->
 
-use Cradle\Module\Utility\File;
+use Cradle\Handlebars\HandlebarsHandler;
 
 return function ($request, $response) {
+    $this->package('global')
+
+    /**
+     * Returns the global handlebars object
+     *
+     * @return Handlebars
+     */
+    ->addMethod('handlebars', function() {
+        static $handlebars = null;
+
+        if(is_null($handlebars)) {
+            $handlebars = HandlebarsHandler::i();
+        }
+
+        return $handlebars;
+    })
+
+    /**
+     * Makes a rendered  template
+     *
+     * @return string
+     */
+    ->addMethod('template', function($file, array $data = [], array $partials = []) {
+        if(!file_exists($file)) {
+            return null;
+        }
+
+        $template = file_get_contents($file);
+        $handlebars = cradle('global')->handlebars();
+
+        foreach ($partials as $name => $content) {
+            if (file_exists($content)) {
+                $content = file_get_contents($content);
+            }
+
+            $handlebars->registerPartial($name, $content);
+        }
+
+        $compiled = $handlebars->compile($template);
+        return $compiled($data);
+    });
+
     //get handlebars
     $handlebars = $this->package('global')->handlebars();
 
+    include_once(__DIR__ . '/helpers.php');
+
     //add cache folder
     //$handlebars->setCache(__DIR__.'/../compiled');
-
-    $handlebars->registerHelper('sort', function ($name, $options) {
-        $value = null;
-        if (isset($_GET['order'][$name])) {
-            $value = $_GET['order'][$name];
-        }
-
-        return $options['fn'](['value' => $value]);
-    });
-
-    $handlebars->registerHelper('inspect', function ($mixed) {
-        return var_export($mixed, true);
-    });
-
-    $handlebars->registerHelper('char_length', function ($value, $length) {
-        return strlen($value, $length);
-    });
-
-    $handlebars->registerHelper('word_length', function ($value, $length) {
-        if (str_word_count($value, 0) > $length) {
-            $words = str_word_count($value, 2);
-            $position = array_keys($words);
-            $value = substr($value, 0, $position[$length]);
-        }
-
-        return $value;
-    });
-
-    $handlebars->registerHelper('toucfirst', function ($value) {
-        return ucfirst($value);
-    });
-
-    $handlebars->registerHelper('ucwords', function ($value) {
-        return ucwords($value);
-    });
-
-    $handlebars->registerHelper('toupper', function ($value) {
-        return strtoupper($value);
-    });
-
-    $handlebars->registerHelper('tolower', function ($value) {
-        return strtolower($value);
-    });
-
-    $handlebars->registerHelper('fileinfo', function($file, $options) {
-        return $options['fn']([
-            'name' => $file,
-            'base' => basename($file),
-            'path' => dirname($file),
-            'extension' => File::getExtensionFromLink($file),
-            'mime' => File::getMimeFromLink($file)
-        ]);
-    });
-
-    $handlebars->registerHelper('scope', function($array, $key, $options) {
-        if (isset($array[$key])) {
-            $value = $array[$key];
-            if(!is_array($value)) {
-                $value = ['value' => $value];
-            }
-
-            return $options['fn']($value);
-        }
-
-        return $options['inverse']();
-    });
-
-    $handlebars->registerHelper('compile', function(
-        $template,
-        $variables,
-        $options
-    ) use ($handlebars) {
-        $template = $handlebars->compile($template);
-        return $template($variables);
-    });
-
-    $handlebars->registerHelper('partial', function(
-        $name,
-        $variables,
-        $option
-    ) use ($handlebars) {
-        $partial = $handlebars->getPartial($name);
-        $template = $handlebars->compile($partial);
-        return $template($variables);
-    });
-
-    $handlebars->registerHelper('error_exist', function($arr, $val, $scheme, $options) {
-        $name = $scheme . "_" . $val;
-
-        if (isset($arr[$name])) {
-            return $options['fn'](['value' => $arr[$name]]);
-        }
-
-        return $options['inverse']();
-    });
 };

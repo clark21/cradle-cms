@@ -85,7 +85,7 @@
                         <li><a title="Filipino" href="/ceb_PH{{page.meta.path}}">Visaya</a></li>
                     </ul>
                 </li>
-                {{#session 'me'}}
+                {{#request 'session' 'me'}}
                     <li>
                         <a href="/account?redirect_uri={{../page.meta.path}}" class="btn text-info">
                             {{_ 'Account Settings'}}
@@ -99,7 +99,7 @@
                 {{else}}
                     <li><a href="/login?redirect_uri={{page.meta.path}}">{{_ 'Login'}}</a></li>
                     <li><a href="/signup?redirect_uri={{page.meta.path}}">{{_ 'Signup'}}</a></li>
-                {{/session}}
+                {{/request}}
             </ul>
         </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
@@ -145,7 +145,7 @@
                 </li>
             </ul>
             <ul class="navbar-nav my-2 my-lg-0">
-                {{#session 'me'}}
+                {{#request 'session' 'me'}}
                     <li class="nav-item">
                         <a class="nav-link" href="/account?redirect_uri={{../page.meta.path}}">
                             {{_ 'Account Settings'}}
@@ -163,7 +163,7 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/signup?redirect_uri={{page.meta.path}}">{{_ 'Signup'}}</a>
                     </li>
-                {{/session}}
+                {{/request}}
             </ul>
         </div>
     </div>

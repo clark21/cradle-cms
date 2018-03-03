@@ -12,7 +12,7 @@
                 </a>
             </li>
             <li class="breadcrumb-item">
-                <a href="/admin/system/object/{{relation.schema.name}}/update/{{key relation.schema.primary relation.data}}">
+                <a href="/admin/system/object/{{relation.schema.name}}/update/{{scope relation.data relation.schema.primary}}">
                     {{relation.suggestion}}
                 </a>
             </li>
@@ -59,77 +59,24 @@
             </div>
             <form method="get">
                 <div class="box-body box-padding">
-                        <div class="form-group">
-                            <label for="q">Search</label>
-                            <input
-                                class="form-control"
-                                name="q"
-                                placeholder="Enter Search {{schema.plural}}"
-                                type="search"
-                                value="{{q}}"
-                            />
-                        </div>
+                    <div class="form-group">
+                        <label for="q">Search</label>
+                        <input
+                            class="form-control"
+                            name="q"
+                            placeholder="Enter Search {{schema.plural}}"
+                            type="search"
+                            value="{{q}}"
+                        />
+                    </div>
 
-                        {{#if schema.filterable.length}}
-                            <div class="form-group">
-                                <a
-                                    data-do="search-filter-toggle"
-                                    data-on="click"
-                                    data-toggle="collapse"
-                                    data-target="#filter-options"
-                                >
-                                    <span>more</span> <i class="fas fa-caret-down"></i>
-                                </a>
-                            </div>
-
-                            <div id="filter-options" class="collapse">
-                                {{#each schema.relations}}
-                                    {{#in many '0,1'}}
-                                        <div class="form-group{{#has primary2 ../errors}} has-error{{/has}}">
-                                            <label class="control-label">{{singular}}</label>
-                                            <div>
-                                                <input
-                                                    autocomplete="off"
-                                                    class="form-control suggestion-label-{{name}}"
-                                                    name="{{suggestion_name}}"
-                                                    placeholder="Enter {{singular}}"
-                                                    type="text"
-                                                    value="{{key suggestion_name ../item}}"
-                                                />
-                                                <input
-                                                    class="suggestion-value-{{name}}"
-                                                    name="filter[{{primary2}}]"
-                                                    type="hidden"
-                                                    value="{{key primary2 ../item}}"
-                                                />
-                                                <div
-                                                    class="input-suggestion d-none"
-                                                    data-do="suggestion-field"
-                                                    data-format="{{suggestion}}"
-                                                    data-target-label="input.suggestion-label-{{name}}"
-                                                    data-target-value="input.suggestion-value-{{name}}"
-                                                    {{#in name ../valid_relations}}
-                                                        data-url="/admin/system/object/{{name}}/search?q={QUERY}&render=false"
-                                                    {{else}}
-                                                        data-url="/admin/{{name}}/search?q={QUERY}&render=false"
-                                                    {{/in}}
-                                                    data-value="{{primary2}}"
-                                                ></div>
-                                                {{#has primary2 ../errors}}
-                                                    <span class="help-text">{{key primary2 ../errors}}</span>
-                                                {{/has}}
-                                            </div>
-                                        </div>
-                                    {{/in}}
-                                {{/each}}
-
-                                {{> object_filters}}
-                                <div class="form-group">
-                                    <label for="save">Save Filters</label>
-                                    <input class="form-control" name="save" placeholder="Enter Filter Name" type="text" />
-                                </div>
-                            </div>
+                    {{#if schema.filterable.length}}
+                        {{> object_search_form}}
+                    {{else}}
+                        {{#if filterable_relations.length}}
+                            {{> object_search_form}}
                         {{/if}}
+                    {{/if}}
                 </div>
                 <div class="box-foot box-light">
                     <div class="box-left">
@@ -143,327 +90,39 @@
         </div>
 
         <form method="post">
-            <div class="clearfix mb-4 search-actions">
-                <div class="float-left mr-2">
-                    <div class="input-group">
-                        <select class="form-control" name="bulk-action">
-                            <option value="remove">Remove</option>
-                            <option value="restore">Restore</option>
-                        </select>
-                        <button class="btn btn-secondary">Apply</button>
-                    </div>
-                </div>
-
-                <div class="float-left mr-2">
-                    <div class="input-group">
-                        <select class="form-control" name="range" data-do="object-range" data-on="change">
-                            <option value="25" {{#when range '==' '25'}}selected{{/when}}>Show 25</option>
-                            <option value="50" {{#when range '==' '50'}}selected{{/when}}>Show 50</option>
-                            <option value="100" {{#when range '==' '100'}}selected{{/when}}>Show 100</option>
-                            <option value="200" {{#when range '==' '200'}}selected{{/when}}>Show 200</option>
-                            <option value="0" {{#when range '==' '0'}}selected{{/when}}>Show All</option>
-                        </select>
-                    </div>
-                </div>
-
-                {{#if schema.active}}
-                    <div class="btn-group" role="group" aria-label="...">
-                        <a class="btn btn-primary" href="?filter[{{schema.active}}]=1">
-                            Active
-                        </a>
-                        <a class="btn btn-danger" href="?filter[{{schema.active}}]=0">
-                            Inactive
-                        </a>
-                    </div>
-                {{/if}}
-
-                <div class="float-right">
-                    <a
-                        class="btn btn-pink"
-                        data-do="import"
-                        data-on="click"
-                        data-url="import"
-                        data-schema="{{schema.name}}"
-                        {{#if relation.schema.name}}
-                        data-relation="{{relation.schema.name}}"
-                        data-relation-id="{{key relation.schema.primary relation.data}}"
-                        {{/if}}
-                        href="javascript:void(0)"
-                    >
-                        <i class="fas fa-upload"></i> Import
-                    </a>
-                    {{#if relation.suggestion}}
-                        <a class="btn btn-purple" href="/admin/system/object/{{schema.name}}/export/{{relation.schema.name}}/{{key relation.schema.primary relation.data}}/csv?{{toquery}}" target="_blank">
-                            <i class="fas fa-download"></i> Export
-                        </a>
-                        <a class="btn btn-yellow" href="/admin/system/object/{{relation.schema.name}}/{{key relation.schema.primary relation.data}}/link/{{schema.name}}">
-                            <i class="fas fa-link"></i> {{_ 'Link %s' schema.singular}}
-                        </a>
-                        <a class="btn btn-success" href="/admin/system/object/{{schema.name}}/create/{{relation.schema.name}}/{{key relation.schema.primary relation.data}}">
-                            <i class="fas fa-plus"></i> {{_ 'Create %s' schema.singular}}
-                        </a>
-                    {{else}}
-                        <a class="btn btn-purple" href="export/csv?{{toquery}}" target="_blank">
-                            <i class="fas fa-download"></i> Export
-                        </a>
-                        <a class="btn btn-success" href="/admin/system/object/{{schema.name}}/create">
-                            <i class="fas fa-plus"></i> {{_ 'Create %s' schema.singular}}
-                        </a>
-                    {{/if}}
-                </div>
-            </div>
+            {{> object_search_actions}}
 
             <div class="table-overflow">
                 <table class="table table-responsive-sm table-striped table-data">
                     <thead>
-                        <tr>
-                            <th class="table-bulk-checkbox">
-                                <label class="checkbox checkbox-1">
-                                    <input
-                                        data-do="table-checkall"
-                                        type="checkbox"
-                                    />
-                                    <span></span>
-                                </label>
-                            </th>
-                            <th>Actions</th>
-                            <th>
-                                <a href="?{{sorturl schema.primary}}">
-                                    ID
-                                    {{{sortcaret schema.primary}}}
-                                </a>
-                            </th>
-                            {{#each schema.relations}}
-                                {{#when many '==' 1}}
-                                    <th>{{singular}}</th>
-                                {{/when}}
-                            {{/each}}
-                            {{#each schema.fields}}
-                                {{#in @key ../schema.listable}}
-                                    {{#in @key ../schema.sortable}}
-                                        <th>
-                                            <a href="?{{sorturl @key}}">
-                                                {{label}}
-                                                {{{sortcaret @key}}}
-                                            </a>
-                                        </th>
-                                    {{else}}
-                                        <th>{{label}}</th>
-                                    {{/in}}
-                                {{/in}}
-                            {{/each}}
-                        </tr>
+                        {{> object_search_head}}
                     </thead>
                     <tbody>
                         {{#each rows}}
-                            <tr data-id="{{key ../schema.primary this}}">
+                            <tr data-id="{{scope this ../schema.primary}}">
                                 <td class="table-bulk-checkbox">
                                     <label class="checkbox checkbox-1">
-                                        <input type="checkbox" name="{{../schema.primary}}[]" value="{{key ../schema.primary this}}" />
+                                        <input type="checkbox" name="{{../schema.primary}}[]" value="{{scope this ../schema.primary}}" />
                                         <span></span>
                                     </label>
                                 </td>
                                 <td class="table-actions">
-                                    <a
-                                        class="text-purple"
-                                        {{#if ../relation.suggestion}}
-                                            href="/admin/system/object/{{../schema.name}}/create/{{../relation.schema.name}}/{{key ../relation.schema.primary ../relation.data}}?copy={{key ../schema.primary this}}&redirect_uri={{../redirect}}"
-                                        {{else}}
-                                            href="/admin/system/object/{{../schema.name}}/create?copy={{key ../schema.primary this}}&redirect_uri={{../redirect}}"
-                                        {{/if}}
-                                        title="Copy {{../schema.singular}}"
-                                    >
-                                        <i class="fa fa-copy"></i>
-                                    </a>
-
-                                    {{#is_active this ../schema}}
-                                        <a
-                                            class="text-grey"
-                                            href="/admin/system/object/{{../schema.name}}/update/{{key ../schema.primary this}}?redirect_uri={{../redirect}}"
-                                            title="Edit {{../schema.singular}}"
-                                        >
-                                            <i class="fa fa-edit"></i>
-                                        </a>
-
-                                        {{#each ../schema.relations}}
-                                            {{#when many '==' 2}}
-                                                <a
-                                                    class="text-info"
-                                                    title="View {{plural}}"
-                                                    href="/admin/system/object/{{name}}/search/{{../../schema.name}}/{{key ../../schema.primary ../this}}"
-                                                >
-                                                    <i class="{{icon}}"></i>
-                                                </a>
-                                                <a
-                                                    class="text-success"
-                                                    title="Create {{plural}}"
-                                                    href="/admin/system/object/{{name}}/create/{{../../schema.name}}/{{key ../../schema.primary ../this}}?redirect_uri={{../redirect}}"
-                                                >
-                                                    <i class="{{icon}}"></i>
-                                                </a>
-                                            {{/when}}
-                                        {{/each}}
-
-                                        {{#if ../relation.suggestion}}
-                                            <a
-                                                class="text-pink remove"
-                                                href="/admin/system/object/{{../relation.schema.name}}/{{key ../relation.schema.primary ../relation.data}}/unlink/{{../schema.name}}/{{key ../schema.primary this}}?redirect_uri={{../redirect}}"
-                                                title="Remove {{../schema.singular}}"
-                                            >
-                                                <i class="fa fa-unlink"></i>
-                                            </a>
-                                        {{/if}}
-
-                                        <a
-                                            class="text-danger remove"
-                                            href="/admin/system/object/{{../schema.name}}/remove/{{key ../schema.primary this}}?redirect_uri={{../redirect}}"
-                                            title="Remove {{../schema.singular}}"
-                                        >
-                                            <i class="fa fa-times"></i>
-                                        </a>
-                                    {{else}}
-                                        <a
-                                            class="text-success restore"
-                                            href="/admin/system/object/{{../schema.name}}/restore/{{key ../schema.primary this}}?redirect_uri={{../redirect}}"
-                                            title="Restore {{../schema.singular}}"
-                                        >
-                                            <i class="fas fa-external-link-alt"></i>
-                                        </a>
-                                    {{/is_active}}
+                                    {{> object_search_row_actions}}
                                 </td>
-                                <td>{{key ../schema.primary this}}</td>
+                                <td>{{scope this ../schema.primary}}</td>
                                 {{#each ../schema.relations}}
                                     {{#when many '==' 1}}
                                         <td>
                                             <a
-                                                href="/admin/system/object/{{name}}/update/{{key primary ../this}}"
+                                                href="/admin/system/object/{{name}}/update/{{scope ../this primary}}"
                                                 target="_blank"
                                             >
-                                                {{get_suggestion this ../this}}
+                                                {{suggest this ../this}}
                                             </a>
                                         </td>
                                     {{/when}}
                                 {{/each}}
-                                {{#get_format this ../schema}}
-                                    {{#when format '===' 'none'}}
-                                        {{#in name ../../schema.filterable}}
-                                            <td>
-                                                <a href="?{{filtertoquery name value}}">
-                                                    {{value}}
-                                                </a>
-                                            </td>
-                                        {{else}}
-                                            <td>{{value}}</td>
-                                        {{/in}}
-                                    {{/when}}
-                                    {{#when format '===' 'lower'}}
-                                        {{#in name ../../schema.filterable}}
-                                            <td>
-                                                <a href="?{{filtertoquery name value}}">
-                                                    {{tolower value}}
-                                                </a>
-                                            </td>
-                                        {{else}}
-                                            <td>{{tolower value}}</td>
-                                        {{/in}}
-                                    {{/when}}
-                                    {{#when format '===' 'upper'}}
-                                        {{#in name ../../schema.filterable}}
-                                            <td>
-                                                <a href="?{{filtertoquery name value}}">
-                                                    {{toupper value}}
-                                                </a>
-                                            </td>
-                                        {{else}}
-                                            <td>{{toupper value}}</td>
-                                        {{/in}}
-                                    {{/when}}
-                                    {{#when format '===' 'capital'}}
-                                        {{#in name ../../schema.filterable}}
-                                            <td>
-                                                <a href="?{{filtertoquery name value}}">
-                                                    {{capital value}}
-                                                </a>
-                                            </td>
-                                        {{else}}
-                                            <td>{{capital value}}</td>
-                                        {{/in}}
-                                    {{/when}}
-                                    {{#when format '===' 'length'}}
-                                        <td>{{char_length value parameters}}</td>
-                                    {{/when}}
-                                    {{#when format '===' 'words'}}
-                                        <td>{{word_length value parameters}}</td>
-                                    {{/when}}
-                                    {{#when format '===' 'number'}}
-                                        <td>{{number value}}</td>
-                                    {{/when}}
-                                    {{#when format '===' 'price'}}
-                                        <td>{{price value}}</td>
-                                    {{/when}}
-                                    {{#when format '===' 'yes'}}
-                                        {{#in name ../../schema.filterable}}
-                                            <td>
-                                                <a href="?{{filtertoquery name value}}">
-                                                    {{#if value}}Yes{{else}}No{{/if}}
-                                                </a>
-                                            </td>
-                                        {{else}}
-                                            <td>{{#if value}}Yes{{else}}No{{/if}}</td>
-                                        {{/in}}
-                                    {{/when}}
-                                    {{#when format '===' 'date'}}
-                                        <td>
-                                            {{#if value}}
-                                                {{date value parameters}}
-                                            {{else}}
-                                                &nbsp;
-                                            {{/if}}
-                                        </td>
-                                    {{/when}}
-                                    {{#when format '===' 'relative'}}
-                                        <td>
-                                            {{#if value}}
-                                                {{relative value parameters}}
-                                            {{else}}
-                                                &nbsp;
-                                            {{/if}}
-                                        </td>
-                                    {{/when}}
-                                    {{#when format '===' 'strip'}}
-                                        <td>{{strip value parameters}}</td>
-                                    {{/when}}
-                                    {{#when format '===' 'link'}}
-                                        <td><a href="{{compile parameters.0 ../this}}">{{compile parameters.1 ../this}}</a></td>
-                                    {{/when}}
-                                    {{#when format '===' 'image'}}
-                                        <td><img src="{{value}}" width="{{parameters.0}}" height="{{parameters.1}}" /></td>
-                                    {{/when}}
-                                    {{#when format '===' 'email'}}
-                                        <td><a href="mailto:{{value}}">{{compile parameters ../this}}</a></td>
-                                    {{/when}}
-                                    {{#when format '===' 'phone'}}
-                                        <td><a href="tel:{{value}}">{{compile parameters ../this}}</a></td>
-                                    {{/when}}
-                                    {{#when format '===' 'comma'}}
-                                        <td>{{implode value ','}}</td>
-                                    {{/when}}
-                                    {{#when format '===' 'space'}}
-                                        <td>{{implode value ' '}}</td>
-                                    {{/when}}
-                                    {{#when format '===' 'tag'}}
-                                        <td>
-                                            {{#each value}}
-                                                <div class="tag">{{this}}</div>
-                                            {{/each}}
-                                        </td>
-                                    {{/when}}
-                                    {{#when format '===' 'formula'}}
-                                        <td>
-                                            {{formula parameters ../this}}
-                                        </td>
-                                    {{/when}}
-                                {{/get_format}}
+                                {{> object_search_row_format}}
                             </tr>
                         {{/each}}
                     </tbody>
@@ -479,53 +138,7 @@
             {{/pager}}
         </ul>
     {{else}}
-        <div class="clearfix mb-4 search-actions">
-            {{#if schema.active}}
-                <div class="btn-group" role="group" aria-label="...">
-                    <a class="btn btn-primary" href="?filter[{{schema.active}}]=1">
-                        Active
-                    </a>
-                    <a class="btn btn-danger" href="?filter[{{schema.active}}]=0">
-                        Inactive
-                    </a>
-                </div>
-            {{/if}}
-
-            <div class="float-right">
-                <a
-                    class="btn btn-pink"
-                    data-do="import"
-                    data-on="click"
-                    data-url="import"
-                    data-schema="{{schema.name}}"
-                    {{#if relation.schema.name}}
-                    data-relation="{{relation.schema.name}}"
-                    data-relation-id="{{key relation.schema.primary relation.data}}"
-                    {{/if}}
-                    href="javascript:void(0)"
-                >
-                    <i class="fas fa-upload"></i> Import
-                </a>
-                {{#if relation.suggestion}}
-                    <a class="btn btn-purple" href="/admin/system/object/{{schema.name}}/export/{{relation.schema.name}}/{{key relation.schema.primary relation.data}}/csv?{{toquery}}" target="_blank">
-                        <i class="fas fa-download"></i> Export
-                    </a>
-                    <a class="btn btn-yellow" href="/admin/system/object/{{relation.schema.name}}/{{key relation.schema.primary relation.data}}/link/{{schema.name}}">
-                        <i class="fas fa-link"></i> {{_ 'Link %s' schema.singular}}
-                    </a>
-                    <a class="btn btn-success" href="/admin/system/object/{{schema.name}}/create/{{relation.schema.name}}/{{key relation.schema.primary relation.data}}">
-                        <i class="fas fa-plus"></i> {{_ 'Create %s' schema.singular}}
-                    </a>
-                {{else}}
-                    <a class="btn btn-purple" href="export/csv?{{toquery}}" target="_blank">
-                        <i class="fas fa-download"></i> Export
-                    </a>
-                    <a class="btn btn-success" href="/admin/system/object/{{schema.name}}/create">
-                        <i class="fas fa-plus"></i> {{_ 'Create %s' schema.singular}}
-                    </a>
-                {{/if}}
-            </div>
-        </div>
+        {{> object_search_actions}}
 
         <!-- START: NO RESULTS -->
         <div class="alert alert-info no-results">

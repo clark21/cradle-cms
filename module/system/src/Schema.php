@@ -34,6 +34,11 @@ class Schema extends Registry
      */
     public function __construct($name)
     {
+        if($name instanceof \Closure) {
+            foreach(debug_backtrace() as $trace) {
+                echo $trace['file'] .' - ' . $trace['line'] . '<br />';
+            }
+        }
         $this->data = $name;
         if(!is_array($this->data)) {
             $this->data = cradle()
@@ -88,6 +93,7 @@ class Schema extends Registry
             'files' => $this->getFileFieldNames(),
             'json' => $this->getJsonFieldNames(),
             'listable' => $this->getListableFieldNames(),
+            'detailable' => $this->getDetailableFieldNames(),
             'primary' => $this->getPrimaryFieldName(),
             'required' => $this->getRequiredFieldNames(),
             'searchable' => $this->getSearchableFieldNames(),
@@ -123,6 +129,32 @@ class Schema extends Registry
         }
 
         return false;
+    }
+
+    /**
+     * Returns detailable fields
+     *
+     * @return string
+     */
+    public function getDetailableFieldNames()
+    {
+        $results = [];
+        if(!isset($this->data['fields']) || empty($this->data['fields'])) {
+            return $results;
+        }
+
+        $table = $this->data['name'];
+        foreach($this->data['fields'] as $field) {
+            $name = $table . '_' . $field['name'];
+
+            if(isset($field['detail']['format'])
+                && $field['detail']['format'] !== 'hide'
+            ) {
+                $results[] = $name;
+            }
+        }
+
+        return $results;
     }
 
     /**
@@ -467,8 +499,36 @@ class Schema extends Registry
      */
     public function getSuggestionFormat(array $data)
     {
+        //if no suggestion format
         if (!isset($this->data['suggestion']) || !trim($this->data['suggestion'])) {
-            return null;
+            //use best guess
+            $suggestion = null;
+            foreach ($data as $key => $value) {
+                if(is_numeric($value)
+                    || (
+                        isset($value[0])
+                        && is_numeric($value[0])
+                    )
+                )
+                {
+
+                    continue;
+                }
+
+                $suggestion = $value;
+                break;
+            }
+
+            //if still no suggestion
+            if(is_null($suggestion)) {
+                //just get the first one, i guess.
+                foreach ($data as $key => $value) {
+                    $suggestion = $value;
+                    break;
+                }
+            }
+
+            return $suggestion;
         }
 
         $template = cradle('global')->handlebars()->compile($this->data['suggestion']);

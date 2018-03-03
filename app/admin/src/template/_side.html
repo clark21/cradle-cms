@@ -2,7 +2,7 @@
     {{#each navigation}}
         {{> menu}}
     {{/each}}
-    {{#session 'me'}}
+    {{#request 'session' 'me'}}
         {{#when auth_id '==' 1}}
             <li class="nav-item">
                 <a class="nav-link" data-toggle="collapse" href="#system-schema-nav">
@@ -82,5 +82,5 @@
                 </div>
             </li>
         {{/when}}
-    {{/session}}
+    {{/request}}
 </ul>

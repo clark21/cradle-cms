@@ -11,7 +11,7 @@
             </a>
         </li>
         <li class="breadcrumb-item">
-            <a href="/admin/system/object/{{relation.name}}/search/{{schema.name}}/{{key schema.primary row}}">
+            <a href="/admin/system/object/{{relation.name}}/search/{{schema.name}}/{{scope row schema.primary}}">
                 <i class="fas fa-{{relation.icon}}"></i> {{row.suggestion}} - {{relation.plural}}
             </a>
         </li>
@@ -34,7 +34,7 @@
             </div>
         </div>
         <div class="box-body box-padding">
-            <div class="form-group{{#has relation.primary2 errors}} has-error{{/has}}">
+            <div class="form-group{{#has errors relation.primary2}} has-error{{/has}}">
                 <div>
                     <input
                         autocomplete="off"
@@ -48,7 +48,7 @@
                         class="suggestion-value-{{relation.name}}"
                         name="{{relation.primary2}}"
                         type="hidden"
-                        value="{{key relation.primary2 item}}"
+                        value="{{scope item relation.primary2}}"
                     />
                     <div
                         class="input-suggestion d-none"
@@ -56,15 +56,15 @@
                         data-format="{{relation.suggestion}}"
                         data-target-label="input.suggestion-label-{{relation.name}}"
                         data-target-value="input.suggestion-value-{{relation.name}}"
-                        {{#in relation.name valid_relations}}
+                        {{#has valid_relations relation.name}}
                             data-url="/admin/system/object/{{relation.name}}/search?q={QUERY}&render=false"
                         {{else}}
                             data-url="/admin/{{relation.name}}/search?q={QUERY}&render=false"
-                        {{/in}}
+                        {{/has}}
                         data-value="{{relation.primary2}}"
                     ></div>
-                    {{#has relation.primary2 errors}}
-                        <span class="help-text">{{key relation.primary2 errors}}</span>
+                    {{#has errors relation.primary2}}
+                        <span class="help-text">{{scope errors relation.primary2}}</span>
                     {{/has}}
                 </div>
             </div>

@@ -99,6 +99,13 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
         $data['schema']['filterable'] = array_values($data['schema']['filterable']);
     }
 
+    $data['filterable_relations'] = [];
+    foreach($data['schema']['relations'] as $relation) {
+        if($relation['many'] < 2) {
+            $data['filterable_relations'][] = $relation;
+        }
+    }
+
     //determine valid relations
     $data['valid_relations'] = [];
     cradle()->trigger('system-schema-search', $request, $response);
@@ -113,137 +120,14 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
     //set the class name
     $class = 'page-admin-system-object-search page-admin';
 
-    //add custom page helpers
-    cradle('global')
-        ->handlebars()
-        ->registerHelper('when', function(...$args) {
-            //$value1, $operator, $value2, $options
-            $options = array_pop($args);
-            $value2 = array_pop($args);
-            $operator = array_pop($args);
-
-            $value1 = array_shift($args);
-
-            foreach($args as $arg) {
-                if (isset($value1[$arg])) {
-                    $value1 = $value1[$arg];
-                }
-            }
-
-            $valid = false;
-
-            switch (true) {
-                case $operator == '=='   && $value1 == $value2:
-                case $operator == '==='  && $value1 === $value2:
-                case $operator == '!='   && $value1 != $value2:
-                case $operator == '!=='  && $value1 !== $value2:
-                case $operator == '<'    && $value1 < $value2:
-                case $operator == '<='   && $value1 <= $value2:
-                case $operator == '>'    && $value1 > $value2:
-                case $operator == '>='   && $value1 >= $value2:
-                case $operator == '&&'   && ($value1 && $value2):
-                case $operator == '||'   && ($value1 || $value2):
-                    $valid = true;
-                    break;
-            }
-
-            if($valid) {
-                return $options['fn']();
-            }
-
-            return $options['inverse']();
-        })
-        ->registerHelper('sorturl', function($key) {
-            $query = $_GET;
-            $value = null;
-            if(isset($query['order'][$key])) {
-                $value = $query['order'][$key];
-            }
-
-            if(is_null($value)) {
-                unset($query['order']);
-                $query['order'][$key] = 'ASC';
-            } else if($value === 'ASC') {
-                unset($query['order']);
-                $query['order'][$key] = 'DESC';
-            } else if($value === 'DESC') {
-                unset($query['order'][$key]);
-            }
-
-            return http_build_query($query);
-        })
-        ->registerHelper('sortcaret', function($key) {
-            $caret = null;
-            if(isset($_GET['order'][$key])
-                && $_GET['order'][$key] === 'ASC'
-            ) {
-                $caret = '<i class="fa fa-caret-up"></i>';
-            } else if(isset($_GET['order'][$key])
-                && $_GET['order'][$key] === 'DESC'
-            ) {
-                $caret = '<i class="fa fa-caret-down"></i>';
-            }
-
-            return $caret;
-        })
-        ->registerHelper('is_active', function($row, $schema, $options) {
-            if(!$schema['active'] || $row[$schema['active']]) {
-                return $options['fn']();
-            }
-
-            return $options['inverse']();
-        })
-        ->registerHelper('get_format', function($row, $schema, $options) {
-            $columns = [];
-
-            foreach($schema['fields'] as $name => $field) {
-                if(!in_array($name, $schema['listable'])) {
-                    continue;
-                }
-
-                if (!isset($row[$name])) {
-                    $row[$name] = null;
-                }
-
-                $field['list']['name'] = $name;
-                $field['list']['value'] = $row[$name];
-                $columns[] = $options['fn']($field['list']);
-            }
-
-            return implode('', $columns);
-        })
-        ->registerHelper('formula', function($parameter, $row) {
-            // extract data as variables
-            extract($row, EXTR_PREFIX_SAME, 'formula');
-
-            // create the expression
-            $expression = sprintf(
-                'return %s ;',
-                str_replace(['{{', '}}'], ['$', ''], $parameter)
-            );
-
-            // try to evaluate
-            try {
-                // i know that this is not safe but...
-                return eval($expression);
-            } catch(\Exception $e) {
-                return 0;
-            }
-        })
-        ->registerHelper('get_suggestion', function($schema, $row) {
-            return SystemSchema::i($schema)->getSuggestionFormat($row);
-        })
-        ->registerHelper('filtertoquery', function($key = null, $value = '') {
-            $query = $_GET;
-            $query['filter'][$key] = $value;
-            return http_build_query($query);
-        });
-
-    // cradle()->inspect($data['rows']);exit;
-
     //render the body
     $body = cradle('/module/system')->template('object/search', $data, [
-        'object_filters'
+        'object_search_head',
+        'object_search_form',
+        'object_search_filters',
+        'object_search_actions',
+        'object_search_row_format',
+        'object_search_row_actions'
     ]);
 
     //set content
@@ -381,157 +265,20 @@ $cradle->get('/admin/system/object/:schema/create', function($request, $response
     //set the class name
     $class = 'page-admin-system-object-create page-admin';
 
+    //set the action
+    $data['action'] = 'create';
+
     //determine the title
     $data['title'] = cradle('global')->translate(
         'Create %s',
         $data['schema']['singular']
     );
 
-    //add custom page helpers
-    cradle('global')
-        ->handlebars()
-        ->registerHelper('when', function(...$args) {
-            //$value1, $operator, $value2, $options
-            $options = array_pop($args);
-            $value2 = array_pop($args);
-            $operator = array_pop($args);
-
-            $value1 = array_shift($args);
-
-            foreach($args as $arg) {
-                if(!isset($value1[$arg])) {
-                    $value1 = null;
-                    break;
-                }
-
-                $value1 = $value1[$arg];
-            }
-
-            $valid = false;
-
-            switch (true) {
-                case $operator == '=='   && $value1 == $value2:
-                case $operator == '==='  && $value1 === $value2:
-                case $operator == '!='   && $value1 != $value2:
-                case $operator == '!=='  && $value1 !== $value2:
-                case $operator == '<'    && $value1 < $value2:
-                case $operator == '<='   && $value1 <= $value2:
-                case $operator == '>'    && $value1 > $value2:
-                case $operator == '>='   && $value1 >= $value2:
-                case $operator == '&&'   && ($value1 && $value2):
-                case $operator == '||'   && ($value1 || $value2):
-                    $valid = true;
-                    break;
-            }
-
-            if($valid) {
-                return $options['fn']();
-            }
-
-            return $options['inverse']();
-        })
-        ->registerHelper('loop', function(...$args) {
-            $args = func_get_args();
-
-            //$object, $options
-            $options = array_pop($args);
-            $object = array_shift($args);
-
-            foreach($args as $arg) {
-                if(!isset($object[$arg])) {
-                    $object = null;
-                    break;
-                }
-
-                $object = $object[$arg];
-            }
-
-            if (is_scalar($object) || !$object) {
-                return $options['inverse']();
-            }
-
-            //test foreach
-            $keyName = null;
-            $valueName = null;
-            //see handlebars.js {{#each array as |value, key|}}
-            if (strpos($options['args'], ' as |') !== false
-                && substr_count($options['args'], '|') === 2
-            ) {
-                list($tmp, $valueName) = explode('|', $options['args']);
-
-                if (strpos($valueName, ',') !== false) {
-                    list($valueName, $keyName) = explode(',', trim($valueName));
-                }
-
-                $keyName = trim($keyName);
-                $valueName = trim($valueName);
-            }
-
-            $buffer = [];
-            $object = (array) $object;
-
-            $first = $last = null;
-
-            if (!empty($object)) {
-                //get last
-                end($object);
-                $last = key($object);
-
-                //get first
-                reset($object);
-                $first = key($object);
-            }
-
-            $i = 0;
-            foreach ($object as $key => $value) {
-                //pass on hash
-                if (is_array($value)
-                    && isset($options['hash'])
-                    && is_array($options['hash'])
-                ) {
-                    $value = array_merge($value, $options['hash']);
-                }
-
-                if (!is_array($value)) {
-                    $value = ['this' => $value];
-                } else {
-                    $value['this'] = $value;
-                }
-
-                if ($valueName) {
-                    $value[$valueName] = $value['this'];
-                }
-
-                if ($keyName) {
-                    $value[$keyName] = $key;
-                }
-
-                $value['@index'] = $i;
-                $value['@key'] = $key;
-                $value['@first'] = $first == $key;
-                $value['@last'] = $last == $key;
-
-                $buffer[] = $options['fn']($value);
-                $i++;
-            }
-
-            return implode('', $buffer);
-        })
-        ->registerHelper('has', function($value, $array, $options) {
-            if(!is_array($array)) {
-                return $options['inverse']();
-            }
-
-            if(isset($array[$value])) {
-                return $options['fn']();
-            }
-
-            return $options['inverse']();
-        });
-
     //render the body
     $body = cradle('/module/system')->template('object/form', $data, [
-        'object_fields'
+        'object_form_fields',
+        'object_form_detail',
+        'object_form_format'
     ]);
 
     //set content
@@ -583,37 +330,39 @@ $cradle->get('/admin/system/object/:schema/update/:id', function($request, $resp
         $data['errors'] = $response->getValidation();
     }
 
-    //if no item
-    if(empty($data['item'])) {
-        //table_id, 1 for example
-        $request->setStage(
-            $schema->getPrimaryFieldName(),
-            $request->getStage('id')
+    //table_id, 1 for example
+    $request->setStage(
+        $schema->getPrimaryFieldName(),
+        $request->getStage('id')
+    );
+
+    //get the original table row
+    cradle()->trigger('system-object-detail', $request, $response);
+
+    //can we update ?
+    if($response->isError()) {
+        //redirect
+        $redirect = sprintf(
+            '/admin/system/object/%s/search',
+            $request->getStage('schema')
         );
 
-        //get the original table row
-        cradle()->trigger('system-object-detail', $request, $response);
-
-        //can we update ?
-        if($response->isError()) {
-            //redirect
-            $redirect = sprintf(
-                '/admin/system/object/%s/search',
-                $request->getStage('schema')
-            );
-
-            //this is for flexibility
-            if($request->hasStage('redirect_uri')) {
-                $redirect = $request->getStage('redirect_uri');
-            }
-
-            //add a flash
-            cradle('global')->flash($response->getMessage(), 'error');
-            return cradle('global')->redirect($redirect);
+        //this is for flexibility
+        if($request->hasStage('redirect_uri')) {
+            $redirect = $request->getStage('redirect_uri');
         }
 
+        //add a flash
+        cradle('global')->flash($response->getMessage(), 'error');
+        return cradle('global')->redirect($redirect);
+    }
+
+    $data['detail'] = $response->getResults();
+
+    //if no item
+    if(empty($data['item'])) {
         //pass the item to the template
-        $data['item'] = $response->getResults();
+        $data['item'] = $data['detail'];
 
         //add suggestion value for each relation
         foreach ($data['schema']['relations'] as $name => $relation) {
@@ -648,6 +397,9 @@ $cradle->get('/admin/system/object/:schema/update/:id', function($request, $resp
         return;
     }
 
+    //determine the suggestion
+    $data['detail']['suggestion'] = $schema->getSuggestionFormat($data['item']);
+
     //add CSRF
     cradle()->trigger('csrf-load', $request, $response);
     $data['csrf'] = $response->getResults('csrf');
@@ -676,160 +428,20 @@ $cradle->get('/admin/system/object/:schema/update/:id', function($request, $resp
     //set the class name
     $class = 'page-admin-system-object-update page-admin';
 
+    //set the action
+    $data['action'] = 'update';
+
     //determine the title
     $data['title'] = cradle('global')->translate(
         'Updating %s',
         $data['schema']['singular']
     );
 
-    //add custom page helpers
-    cradle('global')
-        ->handlebars()
-        ->registerHelper('when', function(...$args) {
-            //$value1, $operator, $value2, $options
-            $options = array_pop($args);
-            $value2 = array_pop($args);
-            $operator = array_pop($args);
-
-            $value1 = array_shift($args);
-
-            foreach($args as $arg) {
-                if(!isset($value1[$arg])) {
-                    $value1 = null;
-                    break;
-                }
-
-                $value1 = $value1[$arg];
-            }
-
-            $valid = false;
-
-            switch (true) {
-                case $operator == '=='   && $value1 == $value2:
-                case $operator == '==='  && $value1 === $value2:
-                case $operator == '!='   && $value1 != $value2:
-                case $operator == '!=='  && $value1 !== $value2:
-                case $operator == '<'    && $value1 < $value2:
-                case $operator == '<='   && $value1 <= $value2:
-                case $operator == '>'    && $value1 > $value2:
-                case $operator == '>='   && $value1 >= $value2:
-                case $operator == '&&'   && ($value1 && $value2):
-                case $operator == '||'   && ($value1 || $value2):
-                    $valid = true;
-                    break;
-            }
-
-            if($valid) {
-                return $options['fn']();
-            }
-
-            return $options['inverse']();
-        })
-        ->registerHelper('loop', function(...$args) {
-            $args = func_get_args();
-
-            //$object, $options
-            $options = array_pop($args);
-            $object = array_shift($args);
-
-            foreach($args as $arg) {
-                if(!isset($object[$arg])) {
-                    $object = null;
-                    break;
-                }
-
-                $object = $object[$arg];
-            }
-
-            if (is_scalar($object) || !$object) {
-                return $options['inverse']();
-            }
-
-            //test foreach
-            $keyName = null;
-            $valueName = null;
-            //see handlebars.js {{#each array as |value, key|}}
-            if (strpos($options['args'], ' as |') !== false
-                && substr_count($options['args'], '|') === 2
-            ) {
-                list($tmp, $valueName) = explode('|', $options['args']);
-
-                if (strpos($valueName, ',') !== false) {
-                    list($valueName, $keyName) = explode(',', trim($valueName));
-                }
-
-                $keyName = trim($keyName);
-                $valueName = trim($valueName);
-            }
-
-            $buffer = [];
-            $object = (array) $object;
-
-            $first = $last = null;
-
-            if (!empty($object)) {
-                //get last
-                end($object);
-                $last = key($object);
-
-                //get first
-                reset($object);
-                $first = key($object);
-            }
-
-            $i = 0;
-            foreach ($object as $key => $value) {
-                //pass on hash
-                if (is_array($value)
-                    && isset($options['hash'])
-                    && is_array($options['hash'])
-                ) {
-                    $value = array_merge($value, $options['hash']);
-                }
-
-                if (!is_array($value)) {
-                    $value = ['this' => $value];
-                } else {
-                    $value['this'] = $value;
-                }
-
-                if ($valueName) {
-                    $value[$valueName] = $value['this'];
-                }
-
-                if ($keyName) {
-                    $value[$keyName] = $key;
-                }
-
-                $value['@index'] = $i;
-                $value['@key'] = $key;
-                $value['@first'] = $first == $key;
-                $value['@last'] = $last == $key;
-
-                $buffer[] = $options['fn']($value);
-                $i++;
-            }
-
-            return implode('', $buffer);
-        })
-        ->registerHelper('get_suggestion', function($schema, $data) {
-            return SystemSchema::i($schema)->getSuggestionFormat($data);
-        })
-        ->registerHelper('has', function($value, $array, $options) {
-            if(!is_array($array)) {
-                return $options['inverse']();
-            }
-
-            if(isset($array[$value])) {
-                return $options['fn']();
-            }
-
-            return $options['inverse']();
-        });
-
     //render the body
     $body = cradle('/module/system')->template('object/form', $data, [
-        'object_fields'
+        'object_form_fields',
+        'object_form_detail',
+        'object_form_format'
     ]);
 
     //if we only want the body

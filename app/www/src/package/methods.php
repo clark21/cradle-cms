@@ -36,7 +36,14 @@ $cradle->package('/app/www')->addMethod('template', function (
     foreach ($partials as $partial) {
         //Sample: product_comment => product/_comment
         //Sample: flash => _flash
-        $file = str_replace('_', '/_', $partial) . '.html';
+        $partialPath = str_replace('_', '/', $partial);
+        $last = strrpos($partialPath, '/');
+
+        if($last !== false) {
+            $partialPath = substr_replace($partialPath, '/_', $last, 1);
+        }
+
+        $file = $partialPath . '.html';
 
         if (strpos($file, '_') === false) {
             $file = '_' . $file;

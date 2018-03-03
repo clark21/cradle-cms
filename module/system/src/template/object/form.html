@@ -12,12 +12,12 @@
                 </a>
             </li>
             <li class="breadcrumb-item">
-                <a href="/admin/system/object/{{relation.schema.name}}/update/{{key relation.schema.primary relation.data}}">
+                <a href="/admin/system/object/{{relation.schema.name}}/update/{{scope relation.data relation.schema.primary}}">
                     {{relation.suggestion}}
                 </a>
             </li>
             <li class="breadcrumb-item">
-                <a href="/admin/system/object/{{schema.name}}/search/{{relation.schema.name}}/{{key relation.schema.primary relation.data}}">
+                <a href="/admin/system/object/{{schema.name}}/search/{{relation.schema.name}}/{{scope relation.data relation.schema.primary}}">
                     <i class="fas fa-{{schema.icon}}"></i> {{schema.plural}}
                 </a>
             </li>
@@ -35,44 +35,9 @@
 </nav>
 
 <div class="main-padding">
-    <div class="relations-menu">
-        <div class="row">
-            <div class="col-sm">
-                {{#each schema.relations}}
-                    {{#when many '==' 1}}
-                    <span class="relation">
-                        <span class="font-weight-bold">{{singular}}:</span>
-                        <span>
-                            <a 
-                                href="/admin/system/object/{{name}}/update/{{key primary ../item}}" 
-                                target="_blank"
-                            >
-                                {{get_suggestion this ../item}}
-                            </a>
-                        </span>
-                        &nbsp;
-                    </span>
-                    {{/when}}
-                {{/each}}
-            </div>
-            <div class="col-sm text-right">
-                {{#each schema.relations}}
-                    {{#when many '==' 2}}
-                    <span class="relation">
-                        <span class="font-weight-bold">{{plural}}</span>
-                        <span>
-                            <a href="/admin/system/object/{{name}}/search/{{../schema.name}}/{{key primary ../item}}" target="_blank">
-                                View All {{plural}}
-                            </a>
-                        </span>
-                    </span>
-                    {{/when}}
-                {{/each}}
-            </div>
-        </div>
-    </div>
-
-    <hr />
+    {{#when action '===' 'update'}}
+        {{> object_form_detail}}
+    {{/when}}
 
     {{#if relation.suggestion}}
         <h3 class="main-title">
@@ -107,10 +72,11 @@
                 <i class="fa fa-plus"></i> {{title}}
             </div>
         </div>
+
         <div class="box-body box-padding">
             {{#each schema.relations}}
-                {{#in many '0,1'}}
-                    <div class="form-group{{#has primary2 ../errors}} has-error{{/has}}">
+                {{#when many '==' 0}}
+                    <div class="form-group{{#has ../errors primary2}} has-error{{/has}}">
                         <label class="control-label">{{singular}}</label>
                         <div>
                             <input
@@ -119,13 +85,31 @@
                                 name="{{suggestion_name}}"
                                 placeholder="Enter {{singular}}"
                                 type="text"
-                                value="{{key suggestion_name ../item}}"
+                                value="
+                                {{~#has suggestion_name ../item}}
+                                    {{~key suggestion_name ../item}}
+                                {{~else~}}
+                                    {{~#has name ../item}}
+                                        {{~#scope ../item name}}
+                                            {{~get_suggestion ../this this}}
+                                        {{~/scope~}}
+                                    {{~/has~}}
+                                {{~/has}}"
                             />
                             <input
                                 class="suggestion-value-{{name}}"
                                 name="{{primary2}}"
                                 type="hidden"
-                                value="{{key primary2 ../item}}"
+                                value="
+                                {{~#has primary2 ../item}}
+                                    {{~key primary2 ../item}}
+                                {{~else~}}
+                                    {{~#has name ../item}}
+                                        {{~#scope ../item name}}
+                                            {{~key ../primary2 this}}
+                                        {{~/scope~}}
+                                    {{~/has~}}
+                                {{~/has}}"
                             />
                             <div
                                 class="input-suggestion d-none"
@@ -133,33 +117,69 @@
                                 data-format="{{suggestion}}"
                                 data-target-label="input.suggestion-label-{{name}}"
                                 data-target-value="input.suggestion-value-{{name}}"
-                                {{#in name ../valid_relations}}
+                                {{#has ../valid_relations name}}
                                     data-url="/admin/system/object/{{name}}/search?q={QUERY}&render=false"
                                 {{else}}
                                     data-url="/admin/{{name}}/search?q={QUERY}&render=false"
-                                {{/in}}
+                                {{/has}}
                                 data-value="{{primary2}}"
                             ></div>
-                            {{#has primary2 ../errors}}
-                                <span class="help-text">{{key primary2 ../errors}}</span>
+                            {{#has ../errors primary2}}
+                                <span class="help-text">{{scope ../errors primary2}}</span>
                             {{/has}}
                         </div>
                     </div>
-                {{/in}}
+                {{/when}}
+                {{#when many '==' 1}}
+                    <div class="form-group{{#has ../errors primary2}} has-error{{/has}}">
+                        <label class="control-label">{{singular}}</label>
+                        <div>
+                            <input
+                                autocomplete="off"
+                                class="form-control suggestion-label-{{name}}"
+                                name="{{suggestion_name}}"
+                                placeholder="Enter {{singular}}"
+                                type="text"
+                                value="{{scope ../item suggestion_name}}"
+                            />
+                            <input
+                                class="suggestion-value-{{name}}"
+                                name="{{primary2}}"
+                                type="hidden"
+                                value="{{scope ../item primary2}}"
+                            />
+                            <div
+                                class="input-suggestion d-none"
+                                data-do="suggestion-field"
+                                data-format="{{suggestion}}"
+                                data-target-label="input.suggestion-label-{{name}}"
+                                data-target-value="input.suggestion-value-{{name}}"
+                                {{#has ../valid_relations name}}
+                                    data-url="/admin/system/object/{{name}}/search?q={QUERY}&render=false"
+                                {{else}}
+                                    data-url="/admin/{{name}}/search?q={QUERY}&render=false"
+                                {{/has}}
+                                data-value="{{primary2}}"
+                            ></div>
+                            {{#has ../errors primary2}}
+                                <span class="help-text">{{scope ../errors primary2}}</span>
+                            {{/has}}
+                        </div>
+                    </div>
+                {{/when}}
             {{/each}}
             {{#each schema.fields}}
-                {{#in field.type 'none,hide,active,created,updated'}}
-                {{else}}
-                    <div class="form-group{{#has @key ../errors}} has-error{{/has}}">
+                {{#hasnt 'none,hide,active,created,updated' field.type}}
+                    <div class="form-group{{#has ../errors @key}} has-error{{/has}}">
                         <label class="control-label">{{label}}</label>
                         <div>
-                            {{> object_fields}}
-                            {{#has @key ../errors}}
-                                <span class="help-text">{{key @key ../errors}}</span>
+                            {{> object_form_fields}}
+                            {{#has ../errors @key}}
+                                <span class="help-text">{{scope ../errors @key}}</span>
                             {{/has}}
                         </div>
                     </div>
-                {{/in}}
+                {{/hasnt}}
             {{/each}}
         </div>
         <div class="box-foot box-light">

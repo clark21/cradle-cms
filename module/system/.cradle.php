@@ -19,36 +19,49 @@ use Cradle\Module\Utility\ServiceFactory;
 ServiceFactory::register('object', ObjectService::class);
 ServiceFactory::register('system', SystemService::class);
 
-$cradle->package('/module/system')->addMethod('template', function (
-    $path,
-    array $data = array(),
-    $partials = array()
-) {
-    // get the root directory
-    $root = __DIR__ . '/src/template/';
-
-    //render
+$cradle->preprocess(function($request, $response) {
+    //add helpers
     $handlebars = cradle('global')->handlebars();
+    include __DIR__ . '/src/helpers.php';
 
-    // check for partials
-    if (!is_array($partials)) {
-        $partials = array($partials);
-    }
+    $this->package('/module/system')
+    /**
+     * Add Template Builder
+     *
+     */
+    ->addMethod('template', function ($file, array $data = [], $partials = []) {
+        // get the root directory
+        $root = __DIR__ . '/src/template/';
 
-    foreach ($partials as $partial) {
-        //Sample: product_comment => product/_comment
-        //Sample: flash => _flash
-        $file = str_replace('_', '/_', $partial) . '.html';
-
-        if (strpos($file, '_') === false) {
-            $file = '_' . $file;
+        // check for partials
+        if (!is_array($partials)) {
+            $partials = [$partials];
         }
 
-        // register the partial
-        $handlebars->registerPartial($partial, file_get_contents($root . $file));
-    }
+        $paths = [];
 
-    // set the main template
-    $template = $handlebars->compile(file_get_contents($root . $path . '.html'));
-    return $template($data);
+        foreach ($partials as $partial) {
+            //Sample: product_comment => product/_comment
+            //Sample: flash => _flash
+            $path = str_replace('_', '/', $partial);
+            $last = strrpos($path, '/');
+
+            if($last !== false) {
+                $path = substr_replace($path, '/_', $last, 1);
+            }
+
+            $path = $path . '.html';
+
+            if (strpos($path, '_') === false) {
+                $path = '_' . $path;
+            }
+
+            $paths[$partial] = $root . $path;
+        }
+
+        $file = $root . $file . '.html';
+
+        //render
+        return cradle('global')->template($file, $data, $paths);
+    });
 });

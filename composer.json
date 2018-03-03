@@ -21,7 +21,6 @@
         "cradlephp/sink-faucet": "dev-master",
         "cblanquera/cradle-captcha": "dev-master",
         "cblanquera/cradle-csrf": "dev-master",
-        "cblanquera/cradle-handlebars": "dev-master",
         "cblanquera/cradle-queue": "dev-master",
         "elasticsearch/elasticsearch": "2.2.2",
         "predis/predis": "1.1.1",

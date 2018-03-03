@@ -1,0 +1,81 @@
+<div class="row">
+    <div class="col-sm-6">
+        <div class="box">
+            <div class="box-head box-light">
+                <div class="box-title">{{detail.suggestion}}</div>
+            </div>
+            <div class="box-body box-padding">
+                <table class="table table-striped">
+                    <tbody>
+                        {{> object_form_format}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="box">
+            <div class="box-head box-light">
+                <div class="box-title">{{_ 'Relations'}}</div>
+            </div>
+            <div class="box-body box-padding">
+                <table class="table table-striped">
+                    <tbody>
+                        {{#each schema.relations}}
+                            {{#when many '==' 0}}
+                                {{#has ../detail name}}
+                                    {{#scope ../detail name}}
+                                        <tr>
+                                            <td>{{../singular}}</td>
+                                            <td>
+                                                <a
+                                                    href="/admin/system/object/{{../name}}/update/{{scope this ../primary}}"
+                                                    target="_blank"
+                                                >
+                                                    {{suggest ../this this}}
+                                                </a>
+                                                &nbsp;&nbsp;
+                                                <a
+                                                    class="text-pink remove"
+                                                    href="/admin/system/object/{{../../schema.name}}/{{scope ../../item ../../schema.primary}}/unlink/{{../name}}/{{scope this ../primary}}?redirect_uri={{../../redirect}}"
+                                                    title="Remove {{../singular}}"
+                                                >
+                                                    <i class="fa fa-unlink"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {{/scope}}
+                                {{/has}}
+                            {{/when}}
+                            {{#when many '==' 1}}
+                                {{#has ../detail primary}}
+                                    <tr>
+                                        <td>{{singular}}</td>
+                                        <td>
+                                            <a
+                                                href="/admin/system/object/{{name}}/update/{{scope ../detail primary}}"
+                                                target="_blank"
+                                            >
+                                                {{suggest this ../detail}}
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {{/has}}
+                            {{/when}}
+                            {{#when many '==' 2}}
+                                <tr>
+                                    <td>{{singular}}</td>
+                                    <td>
+                                        <a href="/admin/system/object/{{name}}/search/{{../schema.name}}/{{scope ../detail primary}}" target="_blank">
+                                            {{_ 'View All %s' plural}}
+                                        </a>
+                                    </td>
+                                </tr>
+                            {{/when}}
+                        {{/each}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

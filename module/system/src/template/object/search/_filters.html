@@ -1,38 +1,37 @@
 {{#each schema.fields}}
-    {{#in @key ../schema.filterable}}
-        {{#in field.type 'password,files,images,textarea,wysiwyg,markdown,none,hide,active'}}
-        {{else}}
+    {{#has ../schema.filterable @key}}
+        {{#hasnt 'password,files,images,textarea,wysiwyg,markdown,none,hide,active' field.type}}
             <div class="form-group">
                 <label for="filter[{{@key}}]">{{label}}</label>
-                {{#in field.type 'text,slug,file,image'}}
+                {{#has 'text,slug,file,image' field.type}}
                     <input
                         class="form-control"
                         name="filter[{{@key}}]"
                         type="text"
-                        value="{{key @key ../filter}}"
+                        value="{{scope ../filter @key}}"
                         {{#each field.attributes}}
                             {{@key}}="{{this}}"
                         {{/each}}
                     />
-                {{/in}}
-                {{#in field.type 'email,search,url,color,week,month'}}
+                {{/has}}
+                {{#has 'email,search,url,color,week,month' field.type}}
                     <input
                         class="form-control"
                         name="filter[{{@key}}]"
                         type="{{field.type}}"
-                        value="{{key @key ../filter}}"
+                        value="{{scope ../filter @key}}"
                         {{#each field.attributes}}
                             {{@key}}="{{this}}"
                         {{/each}}
                     />
-                {{/in}}
+                {{/has}}
                 {{#when field.type '===' 'mask'}}
                     <input
                         class="form-control"
                         data-do="mask-field"
                         name="filter[{{@key}}]"
                         type="text"
-                        value="{{key @key ../filter}}"
+                        value="{{scope ../filter @key}}"
                         {{#each field.attributes}}
                             {{@key}}="{{this}}"
                         {{/each}}
@@ -167,7 +166,7 @@
                         name="filter[{{@key}}]"
                         tabindex="-1"
                         type="hidden"
-                        value="{{key @key ../filter}}"
+                        value="{{scope ../filter @key}}"
                         {{#each field.attributes}}
                             {{@key}}="{{this}}"
                         {{/each}}
@@ -314,7 +313,7 @@
                         data-do="knob-field"
                         name="filter[{{@key}}]"
                         type="text"
-                        value="{{key @key ../filter}}"
+                        value="{{scope ../filter @key}}"
                         {{#each field.attributes}}
                             {{@key}}="{{this}}"
                         {{/each}}
@@ -424,13 +423,13 @@
                         name="filter[{{@key}}]"
                         tabindex="-1"
                         type="hidden"
-                        value="{{key @key ../filter}}"
+                        value="{{scope ../filter @key}}"
                         {{#each field.attributes}}
                             {{@key}}="{{this}}"
                         {{/each}}
                     />
                 {{/when}}
             </div>
-        {{/in}}
-    {{/in}}
+        {{/hasnt}}
+    {{/has}}
 {{/each}}

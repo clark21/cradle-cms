@@ -49,13 +49,13 @@
                     aria-expanded="false"
                 >
                     <img class="rounded-circle" src="/images/default-avatar.png" width="40" />
-                    Welcome {{#session 'me'}}{{user_name}}{{/session}}
+                    Welcome {{#request 'session' 'me'}}{{user_name}}{{/request}}
                 </a>
                 <div class="dropdown-menu">
                     <a class="dropdown-item" href="#">Action</a>
                     <a class="dropdown-item" href="#">Another action</a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="/logout?redirect_uri={{server 'REQUEST_URI'}}">Logout</a>
+                    <a class="dropdown-item" href="/logout?redirect_uri={{request 'server' 'REQUEST_URI'}}">Logout</a>
                 </div>
             </li>
         </ul>

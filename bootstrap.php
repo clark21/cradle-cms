@@ -17,7 +17,6 @@ return cradle()
     ->preprocess(include('bootstrap/roles.php'))
 
     //add packages here
-    ->register('cblanquera/cradle-handlebars')
     ->register('cblanquera/cradle-queue')
     ->register('cblanquera/cradle-csrf')
     ->register('cblanquera/cradle-captcha')
