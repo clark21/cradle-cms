@@ -39,7 +39,7 @@ $cradle->package('/app/www')->addMethod('template', function (
         $partialPath = str_replace('_', '/', $partial);
         $last = strrpos($partialPath, '/');
 
-        if($last !== false) {
+        if ($last !== false) {
             $partialPath = substr_replace($partialPath, '/_', $last, 1);
         }
 

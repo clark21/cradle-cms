@@ -13,7 +13,7 @@
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/system/template/:action', function($request, $response) {
+$cradle->get('/admin/system/template/:action', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     //only for admin
@@ -42,7 +42,7 @@ $cradle->get('/admin/system/template/:action', function($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/system/docs', function($request, $response) {
+$cradle->get('/admin/system/docs', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     //only for admin

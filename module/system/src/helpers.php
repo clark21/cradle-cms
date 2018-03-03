@@ -2,7 +2,7 @@
 
 use Cradle\Module\System\Schema;
 
-$handlebars->registerHelper('relations', function(...$args) {
+$handlebars->registerHelper('relations', function (...$args) {
     //resolve the arguments
     $options = array_pop($args);
     $schema = array_shift($args);
@@ -18,20 +18,20 @@ $handlebars->registerHelper('relations', function(...$args) {
     return $each($relations, $options);
 });
 
-$handlebars->registerHelper('suggest', function($schema, $row) {
+$handlebars->registerHelper('suggest', function ($schema, $row) {
     return Schema::i($schema)->getSuggestionFormat($row);
 });
 
-$handlebars->registerHelper('format', function($schema, $row, $type, $options) {
+$handlebars->registerHelper('format', function ($schema, $row, $type, $options) {
     $schema = Schema::i($schema);
     $fields = $schema->getFields();
 
-    if($type !== 'list') {
+    if ($type !== 'list') {
         $type = 'detail';
     }
 
     $formats = [];
-    foreach($fields as $name => $field) {
+    foreach ($fields as $name => $field) {
         $format = $field[$type];
         $format['name'] = $name;
         $format['label'] = $field['label'];
@@ -44,7 +44,7 @@ $handlebars->registerHelper('format', function($schema, $row, $type, $options) {
     return implode('', $formats);
 });
 
-$handlebars->registerHelper('schema_key', function($schema, $row, $key) {
+$handlebars->registerHelper('schema_key', function ($schema, $row, $key) {
     $schema = Schema::i($schema);
 
     switch ($key) {
@@ -73,9 +73,9 @@ $handlebars->registerHelper('schema_key', function($schema, $row, $key) {
     return false;
 });
 
-$handlebars->registerHelper('active', function($schema, $row, $options) {
+$handlebars->registerHelper('active', function ($schema, $row, $options) {
     $schemaKey = cradle('global')->handlebars()->getHelper('schema_key');
-    if(!$schemaKey($schema, $row, 'active')) {
+    if (!$schemaKey($schema, $row, 'active')) {
         return $options['fn']();
     }
 

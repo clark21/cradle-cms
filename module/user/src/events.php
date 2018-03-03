@@ -41,11 +41,11 @@ $cradle->on('user-create', function ($request, $response) {
     //----------------------------//
     // 3. Prepare Data
 
-    if(isset($data['user_meta'])) {
+    if (isset($data['user_meta'])) {
         $data['user_meta'] = json_encode($data['user_meta']);
     }
 
-    if(isset($data['user_files'])) {
+    if (isset($data['user_files'])) {
         $data['user_files'] = json_encode($data['user_files']);
     }
 
@@ -59,19 +59,19 @@ $cradle->on('user-create', function ($request, $response) {
     //save user to database
     $results = $userSql->create($data);
     //link comment
-    if(isset($data['comment_id'])) {
+    if (isset($data['comment_id'])) {
         $userSql->linkComment($results['user_id'], $data['comment_id']);
     }
     //link address
-    if(isset($data['address_id'])) {
+    if (isset($data['address_id'])) {
         $userSql->linkAddress($results['user_id'], $data['address_id']);
     }
     //link history
-    if(isset($data['history_id'])) {
+    if (isset($data['history_id'])) {
         $userSql->linkHistory($results['user_id'], $data['history_id']);
     }
     //link user
-    if(isset($data['user_id'])) {
+    if (isset($data['user_id'])) {
         $userSql->linkUser($results['user_id'], $data['user_id']);
     }
 
@@ -341,11 +341,11 @@ $cradle->on('user-update', function ($request, $response) {
     //----------------------------//
     // 3. Prepare Data
 
-    if(isset($data['user_meta'])) {
+    if (isset($data['user_meta'])) {
         $data['user_meta'] = json_encode($data['user_meta']);
     }
 
-    if(isset($data['user_files'])) {
+    if (isset($data['user_files'])) {
         $data['user_files'] = json_encode($data['user_files']);
     }
 
@@ -413,11 +413,11 @@ $cradle->on('user-import', function ($request, $response) {
     // There is no error,
     // So proceed on adding/updating the items one by one
     foreach ($data['rows'] as $i => $row) {
-        if(isset($row['user_created'])) {
+        if (isset($row['user_created'])) {
             unset($row['user_created']);
         }
 
-        if(isset($row['user_updated'])) {
+        if (isset($row['user_updated'])) {
             unset($row['user_updated']);
         }
 

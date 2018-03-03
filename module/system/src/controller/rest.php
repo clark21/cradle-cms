@@ -13,7 +13,7 @@
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/rest/system/object/:schema/search', function($request, $response) {
+$cradle->get('/rest/system/object/:schema/search', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     cradle()->trigger('system-rest-permitted', $request, $response);
@@ -50,7 +50,7 @@ $cradle->get('/rest/system/object/:schema/search', function($request, $response)
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/rest/system/object/:schema1/search/:schema2/:id', function($request, $response) {
+$cradle->get('/rest/system/object/:schema1/search/:schema2/:id', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     cradle()->trigger('system-rest-permitted', $request, $response);
@@ -84,7 +84,7 @@ $cradle->get('/rest/system/object/:schema1/search/:schema2/:id', function($reque
  * @param Request $request
  * @param Response $response
  */
-$cradle->post('/rest/system/object/:schema/search', function($request, $response) {
+$cradle->post('/rest/system/object/:schema/search', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     cradle()->trigger('system-rest-permitted', $request, $response);
@@ -125,7 +125,7 @@ $cradle->post('/rest/system/object/:schema/search', function($request, $response
  * @param Request $request
  * @param Response $response
  */
-$cradle->post('/rest/system/object/:schema1/search/:schema2/:id', function($request, $response) {
+$cradle->post('/rest/system/object/:schema1/search/:schema2/:id', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     cradle()->trigger('system-rest-permitted', $request, $response);
@@ -170,7 +170,7 @@ $cradle->post('/rest/system/object/:schema1/search/:schema2/:id', function($requ
  * @param Request $request
  * @param Response $response
  */
-$cradle->post('/rest/system/object/:schema/create', function($request, $response) {
+$cradle->post('/rest/system/object/:schema/create', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     cradle()->trigger('system-rest-permitted', $request, $response);
@@ -211,7 +211,7 @@ $cradle->post('/rest/system/object/:schema/create', function($request, $response
  * @param Request $request
  * @param Response $response
  */
-$cradle->post('/rest/system/object/:schema1/create/:schema2/:id', function($request, $response) {
+$cradle->post('/rest/system/object/:schema1/create/:schema2/:id', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     cradle()->trigger('system-rest-permitted', $request, $response);
@@ -256,7 +256,7 @@ $cradle->post('/rest/system/object/:schema1/create/:schema2/:id', function($requ
  * @param Request $request
  * @param Response $response
  */
-$cradle->post('/rest/system/object/:schema/update/:id', function($request, $response) {
+$cradle->post('/rest/system/object/:schema/update/:id', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     cradle()->trigger('system-rest-permitted', $request, $response);
@@ -286,7 +286,7 @@ $cradle->post('/rest/system/object/:schema/update/:id', function($request, $resp
         sprintf(
             '/admin/system/object/%s/update/%s',
             $request->getStage('schema'),
-            $request->getStage('id')            
+            $request->getStage('id')
         ),
         $request,
         $response
@@ -299,7 +299,7 @@ $cradle->post('/rest/system/object/:schema/update/:id', function($request, $resp
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/rest/system/object/:schema/remove/:id', function($request, $response) {
+$cradle->get('/rest/system/object/:schema/remove/:id', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     cradle()->trigger('system-rest-permitted', $request, $response);
@@ -319,7 +319,7 @@ $cradle->get('/rest/system/object/:schema/remove/:id', function($request, $respo
         sprintf(
             '/admin/system/object/%s/remove/%s',
             $request->getStage('schema'),
-            $request->getStage('id')            
+            $request->getStage('id')
         ),
         $request,
         $response
@@ -332,7 +332,7 @@ $cradle->get('/rest/system/object/:schema/remove/:id', function($request, $respo
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/rest/system/object/:schema/restore/:id', function($request, $response) {
+$cradle->get('/rest/system/object/:schema/restore/:id', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     cradle()->trigger('system-rest-permitted', $request, $response);
@@ -352,7 +352,7 @@ $cradle->get('/rest/system/object/:schema/restore/:id', function($request, $resp
         sprintf(
             '/admin/system/object/%s/restore/%s',
             $request->getStage('schema'),
-            $request->getStage('id')            
+            $request->getStage('id')
         ),
         $request,
         $response
@@ -365,7 +365,7 @@ $cradle->get('/rest/system/object/:schema/restore/:id', function($request, $resp
  * @param Request $request
  * @param Response $response
  */
-$cradle->post('/rest/system/object/:schema/import', function($request, $response) {
+$cradle->post('/rest/system/object/:schema/import', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     cradle()->trigger('system-rest-permitted', $request, $response);
@@ -384,7 +384,7 @@ $cradle->post('/rest/system/object/:schema/import', function($request, $response
         'post',
         sprintf(
             '/admin/system/object/%s/import',
-            $request->getStage('schema')     
+            $request->getStage('schema')
         ),
         $request,
         $response
@@ -397,7 +397,7 @@ $cradle->post('/rest/system/object/:schema/import', function($request, $response
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/rest/system/object/:schema/export/:type', function($request, $response) {
+$cradle->get('/rest/system/object/:schema/export/:type', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     cradle()->trigger('system-rest-permitted', $request, $response);
@@ -415,7 +415,7 @@ $cradle->get('/rest/system/object/:schema/export/:type', function($request, $res
         sprintf(
             '/admin/system/object/%s/export/%s',
             $request->getStage('schema'),
-            $request->getStage('type')    
+            $request->getStage('type')
         ),
         $request,
         $response

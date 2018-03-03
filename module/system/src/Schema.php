@@ -34,19 +34,19 @@ class Schema extends Registry
      */
     public function __construct($name)
     {
-        if($name instanceof \Closure) {
-            foreach(debug_backtrace() as $trace) {
+        if ($name instanceof \Closure) {
+            foreach (debug_backtrace() as $trace) {
                 echo $trace['file'] .' - ' . $trace['line'] . '<br />';
             }
         }
         $this->data = $name;
-        if(!is_array($this->data)) {
+        if (!is_array($this->data)) {
             $this->data = cradle()
                 ->package('global')
                 ->config('admin/schema/' . $name);
         }
 
-        if(!$this->data || empty($this->data)) {
+        if (!$this->data || empty($this->data)) {
             throw Exception::forSchemaNotFound($name);
         }
     }
@@ -60,15 +60,15 @@ class Schema extends Registry
      */
     public function getActiveFieldName()
     {
-        if(!isset($this->data['fields'])
+        if (!isset($this->data['fields'])
             || empty($this->data['fields'])
         ) {
             return false;
         }
 
         $table = $this->data['name'];
-        foreach($this->data['fields'] as $field) {
-            if($field['name'] === 'active') {
+        foreach ($this->data['fields'] as $field) {
+            if ($field['name'] === 'active') {
                 return $table . '_' . $field['name'];
             }
         }
@@ -117,13 +117,13 @@ class Schema extends Registry
      */
     public function getCreatedFieldName()
     {
-        if(!isset($this->data['fields']) || empty($this->data['fields'])) {
+        if (!isset($this->data['fields']) || empty($this->data['fields'])) {
             return false;
         }
 
         $table = $this->data['name'];
-        foreach($this->data['fields'] as $field) {
-            if($field['name'] === 'created') {
+        foreach ($this->data['fields'] as $field) {
+            if ($field['name'] === 'created') {
                 return $table . '_' . $field['name'];
             }
         }
@@ -139,15 +139,15 @@ class Schema extends Registry
     public function getDetailableFieldNames()
     {
         $results = [];
-        if(!isset($this->data['fields']) || empty($this->data['fields'])) {
+        if (!isset($this->data['fields']) || empty($this->data['fields'])) {
             return $results;
         }
 
         $table = $this->data['name'];
-        foreach($this->data['fields'] as $field) {
+        foreach ($this->data['fields'] as $field) {
             $name = $table . '_' . $field['name'];
 
-            if(isset($field['detail']['format'])
+            if (isset($field['detail']['format'])
                 && $field['detail']['format'] !== 'hide'
             ) {
                 $results[] = $name;
@@ -165,14 +165,14 @@ class Schema extends Registry
     public function getFilterableFieldNames()
     {
         $results = [];
-        if(!isset($this->data['fields']) || empty($this->data['fields'])) {
+        if (!isset($this->data['fields']) || empty($this->data['fields'])) {
             return $results;
         }
 
         $table = $this->data['name'];
-        foreach($this->data['fields'] as $field) {
+        foreach ($this->data['fields'] as $field) {
             $name = $table . '_' . $field['name'];
-            if(isset($field['filterable']) && $field['filterable']) {
+            if (isset($field['filterable']) && $field['filterable']) {
                 $results[] = $name;
             }
         }
@@ -188,14 +188,14 @@ class Schema extends Registry
     public function getFields()
     {
         $results = [];
-        if(!isset($this->data['fields'])
+        if (!isset($this->data['fields'])
             || empty($this->data['fields'])
         ) {
             return $results;
         }
 
         $table = $this->data['name'];
-        foreach($this->data['fields'] as $field) {
+        foreach ($this->data['fields'] as $field) {
             $name = $table . '_' . $field['name'];
             $results[$name] = $field;
         }
@@ -211,26 +211,25 @@ class Schema extends Registry
     public function getFileFieldNames()
     {
         $results = [];
-        if(!isset($this->data['fields'])
+        if (!isset($this->data['fields'])
             || empty($this->data['fields'])
         ) {
             return $results;
         }
 
         $table = $this->data['name'];
-        foreach($this->data['fields'] as $field) {
+        foreach ($this->data['fields'] as $field) {
             $name = $table . '_' . $field['name'];
 
-            if(
-                in_array(
-                    $field['field']['type'],
-                    [
+            if (in_array(
+                $field['field']['type'],
+                [
                         'file',
                         'image',
                         'files',
                         'images'
                     ]
-                )
+            )
             ) {
                 $results[] = $name;
             }
@@ -247,18 +246,17 @@ class Schema extends Registry
     public function getJsonFieldNames()
     {
         $results = [];
-        if(!isset($this->data['fields']) || empty($this->data['fields'])) {
+        if (!isset($this->data['fields']) || empty($this->data['fields'])) {
             return $results;
         }
 
         $table = $this->data['name'];
-        foreach($this->data['fields'] as $field) {
+        foreach ($this->data['fields'] as $field) {
             $name = $table . '_' . $field['name'];
 
-            if(
-                in_array(
-                    $field['field']['type'],
-                    [
+            if (in_array(
+                $field['field']['type'],
+                [
                         'files',
                         'images',
                         'tag',
@@ -266,7 +264,7 @@ class Schema extends Registry
                         'checkboxes',
                         'multirange'
                     ]
-                )
+            )
             ) {
                 $results[] = $name;
             }
@@ -283,15 +281,15 @@ class Schema extends Registry
     public function getListableFieldNames()
     {
         $results = [];
-        if(!isset($this->data['fields']) || empty($this->data['fields'])) {
+        if (!isset($this->data['fields']) || empty($this->data['fields'])) {
             return $results;
         }
 
         $table = $this->data['name'];
-        foreach($this->data['fields'] as $field) {
+        foreach ($this->data['fields'] as $field) {
             $name = $table . '_' . $field['name'];
 
-            if(isset($field['list']['format'])
+            if (isset($field['list']['format'])
                 && $field['list']['format'] !== 'hide'
             ) {
                 $results[] = $name;
@@ -321,7 +319,7 @@ class Schema extends Registry
     public function getRelations($many = -1)
     {
         $results = [];
-        if(!isset($this->data['relations'])
+        if (!isset($this->data['relations'])
             || empty($this->data['relations'])
         ) {
             return $results;
@@ -330,8 +328,8 @@ class Schema extends Registry
         $table = $this->getName();
         $primary = $this->getPrimaryFieldName();
 
-        foreach($this->data['relations'] as $relation) {
-            if($many != -1 && $many != $relation['many']) {
+        foreach ($this->data['relations'] as $relation) {
+            if ($many != -1 && $many != $relation['many']) {
                 continue;
             }
 
@@ -341,7 +339,7 @@ class Schema extends Registry
 
             try {
                 $results[$name] = Schema::i($relation['name'])->getAll(false);
-            } catch(Exception $e) {
+            } catch (Exception $e) {
                 //this is not a registered schema
                 //lets make a best guess
                 $results[$name]['name'] = $relation['name'];
@@ -355,7 +353,7 @@ class Schema extends Registry
             $results[$name]['many'] = $relation['many'];
 
             //case for relating to itself ie. post_post
-            if($table === $relation['name']) {
+            if ($table === $relation['name']) {
                 $results[$name]['primary1'] .= '_1';
                 $results[$name]['primary2'] .= '_2';
             }
@@ -372,12 +370,12 @@ class Schema extends Registry
     public function getRequiredFieldNames()
     {
         $results = [];
-        if(!isset($this->data['fields']) || empty($this->data['fields'])) {
+        if (!isset($this->data['fields']) || empty($this->data['fields'])) {
             return $results;
         }
 
         $table = $this->data['name'];
-        foreach($this->data['fields'] as $field) {
+        foreach ($this->data['fields'] as $field) {
             $name = $table . '_' . $field['name'];
             if (!isset($field['validation'])) {
                 continue;
@@ -411,21 +409,20 @@ class Schema extends Registry
         cradle()->trigger('system-schema-search', $request, $response);
         $rows = $response->getResults('rows');
 
-        if(empty($rows)) {
+        if (empty($rows)) {
             return $results;
         }
 
-        foreach($rows as $row) {
+        foreach ($rows as $row) {
             $schema = Schema::i($row['name']);
             $table = $row['name'] . '_' . $name;
             $relations = $schema->getRelations();
-            if(!isset($relations[$table]['many'])
+            if (!isset($relations[$table]['many'])
                 || (
                     $many != -1
                     && $many != $relations[$table]['many']
                 )
-            )
-            {
+            ) {
                 continue;
             }
 
@@ -444,14 +441,14 @@ class Schema extends Registry
     public function getSearchableFieldNames()
     {
         $results = [];
-        if(!isset($this->data['fields']) || empty($this->data['fields'])) {
+        if (!isset($this->data['fields']) || empty($this->data['fields'])) {
             return $results;
         }
 
         $table = $this->data['name'];
-        foreach($this->data['fields'] as $field) {
+        foreach ($this->data['fields'] as $field) {
             $name = $table . '_' . $field['name'];
-            if(isset($field['searchable']) && $field['searchable']) {
+            if (isset($field['searchable']) && $field['searchable']) {
                 $results[] = $name;
             }
         }
@@ -469,19 +466,19 @@ class Schema extends Registry
     public function getSlugableFieldNames($primary = false)
     {
         $results = [];
-        if($primary) {
+        if ($primary) {
             $results[] = $primary;
         }
 
-        if(!isset($this->data['fields']) || empty($this->data['fields'])) {
+        if (!isset($this->data['fields']) || empty($this->data['fields'])) {
             return $results;
         }
 
         $table = $this->data['name'];
-        foreach($this->data['fields'] as $field) {
+        foreach ($this->data['fields'] as $field) {
             $name = $table . '_' . $field['name'];
             if (isset($field['type'])) {
-                if($field['type'] === 'slug') {
+                if ($field['type'] === 'slug') {
                     $results[] = $name;
                 }
             }
@@ -504,14 +501,12 @@ class Schema extends Registry
             //use best guess
             $suggestion = null;
             foreach ($data as $key => $value) {
-                if(is_numeric($value)
+                if (is_numeric($value)
                     || (
                         isset($value[0])
                         && is_numeric($value[0])
                     )
-                )
-                {
-
+                ) {
                     continue;
                 }
 
@@ -520,7 +515,7 @@ class Schema extends Registry
             }
 
             //if still no suggestion
-            if(is_null($suggestion)) {
+            if (is_null($suggestion)) {
                 //just get the first one, i guess.
                 foreach ($data as $key => $value) {
                     $suggestion = $value;
@@ -544,14 +539,14 @@ class Schema extends Registry
     public function getSortableFieldNames()
     {
         $results = [];
-        if(!isset($this->data['fields']) || empty($this->data['fields'])) {
+        if (!isset($this->data['fields']) || empty($this->data['fields'])) {
             return $results;
         }
 
         $table = $this->data['name'];
-        foreach($this->data['fields'] as $field) {
+        foreach ($this->data['fields'] as $field) {
             $name = $table . '_' . $field['name'];
-            if(isset($field['sortable']) && $field['sortable']) {
+            if (isset($field['sortable']) && $field['sortable']) {
                 $results[] = $name;
             }
         }
@@ -567,12 +562,12 @@ class Schema extends Registry
     public function getUniqueFieldNames()
     {
         $results = [];
-        if(!isset($this->data['fields']) || empty($this->data['fields'])) {
+        if (!isset($this->data['fields']) || empty($this->data['fields'])) {
             return $results;
         }
 
         $table = $this->data['name'];
-        foreach($this->data['fields'] as $field) {
+        foreach ($this->data['fields'] as $field) {
             $name = $table . '_' . $field['name'];
             if (!isset($field['validation'])) {
                 continue;
@@ -595,13 +590,13 @@ class Schema extends Registry
      */
     public function getUpdatedFieldName()
     {
-        if(!isset($this->data['fields']) || empty($this->data['fields'])) {
+        if (!isset($this->data['fields']) || empty($this->data['fields'])) {
             return false;
         }
 
         $table = $this->data['name'];
-        foreach($this->data['fields'] as $field) {
-            if($field['name'] === 'updated') {
+        foreach ($this->data['fields'] as $field) {
+            if ($field['name'] === 'updated') {
                 return $table . '_' . $field['name'];
             }
         }
@@ -632,7 +627,7 @@ class Schema extends Registry
     {
         $service = Service::get($name, $key);
 
-        if($service instanceof NoopService) {
+        if ($service instanceof NoopService) {
             return $service;
         }
 
@@ -653,16 +648,15 @@ class Schema extends Registry
             'relations' => $this->getRelations()
         ];
 
-        foreach($this->data['fields'] as $field) {
-            if(!isset(self::$fieldTypes[$field['field']['type']])) {
+        foreach ($this->data['fields'] as $field) {
+            if (!isset(self::$fieldTypes[$field['field']['type']])) {
                 continue;
             }
 
             $name = $data['name'] . '_' . $field['name'];
             $format = self::$fieldTypes[$field['field']['type']];
 
-            if (
-                // if type is int or float
+            if (// if type is int or float
                 ($format['type'] === 'INT' || $format['type'] === 'FLOAT')
                 // and there's a min attribute
                 && isset($field['field']['attributes']['min'])

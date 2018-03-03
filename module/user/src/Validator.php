@@ -31,8 +31,8 @@ class Validator
      * @return array
      */
     public static function getCreateErrors(array $data, array $errors = [])
-    { 
-        if(!isset($data['user_name']) || empty($data['user_name'])) {
+    {
+        if (!isset($data['user_name']) || empty($data['user_name'])) {
             $errors['user_name'] = 'Name is required';
         }
                 
@@ -49,12 +49,12 @@ class Validator
      */
     public static function getUpdateErrors(array $data, array $errors = [])
     {
-        if(!isset($data['user_id']) || !is_numeric($data['user_id'])) {
+        if (!isset($data['user_id']) || !is_numeric($data['user_id'])) {
             $errors['user_id'] = 'Invalid ID';
         }
 
         
-        if(isset($data['user_name']) && empty($data['user_name'])) {
+        if (isset($data['user_name']) && empty($data['user_name'])) {
             $errors['user_name'] = 'Name is required';
         }
                 

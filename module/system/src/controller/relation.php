@@ -19,7 +19,7 @@ use Cradle\Http\Response;
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/system/object/:schema1/search/:schema2/:id', function($request, $response) {
+$cradle->get('/admin/system/object/:schema1/search/:schema2/:id', function ($request, $response) {
     //variable list
     $id = $request->getStage('id');
     $schema1 = $request->getStage('schema1');
@@ -76,7 +76,7 @@ $cradle->get('/admin/system/object/:schema1/search/:schema2/:id', function($requ
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/system/object/:schema1/create/:schema2/:id', function($request, $response) {
+$cradle->get('/admin/system/object/:schema1/create/:schema2/:id', function ($request, $response) {
     //variable list
     $id = $request->getStage('id');
     $schema1 = $request->getStage('schema1');
@@ -133,7 +133,7 @@ $cradle->get('/admin/system/object/:schema1/create/:schema2/:id', function($requ
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/system/object/:schema1/:id/link/:schema2', function($request, $response) {
+$cradle->get('/admin/system/object/:schema1/:id/link/:schema2', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     $request->setStage('redirect', '/admin/system/object/' . $request->getStage('schema') . '/search');
@@ -170,7 +170,7 @@ $cradle->get('/admin/system/object/:schema1/:id/link/:schema2', function($reques
     );
 
     //if there is a specified redirect
-    if($request->hasStage('redirect_uri')) {
+    if ($request->hasStage('redirect_uri')) {
         //set the redirect
         $redirect = $request->getStage('redirect_uri');
     }
@@ -184,7 +184,7 @@ $cradle->get('/admin/system/object/:schema1/:id/link/:schema2', function($reques
         $message = cradle('global')->translate('Relation does not exist');
 
         //if we dont want to redirect
-        if($redirect === 'false') {
+        if ($redirect === 'false') {
             return $response->setError(true, $message);
         }
 
@@ -207,7 +207,7 @@ $cradle->get('/admin/system/object/:schema1/:id/link/:schema2', function($reques
     cradle()->trigger('system-object-detail', $request, $response);
 
     //can we update ?
-    if($response->isError()) {
+    if ($response->isError()) {
         //add a flash
         cradle('global')->flash($response->getMessage(), 'error');
         return cradle('global')->redirect($redirect);
@@ -231,7 +231,7 @@ $cradle->get('/admin/system/object/:schema1/:id/link/:schema2', function($reques
     //determine valid relations
     $data['valid_relations'] = [];
     cradle()->trigger('system-schema-search', $request, $response);
-    foreach($response->getResults('rows') as $relation) {
+    foreach ($response->getResults('rows') as $relation) {
         $data['valid_relations'][] = $relation['name'];
     }
 
@@ -250,7 +250,7 @@ $cradle->get('/admin/system/object/:schema1/:id/link/:schema2', function($reques
     $body = cradle('/module/system')->template('object/link', $data);
 
     //if we only want the body
-    if($request->getStage('render') === 'body') {
+    if ($request->getStage('render') === 'body') {
         return;
     }
 
@@ -270,7 +270,7 @@ $cradle->get('/admin/system/object/:schema1/:id/link/:schema2', function($reques
  * @param Request $request
  * @param Response $response
  */
-$cradle->post('/admin/system/object/:schema1/search/:schema2/:id', function($request, $response) {
+$cradle->post('/admin/system/object/:schema1/search/:schema2/:id', function ($request, $response) {
     //variable list
     $id = $request->getStage('id');
     $schema1 = SystemSchema::i($request->getStage('schema1'));
@@ -285,7 +285,7 @@ $cradle->post('/admin/system/object/:schema1/search/:schema2/:id', function($req
     );
 
     //if there is a specified redirect
-    if($request->hasStage('redirect_uri')) {
+    if ($request->hasStage('redirect_uri')) {
         //set the redirect
         $redirect = $request->getStage('redirect_uri');
     }
@@ -313,7 +313,7 @@ $cradle->post('/admin/system/object/:schema1/search/:schema2/:id', function($req
  * @param Request $request
  * @param Response $response
  */
-$cradle->post('/admin/system/object/:schema1/create/:schema2/:id', function($request, $response) {
+$cradle->post('/admin/system/object/:schema1/create/:schema2/:id', function ($request, $response) {
     //variable list
     $id = $request->getStage('id');
     $schema1 = SystemSchema::i($request->getStage('schema1'));
@@ -328,7 +328,7 @@ $cradle->post('/admin/system/object/:schema1/create/:schema2/:id', function($req
     );
 
     //if there is a specified redirect
-    if($request->hasStage('redirect_uri')) {
+    if ($request->hasStage('redirect_uri')) {
         //set the redirect
         $redirect = $request->getStage('redirect_uri');
     }
@@ -389,13 +389,14 @@ $cradle->post('/admin/system/object/:schema1/create/:schema2/:id', function($req
     cradle()->trigger('system-object-link', $request, $response);
 
     //if we dont want to redirect
-    if($redirect === 'false') {
+    if ($redirect === 'false') {
         return;
     }
 
     //add a flash
     cradle('global')->flash(sprintf(
-        '%s was Created', 'success',
+        '%s was Created',
+        'success',
         $schema1->getSingular()
     ));
 
@@ -408,7 +409,7 @@ $cradle->post('/admin/system/object/:schema1/create/:schema2/:id', function($req
  * @param Request $request
  * @param Response $response
  */
-$cradle->post('/admin/system/object/:schema1/:id/link/:schema2', function($request, $response) {
+$cradle->post('/admin/system/object/:schema1/:id/link/:schema2', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     //only for admin
@@ -436,7 +437,7 @@ $cradle->post('/admin/system/object/:schema1/:id/link/:schema2', function($reque
     //----------------------------//
     // 4. Interpret Results
     //if the event returned an error
-    if($response->isError()) {
+    if ($response->isError()) {
         //determine route
         $route = sprintf(
             '/admin/system/object/%s/%s/link/%s',
@@ -446,7 +447,7 @@ $cradle->post('/admin/system/object/:schema1/:id/link/:schema2', function($reque
         );
 
         //this is for flexibility
-        if($request->hasStage('route')) {
+        if ($request->hasStage('route')) {
             $route = $request->getStage('route');
         }
 
@@ -463,13 +464,13 @@ $cradle->post('/admin/system/object/:schema1/:id/link/:schema2', function($reque
     );
 
     //if there is a specified redirect
-    if($request->hasStage('redirect_uri')) {
+    if ($request->hasStage('redirect_uri')) {
         //set the redirect
         $redirect = $request->getStage('redirect_uri');
     }
 
     //if we dont want to redirect
-    if($redirect === 'false') {
+    if ($redirect === 'false') {
         return;
     }
 
@@ -504,7 +505,7 @@ $cradle->post('/admin/system/object/:schema1/:id/link/:schema2', function($reque
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/system/object/:schema1/:id1/unlink/:schema2/:id2', function($request, $response) {
+$cradle->get('/admin/system/object/:schema1/:id1/unlink/:schema2/:id2', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     //only for admin
@@ -540,17 +541,17 @@ $cradle->get('/admin/system/object/:schema1/:id1/unlink/:schema2/:id2', function
     );
 
     //if there is a specified redirect
-    if($request->hasStage('redirect_uri')) {
+    if ($request->hasStage('redirect_uri')) {
         //set the redirect
         $redirect = $request->getStage('redirect_uri');
     }
 
     //if we dont want to redirect
-    if($redirect === 'false') {
+    if ($redirect === 'false') {
         return;
     }
 
-    if($response->isError()) {
+    if ($response->isError()) {
         //add a flash
         cradle('global')->flash($response->getMessage(), 'error');
     } else {
@@ -586,7 +587,7 @@ $cradle->get('/admin/system/object/:schema1/:id1/unlink/:schema2/:id2', function
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/system/object/:schema1/export/:schema2/:id/:type', function($request, $response) {
+$cradle->get('/admin/system/object/:schema1/export/:schema2/:id/:type', function ($request, $response) {
     //variable list
     $id = $request->getStage('id');
     $schema1 = $request->getStage('schema1');

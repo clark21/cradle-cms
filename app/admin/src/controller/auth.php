@@ -13,7 +13,7 @@
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/auth/search', function($request, $response) {
+$cradle->get('/admin/auth/search', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     if (!cradle('/module/role')->hasPermissions($request, $response)) {
@@ -23,19 +23,19 @@ $cradle->get('/admin/auth/search', function($request, $response) {
     //----------------------------//
     // 2. Prepare Data
 
-    if(!$request->hasStage('range')) {
+    if (!$request->hasStage('range')) {
         $request->setStage('range', 50);
     }
 
     //filter possible filter options
     //we do this to prevent SQL injections
-    if(is_array($request->getStage('filter'))) {
+    if (is_array($request->getStage('filter'))) {
         $filterable = [
             'auth_active'
         ];
 
-        foreach($request->getStage('filter') as $key => $value) {
-            if(!in_array($key, $filterable)) {
+        foreach ($request->getStage('filter') as $key => $value) {
+            if (!in_array($key, $filterable)) {
                 $request->removeStage('filter', $key);
             }
         }
@@ -45,7 +45,7 @@ $cradle->get('/admin/auth/search', function($request, $response) {
     cradle()->trigger('auth-search', $request, $response);
 
     //if we only want the raw data
-    if($request->getStage('render') === 'false') {
+    if ($request->getStage('render') === 'false') {
         return;
     }
 
@@ -64,7 +64,7 @@ $cradle->get('/admin/auth/search', function($request, $response) {
         ->setContent($body);
 
     //if we only want the body
-    if($request->getStage('render') === 'body') {
+    if ($request->getStage('render') === 'body') {
         return;
     }
 
@@ -78,7 +78,7 @@ $cradle->get('/admin/auth/search', function($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/auth/create', function($request, $response) {
+$cradle->get('/admin/auth/create', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     // set redirect
@@ -99,7 +99,8 @@ $cradle->get('/admin/auth/create', function($request, $response) {
     //for ?copy=1 functionality
     if (empty($data['item']) && is_numeric($request->getStage('copy'))) {
         //table_id, 1 for example
-        $request->setStage('auth_id',
+        $request->setStage(
+            'auth_id',
             $request->getStage('copy')
         );
 
@@ -107,7 +108,7 @@ $cradle->get('/admin/auth/create', function($request, $response) {
         cradle()->trigger('auth-detail', $request, $response);
 
         //can we update ?
-        if($response->isError()) {
+        if ($response->isError()) {
             //add a flash
             cradle('global')->flash($response->getMessage(), 'error');
             return cradle('global')->redirect('/admin/auth/search');
@@ -131,7 +132,7 @@ $cradle->get('/admin/auth/create', function($request, $response) {
         ->setContent($body);
 
     //if we only want the body
-    if($request->getStage('render') === 'body') {
+    if ($request->getStage('render') === 'body') {
         return;
     }
 
@@ -145,7 +146,7 @@ $cradle->get('/admin/auth/create', function($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/auth/update/:id', function($request, $response) {
+$cradle->get('/admin/auth/update/:id', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     // set redirect
@@ -164,11 +165,11 @@ $cradle->get('/admin/auth/update/:id', function($request, $response) {
     $request->setStage('auth_id', $authId);
 
     //if no item
-    if(empty($data['item'])) {
+    if (empty($data['item'])) {
         cradle()->trigger('auth-detail', $request, $response);
 
         //can we update ?
-        if($response->isError()) {
+        if ($response->isError()) {
             //add a flash
             cradle('global')->flash($response->getMessage(), 'danger');
             return cradle('global')->redirect('/admin/auth/search');
@@ -177,7 +178,7 @@ $cradle->get('/admin/auth/update/:id', function($request, $response) {
         $data['item'] = $response->getResults();
     }
 
-    if($response->isError()) {
+    if ($response->isError()) {
         $response->setFlash($response->getMessage(), 'danger');
         $data['errors'] = $response->getValidation();
     }
@@ -195,7 +196,7 @@ $cradle->get('/admin/auth/update/:id', function($request, $response) {
         ->setContent($body);
 
     //if we only want the body
-    if($request->getStage('render') === 'body') {
+    if ($request->getStage('render') === 'body') {
         return;
     }
 
@@ -209,7 +210,7 @@ $cradle->get('/admin/auth/update/:id', function($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->post('/admin/auth/search', function($request, $response) {
+$cradle->post('/admin/auth/search', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     // set redirect
@@ -225,7 +226,7 @@ $cradle->post('/admin/auth/search', function($request, $response) {
     $route = '/admin/auth/search';
 
     //this is for flexibility
-    if($request->hasStage('route')) {
+    if ($request->hasStage('route')) {
         $route = $request->getStage('route');
     }
 
@@ -260,7 +261,7 @@ $cradle->post('/admin/auth/search', function($request, $response) {
                 return cradle()->triggerRoute('get', $route, $request, $response);
         }
 
-        if($response->isError()) {
+        if ($response->isError()) {
             $errors[] = $response->getMessage();
         } else {
             cradle()->log(
@@ -281,13 +282,13 @@ $cradle->post('/admin/auth/search', function($request, $response) {
     $redirect = '/admin/auth/search';
 
     //if there is a specified redirect
-    if($request->hasStage('redirect_uri')) {
+    if ($request->hasStage('redirect_uri')) {
         //set the redirect
         $redirect = $request->getStage('redirect_uri');
     }
 
     //if we dont want to redirect
-    if($redirect === 'false') {
+    if ($redirect === 'false') {
         return;
     }
 
@@ -317,7 +318,7 @@ $cradle->post('/admin/auth/search', function($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->post('/admin/auth/create', function($request, $response) {
+$cradle->post('/admin/auth/create', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     // set redirect
@@ -346,12 +347,12 @@ $cradle->post('/admin/auth/create', function($request, $response) {
 
     //----------------------------//
     // 4. Interpret Results
-    if($response->isError()) {
+    if ($response->isError()) {
         //determine route
         $route = '/admin/auth/create';
 
         //this is for flexibility
-        if($request->hasStage('route')) {
+        if ($request->hasStage('route')) {
             $route = $request->getStage('route');
         }
 
@@ -373,13 +374,13 @@ $cradle->post('/admin/auth/create', function($request, $response) {
     $redirect = '/admin/auth/search';
 
     //if there is a specified redirect
-    if($request->hasStage('redirect_uri')) {
+    if ($request->hasStage('redirect_uri')) {
         //set the redirect
         $redirect = $request->getStage('redirect_uri');
     }
 
     //if we dont want to redirect
-    if($redirect === 'false') {
+    if ($redirect === 'false') {
         return;
     }
 
@@ -398,7 +399,7 @@ $cradle->post('/admin/auth/create', function($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->post('/admin/auth/update/:id', function($request, $response) {
+$cradle->post('/admin/auth/update/:id', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     // set redirect
@@ -431,12 +432,12 @@ $cradle->post('/admin/auth/update/:id', function($request, $response) {
 
     //----------------------------//
     // 4. Interpret Results
-    if($response->isError()) {
+    if ($response->isError()) {
         //determine route
         $route = '/admin/auth/update';
 
         //this is for flexibility
-        if($request->hasStage('route')) {
+        if ($request->hasStage('route')) {
             $route = $request->getStage('route');
         }
 
@@ -458,13 +459,13 @@ $cradle->post('/admin/auth/update/:id', function($request, $response) {
     $redirect = '/admin/auth/search';
 
     //if there is a specified redirect
-    if($request->hasStage('redirect_uri')) {
+    if ($request->hasStage('redirect_uri')) {
         //set the redirect
         $redirect = $request->getStage('redirect_uri');
     }
 
     //if we dont want to redirect
-    if($redirect === 'false') {
+    if ($redirect === 'false') {
         return;
     }
 
@@ -483,7 +484,7 @@ $cradle->post('/admin/auth/update/:id', function($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/auth/remove/:id', function($request, $response) {
+$cradle->get('/admin/auth/remove/:id', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     // set redirect
@@ -507,17 +508,17 @@ $cradle->get('/admin/auth/remove/:id', function($request, $response) {
     $redirect = '/admin/auth/search';
 
     //if there is a specified redirect
-    if($request->hasStage('redirect_uri')) {
+    if ($request->hasStage('redirect_uri')) {
         //set the redirect
         $redirect = $request->getStage('redirect_uri');
     }
 
     //if we dont want to redirect
-    if($redirect === 'false') {
+    if ($redirect === 'false') {
         return;
     }
 
-    if($response->isError()) {
+    if ($response->isError()) {
         //add a flash
         cradle('global')->flash($response->getMessage(), 'error');
     } else {
@@ -545,7 +546,7 @@ $cradle->get('/admin/auth/remove/:id', function($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/auth/restore/:id', function($request, $response) {
+$cradle->get('/admin/auth/restore/:id', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     if (!cradle('/module/role')->hasPermissions($request, $response)) {
@@ -567,17 +568,17 @@ $cradle->get('/admin/auth/restore/:id', function($request, $response) {
     $redirect = '/admin/auth/search';
 
     //if there is a specified redirect
-    if($request->hasStage('redirect_uri')) {
+    if ($request->hasStage('redirect_uri')) {
         //set the redirect
         $redirect = $request->getStage('redirect_uri');
     }
 
     //if we dont want to redirect
-    if($redirect === 'false') {
+    if ($redirect === 'false') {
         return;
     }
 
-    if($response->isError()) {
+    if ($response->isError()) {
         //add a flash
         cradle('global')->flash($response->getMessage(), 'error');
     } else {
@@ -606,7 +607,7 @@ $cradle->get('/admin/auth/restore/:id', function($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->post('/admin/auth/import', function($request, $response) {
+$cradle->post('/admin/auth/import', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     // set redirect
@@ -628,21 +629,21 @@ $cradle->post('/admin/auth/import', function($request, $response) {
     $redirect = '/admin/auth/search';
 
     //if there is a specified redirect
-    if($request->hasStage('redirect_uri')) {
+    if ($request->hasStage('redirect_uri')) {
         //set the redirect
         $redirect = $request->getStage('redirect_uri');
     }
 
     //if we dont want to redirect
-    if($redirect === 'false') {
+    if ($redirect === 'false') {
         return;
     }
 
     //if the import event returned errors
-    if($response->isError()) {
+    if ($response->isError()) {
         $errors = [];
         //loop through each row
-        foreach($response->getValidation() as $i => $validation) {
+        foreach ($response->getValidation() as $i => $validation) {
             //and loop through each error
             foreach ($validation as $key => $error) {
                 //add the error
@@ -662,7 +663,8 @@ $cradle->post('/admin/auth/import', function($request, $response) {
     }
 
     //record logs
-    cradle()->log('Auths was Imported',
+    cradle()->log(
+        'Auths was Imported',
         $request,
         $response
     );
@@ -680,7 +682,7 @@ $cradle->post('/admin/auth/import', function($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/auth/export/:type', function($request, $response) {
+$cradle->get('/admin/auth/export/:type', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     // set redirect
@@ -690,7 +692,8 @@ $cradle->get('/admin/auth/export/:type', function($request, $response) {
     }
 
     //record logs
-    cradle()->log('Auths was Exported',
+    cradle()->log(
+        'Auths was Exported',
         $request,
         $response
     );
@@ -699,15 +702,15 @@ $cradle->get('/admin/auth/export/:type', function($request, $response) {
     // 2. Prepare Data
     //filter possible filter options
     //we do this to prevent SQL injections
-    if(is_array($request->getStage('filter'))) {
+    if (is_array($request->getStage('filter'))) {
         $filterable = [
             'auth_id',
             'auth_slug',
             'user_name'
         ];
 
-        foreach($request->getStage('filter') as $key => $value) {
-            if(!in_array($key, $filterable)) {
+        foreach ($request->getStage('filter') as $key => $value) {
+            if (!in_array($key, $filterable)) {
                 $request->removeStage('filter', $key);
             }
         }
@@ -715,14 +718,14 @@ $cradle->get('/admin/auth/export/:type', function($request, $response) {
 
     //filter possible sort options
     //we do this to prevent SQL injections
-    if(is_array($request->getStage('order'))) {
+    if (is_array($request->getStage('order'))) {
         $sortable = [
             'auth_slug',
             'user_name'
         ];
 
-        foreach($request->getStage('order') as $key => $value) {
-            if(!in_array($key, $sortable)) {
+        foreach ($request->getStage('order') as $key => $value) {
+            if (!in_array($key, $sortable)) {
                 $request->removeStage('order', $key);
             }
         }
@@ -739,9 +742,9 @@ $cradle->get('/admin/auth/export/:type', function($request, $response) {
     $filename = 'Auths-' . date('Y-m-d');
 
     //if the output type is csv
-    if($type === 'csv') {
+    if ($type === 'csv') {
         //if there are no rows
-        if(empty($rows)) {
+        if (empty($rows)) {
             //at least give the headers
             $rows = [
                 'auth_id',
@@ -749,7 +752,6 @@ $cradle->get('/admin/auth/export/:type', function($request, $response) {
                 'user_name',
                 'auth_type',
             ];
-
         } else {
             //add the headers
             array_unshift($rows, array_keys($rows[0]));
@@ -764,7 +766,7 @@ $cradle->get('/admin/auth/export/:type', function($request, $response) {
         //open a tmp file
         $file = tmpfile();
         //for each row
-        foreach($rows as $row) {
+        foreach ($rows as $row) {
             $row['user_meta'] = !empty($row['user_meta']) ? json_encode($row['user_meta']) : '';
             $row['user_files'] = !empty($row['user_files']) ? json_encode($row['user_files']) : '';
 
@@ -790,15 +792,15 @@ $cradle->get('/admin/auth/export/:type', function($request, $response) {
     }
 
     //if the output type is xml
-    if($type === 'xml') {
+    if ($type === 'xml') {
         //recursive xml parser
-        $toXml = function($array, $xml) use (&$toXml) {
+        $toXml = function ($array, $xml) use (&$toXml) {
             //for each array
-            foreach($array as $key => $value) {
+            foreach ($array as $key => $value) {
                 //if the value is an array
-                if(is_array($value)) {
+                if (is_array($value)) {
                     //if the key is not a number
-                    if(!is_numeric($key)) {
+                    if (!is_numeric($key)) {
                         //send it out for further processing (recursive)
                         $toXml($value, $xml->addChild($key));
                         continue;

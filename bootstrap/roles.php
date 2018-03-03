@@ -10,12 +10,12 @@ return function () {
      * @param *string $role
      * @param Request $request
      */
-    ->addMethod('role', function($role, $request) {
+    ->addMethod('role', function ($role, $request) {
         // get session
         $session = $request->getSession('me');
 
         // if session is empty ignore
-        if(empty($session) || !isset($session)) {
+        if (empty($session) || !isset($session)) {
             return;
         }
 
@@ -23,7 +23,7 @@ return function () {
         $permissions = $session['role_permissions'];
 
         // if role is set
-        if(in_array($role, $permissions)) {
+        if (in_array($role, $permissions)) {
             return true;
         }
 

@@ -30,7 +30,7 @@ $cradle->get('/', function ($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/download', function($request, $response) {
+$cradle->get('/download', function ($request, $response) {
     $location = $request->getStage('location');
     $filename = $request->getStage('filename');
 

@@ -13,8 +13,8 @@ use Cradle\Module\Utility\File;
  *
  * @return string
  */
-$handlebars->registerHelper('capital', function($string, $options) {
-    if($options == 1) {
+$handlebars->registerHelper('capital', function ($string, $options) {
+    if ($options == 1) {
         return ucfirst($string);
     }
 
@@ -81,9 +81,9 @@ $handlebars->registerHelper('words', function ($value, $length) {
  *
  * @return string
  */
-$handlebars->registerHelper('strip', function($html, $options) {
+$handlebars->registerHelper('strip', function ($html, $options) {
     $allowable = '<p><b><em><i><strong><b><br><u><ul><li><ol>';
-    if(is_string($options)) {
+    if (is_string($options)) {
         $allowable = $options;
     }
 
@@ -100,9 +100,9 @@ $handlebars->registerHelper('strip', function($html, $options) {
  *
  * @return string
  */
-$handlebars->registerHelper('number', function($number, $options) {
+$handlebars->registerHelper('number', function ($number, $options) {
     $decimals = 0;
-    if(is_numeric($options)) {
+    if (is_numeric($options)) {
         $decimals = $options;
     }
 
@@ -116,7 +116,7 @@ $handlebars->registerHelper('number', function($number, $options) {
  *
  * @return string
  */
-$handlebars->registerHelper('price', function($price, $options) {
+$handlebars->registerHelper('price', function ($price, $options) {
     return number_format((float) $price, 2);
 });
 
@@ -128,11 +128,11 @@ $handlebars->registerHelper('price', function($price, $options) {
  *
  * @return string
  */
-$handlebars->registerHelper('formula', function($template, $variables = []) {
+$handlebars->registerHelper('formula', function ($template, $variables = []) {
     $compiler = cradle('global')->handlebars()->getHelper('compile');
     $formula = $compiler($template, $variables);
 
-    if(preg_match('/[a-zA-Z]/', $formula)) {
+    if (preg_match('/[a-zA-Z]/', $formula)) {
         return cradle('global')->translate('Invalid Formaula');
     }
 
@@ -155,7 +155,7 @@ $handlebars->registerHelper('formula', function($template, $variables = []) {
  *
  * @return string
  */
-$handlebars->registerHelper('date', function($time, $format, $options) {
+$handlebars->registerHelper('date', function ($time, $format, $options) {
     return date($format, strtotime($time));
 });
 
@@ -167,7 +167,7 @@ $handlebars->registerHelper('date', function($time, $format, $options) {
  *
  * @return string
  */
-$handlebars->registerHelper('relative', function($date, $options) {
+$handlebars->registerHelper('relative', function ($date, $options) {
     $settings = cradle('global')->config('settings');
     $timezone = new Timezone($settings['server_timezone'], $date);
     $offset = $timezone->getOffset();
@@ -188,7 +188,7 @@ $handlebars->registerHelper('relative', function($date, $options) {
 
         $relative = str_replace(' ', '', $relative);
 
-        if(!preg_match('/^[0-9]+[a-z]+$/', $relative)) {
+        if (!preg_match('/^[0-9]+[a-z]+$/', $relative)) {
             return '';
         }
     }
@@ -206,14 +206,14 @@ $handlebars->registerHelper('relative', function($date, $options) {
  *
  * @return string
  */
-$handlebars->registerHelper('join', function(array $list, $separator, $options) {
-    foreach($list as $i => $variable) {
-        if(is_string($variable)) {
+$handlebars->registerHelper('join', function (array $list, $separator, $options) {
+    foreach ($list as $i => $variable) {
+        if (is_string($variable)) {
             $list[$i] = "'".$variable."'";
             continue;
         }
 
-        if(is_array($variable)) {
+        if (is_array($variable)) {
             $list[$i] = "'".implode(',', $variable)."'";
         }
     }
@@ -229,7 +229,7 @@ $handlebars->registerHelper('join', function(array $list, $separator, $options) 
  *
  * @return [BLOCK]
  */
-$handlebars->registerHelper('split', function($string, $separator, $options) {
+$handlebars->registerHelper('split', function ($string, $separator, $options) {
     $list = explode($separator, $string);
     $list['this'] = $list;
     return $options['fn']($list);
@@ -243,7 +243,7 @@ $handlebars->registerHelper('split', function($string, $separator, $options) {
  *
  * @return [BLOCK]
  */
-$handlebars->registerHelper('scope', function(...$args) {
+$handlebars->registerHelper('scope', function (...$args) {
     $options = array_pop($args);
     $array = array_shift($args);
     if (!is_array($array)) {
@@ -259,7 +259,7 @@ $handlebars->registerHelper('scope', function(...$args) {
     if (!is_array($scope)) {
         $scope = ['this' => $scope];
         $results = $options['fn']($scope);
-        if(!$results) {
+        if (!$results) {
             return $scope['this'];
         }
     }
@@ -282,11 +282,11 @@ $handlebars->registerHelper('scope', function(...$args) {
  *
  * @return string
  */
-$handlebars->registerHelper('query', function(...$args) {
+$handlebars->registerHelper('query', function (...$args) {
     $options = array_pop($args);
     $query = cradle()->getRequest()->getGet();
 
-    if(count($args) === 1) {
+    if (count($args) === 1) {
         return $query[$args];
     }
 
@@ -310,7 +310,7 @@ $handlebars->registerHelper('query', function(...$args) {
  *
  * @return string
  */
-$handlebars->registerHelper('sorturl', function(...$args) {
+$handlebars->registerHelper('sorturl', function (...$args) {
     $options = array_pop($args);
     $query = cradle()->getRequest()->getGet();
     $registry = Registry::i($query);
@@ -320,16 +320,16 @@ $handlebars->registerHelper('sorturl', function(...$args) {
         $value = $registry->get(...$args);
     }
 
-    if(count($args) > 1) {
+    if (count($args) > 1) {
         $key = array_pop($args);
         $registry->remove(...$args);
         $args[] = $key;
     }
 
-    if(is_null($value)) {
+    if (is_null($value)) {
         $args[] = 'ASC';
         $registry->set(...$args);
-    } else if($value === 'ASC') {
+    } else if ($value === 'ASC') {
         $args[] = 'DESC';
         $registry->set(...$args);
     }
@@ -344,7 +344,7 @@ $handlebars->registerHelper('sorturl', function(...$args) {
  *
  * @return string
  */
-$handlebars->registerHelper('sortcaret', function(...$args) {
+$handlebars->registerHelper('sortcaret', function (...$args) {
     $options = array_pop($args);
     $request = cradle()->getRequest();
 
@@ -354,9 +354,9 @@ $handlebars->registerHelper('sortcaret', function(...$args) {
     }
 
     $caret = null;
-    if($value === 'ASC') {
+    if ($value === 'ASC') {
         $caret = '<i class="fas fa-caret-up"></i>';
-    } else if($value === 'DESC') {
+    } else if ($value === 'DESC') {
         $caret = '<i class="fas fa-caret-down"></i>';
     }
 
@@ -371,15 +371,15 @@ $handlebars->registerHelper('sortcaret', function(...$args) {
  *
  * @return [BLOCK]
  */
-$handlebars->registerHelper('pager', function($total, $range, $options) {
-    if($range == 0) {
+$handlebars->registerHelper('pager', function ($total, $range, $options) {
+    if ($range == 0) {
         return '';
     }
 
     $show = 10;
     $start = 0;
 
-    if(isset($_GET['start']) && is_numeric($_GET['start'])) {
+    if (isset($_GET['start']) && is_numeric($_GET['start'])) {
         $start = $_GET['start'];
     }
 
@@ -389,22 +389,22 @@ $handlebars->registerHelper('pager', function($total, $range, $options) {
     $min     = $page - $show;
     $max     = $page + $show;
 
-    if($min < 1) {
+    if ($min < 1) {
         $min = 1;
     }
 
-    if($max > $pages) {
+    if ($max > $pages) {
         $max = $pages;
     }
 
     //if no pages
-    if($pages <= 1) {
+    if ($pages <= 1) {
         return $options['inverse']();
     }
 
     $buffer = array();
 
-    for($i = $min; $i <= $max; $i++) {
+    for ($i = $min; $i <= $max; $i++) {
         $_GET['start'] = ($i -1) * $range;
 
         $buffer[] = $options['fn'](array(
@@ -428,7 +428,7 @@ $handlebars->registerHelper('pager', function($total, $range, $options) {
  *
  * @return [BLOCK]
  */
-$handlebars->registerHelper('when', function(...$args) {
+$handlebars->registerHelper('when', function (...$args) {
     //$value1, $operator, $value2, $options
     $options = array_pop($args);
     $value2 = array_pop($args);
@@ -436,8 +436,8 @@ $handlebars->registerHelper('when', function(...$args) {
 
     $value1 = array_shift($args);
 
-    foreach($args as $arg) {
-        if(!isset($value1[$arg])) {
+    foreach ($args as $arg) {
+        if (!isset($value1[$arg])) {
             $value1 = null;
             break;
         }
@@ -462,7 +462,7 @@ $handlebars->registerHelper('when', function(...$args) {
             break;
     }
 
-    if($valid) {
+    if ($valid) {
         return $options['fn']();
     }
 
@@ -478,7 +478,7 @@ $handlebars->registerHelper('when', function(...$args) {
  *
  * @return [BLOCK]
  */
-$handlebars->registerHelper('otherwise', function($value1, $operator, $value2, $options) {
+$handlebars->registerHelper('otherwise', function ($value1, $operator, $value2, $options) {
     $valid = false;
 
     switch (true) {
@@ -496,7 +496,7 @@ $handlebars->registerHelper('otherwise', function($value1, $operator, $value2, $
             break;
     }
 
-    if($valid) {
+    if ($valid) {
         return $options['inverse']();
     }
 
@@ -511,16 +511,16 @@ $handlebars->registerHelper('otherwise', function($value1, $operator, $value2, $
  *
  * @return [BLOCK]
  */
-$handlebars->registerHelper('has', function($array, $value, $options) {
-    if(is_string($array)) {
+$handlebars->registerHelper('has', function ($array, $value, $options) {
+    if (is_string($array)) {
         $array = explode(',', $array);
     }
 
-    if(!is_array($array)) {
+    if (!is_array($array)) {
         return $options['inverse']();
     }
 
-    if(in_array($value, $array)) {
+    if (in_array($value, $array)) {
         return $options['fn']();
     }
 
@@ -535,16 +535,16 @@ $handlebars->registerHelper('has', function($array, $value, $options) {
  *
  * @return [BLOCK]
  */
-$handlebars->registerHelper('hasnt', function($array, $value, $options) {
-    if(is_string($array)) {
+$handlebars->registerHelper('hasnt', function ($array, $value, $options) {
+    if (is_string($array)) {
         $array = explode(',', $array);
     }
 
-    if(!is_array($array)) {
+    if (!is_array($array)) {
         return $options['fn']();
     }
 
-    if(in_array($value, $array)) {
+    if (in_array($value, $array)) {
         return $options['inverse']();
     }
 
@@ -561,7 +561,7 @@ $handlebars->registerHelper('hasnt', function($array, $value, $options) {
  *
  * @return string
  */
-$handlebars->registerHelper('compile', function($template, $variables) {
+$handlebars->registerHelper('compile', function ($template, $variables) {
     $template = cradle('global')->handlebars()->compile($template);
     return $template($variables);
 });
@@ -574,7 +574,7 @@ $handlebars->registerHelper('compile', function($template, $variables) {
  *
  * @return string
  */
-$handlebars->registerHelper('partial', function($name, $variables) {
+$handlebars->registerHelper('partial', function ($name, $variables) {
     $handlebars = cradle('global')->handlebars();
     $partial = $handlebars->getPartial($name);
     $template = $handlebars->compile($partial);
@@ -586,13 +586,13 @@ $handlebars->registerHelper('partial', function($name, $variables) {
  *
  * @param *mixed[..mixed] Variables to output
  */
-$handlebars->registerHelper('inspect', function(...$args) {
+$handlebars->registerHelper('inspect', function (...$args) {
     $options = array_pop($args);
 
     $template = '<h6>Argument %s:</h6><pre class="inspector">%s</pre>';
 
     $inspectors = [];
-    foreach($args as $i => $arg) {
+    foreach ($args as $i => $arg) {
         $inspectors[] = sprintf($template, $i, var_export($arg, true));
     }
 
@@ -609,7 +609,7 @@ $handlebars->registerHelper('inspect', function(...$args) {
  *
  * @return [BLOCK]
  */
-$handlebars->registerHelper('fileinfo', function($file, $options) {
+$handlebars->registerHelper('fileinfo', function ($file, $options) {
     $info = [
         'name' => $file,
         'base' => basename($file),
@@ -631,14 +631,14 @@ $handlebars->registerHelper('fileinfo', function($file, $options) {
  *
  * @return mixed
  */
-$handlebars->registerHelper('settings', function($key, $options) {
+$handlebars->registerHelper('settings', function ($key, $options) {
     $settings = cradle('global')->config('settings');
 
-    if(!isset($settings[$key])) {
+    if (!isset($settings[$key])) {
         return $options['inverse']();
     }
 
-    if(is_object($settings[$key]) || is_array($settings[$key])) {
+    if (is_object($settings[$key]) || is_array($settings[$key])) {
         return $options['fn']((array) $settings[$key]);
     }
 
@@ -652,16 +652,16 @@ $handlebars->registerHelper('settings', function($key, $options) {
  *
  * @return mixed|[BLOCK]
  */
-$handlebars->registerHelper('request', function(...$args) {
+$handlebars->registerHelper('request', function (...$args) {
     $options = array_pop($args);
 
     $results = cradle()->getRequest()->get(...$args);
 
-    if(!$results) {
+    if (!$results) {
         return $options['inverse']();
     }
 
-    if(is_object($results) || is_array($results)) {
+    if (is_object($results) || is_array($results)) {
         return $options['fn']((array) $results);
     }
 
@@ -675,16 +675,16 @@ $handlebars->registerHelper('request', function(...$args) {
  *
  * @return mixed|[BLOCK]
  */
-$handlebars->registerHelper('response', function(...$args) {
+$handlebars->registerHelper('response', function (...$args) {
     $options = array_pop($args);
 
     $results = cradle()->getResponse()->get(...$args);
 
-    if(!$results) {
+    if (!$results) {
         return $options['inverse']();
     }
 
-    if(is_object($results) || is_array($results)) {
+    if (is_object($results) || is_array($results)) {
         return $options['fn']((array) $results);
     }
 
@@ -699,19 +699,19 @@ $handlebars->registerHelper('response', function(...$args) {
  *
  * @return string
  */
-$handlebars->registerHelper('_', function($key) {
+$handlebars->registerHelper('_', function ($key) {
     $args = func_get_args();
     $key = array_shift($args);
     $options = array_pop($args);
 
     $more = explode(' __ ', $options['fn']());
 
-    foreach($more as $arg) {
+    foreach ($more as $arg) {
         $args[] = $arg;
     }
 
-    foreach($args as $i => $arg) {
-        if(is_null($arg)) {
+    foreach ($args as $i => $arg) {
+        if (is_null($arg)) {
             $args[$i] = '';
         }
     }
@@ -727,19 +727,19 @@ $handlebars->registerHelper('_', function($key) {
  *
  * @return string
  */
-$handlebars->registerHelper('i18n', function($key) {
+$handlebars->registerHelper('i18n', function ($key) {
     $args = func_get_args();
     $key = array_shift($args);
     $options = array_pop($args);
 
     $more = explode(' __ ', $options['fn']());
 
-    foreach($more as $arg) {
+    foreach ($more as $arg) {
         $args[] = $arg;
     }
 
-    foreach($args as $i => $arg) {
-        if(is_null($arg)) {
+    foreach ($args as $i => $arg) {
+        if (is_null($arg)) {
             $args[$i] = '';
         }
     }
@@ -755,19 +755,19 @@ $handlebars->registerHelper('i18n', function($key) {
  *
  * @return string
  */
-$handlebars->registerHelper('translate', function($key) {
+$handlebars->registerHelper('translate', function ($key) {
     $args = func_get_args();
     $key = array_shift($args);
     $options = array_pop($args);
 
     $more = explode(' __ ', $options['fn']());
 
-    foreach($more as $arg) {
+    foreach ($more as $arg) {
         $args[] = $arg;
     }
 
-    foreach($args as $i => $arg) {
-        if(is_null($arg)) {
+    foreach ($args as $i => $arg) {
+        if (is_null($arg)) {
             $args[$i] = '';
         }
     }

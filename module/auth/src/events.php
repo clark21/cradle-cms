@@ -40,7 +40,7 @@ $cradle->on('auth-create', function ($request, $response) {
 
     //----------------------------//
     // 3. Prepare Data
-    if(isset($data['auth_password'])) {
+    if (isset($data['auth_password'])) {
         $data['auth_password'] = md5(strtotime($data['auth_password']));
     }
 
@@ -55,27 +55,26 @@ $cradle->on('auth-create', function ($request, $response) {
     $results = $authSql->create($data);
 
     //link user
-    if(isset($data['user_id'])) {
+    if (isset($data['user_id'])) {
         $authSql->linkUser($results['auth_id'], $data['user_id']);
     }
 
     //create user
-    if(!isset($data['user_id'])) {
+    if (!isset($data['user_id'])) {
         // set user name
         $request->setStage('user_name', $request->getStage('auth_slug'));
 
         cradle()->trigger('user-create', $request, $response);
 
-        if($response->isError()) {
+        if ($response->isError()) {
             return;
         }
 
         $userResult = $response->getResults();
 
-        if(isset($userResult['user_id'])) {
+        if (isset($userResult['user_id'])) {
             $authSql->linkUser($results['auth_id'], $userResult['user_id']);
         }
-
     }
 
     //index auth
@@ -634,7 +633,7 @@ $cradle->on('auth-update', function ($request, $response) {
     //----------------------------//
     // 3. Prepare Data
 
-    if(isset($data['auth_password'])) {
+    if (isset($data['auth_password'])) {
         $data['auth_password'] = md5(strtotime($data['auth_password']));
     }
 
@@ -830,19 +829,19 @@ $cradle->on('auth-import', function ($request, $response) {
     // There is no error,
     // So proceed on adding/updating the items one by one
     foreach ($data['rows'] as $i => $row) {
-        if(isset($row['auth_created'])) {
+        if (isset($row['auth_created'])) {
             unset($row['auth_created']);
         }
 
-        if(isset($row['auth_updated'])) {
+        if (isset($row['auth_updated'])) {
             unset($row['auth_updated']);
         }
 
-        if(isset($row['user_created'])) {
+        if (isset($row['user_created'])) {
             unset($row['user_created']);
         }
 
-        if(isset($row['user_updated'])) {
+        if (isset($row['user_updated'])) {
             unset($row['user_updated']);
         }
 

@@ -13,7 +13,7 @@
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/system/menu', function($request, $response) {
+$cradle->get('/admin/system/menu', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     //only for admin
@@ -52,7 +52,7 @@ $cradle->get('/admin/system/menu', function($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->post('/admin/system/menu', function($request, $response) {
+$cradle->post('/admin/system/menu', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     //only for admin
@@ -66,7 +66,7 @@ $cradle->post('/admin/system/menu', function($request, $response) {
     //just add it to menu?
     $path = cradle('global')->path('config') . '/admin/menu.php';
 
-    if(!file_exists($path)) {
+    if (!file_exists($path)) {
         touch($path);
         chmod($path, 0777);
     }

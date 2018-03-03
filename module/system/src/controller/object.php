@@ -19,7 +19,7 @@ use Cradle\Http\Response;
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/system/object/:schema/search', function($request, $response) {
+$cradle->get('/admin/system/object/:schema/search', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     if (!cradle('/module/role')->hasPermissions($request, $response)) {
@@ -39,16 +39,16 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
     }
 
     //set a default range
-    if(!$request->hasStage('range')) {
+    if (!$request->hasStage('range')) {
         $request->setStage('range', 50);
     }
 
     //filter possible filter options
     //we do this to prevent SQL injections
-    if(is_array($request->getStage('filter'))) {
-        foreach($request->getStage('filter') as $key => $value) {
+    if (is_array($request->getStage('filter'))) {
+        foreach ($request->getStage('filter') as $key => $value) {
             //if invalid key format or there is no value
-            if(!preg_match('/^[a-zA-Z0-9_]+$/', $key) || !strlen($value)) {
+            if (!preg_match('/^[a-zA-Z0-9_]+$/', $key) || !strlen($value)) {
                 $request->removeStage('filter', $key);
             }
         }
@@ -56,9 +56,9 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
 
     //filter possible sort options
     //we do this to prevent SQL injections
-    if(is_array($request->getStage('order'))) {
-        foreach($request->getStage('order') as $key => $value) {
-            if(!preg_match('/^[a-zA-Z0-9_]+$/', $key)) {
+    if (is_array($request->getStage('order'))) {
+        foreach ($request->getStage('order') as $key => $value) {
+            if (!preg_match('/^[a-zA-Z0-9_]+$/', $key)) {
                 $request->removeStage('order', $key);
             }
         }
@@ -68,7 +68,7 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
     cradle()->trigger('system-object-search', $request, $response);
 
     //if we only want the raw data
-    if($request->getStage('render') === 'false') {
+    if ($request->getStage('render') === 'false') {
         return;
     }
 
@@ -85,11 +85,11 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
     $data['schema'] = $schema->getAll();
 
     //if there's an active field
-    if($data['schema']['active']) {
+    if ($data['schema']['active']) {
         //find it
-        foreach($data['schema']['filterable'] as $i => $filter) {
+        foreach ($data['schema']['filterable'] as $i => $filter) {
             //if we found it
-            if($filter === $data['schema']['active']) {
+            if ($filter === $data['schema']['active']) {
                 //remove it from the filters
                 unset($data['schema']['filterable'][$i]);
             }
@@ -100,8 +100,8 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
     }
 
     $data['filterable_relations'] = [];
-    foreach($data['schema']['relations'] as $relation) {
-        if($relation['many'] < 2) {
+    foreach ($data['schema']['relations'] as $relation) {
+        if ($relation['many'] < 2) {
             $data['filterable_relations'][] = $relation;
         }
     }
@@ -109,7 +109,7 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
     //determine valid relations
     $data['valid_relations'] = [];
     cradle()->trigger('system-schema-search', $request, $response);
-    foreach($response->getResults('rows') as $relation) {
+    foreach ($response->getResults('rows') as $relation) {
         $data['valid_relations'][] = $relation['name'];
     }
 
@@ -137,7 +137,7 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
         ->setContent($body);
 
     //if we only want the body
-    if($request->getStage('render') === 'body') {
+    if ($request->getStage('render') === 'body') {
         return;
     }
 
@@ -151,7 +151,7 @@ $cradle->get('/admin/system/object/:schema/search', function($request, $response
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/system/object/:schema/create', function($request, $response) {
+$cradle->get('/admin/system/object/:schema/create', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     // set redirect
@@ -191,7 +191,7 @@ $cradle->get('/admin/system/object/:schema/create', function($request, $response
         cradle()->trigger('system-object-detail', $request, $response);
 
         //can we update ?
-        if($response->isError()) {
+        if ($response->isError()) {
             //add a flash
             cradle('global')->flash($response->getMessage(), 'error');
             return cradle('global')->redirect(sprintf(
@@ -205,21 +205,21 @@ $cradle->get('/admin/system/object/:schema/create', function($request, $response
 
         //add suggestion value for each relation
         foreach ($data['schema']['relations'] as $name => $relation) {
-            if($relation['many'] == 2) {
+            if ($relation['many'] == 2) {
                 continue;
             }
 
             $suggestion = '_' . $relation['primary2'];
 
             $suggestionData = $data['item'];
-            if($relation['many'] == 0) {
-                if(!isset($data['item'][$relation['name']])) {
+            if ($relation['many'] == 0) {
+                if (!isset($data['item'][$relation['name']])) {
                     continue;
                 }
 
                 $suggestionData = $data['item'][$relation['name']];
 
-                if(!$suggestionData) {
+                if (!$suggestionData) {
                     continue;
                 }
             }
@@ -227,7 +227,8 @@ $cradle->get('/admin/system/object/:schema/create', function($request, $response
             try {
                 $data['item'][$suggestion] = SystemSchema::i($relation['name'])
                     ->getSuggestionFormat($suggestionData);
-            } catch(Exception $e) {}
+            } catch (Exception $e) {
+            }
         }
     }
 
@@ -256,7 +257,7 @@ $cradle->get('/admin/system/object/:schema/create', function($request, $response
     //determine valid relations
     $data['valid_relations'] = [];
     cradle()->trigger('system-schema-search', $request, $response);
-    foreach($response->getResults('rows') as $relation) {
+    foreach ($response->getResults('rows') as $relation) {
         $data['valid_relations'][] = $relation['name'];
     }
 
@@ -288,7 +289,7 @@ $cradle->get('/admin/system/object/:schema/create', function($request, $response
         ->setContent($body);
 
     //if we only want the body
-    if($request->getStage('render') === 'body') {
+    if ($request->getStage('render') === 'body') {
         return;
     }
 
@@ -302,7 +303,7 @@ $cradle->get('/admin/system/object/:schema/create', function($request, $response
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/system/object/:schema/update/:id', function($request, $response) {
+$cradle->get('/admin/system/object/:schema/update/:id', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     // set redirect
@@ -340,7 +341,7 @@ $cradle->get('/admin/system/object/:schema/update/:id', function($request, $resp
     cradle()->trigger('system-object-detail', $request, $response);
 
     //can we update ?
-    if($response->isError()) {
+    if ($response->isError()) {
         //redirect
         $redirect = sprintf(
             '/admin/system/object/%s/search',
@@ -348,7 +349,7 @@ $cradle->get('/admin/system/object/:schema/update/:id', function($request, $resp
         );
 
         //this is for flexibility
-        if($request->hasStage('redirect_uri')) {
+        if ($request->hasStage('redirect_uri')) {
             $redirect = $request->getStage('redirect_uri');
         }
 
@@ -360,27 +361,27 @@ $cradle->get('/admin/system/object/:schema/update/:id', function($request, $resp
     $data['detail'] = $response->getResults();
 
     //if no item
-    if(empty($data['item'])) {
+    if (empty($data['item'])) {
         //pass the item to the template
         $data['item'] = $data['detail'];
 
         //add suggestion value for each relation
         foreach ($data['schema']['relations'] as $name => $relation) {
-            if($relation['many'] == 2) {
+            if ($relation['many'] == 2) {
                 continue;
             }
 
             $suggestion = '_' . $relation['primary2'];
 
             $suggestionData = $data['item'];
-            if($relation['many'] == 0) {
-                if(!isset($data['item'][$relation['name']])) {
+            if ($relation['many'] == 0) {
+                if (!isset($data['item'][$relation['name']])) {
                     continue;
                 }
 
                 $suggestionData = $data['item'][$relation['name']];
 
-                if(!$suggestionData) {
+                if (!$suggestionData) {
                     continue;
                 }
             }
@@ -388,12 +389,13 @@ $cradle->get('/admin/system/object/:schema/update/:id', function($request, $resp
             try {
                 $data['item'][$suggestion] = SystemSchema::i($relation['name'])
                     ->getSuggestionFormat($suggestionData);
-            } catch(Exception $e) {}
+            } catch (Exception $e) {
+            }
         }
     }
 
     //if we only want the raw data
-    if($request->getStage('render') === 'false') {
+    if ($request->getStage('render') === 'false') {
         return;
     }
 
@@ -419,7 +421,7 @@ $cradle->get('/admin/system/object/:schema/update/:id', function($request, $resp
     //determine valid relations
     $data['valid_relations'] = [];
     cradle()->trigger('system-schema-search', $request, $response);
-    foreach($response->getResults('rows') as $relation) {
+    foreach ($response->getResults('rows') as $relation) {
         $data['valid_relations'][] = $relation['name'];
     }
 
@@ -445,7 +447,7 @@ $cradle->get('/admin/system/object/:schema/update/:id', function($request, $resp
     ]);
 
     //if we only want the body
-    if($request->getStage('render') === 'body') {
+    if ($request->getStage('render') === 'body') {
         return;
     }
 
@@ -465,7 +467,7 @@ $cradle->get('/admin/system/object/:schema/update/:id', function($request, $resp
  * @param Request $request
  * @param Response $response
  */
-$cradle->post('/admin/system/object/:schema/search', function($request, $response) {
+$cradle->post('/admin/system/object/:schema/search', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     // set redirect
@@ -486,7 +488,7 @@ $cradle->post('/admin/system/object/:schema/search', function($request, $respons
     );
 
     //this is for flexibility
-    if($request->hasStage('route')) {
+    if ($request->hasStage('route')) {
         $route = $request->getStage('route');
     }
 
@@ -521,7 +523,7 @@ $cradle->post('/admin/system/object/:schema/search', function($request, $respons
                 return cradle()->triggerRoute('get', $route, $request, $response);
         }
 
-        if($response->isError()) {
+        if ($response->isError()) {
             $errors[] = $response->getMessage();
         } else {
             cradle()->log(
@@ -546,13 +548,13 @@ $cradle->post('/admin/system/object/:schema/search', function($request, $respons
     );
 
     //if there is a specified redirect
-    if($request->hasStage('redirect_uri')) {
+    if ($request->hasStage('redirect_uri')) {
         //set the redirect
         $redirect = $request->getStage('redirect_uri');
     }
 
     //if we dont want to redirect
-    if($redirect === 'false') {
+    if ($redirect === 'false') {
         return;
     }
 
@@ -582,7 +584,7 @@ $cradle->post('/admin/system/object/:schema/search', function($request, $respons
  * @param Request $request
  * @param Response $response
  */
-$cradle->post('/admin/system/object/:schema/create', function($request, $response) {
+$cradle->post('/admin/system/object/:schema/create', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     // set redirect
@@ -603,28 +605,28 @@ $cradle->post('/admin/system/object/:schema/create', function($request, $respons
     $invalidTypes = ['none', 'active', 'created', 'updated'];
 
     //for each field
-    foreach($fields as $name => $field) {
+    foreach ($fields as $name => $field) {
         //if the field is invalid
-        if(in_array($field['field']['type'], $invalidTypes)) {
+        if (in_array($field['field']['type'], $invalidTypes)) {
             $request->removeStage($name);
             continue;
         }
 
         //if no value
-        if($request->hasStage($name) && !$request->getStage($name)) {
+        if ($request->hasStage($name) && !$request->getStage($name)) {
             //make it null
             $request->setStage($name, null);
             continue;
         }
 
-        if(//if there is a default
+        if (//if there is a default
             isset($field['default'])
             && trim($field['default'])
             // and there's no stage
             && $request->hasStage($name)
             && !$request->getStage($name)
         ) {
-            if(strtoupper($field['default']) === 'NOW()') {
+            if (strtoupper($field['default']) === 'NOW()') {
                 $field['default'] = date('Y-m-d H:i:s');
             }
 
@@ -649,7 +651,7 @@ $cradle->post('/admin/system/object/:schema/create', function($request, $respons
     //----------------------------//
     // 4. Interpret Results
     //if the event returned an error
-    if($response->isError()) {
+    if ($response->isError()) {
         //determine route
         $route = sprintf(
             '/admin/system/object/%s/create',
@@ -657,7 +659,7 @@ $cradle->post('/admin/system/object/:schema/create', function($request, $respons
         );
 
         //this is for flexibility
-        if($request->hasStage('route')) {
+        if ($request->hasStage('route')) {
             $route = $request->getStage('route');
         }
 
@@ -684,19 +686,20 @@ $cradle->post('/admin/system/object/:schema/create', function($request, $respons
     );
 
     //if there is a specified redirect
-    if($request->hasStage('redirect_uri')) {
+    if ($request->hasStage('redirect_uri')) {
         //set the redirect
         $redirect = $request->getStage('redirect_uri');
     }
 
     //if we dont want to redirect
-    if($redirect === 'false') {
+    if ($redirect === 'false') {
         return;
     }
 
     //add a flash
     cradle('global')->flash(sprintf(
-        '%s was Created', 'success',
+        '%s was Created',
+        'success',
         $schema->getSingular()
     ));
 
@@ -709,7 +712,7 @@ $cradle->post('/admin/system/object/:schema/create', function($request, $respons
  * @param Request $request
  * @param Response $response
  */
-$cradle->post('/admin/system/object/:schema/update/:id', function($request, $response) {
+$cradle->post('/admin/system/object/:schema/update/:id', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     // set redirect
@@ -736,28 +739,28 @@ $cradle->post('/admin/system/object/:schema/update/:id', function($request, $res
     $invalidTypes = ['none', 'active', 'created', 'updated'];
 
     //for each field
-    foreach($fields as $name => $field) {
+    foreach ($fields as $name => $field) {
         //if the field is invalid
-        if(in_array($field['field']['type'], $invalidTypes)) {
+        if (in_array($field['field']['type'], $invalidTypes)) {
             $request->removeStage($name);
             continue;
         }
 
         //if no value
-        if($request->hasStage($name) && !$request->getStage($name)) {
+        if ($request->hasStage($name) && !$request->getStage($name)) {
             //make it null
             $request->setStage($name, null);
             continue;
         }
 
-        if(//if there is a default
+        if (//if there is a default
             isset($field['default'])
             && trim($field['default'])
             // and there's no stage
             && $request->hasStage($name)
             && !$request->getStage($name)
         ) {
-            if(strtoupper($field['default']) === 'NOW()') {
+            if (strtoupper($field['default']) === 'NOW()') {
                 $field['default'] = date('Y-m-d H:i:s');
             }
 
@@ -774,7 +777,7 @@ $cradle->post('/admin/system/object/:schema/update/:id', function($request, $res
     //----------------------------//
     // 4. Interpret Results
     //if the event returned an error
-    if($response->isError()) {
+    if ($response->isError()) {
         //determine route
         $route = sprintf(
             '/admin/system/object/%s/update/%s',
@@ -783,7 +786,7 @@ $cradle->post('/admin/system/object/:schema/update/:id', function($request, $res
         );
 
         //this is for flexibility
-        if($request->hasStage('route')) {
+        if ($request->hasStage('route')) {
             $route = $request->getStage('route');
         }
 
@@ -811,19 +814,20 @@ $cradle->post('/admin/system/object/:schema/update/:id', function($request, $res
     );
 
     //if there is a specified redirect
-    if($request->hasStage('redirect_uri')) {
+    if ($request->hasStage('redirect_uri')) {
         //set the redirect
         $redirect = $request->getStage('redirect_uri');
     }
 
     //if we dont want to redirect
-    if($redirect === 'false') {
+    if ($redirect === 'false') {
         return;
     }
 
     //add a flash
     cradle('global')->flash(sprintf(
-        '%s was Updated', 'success',
+        '%s was Updated',
+        'success',
         $schema->getSingular()
     ));
 
@@ -836,7 +840,7 @@ $cradle->post('/admin/system/object/:schema/update/:id', function($request, $res
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/system/object/:schema/remove/:id', function($request, $response) {
+$cradle->get('/admin/system/object/:schema/remove/:id', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     // set redirect
@@ -869,17 +873,17 @@ $cradle->get('/admin/system/object/:schema/remove/:id', function($request, $resp
     );
 
     //if there is a specified redirect
-    if($request->hasStage('redirect_uri')) {
+    if ($request->hasStage('redirect_uri')) {
         //set the redirect
         $redirect = $request->getStage('redirect_uri');
     }
 
     //if we dont want to redirect
-    if($redirect === 'false') {
+    if ($redirect === 'false') {
         return;
     }
 
-    if($response->isError()) {
+    if ($response->isError()) {
         //add a flash
         cradle('global')->flash($response->getMessage(), 'error');
     } else {
@@ -908,7 +912,7 @@ $cradle->get('/admin/system/object/:schema/remove/:id', function($request, $resp
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/system/object/:schema/restore/:id', function($request, $response) {
+$cradle->get('/admin/system/object/:schema/restore/:id', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     // set redirect
@@ -941,17 +945,17 @@ $cradle->get('/admin/system/object/:schema/restore/:id', function($request, $res
     );
 
     //if there is a specified redirect
-    if($request->hasStage('redirect_uri')) {
+    if ($request->hasStage('redirect_uri')) {
         //set the redirect
         $redirect = $request->getStage('redirect_uri');
     }
 
     //if we dont want to redirect
-    if($redirect === 'false') {
+    if ($redirect === 'false') {
         return;
     }
 
-    if($response->isError()) {
+    if ($response->isError()) {
         //add a flash
         cradle('global')->flash($response->getMessage(), 'error');
     } else {
@@ -980,7 +984,7 @@ $cradle->get('/admin/system/object/:schema/restore/:id', function($request, $res
  * @param Request $request
  * @param Response $response
  */
-$cradle->post('/admin/system/object/:schema/import', function($request, $response) {
+$cradle->post('/admin/system/object/:schema/import', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     if (!cradle('/module/role')->hasPermissions($request, $response)) {
@@ -1018,21 +1022,21 @@ $cradle->post('/admin/system/object/:schema/import', function($request, $respons
     }
 
     //if there is a specified redirect
-    if($request->hasStage('redirect_uri')) {
+    if ($request->hasStage('redirect_uri')) {
         //set the redirect
         $redirect = $request->getStage('redirect_uri');
     }
 
     //if we dont want to redirect
-    if($redirect === 'false') {
+    if ($redirect === 'false') {
         return;
     }
 
     //if the import event returned errors
-    if($response->isError()) {
+    if ($response->isError()) {
         $errors = [];
         //loop through each row
-        foreach($response->getValidation() as $i => $validation) {
+        foreach ($response->getValidation() as $i => $validation) {
             //and loop through each error
             foreach ($validation as $key => $error) {
                 //add the error
@@ -1077,7 +1081,7 @@ $cradle->post('/admin/system/object/:schema/import', function($request, $respons
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/system/object/:schema/export/:type', function($request, $response) {
+$cradle->get('/admin/system/object/:schema/export/:type', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     // set redirect
@@ -1098,7 +1102,7 @@ $cradle->get('/admin/system/object/:schema/export/:type', function($request, $re
 
     //filter possible filter options
     //we do this to prevent SQL injections
-    if(is_array($request->getStage('filter'))) {
+    if (is_array($request->getStage('filter'))) {
         $filterable = $schema->getFilterableFieldNames();
 
         //allow relation primary
@@ -1106,8 +1110,8 @@ $cradle->get('/admin/system/object/:schema/export/:type', function($request, $re
             $filterable[] = $relation['schema']['primary'];
         }
 
-        foreach($request->getStage('filter') as $key => $value) {
-            if(!in_array($key, $filterable)) {
+        foreach ($request->getStage('filter') as $key => $value) {
+            if (!in_array($key, $filterable)) {
                 $request->removeStage('filter', $key);
             }
         }
@@ -1115,11 +1119,11 @@ $cradle->get('/admin/system/object/:schema/export/:type', function($request, $re
 
     //filter possible sort options
     //we do this to prevent SQL injections
-    if(is_array($request->getStage('order'))) {
+    if (is_array($request->getStage('order'))) {
         $sortable = $schema->getSortableFieldNames();
 
-        foreach($request->getStage('order') as $key => $value) {
-            if(!in_array($key, $sortable)) {
+        foreach ($request->getStage('order') as $key => $value) {
+            if (!in_array($key, $sortable)) {
                 $request->removeStage('order', $key);
             }
         }
@@ -1138,9 +1142,9 @@ $cradle->get('/admin/system/object/:schema/export/:type', function($request, $re
     $filename = $schema->getPlural() . '-' . date('Y-m-d');
 
     //if the output type is csv
-    if($type === 'csv') {
+    if ($type === 'csv') {
         //if there are no rows
-        if(empty($rows)) {
+        if (empty($rows)) {
             //at least give the headers
             $rows = [array_keys($schema->getFields())];
         } else {
@@ -1157,7 +1161,7 @@ $cradle->get('/admin/system/object/:schema/export/:type', function($request, $re
         //open a tmp file
         $file = tmpfile();
         //for each row
-        foreach($rows as $row) {
+        foreach ($rows as $row) {
             //add it to the tmp file as a csv
             fputcsv($file, array_values($row));
         }
@@ -1180,15 +1184,15 @@ $cradle->get('/admin/system/object/:schema/export/:type', function($request, $re
     }
 
     //if the output type is xml
-    if($type === 'xml') {
+    if ($type === 'xml') {
         //recursive xml parser
-        $toXml = function($array, $xml) use (&$toXml) {
+        $toXml = function ($array, $xml) use (&$toXml) {
             //for each array
-            foreach($array as $key => $value) {
+            foreach ($array as $key => $value) {
                 //if the value is an array
-                if(is_array($value)) {
+                if (is_array($value)) {
                     //if the key is not a number
-                    if(!is_numeric($key)) {
+                    if (!is_numeric($key)) {
                         //send it out for further processing (recursive)
                         $toXml($value, $xml->addChild($key));
                         continue;

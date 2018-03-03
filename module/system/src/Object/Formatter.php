@@ -50,19 +50,20 @@ class Formatter
      *
      * @return array
      */
-    public function formatData(array $data, $s3 = false, $upload = null) {
+    public function formatData(array $data, $s3 = false, $upload = null)
+    {
         $fields = $this->schema->getFields();
         $table = $this->schema->getName();
 
-        foreach($fields as $field) {
+        foreach ($fields as $field) {
             $name = $table . '_' . $field['name'];
             //if there's no data
-            if(!isset($data[$name])) {
+            if (!isset($data[$name])) {
                 //no need to format
                 continue;
             }
 
-            switch($field['field']['type']) {
+            switch ($field['field']['type']) {
                 case 'file':
                 case 'image':
                     //upload files
@@ -112,7 +113,7 @@ class Formatter
                     break;
                 case 'active':
                 case 'checkbox':
-                    if($data[$name]) {
+                    if ($data[$name]) {
                         $data[$name] = 1;
                     } else {
                         $data[$name] = 0;

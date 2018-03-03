@@ -39,11 +39,11 @@ $cradle->on('system-schema-create', function ($request, $response) {
     // 3. Prepare Data
 
     // filter relations
-    if(isset($data['relations'])) {
+    if (isset($data['relations'])) {
         // filter out empty relations
         $data['relations'] = array_filter(
             $data['relations'],
-            function($relation) {
+            function ($relation) {
                 // make sure we have relation name
                 return $relation['name'] !== '' ? true : false;
             }
@@ -60,7 +60,7 @@ $cradle->on('system-schema-create', function ($request, $response) {
 
     $path = $this->package('global')->path('config') . '/admin/schema';
 
-    if(!is_dir($path)) {
+    if (!is_dir($path)) {
         mkdir($path, 0777);
     }
 
@@ -89,9 +89,9 @@ $cradle->on('system-schema-detail', function ($request, $response) {
     }
 
     $id = null;
-    if(isset($data['schema'])) {
+    if (isset($data['schema'])) {
         $id = $data['schema'];
-    } else if(isset($data['name'])) {
+    } else if (isset($data['name'])) {
         $id = $data['name'];
     }
 
@@ -148,7 +148,7 @@ $cradle->on('system-schema-remove', function ($request, $response) {
     try {
         //remove table
         $systemSql->remove($data);
-    } catch(\Exception $e) {
+    } catch (\Exception $e) {
         return $response->setError(true, $e->getMessage());
     }
 
@@ -157,7 +157,7 @@ $cradle->on('system-schema-remove', function ($request, $response) {
         . $table
         . '.php';
 
-    if(file_exists($path)) {
+    if (file_exists($path)) {
         $new = $this->package('global')->path('config')
             . '/admin/schema/_'
             . $table
@@ -202,7 +202,7 @@ $cradle->on('system-schema-restore', function ($request, $response) {
     try {
         //remove table
         $systemSql->restore($data);
-    } catch(\Exception $e) {
+    } catch (\Exception $e) {
         return $response->setError(true, $e->getMessage());
     }
 
@@ -211,7 +211,7 @@ $cradle->on('system-schema-restore', function ($request, $response) {
         . $table
         . '.php';
 
-    if(file_exists($path)) {
+    if (file_exists($path)) {
         $new = $this->package('global')->path('config')
             . '/admin/schema/'
             . $table
@@ -255,9 +255,8 @@ $cradle->on('system-schema-search', function ($request, $response) {
     }
 
     $results = [];
-    foreach($files as $file) {
-        if(
-            //if this is not a php file
+    foreach ($files as $file) {
+        if (//if this is not a php file
             (strpos($file, '.php') === false)
             //or active and this is not active
             || ($active && strpos($file, '_') === 0)
@@ -315,11 +314,11 @@ $cradle->on('system-schema-update', function ($request, $response) {
     // 3. Prepare Data
 
     // filter relations
-    if(isset($data['relations'])) {
+    if (isset($data['relations'])) {
         // filter out empty relations
         $data['relations'] = array_filter(
             $data['relations'],
-            function($relation) {
+            function ($relation) {
                 // make sure we have relation name
                 return $relation['name'] !== '' ? true : false;
             }

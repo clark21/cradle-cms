@@ -38,7 +38,7 @@ $cradle->on('history-create', function ($request, $response) {
     //----------------------------//
     // 3. Prepare Data
 
-    if(isset($data['history_meta'])) {
+    if (isset($data['history_meta'])) {
         $data['history_meta'] = json_encode($data['history_meta']);
     }
 
@@ -52,7 +52,7 @@ $cradle->on('history-create', function ($request, $response) {
     //save history to database
     $results = $historySql->create($data);
     //link user
-    if(isset($data['user_id'])) {
+    if (isset($data['user_id'])) {
         $historySql->linkUser($results['history_id'], $data['user_id']);
     }
 
@@ -322,7 +322,7 @@ $cradle->on('history-update', function ($request, $response) {
     //----------------------------//
     // 3. Prepare Data
 
-    if(isset($data['history_meta'])) {
+    if (isset($data['history_meta'])) {
         $data['history_meta'] = json_encode($data['history_meta']);
     }
 

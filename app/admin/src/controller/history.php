@@ -13,7 +13,7 @@
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/history/search', function($request, $response) {
+$cradle->get('/admin/history/search', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     // set redirect
@@ -23,24 +23,24 @@ $cradle->get('/admin/history/search', function($request, $response) {
 
     //----------------------------//
     // 2. Prepare Data
-    if(!$request->hasStage('range')) {
+    if (!$request->hasStage('range')) {
         $request->setStage('range', 25);
     }
 
-    if(!$request->hasStage('order')) {
+    if (!$request->hasStage('order')) {
         $request->setStage('order', 'history_created', 'DESC');
     }
 
     //filter possible sorting options
     //we do this to prevent SQL injections
-    if(is_array($request->getStage('order'))) {
+    if (is_array($request->getStage('order'))) {
         $sortable = [
             'history_activity',
             'history_created'
         ];
 
-        foreach($request->getStage('order') as $key => $direction) {
-            if(!in_array($key, $sortable)) {
+        foreach ($request->getStage('order') as $key => $direction) {
+            if (!in_array($key, $sortable)) {
                 $request->removeStage('order', $key);
             } else if ($direction !== 'ASC' && $direction !== 'DESC') {
                 $request->removeStage('order', $key);
@@ -50,15 +50,15 @@ $cradle->get('/admin/history/search', function($request, $response) {
 
     //filter possible filter options
     //we do this to prevent SQL injections
-    if(is_array($request->getStage('filter'))) {
+    if (is_array($request->getStage('filter'))) {
         $filterable = [
         'history_active',
             'history_remote_address',
             'history_activity'
         ];
 
-        foreach($request->getStage('filter') as $key => $value) {
-            if(!in_array($key, $filterable)) {
+        foreach ($request->getStage('filter') as $key => $value) {
+            if (!in_array($key, $filterable)) {
                 $request->removeStage('filter', $key);
             }
         }
@@ -128,9 +128,9 @@ $cradle->post('/ajax/admin/history/:action/notification', function ($request, $r
                 $length = array("60","60","24","30","12","10");
 
                 $currentTime = time();
-                if($currentTime >= $timestamp) {
+                if ($currentTime >= $timestamp) {
                     $diff     = time()- $timestamp;
-                    for($i = 0; $diff >= $length[$i] && $i < count($length)-1; $i++) {
+                    for ($i = 0; $diff >= $length[$i] && $i < count($length)-1; $i++) {
                         $diff = $diff / $length[$i];
                     }
 

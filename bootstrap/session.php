@@ -47,7 +47,7 @@ return function ($request, $response) {
     ->addMethod('requireLogin', function ($type = null) use ($request) {
         // TEMPORARY UNTIL I GOT THE
         // OAUTH PROCESS WORKING
-        if($request->getStage('session') === 'false') {
+        if ($request->getStage('session') === 'false') {
             return;
         }
 

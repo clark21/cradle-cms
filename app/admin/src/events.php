@@ -19,13 +19,13 @@ use Cradle\Http\Response;
 $cradle->on('render-admin-page', function ($request, $response) {
     $navigation = cradle('global')->config('admin/menu');
 
-    $navMatch = function(...$args) use ($request) {
+    $navMatch = function (...$args) use ($request) {
         //$haystack, $needle, $options
         $haystack = $request->get('path', 'string');
         $needle = array_shift($args);
         $options = array_pop($args);
 
-        foreach($args as $path) {
+        foreach ($args as $path) {
             $needle .= '/' . $path;
         }
 

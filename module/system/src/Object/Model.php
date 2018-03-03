@@ -54,7 +54,7 @@ class Model
     {
         $service = Service::get($name, $key);
 
-        if($service instanceof NoopService) {
+        if ($service instanceof NoopService) {
             return $service;
         }
 

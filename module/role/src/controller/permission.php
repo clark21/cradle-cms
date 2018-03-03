@@ -13,7 +13,7 @@
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/permission/search', function($request, $response) {
+$cradle->get('/admin/permission/search', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     if (!cradle('/module/role')->hasPermissions($request, $response)) {
@@ -24,7 +24,7 @@ $cradle->get('/admin/permission/search', function($request, $response) {
     // 2. Prepare Data
     $data = $request->getStage();
 
-    if(!$request->hasStage('filter')) {
+    if (!$request->hasStage('filter')) {
         $request->setStage('filter', 'permission_active', 1);
     }
 
@@ -32,7 +32,7 @@ $cradle->get('/admin/permission/search', function($request, $response) {
     $path = $this->package('global')->path('config') . '/admin/permissions.php';
 
     // check if file
-    if(!is_file($path)) {
+    if (!is_file($path)) {
         file_put_contents(
             $path,
             '<?php //-->' . "\n return [];"
@@ -63,7 +63,7 @@ $cradle->get('/admin/permission/search', function($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/permission/create', function($request, $response) {
+$cradle->get('/admin/permission/create', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     // set redirect
@@ -102,7 +102,7 @@ $cradle->get('/admin/permission/create', function($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/permission/update/:permission_key', function($request, $response) {
+$cradle->get('/admin/permission/update/:permission_key', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     $request->setStage('redirect', '/admin/permission/search');
@@ -142,7 +142,7 @@ $cradle->get('/admin/permission/update/:permission_key', function($request, $res
  * @param Request $request
  * @param Response $response
  */
-$cradle->post('/admin/permission/create', function($request, $response) {
+$cradle->post('/admin/permission/create', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     $request->setStage('redirect', '/admin/permission/search');
@@ -159,7 +159,7 @@ $cradle->post('/admin/permission/create', function($request, $response) {
     cradle()->trigger('permission-create', $request, $response);
 
     // 4. Interpret Results
-    if($response->isError()) {
+    if ($response->isError()) {
         cradle('global')->flash('Invalid Data', 'error');
         return cradle()->triggerRoute(
             'get',
@@ -183,7 +183,7 @@ $cradle->post('/admin/permission/create', function($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->post('/admin/permission/update/:permission_key', function($request, $response) {
+$cradle->post('/admin/permission/update/:permission_key', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     $request->setStage('redirect', '/admin/permission/search');
@@ -199,7 +199,7 @@ $cradle->post('/admin/permission/update/:permission_key', function($request, $re
 
     //----------------------------//
     // 4. Interpret Results
-    if($response->isError()) {
+    if ($response->isError()) {
         $route = '/admin/permission/update/' . $request->getStage('permission_key');
         return cradle()->triggerRoute('get', $route, $request, $response);
     }
@@ -218,7 +218,7 @@ $cradle->post('/admin/permission/update/:permission_key', function($request, $re
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/permission/remove/:permission_key', function($request, $response) {
+$cradle->get('/admin/permission/remove/:permission_key', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     $request->setStage('redirect', '/admin/permission/search');
@@ -238,7 +238,7 @@ $cradle->get('/admin/permission/remove/:permission_key', function($request, $res
 
     //----------------------------//
     // 4. Interpret Results
-    if($response->isError()) {
+    if ($response->isError()) {
         //add a flash
         cradle('global')->flash($response->getMessage(), 'error');
     } else {
@@ -256,7 +256,7 @@ $cradle->get('/admin/permission/remove/:permission_key', function($request, $res
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/permission/restore/:role_id', function($request, $response) {
+$cradle->get('/admin/permission/restore/:role_id', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     $request->setStage('redirect', '/admin/permission/search');
@@ -273,7 +273,7 @@ $cradle->get('/admin/permission/restore/:role_id', function($request, $response)
 
     //----------------------------//
     // 4. Interpret Results
-    if($response->isError()) {
+    if ($response->isError()) {
         //add a flash
         cradle('global')->flash($response->getMessage(), 'error');
     } else {

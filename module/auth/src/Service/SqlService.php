@@ -81,23 +81,23 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
 
         $results = $search->getRow();
 
-        if(!$results) {
+        if (!$results) {
             return $results;
         }
 
-        if($results['role_permissions']) {
+        if ($results['role_permissions']) {
             $results['role_permissions'] = json_decode($results['role_permissions'], true);
         } else {
             $results['role_permissions'] = [];
         }
 
-        if($results['user_meta']) {
+        if ($results['user_meta']) {
             $results['user_meta'] = json_decode($results['user_meta'], true);
         } else {
             $results['user_meta'] = [];
         }
 
-        if($results['user_files']) {
+        if ($results['user_files']) {
             $results['user_files'] = json_decode($results['user_files'], true);
         } else {
             $results['user_files'] = [];
@@ -156,7 +156,7 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
         if (isset($data['q'])) {
             $keywords = $data['q'];
 
-            if(!is_array($keywords)) {
+            if (!is_array($keywords)) {
                 $keywords = [$keywords];
             }
         }
@@ -206,20 +206,18 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
 
         $rows = $search->getRows();
 
-        foreach($rows as $i => $results) {
-
-            if($results['user_meta']) {
+        foreach ($rows as $i => $results) {
+            if ($results['user_meta']) {
                 $rows[$i]['user_meta'] = json_decode($results['user_meta'], true);
             } else {
                 $rows[$i]['user_meta'] = [];
             }
 
-            if($results['user_files']) {
+            if ($results['user_files']) {
                 $rows[$i]['user_files'] = json_decode($results['user_files'], true);
             } else {
                 $rows[$i]['user_files'] = [];
             }
-
         }
 
         //return response format
@@ -290,5 +288,4 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
             ->setUserId($userPrimary)
             ->remove('auth_user');
     }
-
 }

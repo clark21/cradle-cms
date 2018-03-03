@@ -195,7 +195,7 @@ $cradle->on('permission-remove', function ($request, $response) {
     //----------------------------//
     // 3. Process Data
     $results['permissions'] = $this->package('global')->config('admin/permissions');
-    if(isset($results['permissions'][$id])) {
+    if (isset($results['permissions'][$id])) {
         unset($results['permissions'][$id]);
         $results['permissions'] = array_values($results['permissions']);
     }

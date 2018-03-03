@@ -31,8 +31,8 @@ class Validator
      * @return array
      */
     public static function getCreateErrors(array $data, array $errors = [])
-    { 
-        if(!isset($data['history_activity']) || empty($data['history_activity'])) {
+    {
+        if (!isset($data['history_activity']) || empty($data['history_activity'])) {
             $errors['history_activity'] = 'History Activity is required';
         }
                 
@@ -49,12 +49,12 @@ class Validator
      */
     public static function getUpdateErrors(array $data, array $errors = [])
     {
-        if(!isset($data['history_id']) || !is_numeric($data['history_id'])) {
+        if (!isset($data['history_id']) || !is_numeric($data['history_id'])) {
             $errors['history_id'] = 'Invalid ID';
         }
 
         
-        if(isset($data['history_activity']) && empty($data['history_activity'])) {
+        if (isset($data['history_activity']) && empty($data['history_activity'])) {
             $errors['history_activity'] = 'History Activity is required';
         }
                 
@@ -73,7 +73,7 @@ class Validator
     {
         //validations
         
-        if(isset($data['history_activity']) && empty($data['history_activity'])) {
+        if (isset($data['history_activity']) && empty($data['history_activity'])) {
             $errors['history_activity'] = 'History Activity cannot be empty';
         }
                 

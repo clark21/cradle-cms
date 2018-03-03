@@ -58,7 +58,7 @@ class SqlService
      */
     public function create(array $data)
     {
-        if(is_null($this->schema)) {
+        if (is_null($this->schema)) {
             throw SystemException::forNoSchema();
         }
 
@@ -66,11 +66,11 @@ class SqlService
         $created = $this->schema->getCreatedFieldName($data);
         $updated = $this->schema->getUpdatedFieldName($data);
 
-        if($created) {
+        if ($created) {
             $data[$created] = date('Y-m-d H:i:s');
         }
 
-        if($updated) {
+        if ($updated) {
             $data[$updated] = date('Y-m-d H:i:s');
         }
 
@@ -90,7 +90,7 @@ class SqlService
      */
     public function exists($object, $key, $value)
     {
-        if(is_null($this->schema)) {
+        if (is_null($this->schema)) {
             throw SystemException::forNoSchema();
         }
 
@@ -112,7 +112,7 @@ class SqlService
      */
     public function get($key, $id)
     {
-        if(is_null($this->schema)) {
+        if (is_null($this->schema)) {
             throw SystemException::forNoSchema();
         }
 
@@ -124,7 +124,7 @@ class SqlService
         //get 1:1 relations
         $relations = $this->schema->getRelations(1);
 
-        foreach($relations as $table => $relation) {
+        foreach ($relations as $table => $relation) {
             $search
                 ->innerJoinUsing(
                     $table,
@@ -138,14 +138,14 @@ class SqlService
 
         $results = $search->getRow();
 
-        if(!$results) {
+        if (!$results) {
             return $results;
         }
 
         $fields = $this->schema->getJsonFieldNames();
 
-        foreach($fields as $field) {
-            if(isset($results[$field]) && $results[$field]) {
+        foreach ($fields as $field) {
+            if (isset($results[$field]) && $results[$field]) {
                 $results[$field] = json_decode($results[$field], true);
             } else {
                 $results[$field] = [];
@@ -154,7 +154,7 @@ class SqlService
 
         //get 1:0 relations
         $relations = $this->schema->getRelations(0);
-        foreach($relations as $table => $relation) {
+        foreach ($relations as $table => $relation) {
             $results[$relation['name']] = $this
                 ->resource
                 ->search($table)
@@ -165,7 +165,7 @@ class SqlService
 
         //get 1:N relations
         $relations = $this->schema->getRelations(2);
-        foreach($relations as $table => $relation) {
+        foreach ($relations as $table => $relation) {
             $schema = $this->schema;
             $results[$relation['name']] = $this
                 ->resource
@@ -174,7 +174,7 @@ class SqlService
                     //we need to case for post_post for example
                     $relation['name'] === $this->schema->getName(),
                     //this is the post_post way
-                    function() use (&$schema, &$relation) {
+                    function () use (&$schema, &$relation) {
                         $on = sprintf(
                             '%s = %s',
                             $schema->getPrimaryFieldName(),
@@ -183,7 +183,7 @@ class SqlService
                         $this->innerJoinOn($relation['name'], $on);
                     },
                     //this is the normal way
-                    function() use (&$relation) {
+                    function () use (&$relation) {
                         $this->innerJoinUsing($relation['name'], $relation['primary2']);
                     }
                 )
@@ -215,7 +215,7 @@ class SqlService
      */
     public function link($relation, $primary1, $primary2)
     {
-        if(is_null($this->schema)) {
+        if (is_null($this->schema)) {
             throw SystemException::forNoSchema();
         }
 
@@ -223,7 +223,7 @@ class SqlService
         $relations = $this->schema->getRelations();
         $table = $name . '_' . $relation;
 
-        if(!isset($relations[$table])) {
+        if (!isset($relations[$table])) {
             throw SystemException::forNoRelation($name, $relation);
         }
 
@@ -246,7 +246,7 @@ class SqlService
      */
     public function remove($id)
     {
-        if(is_null($this->schema)) {
+        if (is_null($this->schema)) {
             throw SystemException::forNoSchema();
         }
 
@@ -268,7 +268,7 @@ class SqlService
      */
     public function search(array $data = [])
     {
-        if(is_null($this->schema)) {
+        if (is_null($this->schema)) {
             throw SystemException::forNoSchema();
         }
 
@@ -312,7 +312,7 @@ class SqlService
         //get 1:1 relations
         $relations = $this->schema->getRelations(1);
 
-        foreach($relations as $table => $relation) {
+        foreach ($relations as $table => $relation) {
             $search
                 ->innerJoinUsing(
                     $table,
@@ -331,13 +331,12 @@ class SqlService
         $searchable = $this->schema->getSearchableFieldNames(1);
 
         //cutomer_project but the main schema is project for example
-        foreach($reverseRelations as $table => $relation) {
+        foreach ($reverseRelations as $table => $relation) {
             if (//if filter customer is not set
                 !isset($filter[str_replace('_1', '', $relation['primary1'])])
                 //project_customer vs cutomer_project
                 || isset($relations[$relation['name'] . '_' . $relation['source']])
-            )
-            {
+            ) {
                 //then skip
                 continue;
             }
@@ -347,7 +346,8 @@ class SqlService
                 foreach ($filter as $column => $value) {
                     if (isset($relation['fields'][$column])) {
                         //add alias
-                        $newCol = sprintf('%s.%s',
+                        $newCol = sprintf(
+                            '%s.%s',
                             $relation['source'] . '2',
                             $column
                         );
@@ -359,7 +359,8 @@ class SqlService
 
                         //add fields filter
                         if (!empty($value)) {
-                            $statement = sprintf('%s = \'%s\'',
+                            $statement = sprintf(
+                                '%s = \'%s\'',
                                 $newCol,
                                 $value
                             );
@@ -371,7 +372,8 @@ class SqlService
                     //for primary
                     if ($column === $schema->getPrimaryFieldName()) {
                         //add alias
-                        $newCol = sprintf('%s.%s',
+                        $newCol = sprintf(
+                            '%s.%s',
                             $relation['source'],
                             $column
                         );
@@ -383,7 +385,8 @@ class SqlService
 
                         //add primary filter
                         if (!empty($value)) {
-                            $statement = sprintf('%s = %s',
+                            $statement = sprintf(
+                                '%s = %s',
                                 $newCol,
                                 $value
                             );
@@ -394,10 +397,11 @@ class SqlService
                 }
 
                 //add alias on searchable
-                if(!empty($searchable)) {
-                    foreach($searchable as $key => $name) {
+                if (!empty($searchable)) {
+                    foreach ($searchable as $key => $name) {
                         if (isset($relation['fields'][$name])) {
-                            $newCol = sprintf('%s.%s',
+                            $newCol = sprintf(
+                                '%s.%s',
                                 $relation['source'] . '2',
                                 $name
                             );
@@ -411,7 +415,8 @@ class SqlService
                 foreach ($order as $sort => $direction) {
                     if (isset($relation['fields'][$sort])) {
                         //add alias
-                        $newCol = sprintf('%s.%s',
+                        $newCol = sprintf(
+                            '%s.%s',
                             $relation['source'] . '2',
                             $sort
                         );
@@ -429,7 +434,7 @@ class SqlService
                     //we need to case for post_post for example
                     $relation['source'] === $this->schema->getName(),
                     //this is the post_post way
-                    function() use ($table, $schema, $filter, &$relation) {
+                    function () use ($table, $schema, $filter, &$relation) {
                         //TODO: I need help with this section
                         //Used aliases
                         $on = sprintf(
@@ -455,7 +460,7 @@ class SqlService
                         $this->innerJoinOn($source, $on);
                     },
                     //this is the normal way
-                    function() use ($table, $filter, &$relation) {
+                    function () use ($table, $filter, &$relation) {
                         $this->innerJoinUsing($table, $relation['primary2']);
                         $this->innerJoinUsing($relation['source'], $relation['primary1']);
                     }
@@ -477,13 +482,13 @@ class SqlService
                 }
 
                 // minimum?
-                if(isset($value[0]) && !empty($value[0])) {
+                if (isset($value[0]) && !empty($value[0])) {
                     $search
                         ->addFilter($column . ' >= %s', $value[0]);
                 }
 
                 // maximum?
-                if(isset($value[1]) && !empty($value[0])) {
+                if (isset($value[1]) && !empty($value[0])) {
                     $search
                         ->addFilter($column . ' <= %s', $value[1]);
                 }
@@ -491,13 +496,13 @@ class SqlService
         }
 
         //keyword?
-        if(!empty($searchable)) {
+        if (!empty($searchable)) {
             $keywords = [];
 
             if (isset($data['q'])) {
                 $keywords = $data['q'];
 
-                if(!is_array($keywords)) {
+                if (!is_array($keywords)) {
                     $keywords = [$keywords];
                 }
             }
@@ -505,7 +510,7 @@ class SqlService
             foreach ($keywords as $keyword) {
                 $or = [];
                 $where = [];
-                foreach($searchable as $name) {
+                foreach ($searchable as $name) {
                     $where[] = 'LOWER(' . $name . ') LIKE %s';
                     $or[] = '%' . strtolower($keyword) . '%';
                 }
@@ -523,9 +528,9 @@ class SqlService
         $rows = $search->getRows();
         $fields = $this->schema->getJsonFieldNames();
 
-        foreach($rows as $i => $results) {
-            foreach($fields as $field) {
-                if(isset($results[$field]) && $results[$field]) {
+        foreach ($rows as $i => $results) {
+            foreach ($fields as $field) {
+                if (isset($results[$field]) && $results[$field]) {
                     $rows[$i][$field] = json_decode($results[$field], true);
                 } else {
                     $rows[$i][$field] = [];
@@ -564,7 +569,7 @@ class SqlService
      */
     public function unlink($relation, $primary1, $primary2)
     {
-        if(is_null($this->schema)) {
+        if (is_null($this->schema)) {
             throw SystemException::forNoSchema();
         }
 
@@ -572,7 +577,7 @@ class SqlService
         $relations = $this->schema->getRelations();
         $table = $name . '_' . $relation;
 
-        if(!isset($relations[$table])) {
+        if (!isset($relations[$table])) {
             throw SystemException::forNoRelation($name, $relation);
         }
 
@@ -594,14 +599,14 @@ class SqlService
      */
     public function update(array $data)
     {
-        if(is_null($this->schema)) {
+        if (is_null($this->schema)) {
             throw SystemException::forNoSchema();
         }
 
         $table = $this->schema->getName();
         $updated = $this->schema->getUpdatedFieldName();
 
-        if($updated) {
+        if ($updated) {
             $data[$updated] = date('Y-m-d H:i:s');
         }
 

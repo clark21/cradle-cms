@@ -13,7 +13,7 @@
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/system/schema/search', function($request, $response) {
+$cradle->get('/admin/system/schema/search', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     //only for admin
@@ -21,7 +21,7 @@ $cradle->get('/admin/system/schema/search', function($request, $response) {
 
     //----------------------------//
     // 2. Prepare Data
-    if(!$request->hasStage()) {
+    if (!$request->hasStage()) {
         $request->setStage('filter', 'active', 1);
     }
 
@@ -29,7 +29,7 @@ $cradle->get('/admin/system/schema/search', function($request, $response) {
     cradle()->trigger('system-schema-search', $request, $response);
 
     //if we only want the raw data
-    if($request->getStage('render') === 'false') {
+    if ($request->getStage('render') === 'false') {
         return;
     }
 
@@ -55,7 +55,7 @@ $cradle->get('/admin/system/schema/search', function($request, $response) {
         ->setContent($body);
 
     //if we only want the body
-    if($request->getStage('render') === 'body') {
+    if ($request->getStage('render') === 'body') {
         return;
     }
 
@@ -69,7 +69,7 @@ $cradle->get('/admin/system/schema/search', function($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/system/schema/create', function($request, $response) {
+$cradle->get('/admin/system/schema/create', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     //only for admin
@@ -93,7 +93,7 @@ $cradle->get('/admin/system/schema/create', function($request, $response) {
         cradle()->trigger('system-schema-detail', $request, $response);
 
         //can we update ?
-        if($response->isError()) {
+        if ($response->isError()) {
             //add a flash
             cradle('global')->flash($response->getMessage(), 'error');
             return cradle('global')->redirect('/admin/system/schema/search');
@@ -120,8 +120,8 @@ $cradle->get('/admin/system/schema/create', function($request, $response) {
     //add custom page helpers
     cradle('global')
         ->handlebars()
-        ->registerHelper('is_array', function($value, $option) {
-            if(is_array($value)) {
+        ->registerHelper('is_array', function ($value, $option) {
+            if (is_array($value)) {
                 return $option['fn']();
             }
 
@@ -150,7 +150,7 @@ $cradle->get('/admin/system/schema/create', function($request, $response) {
     );
 
     //if we only want the body
-    if($request->getStage('render') === 'body') {
+    if ($request->getStage('render') === 'body') {
         return;
     }
 
@@ -169,7 +169,7 @@ $cradle->get('/admin/system/schema/create', function($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/system/schema/update/:name', function($request, $response) {
+$cradle->get('/admin/system/schema/update/:name', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     //only for admin
@@ -189,17 +189,17 @@ $cradle->get('/admin/system/schema/update/:name', function($request, $response) 
     }
 
     //if no item
-    if(empty($data['item'])) {
+    if (empty($data['item'])) {
         //get the original schema row
         cradle()->trigger('system-schema-detail', $request, $response);
 
         //can we update ?
-        if($response->isError()) {
+        if ($response->isError()) {
             //redirect
             $redirect = '/admin/system/schema/search';
 
             //this is for flexibility
-            if($request->hasStage('redirect_uri')) {
+            if ($request->hasStage('redirect_uri')) {
                 $redirect = $request->getStage('redirect_uri');
             }
 
@@ -212,7 +212,7 @@ $cradle->get('/admin/system/schema/update/:name', function($request, $response) 
     }
 
     //if we only want the raw data
-    if($request->getStage('render') === 'false') {
+    if ($request->getStage('render') === 'false') {
         return;
     }
 
@@ -234,8 +234,8 @@ $cradle->get('/admin/system/schema/update/:name', function($request, $response) 
     //add custom page helpers
     cradle('global')
         ->handlebars()
-        ->registerHelper('is_array', function($value, $option) {
-            if(is_array($value)) {
+        ->registerHelper('is_array', function ($value, $option) {
+            if (is_array($value)) {
                 return $option['fn']();
             }
 
@@ -264,7 +264,7 @@ $cradle->get('/admin/system/schema/update/:name', function($request, $response) 
     );
 
     //if we only want the body
-    if($request->getStage('render') === 'body') {
+    if ($request->getStage('render') === 'body') {
         return;
     }
 
@@ -284,7 +284,7 @@ $cradle->get('/admin/system/schema/update/:name', function($request, $response) 
  * @param Request $request
  * @param Response $response
  */
-$cradle->post('/admin/system/schema/create', function($request, $response) {
+$cradle->post('/admin/system/schema/create', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     //only for admin
@@ -314,12 +314,12 @@ $cradle->post('/admin/system/schema/create', function($request, $response) {
     //----------------------------//
     // 4. Interpret Results
     //if the event returned an error
-    if($response->isError()) {
+    if ($response->isError()) {
         //determine route
         $route = '/admin/system/schema/create';
 
         //this is for flexibility
-        if($request->hasStage('route')) {
+        if ($request->hasStage('route')) {
             $route = $request->getStage('route');
         }
 
@@ -330,13 +330,13 @@ $cradle->post('/admin/system/schema/create', function($request, $response) {
     $redirect = '/admin/system/schema/search';
 
     //if there is a specified redirect
-    if($request->hasStage('redirect_uri')) {
+    if ($request->hasStage('redirect_uri')) {
         //set the redirect
         $redirect = $request->getStage('redirect_uri');
     }
 
     //if we dont want to redirect
-    if($redirect === 'false') {
+    if ($redirect === 'false') {
         return;
     }
 
@@ -364,7 +364,7 @@ $cradle->post('/admin/system/schema/create', function($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->post('/admin/system/schema/update/:name', function($request, $response) {
+$cradle->post('/admin/system/schema/update/:name', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     //only for admin
@@ -384,11 +384,10 @@ $cradle->post('/admin/system/schema/update/:name', function($request, $response)
     }
 
     //if validation has no value make it an array
-    foreach($request->getStage('fields') as $i => $field) {
+    foreach ($request->getStage('fields') as $i => $field) {
         if ($request->hasStage('fields', $i, 'validation')
             && !$request->getStage('fields', $i, 'validation')
-        )
-        {
+        ) {
             $request->setStage('fields', $i, 'validation', []);
         }
     }
@@ -405,7 +404,7 @@ $cradle->post('/admin/system/schema/update/:name', function($request, $response)
     //----------------------------//
     // 4. Interpret Results
     //if the event returned an error
-    if($response->isError()) {
+    if ($response->isError()) {
         //determine route
         $route = sprintf(
             '/admin/system/schema/update/%s',
@@ -413,7 +412,7 @@ $cradle->post('/admin/system/schema/update/:name', function($request, $response)
         );
 
         //this is for flexibility
-        if($request->hasStage('route')) {
+        if ($request->hasStage('route')) {
             $route = $request->getStage('route');
         }
 
@@ -435,13 +434,13 @@ $cradle->post('/admin/system/schema/update/:name', function($request, $response)
     $redirect = '/admin/system/schema/search';
 
     //if there is a specified redirect
-    if($request->hasStage('redirect_uri')) {
+    if ($request->hasStage('redirect_uri')) {
         //set the redirect
         $redirect = $request->getStage('redirect_uri');
     }
 
     //if we dont want to redirect
-    if($redirect === 'false') {
+    if ($redirect === 'false') {
         return;
     }
 
@@ -459,7 +458,7 @@ $cradle->post('/admin/system/schema/update/:name', function($request, $response)
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/system/schema/remove/:name', function($request, $response) {
+$cradle->get('/admin/system/schema/remove/:name', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     //only for admin
@@ -478,17 +477,17 @@ $cradle->get('/admin/system/schema/remove/:name', function($request, $response) 
     $redirect = '/admin/system/schema/search';
 
     //if there is a specified redirect
-    if($request->hasStage('redirect_uri')) {
+    if ($request->hasStage('redirect_uri')) {
         //set the redirect
         $redirect = $request->getStage('redirect_uri');
     }
 
     //if we dont want to redirect
-    if($redirect === 'false') {
+    if ($redirect === 'false') {
         return;
     }
 
-    if($response->isError()) {
+    if ($response->isError()) {
         //add a flash
         cradle('global')->flash($response->getMessage(), 'error');
     } else {
@@ -516,7 +515,7 @@ $cradle->get('/admin/system/schema/remove/:name', function($request, $response) 
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/system/schema/restore/:name', function($request, $response) {
+$cradle->get('/admin/system/schema/restore/:name', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     //only for admin
@@ -535,17 +534,17 @@ $cradle->get('/admin/system/schema/restore/:name', function($request, $response)
     $redirect = '/admin/system/schema/search';
 
     //if there is a specified redirect
-    if($request->hasStage('redirect_uri')) {
+    if ($request->hasStage('redirect_uri')) {
         //set the redirect
         $redirect = $request->getStage('redirect_uri');
     }
 
     //if we dont want to redirect
-    if($redirect === 'false') {
+    if ($redirect === 'false') {
         return;
     }
 
-    if($response->isError()) {
+    if ($response->isError()) {
         //add a flash
         cradle('global')->flash($response->getMessage(), 'error');
     } else {

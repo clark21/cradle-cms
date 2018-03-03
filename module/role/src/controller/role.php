@@ -14,7 +14,7 @@
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/role/search', function($request, $response) {
+$cradle->get('/admin/role/search', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     if (!cradle('/module/role')->hasPermissions($request, $response)) {
@@ -23,23 +23,23 @@ $cradle->get('/admin/role/search', function($request, $response) {
 
     //----------------------------//
     // 2. Prepare Data
-    if(!$request->hasStage('filter')) {
+    if (!$request->hasStage('filter')) {
         $request->setStage('filter', 'role_active', 1);
     }
 
-    if(!$request->hasStage('range')) {
+    if (!$request->hasStage('range')) {
         $request->setStage('range', 50);
     }
 
     //filter possible filter options
     //we do this to prevent SQL injections
-    if(is_array($request->getStage('filter'))) {
+    if (is_array($request->getStage('filter'))) {
         $filterable = [
             'role_active'
         ];
 
-        foreach($request->getStage('filter') as $key => $value) {
-            if(!in_array($key, $filterable)) {
+        foreach ($request->getStage('filter') as $key => $value) {
+            if (!in_array($key, $filterable)) {
                 $request->removeStage('filter', $key);
             }
         }
@@ -49,7 +49,7 @@ $cradle->get('/admin/role/search', function($request, $response) {
     cradle()->trigger('role-search', $request, $response);
 
     //if we only want the raw data
-    if($request->getStage('render') === 'false') {
+    if ($request->getStage('render') === 'false') {
         return;
     }
 
@@ -77,7 +77,7 @@ $cradle->get('/admin/role/search', function($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/role/create', function($request, $response) {
+$cradle->get('/admin/role/create', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     // set redirect
@@ -92,7 +92,7 @@ $cradle->get('/admin/role/create', function($request, $response) {
     $path = $this->package('global')->path('config') . '/admin/permissions.php';
 
     // check if file
-    if(!is_file($path)) {
+    if (!is_file($path)) {
         file_put_contents(
             $path,
             '<?php //-->' . "\n return [];"
@@ -110,13 +110,13 @@ $cradle->get('/admin/role/create', function($request, $response) {
 
     $data['permissions'] = $permissions;
 
-    if(isset($data['item']['role_permissions'])) {
+    if (isset($data['item']['role_permissions'])) {
         $rolePermissions = array_keys($data['item']['role_permissions']);
 
         // loop through data
-        foreach($rolePermissions as $permission) {
+        foreach ($rolePermissions as $permission) {
             $key = array_search($permission, array_column($data['permissions'], 'label'));
-            if(is_int($key)) {
+            if (is_int($key)) {
                 $data['permissions'][$key]['checked'] = true;
             }
         }
@@ -143,7 +143,7 @@ $cradle->get('/admin/role/create', function($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/role/update/:role_id', function($request, $response) {
+$cradle->get('/admin/role/update/:role_id', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     // set redirect
@@ -166,9 +166,9 @@ $cradle->get('/admin/role/update/:role_id', function($request, $response) {
     $data['permissions'] = $permissions;
 
     // loop through data
-    foreach($data['item']['role_permissions'] as $permission) {
+    foreach ($data['item']['role_permissions'] as $permission) {
         $key = array_search($permission['label'], array_column($data['permissions'], 'label'));
-        if(is_int($key)) {
+        if (is_int($key)) {
             $data['permissions'][$key]['checked'] = true;
         }
     }
@@ -180,13 +180,13 @@ $cradle->get('/admin/role/update/:role_id', function($request, $response) {
         // get any errors
         $data['errors'] = $response->getValidation();
 
-        if(isset($data['item']['role_permissions'])) {
+        if (isset($data['item']['role_permissions'])) {
             $rolePermissions = array_keys($data['item']['role_permissions']);
 
             // loop through data
-            foreach($rolePermissions as $permission) {
+            foreach ($rolePermissions as $permission) {
                 $key = array_search($permission, array_column($data['permissions'], 'label'));
-                if(is_int($key)) {
+                if (is_int($key)) {
                     $data['permissions'][$key]['checked'] = true;
                 }
             }
@@ -214,7 +214,7 @@ $cradle->get('/admin/role/update/:role_id', function($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->post('/admin/role/create', function($request, $response) {
+$cradle->post('/admin/role/create', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     // set redirect
@@ -243,7 +243,7 @@ $cradle->post('/admin/role/create', function($request, $response) {
 
     //----------------------------//
     // 4. Interpret Results
-    if($response->isError()) {
+    if ($response->isError()) {
         //add a flash
         cradle('global')->flash('Invalid Data', 'error');
         return cradle()->triggerRoute('get', '/admin/role/create', $request, $response);
@@ -263,7 +263,7 @@ $cradle->post('/admin/role/create', function($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->post('/admin/role/update/:role_id', function($request, $response) {
+$cradle->post('/admin/role/update/:role_id', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     // set redirect
@@ -292,7 +292,7 @@ $cradle->post('/admin/role/update/:role_id', function($request, $response) {
 
     //----------------------------//
     // 4. Interpret Results
-    if($response->isError()) {
+    if ($response->isError()) {
         $route = '/admin/role/update/' . $request->getStage('role_id');
         return cradle()->triggerRoute('get', $route, $request, $response);
     }
@@ -311,7 +311,7 @@ $cradle->post('/admin/role/update/:role_id', function($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/role/remove/:role_id', function($request, $response) {
+$cradle->get('/admin/role/remove/:role_id', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     // set redirect
@@ -329,7 +329,7 @@ $cradle->get('/admin/role/remove/:role_id', function($request, $response) {
 
     //----------------------------//
     // 4. Interpret Results
-    if($response->isError()) {
+    if ($response->isError()) {
         //add a flash
         cradle('global')->flash($response->getMessage(), 'error');
     } else {
@@ -347,7 +347,7 @@ $cradle->get('/admin/role/remove/:role_id', function($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/role/restore/:role_id', function($request, $response) {
+$cradle->get('/admin/role/restore/:role_id', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     // set redirect
@@ -365,7 +365,7 @@ $cradle->get('/admin/role/restore/:role_id', function($request, $response) {
 
     //----------------------------//
     // 4. Interpret Results
-    if($response->isError()) {
+    if ($response->isError()) {
         //add a flash
         cradle('global')->flash($response->getMessage(), 'error');
     } else {
@@ -383,7 +383,7 @@ $cradle->get('/admin/role/restore/:role_id', function($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/role/auth/search', function($request, $response) {
+$cradle->get('/admin/role/auth/search', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     if (!cradle('/module/role')->hasPermissions($request, $response)) {
@@ -394,11 +394,11 @@ $cradle->get('/admin/role/auth/search', function($request, $response) {
     // trigger role detail
     $data = $request->getStage();
 
-    if(!$request->hasStage('filter')) {
+    if (!$request->hasStage('filter')) {
         $request->setStage('filter', 'role_active', 1);
     }
 
-    if(!$request->hasStage('range')) {
+    if (!$request->hasStage('range')) {
         $request->setStage('range', 50);
     }
 
@@ -431,7 +431,7 @@ $cradle->get('/admin/role/auth/search', function($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/role/auth/create', function($request, $response) {
+$cradle->get('/admin/role/auth/create', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     // set redirect
@@ -471,7 +471,7 @@ $cradle->get('/admin/role/auth/create', function($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->post('/admin/role/auth/create', function($request, $response) {
+$cradle->post('/admin/role/auth/create', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     // set redirect
@@ -488,7 +488,7 @@ $cradle->post('/admin/role/auth/create', function($request, $response) {
 
     //----------------------------//
     // 4. Interpret Results
-    if($response->isError()) {
+    if ($response->isError()) {
         return cradle()->triggerRoute('get', '/admin/role/auth/create', $request, $response);
     }
 
@@ -507,7 +507,7 @@ $cradle->post('/admin/role/auth/create', function($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/role/auth/:role_id/:role_auth_id/remove', function($request, $response) {
+$cradle->get('/admin/role/auth/:role_id/:role_auth_id/remove', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     // set redirect
@@ -524,7 +524,7 @@ $cradle->get('/admin/role/auth/:role_id/:role_auth_id/remove', function($request
 
     //----------------------------//
     // 4. Interpret Results
-    if($response->isError()) {
+    if ($response->isError()) {
         return cradle()->triggerRoute('get', '/admin/role/auth/search', $request, $response);
     }
 

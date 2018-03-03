@@ -42,9 +42,9 @@ $cradle->on('role-create', function ($request, $response) {
     $rolePermissions = [];
 
     // loop through data
-    foreach($data['role_permissions'] as $permission) {
+    foreach ($data['role_permissions'] as $permission) {
         $key = array_search($permission, array_column($permissions, 'label'));
-        if(is_int($key)) {
+        if (is_int($key)) {
             $rolePermissions[] = $permissions[$key];
         }
     }
@@ -329,9 +329,9 @@ $cradle->on('role-update', function ($request, $response) {
     $permissions = cradle('global')->config('admin/permissions');
 
     // loop through data
-    foreach($data['role_permissions'] as $permission) {
+    foreach ($data['role_permissions'] as $permission) {
         $key = array_search($permission, array_column($permissions, 'label'));
-        if(is_int($key)) {
+        if (is_int($key)) {
             $rolePermissions[] = $permissions[$key];
         }
     }

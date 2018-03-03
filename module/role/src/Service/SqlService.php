@@ -73,11 +73,11 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
 
         $results = $search->getRow();
 
-        if(!$results) {
+        if (!$results) {
             return $results;
         }
 
-        if($results['role_permissions']) {
+        if ($results['role_permissions']) {
             $results['role_permissions'] = json_decode($results['role_permissions'], true);
         } else {
             $results['role_permissions'] = [];
@@ -139,7 +139,7 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
         if (isset($data['q'])) {
             $keywords = $data['q'];
 
-            if(!is_array($keywords)) {
+            if (!is_array($keywords)) {
                 $keywords = [$keywords];
             }
         }
@@ -153,7 +153,7 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
             ->setStart($start)
             ->setRange($range);
 
-        if(isset($data['auth'])) {
+        if (isset($data['auth'])) {
             $search->innerJoinUsing('role_auth', 'role_id')
                 ->innerJoinUsing('auth', 'auth_id');
         }
@@ -187,14 +187,12 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
 
         $rows = $search->getRows();
 
-        foreach($rows as $i => $results) {
-
-            if($results['role_permissions']) {
+        foreach ($rows as $i => $results) {
+            if ($results['role_permissions']) {
                 $rows[$i]['role_permissions'] = json_decode($results['role_permissions'], true);
             } else {
                 $rows[$i]['role_permissions'] = [];
             }
-
         }
 
         //return response format
@@ -298,7 +296,7 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
 
         $row = $search->getRow();
 
-        if($row['role_permissions']) {
+        if ($row['role_permissions']) {
             $row['role_permissions'] = json_decode($row['role_permissions'], true);
         } else {
             $row['role_permissions'] = [];
@@ -351,5 +349,4 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
             ->setRoleId($rolePrimary)
             ->remove('role_history');
     }
-
 }

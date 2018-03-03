@@ -11,7 +11,7 @@ use Cradle\Module\System\Service as SystemService;
 
 /**
  * Process Rest Auth and Token Issuance
- * 
+ *
  * @param Request $request
  * @param Response $response
  */

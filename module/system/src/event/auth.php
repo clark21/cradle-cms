@@ -11,7 +11,7 @@ use Firebase\JWT\JWT;
 
 /**
  * Auth JWT Sign Job
- * 
+ *
  * @param Request $request
  * @param Response $response
  */
@@ -79,7 +79,7 @@ $cradle->on('auth-jwt-sign', function ($request, $response) {
     try {
         // encode the data
         $encoded = JWT::encode($token, $config['secret']);
-    } catch(\Exception $e) {        
+    } catch (\Exception $e) {
         // throw error message
         return $response->setError(true, $e->getMessage());
     }

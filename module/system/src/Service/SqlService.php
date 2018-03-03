@@ -62,7 +62,7 @@ class SqlService
         $queries = [];
 
         //translate object data to sql data
-        if(is_null($this->schema)) {
+        if (is_null($this->schema)) {
             throw SystemException::forNoSchema();
         }
 
@@ -80,38 +80,38 @@ class SqlService
                 'auto_increment' => true,
             ]);
 
-        foreach($data['columns'] as $name => $column) {
+        foreach ($data['columns'] as $name => $column) {
             $attributes = ['type' => $column['type']];
 
-            if(isset($column['length'])) {
+            if (isset($column['length'])) {
                 $attributes['type'] .= '(' . $column['length'] . ')';
             }
 
-            if(isset($column['default']) && strlen($column['default'])) {
+            if (isset($column['default']) && strlen($column['default'])) {
                 $attributes['default'] = $column['default'];
-            } else if(!isset($column['required']) || !$column['required']) {
+            } else if (!isset($column['required']) || !$column['required']) {
                 $attributes['null'] = true;
             }
 
-            if(isset($column['required']) && $column['required']) {
+            if (isset($column['required']) && $column['required']) {
                 $attributes['null'] = false;
             }
 
-            if(isset($column['attribute']) && $column['attribute']) {
+            if (isset($column['attribute']) && $column['attribute']) {
                 $attributes['attribute'] = $column['attribute'];
             }
 
             $query->addField($name, $attributes);
 
-            if(isset($column['index']) && $column['index']) {
+            if (isset($column['index']) && $column['index']) {
                 $query->addKey($name, [$name]);
             }
 
-            if(isset($column['unique']) && $column['unique']) {
+            if (isset($column['unique']) && $column['unique']) {
                 $query->addUniqueKey($name, [$name]);
             }
 
-            if(isset($column['primary']) && $column['primary']) {
+            if (isset($column['primary']) && $column['primary']) {
                 $query->addPrimaryKey($name);
             }
         }
@@ -120,7 +120,7 @@ class SqlService
         $queries[] = (string) $query;
 
         //determine the relation schema
-        foreach($data['relations'] as $table => $relation) {
+        foreach ($data['relations'] as $table => $relation) {
             $query = $this->resource->getCreateQuery($table);
 
             $query->addPrimaryKey($relation['primary1']);
@@ -143,7 +143,7 @@ class SqlService
 
         //execute queries
         $results = [];
-        foreach($queries as $query) {
+        foreach ($queries as $query) {
             $results[] = [
                 'query' => $query,
                 'results' => $this->resource->query($query)
@@ -174,7 +174,7 @@ class SqlService
     {
 
         //translate object data to sql data
-        if(is_null($this->schema)) {
+        if (is_null($this->schema)) {
             throw SystemException::forNoSchema();
         }
 
@@ -184,17 +184,17 @@ class SqlService
         $queries = [];
 
         // check if table is already archived
-        if($this->exists(sprintf('_%s', $data['name']))) {
+        if ($this->exists(sprintf('_%s', $data['name']))) {
             throw SystemException::forSchemaArchiveExists($data['name']);
         }
 
         //if system exists
-        if($this->exists($data['name'])) {
-            if($restorable) {
+        if ($this->exists($data['name'])) {
+            if ($restorable) {
                 $queries[] = 'RENAME TABLE `' . $data['name'] . '` TO `_' . $data['name'] . '`;';
 
                 //determine the relation schema
-                foreach($data['relations'] as $table => $relation) {
+                foreach ($data['relations'] as $table => $relation) {
                     $queries[] = 'RENAME TABLE `' . $table . '` TO `_' . $table . '`;';
                 }
             } else {
@@ -202,7 +202,7 @@ class SqlService
                 $queries[] = 'DROP TABLE IF EXISTS `_' . $data['name'] . '`;';
 
                 //determine the relation schema
-                foreach($data['relations'] as $table => $relation) {
+                foreach ($data['relations'] as $table => $relation) {
                     $queries[] = 'DROP TABLE IF EXISTS `'. $table . '`;';
                     $queries[] = 'DROP TABLE IF EXISTS `_'. $table . '`;';
                 }
@@ -211,7 +211,7 @@ class SqlService
 
         //execute queries
         $results = [];
-        foreach($queries as $query) {
+        foreach ($queries as $query) {
             $results[] = [
                 'query' => $query,
                 'results' => $this->resource->query($query)
@@ -231,7 +231,7 @@ class SqlService
     public function restore()
     {
         //translate object data to sql data
-        if(is_null($this->schema)) {
+        if (is_null($this->schema)) {
             throw SystemException::forNoSchema();
         }
 
@@ -241,12 +241,12 @@ class SqlService
         $queries = [];
 
         // check if table is already archived
-        if($this->exists($data['name'])) {
+        if ($this->exists($data['name'])) {
             throw SystemException::forSchemaAlreadyExists($data['name']);
         }
 
         //if there's no system
-        if(!$this->exists('_' . $data['name'])) {
+        if (!$this->exists('_' . $data['name'])) {
             //go to create mode
             return $this->create($data, true);
         }
@@ -254,13 +254,13 @@ class SqlService
         $queries[] = 'RENAME TABLE `_' . $data['name'] . '` TO `' . $data['name'] . '`;';
 
         //determine the relation schema
-        foreach($data['relations'] as $table => $relation) {
+        foreach ($data['relations'] as $table => $relation) {
             $queries[] = 'RENAME TABLE `_' . $table . '` TO `' . $table . '`;';
         }
 
         //execute queries
         $results = [];
-        foreach($queries as $query) {
+        foreach ($queries as $query) {
             $results[] = [
                 'query' => $query,
                 'results' => $this->resource->query($query)
@@ -294,7 +294,7 @@ class SqlService
     public function update()
     {
         //translate object data to sql data
-        if(is_null($this->schema)) {
+        if (is_null($this->schema)) {
             throw SystemException::forNoSchema();
         }
 
@@ -306,7 +306,7 @@ class SqlService
         $exists = [];
 
         //if there's no system
-        if(!$this->exists($data['name'])) {
+        if (!$this->exists($data['name'])) {
             //go to create mode
             return $this->create($data, true);
         }
@@ -316,16 +316,16 @@ class SqlService
         $query = $this->resource->getAlterQuery($data['name']);
 
         //remove or change fields
-        foreach($columns as $current) {
+        foreach ($columns as $current) {
             //don't do primary
-            if($primary === $current['Field']) {
+            if ($primary === $current['Field']) {
                 continue;
             }
 
             $exists[] = $name = $current['Field'];
 
             //if there is no field in the data
-            if(!isset($data['columns'][$name])) {
+            if (!isset($data['columns'][$name])) {
                 $query->removeField($name);
                 continue;
             }
@@ -334,21 +334,21 @@ class SqlService
 
             $attributes = ['type' => $column['type']];
 
-            if(isset($column['length'])) {
+            if (isset($column['length'])) {
                 $attributes['type'] .= '(' . $column['length'] . ')';
             }
 
-            if(isset($column['default']) && strlen($column['default'])) {
+            if (isset($column['default']) && strlen($column['default'])) {
                 $attributes['default'] = $column['default'];
-            } else if(!isset($column['required']) || !$column['required']) {
+            } else if (!isset($column['required']) || !$column['required']) {
                 $attributes['null'] = true;
             }
 
-            if(isset($column['required']) && $column['required']) {
+            if (isset($column['required']) && $column['required']) {
                 $attributes['null'] = false;
             }
 
-            if(isset($column['attribute']) && $column['attribute']) {
+            if (isset($column['attribute']) && $column['attribute']) {
                 $attributes['attribute'] = $column['attribute'];
             }
 
@@ -358,7 +358,7 @@ class SqlService
             }
 
             //if all matches
-            if($attributes['type'] === $current['Type']
+            if ($attributes['type'] === $current['Type']
                 && $attributes['null'] == ($current['Null'] === 'YES')
                 && $default === $current['Default']
             ) {
@@ -370,48 +370,48 @@ class SqlService
         }
 
         //add fields
-        foreach($data['columns'] as $name => $column) {
-            if(in_array($name, $exists)) {
+        foreach ($data['columns'] as $name => $column) {
+            if (in_array($name, $exists)) {
                 continue;
             }
 
             $attributes = ['type' => $column['type']];
 
-            if(isset($column['length'])) {
+            if (isset($column['length'])) {
                 $attributes['type'] .= '(' . $column['length'] . ')';
             }
 
-            if(isset($column['default']) && strlen($column['default'])) {
+            if (isset($column['default']) && strlen($column['default'])) {
                 $attributes['default'] = $column['default'];
-            } else if(!isset($column['required']) || !$column['required']) {
+            } else if (!isset($column['required']) || !$column['required']) {
                 $attributes['null'] = true;
             }
 
-            if(isset($column['required']) && $column['required']) {
+            if (isset($column['required']) && $column['required']) {
                 $attributes['null'] = false;
             }
 
-            if(isset($column['attribute']) && $column['attribute']) {
+            if (isset($column['attribute']) && $column['attribute']) {
                 $attributes['attribute'] = $column['attribute'];
             }
 
             $query->addField($name, $attributes);
 
-            if(isset($column['index']) && $column['index']) {
+            if (isset($column['index']) && $column['index']) {
                 $query->addKey($name, [$name]);
             }
 
-            if(isset($column['unique']) && $column['unique']) {
+            if (isset($column['unique']) && $column['unique']) {
                 $query->addUniqueKey($name, [$name]);
             }
 
-            if(isset($column['primary']) && $column['primary']) {
+            if (isset($column['primary']) && $column['primary']) {
                 $query->addPrimaryKey($name);
             }
         }
 
         $query = (string) $query;
-        if($query !== 'ALTER TABLE `' . $data['name'] . '` ;') {
+        if ($query !== 'ALTER TABLE `' . $data['name'] . '` ;') {
             $queries[] = $query;
         }
 
@@ -419,7 +419,7 @@ class SqlService
         $relations = array_keys($data['relations']);
 
         //determine the relation tables that need to be removed
-        foreach($installed as $relation) {
+        foreach ($installed as $relation) {
             //uninstall if it's not in the schema
             if (!in_array($relation, $relations)) {
                 $queries[] = 'DROP TABLE IF EXISTS `' . $relation . '`;';
@@ -427,7 +427,7 @@ class SqlService
         }
 
         //determine the relation tables that need to be added
-        foreach($data['relations'] as $table => $relation) {
+        foreach ($data['relations'] as $table => $relation) {
             //install if it's installed
             if (in_array($table, $installed)) {
                 continue;
@@ -455,7 +455,7 @@ class SqlService
 
         //execute queries
         $results = [];
-        foreach($queries as $query) {
+        foreach ($queries as $query) {
             $results[] = [
                 'query' => $query,
                 'results' => $this->resource->query($query)

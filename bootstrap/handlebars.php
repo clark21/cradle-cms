@@ -10,10 +10,10 @@ return function ($request, $response) {
      *
      * @return Handlebars
      */
-    ->addMethod('handlebars', function() {
+    ->addMethod('handlebars', function () {
         static $handlebars = null;
 
-        if(is_null($handlebars)) {
+        if (is_null($handlebars)) {
             $handlebars = HandlebarsHandler::i();
         }
 
@@ -25,8 +25,8 @@ return function ($request, $response) {
      *
      * @return string
      */
-    ->addMethod('template', function($file, array $data = [], array $partials = []) {
-        if(!file_exists($file)) {
+    ->addMethod('template', function ($file, array $data = [], array $partials = []) {
+        if (!file_exists($file)) {
             return null;
         }
 

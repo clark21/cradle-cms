@@ -32,7 +32,7 @@ class Validator
      */
     public static function getCreateErrors(array $data, array $errors = [])
     {
-        if(!isset($data['role_name']) || empty($data['role_name'])) {
+        if (!isset($data['role_name']) || empty($data['role_name'])) {
             $errors['role_name'] = 'Role Name is required';
         } else if (RoleService::get('sql')->exists($data['role_name'])) {
             $errors['role_name'] = 'Role Name Exists';
@@ -55,15 +55,15 @@ class Validator
      */
     public static function getUpdateErrors(array $data, array $errors = [])
     {
-        if(!isset($data['role_id']) || !is_numeric($data['role_id'])) {
+        if (!isset($data['role_id']) || !is_numeric($data['role_id'])) {
             $errors['role_id'] = 'Invalid ID';
         }
 
-        if(isset($data['role_name']) && empty($data['role_name'])) {
+        if (isset($data['role_name']) && empty($data['role_name'])) {
             $errors['role_name'] = 'Role Name is required';
         }
 
-        if(!isset($data['role_permissions']) || empty($data['role_permissions'])) {
+        if (!isset($data['role_permissions']) || empty($data['role_permissions'])) {
             $errors['role_permissions'] = 'Role Permissions is required';
         }
 
@@ -80,13 +80,13 @@ class Validator
      */
     public static function getRoleAuthErrors(array $data, array $errors = [])
     {
-        if(!isset($data['role']['auth_id']) || empty($data['role']['auth_id'])) {
+        if (!isset($data['role']['auth_id']) || empty($data['role']['auth_id'])) {
             $errors['auth_id'] = 'Auth Id is required';
         } else if (RoleService::get('sql')->existsAuth($data['role']['auth_id'])) {
             $errors['auth_id'] = 'Auth Exists';
         }
 
-        if(!isset($data['role']['role_id']) || empty($data['role']['role_id'])) {
+        if (!isset($data['role']['role_id']) || empty($data['role']['role_id'])) {
             $errors['role_id'] = 'Role Id is required';
         }
 
@@ -95,7 +95,7 @@ class Validator
 
     public static function getPermissionCreateErrors(array $data, array $errors = [])
     {
-        if(!isset($data['permission_label']) || empty($data['permission_label'])) {
+        if (!isset($data['permission_label']) || empty($data['permission_label'])) {
             $errors['permission_label'] = 'Permission Label is required';
         }
 
@@ -120,16 +120,16 @@ class Validator
      */
     public static function getPermissionUpdateErrors(array $data, array $errors = [])
     {
-        if(!isset($data['role_id']) || !is_numeric($data['role_id'])) {
+        if (!isset($data['role_id']) || !is_numeric($data['role_id'])) {
             $errors['role_id'] = 'Invalid ID';
         }
 
 
-        if(isset($data['role_name']) && empty($data['role_name'])) {
+        if (isset($data['role_name']) && empty($data['role_name'])) {
             $errors['role_name'] = 'Role Name is required';
         }
 
-        if(!isset($data['role_permissions']) || empty($data['role_permissions'])) {
+        if (!isset($data['role_permissions']) || empty($data['role_permissions'])) {
             $errors['role_permissions'] = 'Role Permissions is required';
         }
 

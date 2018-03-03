@@ -28,19 +28,19 @@ class Validator
      */
     public static function getCreateErrors(array $data, array $errors = [])
     {
-        if(!isset($data['singular']) || empty($data['singular'])) {
+        if (!isset($data['singular']) || empty($data['singular'])) {
             $errors['singular'] = 'Singular is required';
         }
 
-        if(!isset($data['plural']) || empty($data['plural'])) {
+        if (!isset($data['plural']) || empty($data['plural'])) {
             $errors['plural'] = 'Plural is required';
         }
 
-        if(!isset($data['name']) || empty($data['name'])) {
+        if (!isset($data['name']) || empty($data['name'])) {
             $errors['name'] = 'Keyword is required';
         }
 
-        if(!isset($data['fields']) || empty($data['fields'])) {
+        if (!isset($data['fields']) || empty($data['fields'])) {
             $errors['fields'] = 'Fields is required';
         }
 
@@ -57,19 +57,19 @@ class Validator
      */
     public static function getUpdateErrors(array $data, array $errors = [])
     {
-        if(isset($data['singular']) && empty($data['singular'])) {
+        if (isset($data['singular']) && empty($data['singular'])) {
             $errors['singular'] = 'Singular is required';
         }
 
-        if(isset($data['plural']) && empty($data['plural'])) {
+        if (isset($data['plural']) && empty($data['plural'])) {
             $errors['plural'] = 'Plural is required';
         }
 
-        if(isset($data['name']) && empty($data['name'])) {
+        if (isset($data['name']) && empty($data['name'])) {
             $errors['name'] = 'Keyword is required';
         }
 
-        if(!isset($data['fields']) || empty($data['fields'])) {
+        if (!isset($data['fields']) || empty($data['fields'])) {
             $errors['fields'] = 'Fields is required';
         }
 
@@ -88,19 +88,19 @@ class Validator
     {
         //validations
 
-        if(isset($data['singular']) && strlen($data['singular']) <= 3) {
+        if (isset($data['singular']) && strlen($data['singular']) <= 3) {
             $errors['singular'] = 'Singular should be longer than 3 characters';
         }
 
-        if(isset($data['singular']) && strlen($data['singular']) >= 255) {
+        if (isset($data['singular']) && strlen($data['singular']) >= 255) {
             $errors['singular'] = 'Singular should be less than 255 characters';
         }
 
-        if(isset($data['plural']) && strlen($data['plural']) <= 3) {
+        if (isset($data['plural']) && strlen($data['plural']) <= 3) {
             $errors['plural'] = 'Plural should be longer than 3 characters';
         }
 
-        if(isset($data['plural']) && strlen($data['plural']) >= 255) {
+        if (isset($data['plural']) && strlen($data['plural']) >= 255) {
             $errors['plural'] = 'Plural should be less than 255 characters';
         }
 

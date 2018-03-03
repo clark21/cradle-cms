@@ -33,7 +33,7 @@ $cradle->on('system-object-create', function ($request, $response) {
         $data = $request->getStage();
     }
 
-    if(!isset($data['schema'])) {
+    if (!isset($data['schema'])) {
         throw SystemException::forNoSchema();
     }
 
@@ -80,10 +80,9 @@ $cradle->on('system-object-create', function ($request, $response) {
     //loop through relations
     foreach ($relations as $table => $relation) {
         //link relations
-        if(isset($data[$relation['primary2']])
+        if (isset($data[$relation['primary2']])
             && is_numeric($data[$relation['primary2']])
-        )
-        {
+        ) {
             $objectSql->link(
                 $relation['name'],
                 $primary,
@@ -116,7 +115,7 @@ $cradle->on('system-object-detail', function ($request, $response) {
         $data = $request->getStage();
     }
 
-    if(!isset($data['schema'])) {
+    if (!isset($data['schema'])) {
         throw SystemException::forNoSchema();
     }
 
@@ -125,8 +124,8 @@ $cradle->on('system-object-detail', function ($request, $response) {
     $id = $key = null;
     $slugs = $schema->getSlugableFieldNames($schema->getPrimaryFieldName());
 
-    foreach($slugs as $slug) {
-        if(isset($data[$slug])) {
+    foreach ($slugs as $slug) {
+        if (isset($data[$slug])) {
             $id = $data[$slug];
             $key = $slug;
             break;
@@ -207,7 +206,7 @@ $cradle->on('system-object-remove', function ($request, $response) {
     // 3. Prepare Data
     $data = $response->getResults();
 
-    if(!$request->hasStage('schema')) {
+    if (!$request->hasStage('schema')) {
         throw SystemException::forNoSchema();
     }
 
@@ -224,7 +223,7 @@ $cradle->on('system-object-remove', function ($request, $response) {
     $objectElastic = $schema->model()->service('elastic');
 
     //save to database
-    if($active) {
+    if ($active) {
         $payload = [];
         $payload[$primary] = $data[$primary];
         $payload[$active] = 0;
@@ -239,8 +238,8 @@ $cradle->on('system-object-remove', function ($request, $response) {
 
     //invalidate cache
     $slugs = $schema->getSlugableFieldNames($primary);
-    foreach($slugs as $slug) {
-        if(isset($data[$slug])) {
+    foreach ($slugs as $slug) {
+        if (isset($data[$slug])) {
             $objectRedis->removeDetail($data[$slug]);
         }
     }
@@ -272,7 +271,7 @@ $cradle->on('system-object-restore', function ($request, $response) {
     // 3. Prepare Data
     $data = $response->getResults();
 
-    if(!$request->hasStage('schema')) {
+    if (!$request->hasStage('schema')) {
         throw SystemException::forNoSchema();
     }
 
@@ -318,7 +317,7 @@ $cradle->on('system-object-search', function ($request, $response) {
         $data = $request->getStage();
     }
 
-    if(!isset($data['schema'])) {
+    if (!isset($data['schema'])) {
         throw SystemException::forNoSchema();
     }
 
@@ -392,7 +391,7 @@ $cradle->on('system-object-update', function ($request, $response) {
         $data = $request->getStage();
     }
 
-    if(!isset($data['schema'])) {
+    if (!isset($data['schema'])) {
         throw SystemException::forNoSchema();
     }
 
@@ -440,7 +439,7 @@ $cradle->on('system-object-update', function ($request, $response) {
     //loop through relations
     foreach ($relations as $table => $relation) {
         //if 1:N, skip
-        if($relation['many'] > 1) {
+        if ($relation['many'] > 1) {
             continue;
         }
 
@@ -452,8 +451,7 @@ $cradle->on('system-object-update', function ($request, $response) {
                 !isset($data[$relation['primary2']])
                 || !is_numeric($data[$relation['primary2']])
             )
-        )
-        {
+        ) {
             //remove last id
             $objectSql->unlink(
                 $relation['name'],
@@ -464,11 +462,10 @@ $cradle->on('system-object-update', function ($request, $response) {
             continue;
         }
 
-        if(isset($data[$relation['primary2']])
+        if (isset($data[$relation['primary2']])
             && is_numeric($data[$relation['primary2']])
             && $lastId != $data[$relation['primary2']]
-        )
-        {
+        ) {
             //remove last id
             $objectSql->unlink(
                 $relation['name'],
@@ -490,8 +487,8 @@ $cradle->on('system-object-update', function ($request, $response) {
 
     //invalidate cache
     $slugs = $schema->getSlugableFieldNames($primary);
-    foreach($slugs as $slug) {
-        if(isset($data[$slug])) {
+    foreach ($slugs as $slug) {
+        if (isset($data[$slug])) {
             $objectRedis->removeDetail($data[$slug]);
         }
     }
@@ -523,7 +520,7 @@ $cradle->on('system-object-import', function ($request, $response) {
         'old' => 0
     ];
 
-    if(!isset($data['schema'])) {
+    if (!isset($data['schema'])) {
         throw SystemException::forNoSchema();
     }
 
@@ -574,12 +571,12 @@ $cradle->on('system-object-import', function ($request, $response) {
     // So proceed on adding/updating the items one by one
     foreach ($data['rows'] as $i => $row) {
         $created = $schema->getCreatedFieldName();
-        if($created && isset($row[$created])) {
+        if ($created && isset($row[$created])) {
             unset($row[$created]);
         }
 
         $updated = $schema->getUpdatedFieldName();
-        if($updated && isset($row[$updated])) {
+        if ($updated && isset($row[$updated])) {
             unset($row[$updated]);
         }
 
@@ -684,7 +681,7 @@ $cradle->on('system-object-link', function ($request, $response) {
         $data = $request->getStage();
     }
 
-    if(!isset($data['schema1'], $data['schema2'])) {
+    if (!isset($data['schema1'], $data['schema2'])) {
         throw SystemException::forNoSchema();
     }
 
@@ -751,7 +748,7 @@ $cradle->on('system-object-unlink', function ($request, $response) {
         $data = $request->getStage();
     }
 
-    if(!isset($data['schema1'], $data['schema2'])) {
+    if (!isset($data['schema1'], $data['schema2'])) {
         throw SystemException::forNoSchema();
     }
 
@@ -805,7 +802,7 @@ $cradle->on('system-object-unlinkall', function ($request, $response) {
         $data = $request->getStage();
     }
 
-    if(!isset($data['schema1'], $data['schema2'])) {
+    if (!isset($data['schema1'], $data['schema2'])) {
         throw SystemException::forNoSchema();
     }
 

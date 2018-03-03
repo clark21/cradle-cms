@@ -70,7 +70,7 @@ class Validator
 
         $relations = $this->schema->getRelations();
         foreach ($relations as $relation) {
-            if($relation['many'] != 1) {
+            if ($relation['many'] != 1) {
                 continue;
             }
 
@@ -96,17 +96,17 @@ class Validator
         $table = $this->schema->getName();
         $primary = $this->schema->getPrimaryFieldName();
 
-        if(!isset($data[$primary]) || !is_numeric($data[$primary])) {
+        if (!isset($data[$primary]) || !is_numeric($data[$primary])) {
             $errors[$primary] = 'Invalid ID';
         }
 
-        foreach($fields as $name => $field) {
-            if(!isset($field['validation'])) {
+        foreach ($fields as $name => $field) {
+            if (!isset($field['validation'])) {
                 continue;
             }
 
-            foreach($field['validation'] as $validation) {
-                if($validation['method'] === 'required'
+            foreach ($field['validation'] as $validation) {
+                if ($validation['method'] === 'required'
                     && isset($data[$name])
                     && empty($data[$name])
                 ) {
@@ -135,20 +135,20 @@ class Validator
         $table = $this->schema->getName();
         $primary = $this->schema->getPrimaryFieldName();
 
-        foreach($fields as $field) {
+        foreach ($fields as $field) {
             $name = $table . '_' . $field['name'];
             //if there is no data
-            if(!isset($data[$name])) {
+            if (!isset($data[$name])) {
                 //no need to validate
                 continue;
             }
 
-            if(!isset($field['validation']) || !is_array($field['validation'])) {
+            if (!isset($field['validation']) || !is_array($field['validation'])) {
                 continue;
             }
 
-            foreach($field['validation'] as $validation) {
-                switch(true) {
+            foreach ($field['validation'] as $validation) {
+                switch (true) {
                     case $validation['method'] === 'empty'
                         && empty($data[$name]):
                     case $validation['method'] === 'number'
@@ -212,7 +212,7 @@ class Validator
                         $errors[$name] = $validation['message'];
                         break;
                     case $validation['method'] === 'one':
-                        if(!in_array($data[$name], $validation['parameters'])) {
+                        if (!in_array($data[$name], $validation['parameters'])) {
                             $errors[$name] = $validation['message'];
                         }
                         break;
@@ -222,11 +222,11 @@ class Validator
                             ->search($table)
                             ->addFilter($name . '= %s', $data[$name]);
 
-                        if(isset($data[$primary])) {
+                        if (isset($data[$primary])) {
                             $search->addFilter($primary . ' != %s', $data[$primary]);
                         }
 
-                        if($search->getTotal()) {
+                        if ($search->getTotal()) {
                             $errors[$name] = $validation['message'];
                         }
                         break;
