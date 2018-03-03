@@ -243,11 +243,6 @@ $cradle->get('/admin/system/object/:schema/create', function ($request, $respons
         $data['cdn_config'] = File::getS3Client($config);
     }
 
-    //pass suggestion title field for each relation to the template
-    foreach ($data['schema']['relations'] as $name => $relation) {
-        $data['schema']['relations'][$name]['suggestion_name'] = '_' . $relation['primary2'];
-    }
-
     //if this is a relational process
     if ($request->hasStage('relation')) {
         //also pass the relation to the form
@@ -413,17 +408,14 @@ $cradle->get('/admin/system/object/:schema/update/:id', function ($request, $res
         $data['cdn_config'] = File::getS3Client($config);
     }
 
-    //pass suggestion title field for each relation to the template
-    foreach ($data['schema']['relations'] as $name => $relation) {
-        $data['schema']['relations'][$name]['suggestion_name'] = '_' . $relation['primary2'];
-    }
-
     //determine valid relations
     $data['valid_relations'] = [];
     cradle()->trigger('system-schema-search', $request, $response);
     foreach ($response->getResults('rows') as $relation) {
         $data['valid_relations'][] = $relation['name'];
     }
+
+    $data['redirect'] = urlencode($request->getServer('REQUEST_URI'));
 
     //----------------------------//
     // 3. Render Template
@@ -548,7 +540,7 @@ $cradle->post('/admin/system/object/:schema/search', function ($request, $respon
     );
 
     //if there is a specified redirect
-    if ($request->hasStage('redirect_uri')) {
+    if ($request->getStage('redirect_uri')) {
         //set the redirect
         $redirect = $request->getStage('redirect_uri');
     }
@@ -686,7 +678,7 @@ $cradle->post('/admin/system/object/:schema/create', function ($request, $respon
     );
 
     //if there is a specified redirect
-    if ($request->hasStage('redirect_uri')) {
+    if ($request->getStage('redirect_uri')) {
         //set the redirect
         $redirect = $request->getStage('redirect_uri');
     }
@@ -814,7 +806,7 @@ $cradle->post('/admin/system/object/:schema/update/:id', function ($request, $re
     );
 
     //if there is a specified redirect
-    if ($request->hasStage('redirect_uri')) {
+    if ($request->getStage('redirect_uri')) {
         //set the redirect
         $redirect = $request->getStage('redirect_uri');
     }
@@ -873,7 +865,7 @@ $cradle->get('/admin/system/object/:schema/remove/:id', function ($request, $res
     );
 
     //if there is a specified redirect
-    if ($request->hasStage('redirect_uri')) {
+    if ($request->getStage('redirect_uri')) {
         //set the redirect
         $redirect = $request->getStage('redirect_uri');
     }
@@ -945,7 +937,7 @@ $cradle->get('/admin/system/object/:schema/restore/:id', function ($request, $re
     );
 
     //if there is a specified redirect
-    if ($request->hasStage('redirect_uri')) {
+    if ($request->getStage('redirect_uri')) {
         //set the redirect
         $redirect = $request->getStage('redirect_uri');
     }
@@ -1022,7 +1014,7 @@ $cradle->post('/admin/system/object/:schema/import', function ($request, $respon
     }
 
     //if there is a specified redirect
-    if ($request->hasStage('redirect_uri')) {
+    if ($request->getStage('redirect_uri')) {
         //set the redirect
         $redirect = $request->getStage('redirect_uri');
     }

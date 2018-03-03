@@ -329,7 +329,7 @@ class Schema extends Registry
         $primary = $this->getPrimaryFieldName();
 
         foreach ($this->data['relations'] as $relation) {
-            if ($many != -1 && $many != $relation['many']) {
+            if (is_numeric($many) && $many != -1 && $many != $relation['many']) {
                 continue;
             }
 
@@ -348,6 +348,7 @@ class Schema extends Registry
                 $results[$name]['primary'] =  $relation['name'] . '_id';
             }
 
+            $results[$name]['table'] = $name;
             $results[$name]['primary1'] = $primary;
             $results[$name]['primary2'] = $results[$name]['primary'];
             $results[$name]['many'] = $relation['many'];
@@ -356,6 +357,11 @@ class Schema extends Registry
             if ($table === $relation['name']) {
                 $results[$name]['primary1'] .= '_1';
                 $results[$name]['primary2'] .= '_2';
+            }
+
+            //case for getting a specific relation
+            if (!is_numeric($many) && $relation['name'] === $many) {
+                return $results[$name];
             }
         }
 

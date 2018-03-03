@@ -330,7 +330,7 @@ $cradle->post('/admin/system/schema/create', function ($request, $response) {
     $redirect = '/admin/system/schema/search';
 
     //if there is a specified redirect
-    if ($request->hasStage('redirect_uri')) {
+    if ($request->getStage('redirect_uri')) {
         //set the redirect
         $redirect = $request->getStage('redirect_uri');
     }
@@ -434,7 +434,7 @@ $cradle->post('/admin/system/schema/update/:name', function ($request, $response
     $redirect = '/admin/system/schema/search';
 
     //if there is a specified redirect
-    if ($request->hasStage('redirect_uri')) {
+    if ($request->getStage('redirect_uri')) {
         //set the redirect
         $redirect = $request->getStage('redirect_uri');
     }
@@ -477,7 +477,7 @@ $cradle->get('/admin/system/schema/remove/:name', function ($request, $response)
     $redirect = '/admin/system/schema/search';
 
     //if there is a specified redirect
-    if ($request->hasStage('redirect_uri')) {
+    if ($request->getStage('redirect_uri')) {
         //set the redirect
         $redirect = $request->getStage('redirect_uri');
     }
@@ -534,7 +534,7 @@ $cradle->get('/admin/system/schema/restore/:name', function ($request, $response
     $redirect = '/admin/system/schema/search';
 
     //if there is a specified redirect
-    if ($request->hasStage('redirect_uri')) {
+    if ($request->getStage('redirect_uri')) {
         //set the redirect
         $redirect = $request->getStage('redirect_uri');
     }

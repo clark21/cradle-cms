@@ -170,7 +170,7 @@ $cradle->get('/admin/system/object/:schema1/:id/link/:schema2', function ($reque
     );
 
     //if there is a specified redirect
-    if ($request->hasStage('redirect_uri')) {
+    if ($request->getStage('redirect_uri')) {
         //set the redirect
         $redirect = $request->getStage('redirect_uri');
     }
@@ -285,7 +285,7 @@ $cradle->post('/admin/system/object/:schema1/search/:schema2/:id', function ($re
     );
 
     //if there is a specified redirect
-    if ($request->hasStage('redirect_uri')) {
+    if ($request->getStage('redirect_uri')) {
         //set the redirect
         $redirect = $request->getStage('redirect_uri');
     }
@@ -328,7 +328,7 @@ $cradle->post('/admin/system/object/:schema1/create/:schema2/:id', function ($re
     );
 
     //if there is a specified redirect
-    if ($request->hasStage('redirect_uri')) {
+    if ($request->getStage('redirect_uri')) {
         //set the redirect
         $redirect = $request->getStage('redirect_uri');
     }
@@ -417,18 +417,9 @@ $cradle->post('/admin/system/object/:schema1/:id/link/:schema2', function ($requ
 
     //----------------------------//
     // 2. Prepare Data
-    $schema1 = SystemSchema::i($request->getStage('schema1'));
-    $schema2 = SystemSchema::i($request->getStage('schema2'));
-
-    $schema1Primary = $schema1->getPrimaryFieldName();
-    $schema2Primary = $schema2->getPrimaryFieldName();
-
-    //case for post_post
-    if ($schema1Primary === $schema2Primary) {
-        $schema1Primary .= '_1';
-    }
-
-    $request->setStage($schema1Primary, $request->getStage('id'));
+    $schema = SystemSchema::i($request->getStage('schema1'));
+    $relation = $schema->getRelations($request->getStage('schema2'));
+    $request->setStage($relation['primary1'], $request->getStage('id'));
 
     //----------------------------//
     // 3. Process Request
@@ -464,7 +455,7 @@ $cradle->post('/admin/system/object/:schema1/:id/link/:schema2', function ($requ
     );
 
     //if there is a specified redirect
-    if ($request->hasStage('redirect_uri')) {
+    if ($request->getStage('redirect_uri')) {
         //set the redirect
         $redirect = $request->getStage('redirect_uri');
     }
@@ -477,8 +468,8 @@ $cradle->post('/admin/system/object/:schema1/:id/link/:schema2', function ($requ
     //add a flash
     $message = cradle('global')->translate(
         '%s was linked to %s',
-        $schema1->getSingular(),
-        $schema2->getSingular()
+        $schema->getSingular(),
+        $relation['singular']
     );
 
     cradle('global')->flash($message, 'success');
@@ -487,10 +478,10 @@ $cradle->post('/admin/system/object/:schema1/:id/link/:schema2', function ($requ
     cradle()->log(
         sprintf(
             '%s #%s linked to %s #%s',
-            $schema1->getSingular(),
-            $request->getStage('id1'),
-            $schema2->getSingular(),
-            $request->getStage('id2')
+            $schema->getSingular(),
+            $request->getStage('id'),
+            $relation['singular'],
+            $request->getStage($relation['primary2'])
         ),
         $request,
         $response
@@ -513,20 +504,10 @@ $cradle->get('/admin/system/object/:schema1/:id1/unlink/:schema2/:id2', function
 
     //----------------------------//
     // 2. Prepare Data
-    $schema1 = SystemSchema::i($request->getStage('schema1'));
-    $schema2 = SystemSchema::i($request->getStage('schema2'));
-
-    $schema1Primary = $schema1->getPrimaryFieldName();
-    $schema2Primary = $schema2->getPrimaryFieldName();
-
-    //case for post_post
-    if ($schema1Primary === $schema2Primary) {
-        $schema1Primary .= '_1';
-        $schema2Primary .= '_2';
-    }
-
-    $request->setStage($schema1Primary, $request->getStage('id1'));
-    $request->setStage($schema2Primary, $request->getStage('id2'));
+    $schema = SystemSchema::i($request->getStage('schema1'));
+    $relation = $schema->getRelations($request->getStage('schema2'));
+    $request->setStage($relation['primary1'], $request->getStage('id1'));
+    $request->setStage($relation['primary2'], $request->getStage('id2'));
 
     //----------------------------//
     // 3. Process Request
@@ -537,11 +518,11 @@ $cradle->get('/admin/system/object/:schema1/:id1/unlink/:schema2/:id2', function
     //redirect
     $redirect = sprintf(
         '/admin/system/object/%s/search',
-        $schema1->getName()
+        $schema->getName()
     );
 
     //if there is a specified redirect
-    if ($request->hasStage('redirect_uri')) {
+    if ($request->getStage('redirect_uri')) {
         //set the redirect
         $redirect = $request->getStage('redirect_uri');
     }
@@ -555,11 +536,13 @@ $cradle->get('/admin/system/object/:schema1/:id1/unlink/:schema2/:id2', function
         //add a flash
         cradle('global')->flash($response->getMessage(), 'error');
     } else {
+        var_dump($schema->getSingular());
+        var_dump($relation);
         //add a flash
         $message = cradle('global')->translate(
             '%s was unlinked from %s',
-            $schema1->getSingular(),
-            $schema2->getSingular()
+            $schema->getSingular(),
+            $relation['singular']
         );
 
         cradle('global')->flash($message, 'success');
@@ -567,10 +550,10 @@ $cradle->get('/admin/system/object/:schema1/:id1/unlink/:schema2/:id2', function
         //record logs
         cradle()->log(
             sprintf(
-                '%s #%s linked from %s #%s',
-                $schema1->getSingular(),
+                '%s #%s unlinked from %s #%s',
+                $schema->getSingular(),
                 $request->getStage('id1'),
-                $schema2->getSingular(),
+                $relation['singular'],
                 $request->getStage('id2')
             ),
             $request,

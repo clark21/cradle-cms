@@ -282,7 +282,7 @@ $cradle->post('/admin/auth/search', function ($request, $response) {
     $redirect = '/admin/auth/search';
 
     //if there is a specified redirect
-    if ($request->hasStage('redirect_uri')) {
+    if ($request->getStage('redirect_uri')) {
         //set the redirect
         $redirect = $request->getStage('redirect_uri');
     }
@@ -374,7 +374,7 @@ $cradle->post('/admin/auth/create', function ($request, $response) {
     $redirect = '/admin/auth/search';
 
     //if there is a specified redirect
-    if ($request->hasStage('redirect_uri')) {
+    if ($request->getStage('redirect_uri')) {
         //set the redirect
         $redirect = $request->getStage('redirect_uri');
     }
@@ -459,7 +459,7 @@ $cradle->post('/admin/auth/update/:id', function ($request, $response) {
     $redirect = '/admin/auth/search';
 
     //if there is a specified redirect
-    if ($request->hasStage('redirect_uri')) {
+    if ($request->getStage('redirect_uri')) {
         //set the redirect
         $redirect = $request->getStage('redirect_uri');
     }
@@ -508,7 +508,7 @@ $cradle->get('/admin/auth/remove/:id', function ($request, $response) {
     $redirect = '/admin/auth/search';
 
     //if there is a specified redirect
-    if ($request->hasStage('redirect_uri')) {
+    if ($request->getStage('redirect_uri')) {
         //set the redirect
         $redirect = $request->getStage('redirect_uri');
     }
@@ -568,7 +568,7 @@ $cradle->get('/admin/auth/restore/:id', function ($request, $response) {
     $redirect = '/admin/auth/search';
 
     //if there is a specified redirect
-    if ($request->hasStage('redirect_uri')) {
+    if ($request->getStage('redirect_uri')) {
         //set the redirect
         $redirect = $request->getStage('redirect_uri');
     }
@@ -629,7 +629,7 @@ $cradle->post('/admin/auth/import', function ($request, $response) {
     $redirect = '/admin/auth/search';
 
     //if there is a specified redirect
-    if ($request->hasStage('redirect_uri')) {
+    if ($request->getStage('redirect_uri')) {
         //set the redirect
         $redirect = $request->getStage('redirect_uri');
     }

@@ -685,46 +685,41 @@ $cradle->on('system-object-link', function ($request, $response) {
         throw SystemException::forNoSchema();
     }
 
-    $schema1 = SystemSchema::i($data['schema1']);
-    $schema2 = SystemSchema::i($data['schema2']);
-
-    $schema1Primary = $schema1->getPrimaryFieldName();
-    $schema2Primary = $schema2->getPrimaryFieldName();
-
-    if ($schema1Primary == $schema2Primary) {
-        $schema1Primary = sprintf('%s_1', $schema1Primary);
-        $schema2Primary = sprintf('%s_2', $schema2Primary);
-    }
+    $schema = SystemSchema::i($data['schema1']);
+    $relation = $schema->getRelations($data['schema2']);
 
     //----------------------------//
     // 2. Validate Data
-    if (!isset($data[$schema1Primary], $data[$schema2Primary])) {
+    if (!isset($data[$relation['primary1']], $data[$relation['primary2']])) {
         return $response->setError(true, 'No ID provided');
     }
 
-    if (!is_numeric($data[$schema1Primary]) || !is_numeric($data[$schema2Primary])) {
+    $primary1 = $data[$relation['primary1']];
+    $primary2 = $data[$relation['primary2']];
+
+    if (!is_numeric($primary1) || !is_numeric($primary2)) {
         return $response->setError(true, 'Invalid Id provided');
     }
 
     //----------------------------//
     // 3. Process Data
     //this/these will be used a lot
-    $objectSql = $schema1->model()->service('sql');
-    $objectRedis = $schema1->model()->service('redis');
-    $objectElastic = $schema1->model()->service('elastic');
+    $objectSql = $schema->model()->service('sql');
+    $objectRedis = $schema->model()->service('redis');
+    $objectElastic = $schema->model()->service('elastic');
 
     try {
         $results = $objectSql->link(
             $data['schema2'],
-            $data[$schema1Primary],
-            $data[$schema2Primary]
+            $primary1,
+            $primary2
         );
     } catch (SqlException $e) {
         $results = [];
     }
 
     //index post
-    $objectElastic->update($data[$schema1Primary]);
+    $objectElastic->update($primary1);
 
     //invalidate cache
     $objectRedis->removeSearch();
@@ -752,33 +747,41 @@ $cradle->on('system-object-unlink', function ($request, $response) {
         throw SystemException::forNoSchema();
     }
 
-    $schema1 = SystemSchema::i($data['schema1']);
-    $schema2 = SystemSchema::i($data['schema2']);
-
-    $schema1Primary = $schema1->getPrimaryFieldName();
-    $schema2Primary = $schema2->getPrimaryFieldName();
+    $schema = SystemSchema::i($data['schema1']);
+    $relation = $schema->getRelations($data['schema2']);
 
     //----------------------------//
     // 2. Validate Data
-    if (!isset($data[$schema1Primary], $data[$schema2Primary])) {
+    if (!isset($data[$relation['primary1']], $data[$relation['primary2']])) {
         return $response->setError(true, 'No ID provided');
+    }
+
+    $primary1 = $data[$relation['primary1']];
+    $primary2 = $data[$relation['primary2']];
+
+    if (!is_numeric($primary1) || !is_numeric($primary2)) {
+        return $response->setError(true, 'Invalid Id provided');
     }
 
     //----------------------------//
     // 3. Process Data
     //this/these will be used a lot
-    $objectSql = $schema1->model()->service('sql');
-    $objectRedis = $schema1->model()->service('redis');
-    $objectElastic = $schema1->model()->service('elastic');
+    $objectSql = $schema->model()->service('sql');
+    $objectRedis = $schema->model()->service('redis');
+    $objectElastic = $schema->model()->service('elastic');
 
-    $results = $objectSql->unlink(
-        $data['schema2'],
-        $data[$schema1Primary],
-        $data[$schema2Primary]
-    );
+    try {
+        $results = $objectSql->unlink(
+            $data['schema2'],
+            $primary1,
+            $primary2
+        );
+    } catch (SqlException $e) {
+        $results = [];
+    }
 
     //index post
-    $objectElastic->update($data[$schema1Primary]);
+    $objectElastic->update($primary1);
 
     //invalidate cache
     $objectRedis->removeSearch();
