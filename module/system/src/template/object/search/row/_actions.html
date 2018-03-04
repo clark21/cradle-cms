@@ -19,40 +19,33 @@
         <i class="fa fa-edit"></i>
     </a>
 
-    {{#each ../schema.relations}}
-        {{#in '2,3' many}}
-            <a
-                class="text-info"
-                title="View {{plural}}"
-                href="/admin/system/object/{{name}}/search/{{../../schema.name}}/{{scope ../this ../../schema.primary}}"
-            >
-                <i class="{{icon}}"></i>
-            </a>
-            <a
-                class="text-success"
-                title="Create {{singular}}"
-                href="/admin/system/object/{{name}}/create/{{../../schema.name}}/{{scope ../this ../../schema.primary}}?redirect_uri={{redirecturl}}"
-            >
-                <i class="{{icon}}"></i>
-            </a>
-        {{/in}}
-    {{/each}}
-
     {{#relations ../schema.name 3 'reverse'}}
         <a
             class="text-info"
             title="View {{source.plural}}"
-            href="/admin/system/object/{{source.name}}/search/{{name}}/{{scope ../this ../../schema.primary}}"
+            href="/admin/system/object/{{name}}/{{scope ../this primary}}/search/{{source.name}}"
         >
             <i class="{{source.icon}}"></i>
         </a>
+    {{else}}
+        {{#each ../schema.relations}}
+            {{#in '2,3' many}}
+                <a
+                    class="text-info"
+                    title="View {{plural}}"
+                    href="/admin/system/object/{{source.name}}/{{scope ../this source.primary}}/search/{{name}}"
+                >
+                    <i class="{{icon}}"></i>
+                </a>
+            {{/in}}
+        {{/each}}
     {{/relations}}
 
     {{#if ../relation.suggestion}}
         <a
             class="text-pink remove"
             href="/admin/system/object/{{../relation.schema.name}}/{{scope ../relation.data ../relation.schema.primary}}/unlink/{{../schema.name}}/{{scope this ../schema.primary}}?redirect_uri={{redirecturl}}"
-            title="Remove {{../schema.singular}}"
+            title="Unlink {{../schema.singular}}"
         >
             <i class="fa fa-unlink"></i>
         </a>

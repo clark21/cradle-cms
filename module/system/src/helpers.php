@@ -28,6 +28,10 @@ $handlebars->registerHelper('relations', function (...$args) {
         $relations[$name]['suggestion_name'] = '_' . $relation['primary2'];
     }
 
+    if (empty($relations)) {
+        return $options['inverse']();
+    }
+
     $each = cradle('global')->handlebars()->getHelper('each');
 
     return $each($relations, $options);

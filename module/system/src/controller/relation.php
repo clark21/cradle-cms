@@ -19,12 +19,44 @@ use Cradle\Http\Response;
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/system/object/:schema1/search/:schema2/:id', function ($request, $response) {
-    //variable list
+$cradle->get('/admin/system/object/:schema1/:id/search/:schema2', function ($request, $response) {
+    //----------------------------//
+    // 1. Route Permissions
+    //re routing will take care of this
+    //----------------------------//
+    // 2. Prepare Data
+    $schema = SystemSchema::i($request->getStage('schema1'));
+    $relation = $schema->getRelations($request->getStage('schema2'));
+
+    //if no relation
+    if(empty($relation)) {
+        //try the other way around
+        $schema = SystemSchema::i($request->getStage('schema2'));
+        $relation = $schema->getRelations($request->getStage('schema1'));
+    }
+
+    if(empty($relation) || $relation['many'] < 2) {
+        $redirect = sprintf(
+            '/admin/system/object/%s/search',
+            $request->getStage('schema1')
+        );
+
+        //if there is a specified redirect
+        if ($request->getStage('redirect_uri')) {
+            //set the redirect
+            $redirect = $request->getStage('redirect_uri');
+        }
+
+        //add a flash
+        $message = cradle('global')->translate('Invalid relation');
+        cradle('global')->flash($message, 'error');
+        cradle('global')->redirect($redirect);
+    }
+
     $id = $request->getStage('id');
-    $schema1 = $request->getStage('schema1');
-    $schema2 = SystemSchema::i($request->getStage('schema2'));
-    $request->setStage('filter', $schema2->getPrimaryFieldName(), $id);
+    $schema1 = SystemSchema::i($request->getStage('schema1'));
+    $schema2 = $request->getStage('schema2');
+    $request->setStage('filter', $schema1->getPrimaryFieldName(), $id);
 
     //remove the data from stage
     //because we wont need it anymore
@@ -39,9 +71,9 @@ $cradle->get('/admin/system/object/:schema1/search/:schema2/:id', function ($req
 
     $detailRequest
         //let the event know what schema we are using
-        ->setStage('schema', $schema2->getName())
+        ->setStage('schema', $schema1->getName())
         //table_id, 1 for example
-        ->setStage($schema2->getPrimaryFieldName(), $id);
+        ->setStage($schema1->getPrimaryFieldName(), $id);
 
     //now get the actual table row
     cradle()->trigger('system-object-detail', $detailRequest, $detailResponse);
@@ -50,20 +82,22 @@ $cradle->get('/admin/system/object/:schema1/search/:schema2/:id', function ($req
     $results = $detailResponse->getResults();
     //and determine the title of the table row
     //this will be used on the breadcrumbs and title for example
-    $suggestion = $schema2->getSuggestionFormat($results);
+    $suggestion = $schema1->getSuggestionFormat($results);
 
     //pass all the relational data we collected
     $request
-        ->setStage('relation', 'schema', $schema2->getAll())
+        ->setStage('relation', 'schema', $schema1->getAll())
         ->setStage('relation', 'data', $results)
         ->setStage('relation', 'suggestion', $suggestion);
 
+    //----------------------------//
+    // 3. Render Template
     //now let the original search take over
     cradle()->triggerRoute(
         'get',
         sprintf(
             '/admin/system/object/%s/search',
-            $schema1
+            $schema2
         ),
         $request,
         $response
@@ -76,12 +110,16 @@ $cradle->get('/admin/system/object/:schema1/search/:schema2/:id', function ($req
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/system/object/:schema1/create/:schema2/:id', function ($request, $response) {
-    //variable list
+$cradle->get('/admin/system/object/:schema1/:id/create/:schema2', function ($request, $response) {
+    //----------------------------//
+    // 1. Route Permissions
+    //re routing will take care of this
+    //----------------------------//
+    // 2. Prepare Data
     $id = $request->getStage('id');
-    $schema1 = $request->getStage('schema1');
-    $schema2 = SystemSchema::i($request->getStage('schema2'));
-    $request->setStage('filter', $schema2->getPrimaryFieldName(), $id);
+    $schema1 = SystemSchema::i($request->getStage('schema1'));
+    $schema2 = $request->getStage('schema2');
+    $request->setStage('filter', $schema1->getPrimaryFieldName(), $id);
 
     //remove the data from stage
     //because we wont need it anymore
@@ -96,9 +134,9 @@ $cradle->get('/admin/system/object/:schema1/create/:schema2/:id', function ($req
 
     $detailRequest
         //let the event know what schema we are using
-        ->setStage('schema', $schema2->getName())
+        ->setStage('schema', $schema1->getName())
         //table_id, 1 for example
-        ->setStage($schema2->getPrimaryFieldName(), $id);
+        ->setStage($schema1->getPrimaryFieldName(), $id);
 
     //now get the actual table row
     cradle()->trigger('system-object-detail', $detailRequest, $detailResponse);
@@ -107,20 +145,22 @@ $cradle->get('/admin/system/object/:schema1/create/:schema2/:id', function ($req
     $results = $detailResponse->getResults();
     //and determine the title of the table row
     //this will be used on the breadcrumbs and title for example
-    $suggestion = $schema2->getSuggestionFormat($results);
+    $suggestion = $schema1->getSuggestionFormat($results);
 
     //pass all the relational data we collected
     $request
-        ->setStage('relation', 'schema', $schema2->getAll())
+        ->setStage('relation', 'schema', $schema1->getAll())
         ->setStage('relation', 'data', $results)
         ->setStage('relation', 'suggestion', $suggestion);
 
+    //----------------------------//
+    // 3. Render Template
     //now let the original search take over
     cradle()->triggerRoute(
         'get',
         sprintf(
             '/admin/system/object/%s/create',
-            $schema1
+            $schema2
         ),
         $request,
         $response
@@ -136,7 +176,6 @@ $cradle->get('/admin/system/object/:schema1/create/:schema2/:id', function ($req
 $cradle->get('/admin/system/object/:schema1/:id/link/:schema2', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
-    $request->setStage('redirect', '/admin/system/object/' . $request->getStage('schema') . '/search');
     if (!cradle('/module/role')->hasPermissions($request, $response)) {
         return;
     }
@@ -178,6 +217,7 @@ $cradle->get('/admin/system/object/:schema1/:id/link/:schema2', function ($reque
     //pass the relation
     $relation = $request->getStage('schema2');
     $table = $data['schema']['name'] . '_' . $relation;
+
     //if we can't find the relation
     if (!isset($data['schema']['relations'][$table])) {
         //set a message
@@ -270,7 +310,7 @@ $cradle->get('/admin/system/object/:schema1/:id/link/:schema2', function ($reque
  * @param Request $request
  * @param Response $response
  */
-$cradle->post('/admin/system/object/:schema1/search/:schema2/:id', function ($request, $response) {
+$cradle->post('/admin/system/object/:schema1/:id/search/:schema2', function ($request, $response) {
     //variable list
     $id = $request->getStage('id');
     $schema1 = SystemSchema::i($request->getStage('schema1'));
@@ -278,10 +318,10 @@ $cradle->post('/admin/system/object/:schema1/search/:schema2/:id', function ($re
 
     //setup the redirect now, kasi we will change it later
     $redirect = sprintf(
-        '/admin/system/object/%s/search/%s/%s',
+        '/admin/system/object/%s/%s/search/%s',
         $schema1->getName(),
-        $schema2->getName(),
-        $id
+        $id,
+        $schema2->getName()
     );
 
     //if there is a specified redirect
@@ -300,7 +340,7 @@ $cradle->post('/admin/system/object/:schema1/search/:schema2/:id', function ($re
         'post',
         sprintf(
             '/admin/system/object/%s/search',
-            $schema1->getName()
+            $schema2->getName()
         ),
         $request,
         $response
@@ -313,7 +353,7 @@ $cradle->post('/admin/system/object/:schema1/search/:schema2/:id', function ($re
  * @param Request $request
  * @param Response $response
  */
-$cradle->post('/admin/system/object/:schema1/create/:schema2/:id', function ($request, $response) {
+$cradle->post('/admin/system/object/:schema1/:id/create/:schema2', function ($request, $response) {
     //variable list
     $id = $request->getStage('id');
     $schema1 = SystemSchema::i($request->getStage('schema1'));
@@ -321,10 +361,10 @@ $cradle->post('/admin/system/object/:schema1/create/:schema2/:id', function ($re
 
     //setup the redirect now, kasi we will change it later
     $redirect = sprintf(
-        '/admin/system/object/%s/search/%s/%s',
+        '/admin/system/object/%s/%s/search/%s',
         $schema1->getName(),
-        $schema2->getName(),
-        $id
+        $id,
+        $schema2->getName()
     );
 
     //if there is a specified redirect
@@ -335,10 +375,10 @@ $cradle->post('/admin/system/object/:schema1/create/:schema2/:id', function ($re
 
     // setup the route
     $route = sprintf(
-        '/admin/system/object/%s/create/%s/%s',
+        '/admin/system/object/%s/%s/create/%s',
         $schema1->getName(),
-        $schema2->getName(),
-        $id
+        $id,
+        $schema2->getName()
     );
 
     //if there is a specified route
@@ -357,7 +397,7 @@ $cradle->post('/admin/system/object/:schema1/create/:schema2/:id', function ($re
         'post',
         sprintf(
             '/admin/system/object/%s/create',
-            $schema1->getName()
+            $schema2->getName()
         ),
         $request,
         $response
@@ -374,16 +414,16 @@ $cradle->post('/admin/system/object/:schema1/create/:schema2/:id', function ($re
     $primary2 = $schema2->getPrimaryFieldName();
 
     if ($primary1 == $primary2) {
-        $primary1 = sprintf('%s_2', $primary1);
-        $primary2 = sprintf('%s_1', $primary2);
+        $primary1 = sprintf('%s_1', $primary1);
+        $primary2 = sprintf('%s_2', $primary2);
     }
 
     //set the stage to link
     $request
-        ->setStage('schema2', $schema1->getName())
-        ->setStage('schema1', $schema2->getName())
-        ->setStage($primary1, $response->getResults($schema1->getPrimaryFieldName()))
-        ->setStage($primary2, $id);
+        ->setStage('schema1', $schema1->getName())
+        ->setStage('schema2', $schema2->getName())
+        ->setStage($primary1, $id)
+        ->setStage($primary2, $response->getResults($schema2->getPrimaryFieldName()));
 
     //now link it
     cradle()->trigger('system-object-link', $request, $response);
@@ -397,7 +437,7 @@ $cradle->post('/admin/system/object/:schema1/create/:schema2/:id', function ($re
     cradle('global')->flash(sprintf(
         '%s was Created',
         'success',
-        $schema1->getSingular()
+        $schema2->getSingular()
     ));
 
     cradle('global')->redirect($redirect);
@@ -419,11 +459,50 @@ $cradle->post('/admin/system/object/:schema1/:id/link/:schema2', function ($requ
     // 2. Prepare Data
     $schema = SystemSchema::i($request->getStage('schema1'));
     $relation = $schema->getRelations($request->getStage('schema2'));
-    $request->setStage($relation['primary1'], $request->getStage('id'));
+
+    //if no relation
+    if(empty($relation)) {
+        //try the other way around
+        $schema = SystemSchema::i($request->getStage('schema2'));
+        $relation = $schema->getRelations($request->getStage('schema1'));
+
+        $id1 = $request->getStage($relation['primary2']);
+        $id2 = $request->getStage('id');
+    } else {
+        $id1 = $request->getStage('id');
+        $id2 = $request->getStage($relation['primary2']);
+    }
+
+    //redirect
+    $redirect = sprintf(
+        '/admin/system/object/%s/search/%s/%s',
+        $request->getStage('schema2'),
+        $request->getStage('schema1'),
+        $request->getStage('id')
+    );
+
+    //if there is a specified redirect
+    if ($request->getStage('redirect_uri')) {
+        //set the redirect
+        $redirect = $request->getStage('redirect_uri');
+    }
+
+    $request
+        ->setStage('id1', $id1)
+        ->setStage('id2', $id2)
+        ->setStage('redirect_uri', 'false');
 
     //----------------------------//
     // 3. Process Request
-    cradle()->trigger('system-object-link', $request, $response);
+    $route = sprintf(
+        '/admin/system/object/%s/%s/link/%s/%s',
+        $request->getStage('schema1'),
+        $request->getStage('id1'),
+        $request->getStage('schema2'),
+        $request->getStage('id2')
+    );
+
+    cradle()->triggerRoute('get', $route, $request, $response);
 
     //----------------------------//
     // 4. Interpret Results
@@ -446,20 +525,6 @@ $cradle->post('/admin/system/object/:schema1/:id/link/:schema2', function ($requ
         return cradle()->triggerRoute('get', $route, $request, $response);
     }
 
-    //redirect
-    $redirect = sprintf(
-        '/admin/system/object/%s/search/%s/%s',
-        $request->getStage('schema2'),
-        $request->getStage('schema1'),
-        $request->getStage('id')
-    );
-
-    //if there is a specified redirect
-    if ($request->getStage('redirect_uri')) {
-        //set the redirect
-        $redirect = $request->getStage('redirect_uri');
-    }
-
     //if we dont want to redirect
     if ($redirect === 'false') {
         return;
@@ -479,13 +544,93 @@ $cradle->post('/admin/system/object/:schema1/:id/link/:schema2', function ($requ
         sprintf(
             '%s #%s linked to %s #%s',
             $schema->getSingular(),
-            $request->getStage('id'),
+            $request->getStage('id1'),
             $relation['singular'],
-            $request->getStage($relation['primary2'])
+            $request->getStage('id2')
         ),
         $request,
         $response
     );
+
+    cradle('global')->redirect($redirect);
+});
+
+/**
+ * Link object from object
+ *
+ * @param Request $request
+ * @param Response $response
+ */
+$cradle->get('/admin/system/object/:schema1/:id1/link/:schema2/:id2', function ($request, $response) {
+    //----------------------------//
+    // 1. Route Permissions
+    //only for admin
+    cradle('global')->requireLogin('admin');
+
+    //----------------------------//
+    // 2. Prepare Data
+    $schema = SystemSchema::i($request->getStage('schema1'));
+    $relation = $schema->getRelations($request->getStage('schema2'));
+
+    //if no relation
+    if(empty($relation)) {
+        //try the other way around
+        $schema = SystemSchema::i($request->getStage('schema2'));
+        $relation = $schema->getRelations($request->getStage('schema1'));
+    }
+
+    $request->setStage($relation['primary1'], $request->getStage('id1'));
+    $request->setStage($relation['primary2'], $request->getStage('id2'));
+
+    //----------------------------//
+    // 3. Process Request
+    cradle()->trigger('system-object-link', $request, $response);
+
+    //----------------------------//
+    // 4. Interpret Results
+    //redirect
+    $redirect = sprintf(
+        '/admin/system/object/%s/search',
+        $schema->getName()
+    );
+
+    //if there is a specified redirect
+    if ($request->getStage('redirect_uri')) {
+        //set the redirect
+        $redirect = $request->getStage('redirect_uri');
+    }
+
+    //if we dont want to redirect
+    if ($redirect === 'false') {
+        return;
+    }
+
+    if ($response->isError()) {
+        //add a flash
+        cradle('global')->flash($response->getMessage(), 'error');
+    } else {
+        //add a flash
+        $message = cradle('global')->translate(
+            '%s was linked to %s',
+            $schema->getSingular(),
+            $relation['singular']
+        );
+
+        cradle('global')->flash($message, 'success');
+
+        //record logs
+        cradle()->log(
+            sprintf(
+                '%s #%s linked to %s #%s',
+                $schema->getSingular(),
+                $request->getStage('id1'),
+                $relation['singular'],
+                $request->getStage('id2')
+            ),
+            $request,
+            $response
+        );
+    }
 
     cradle('global')->redirect($redirect);
 });
@@ -506,6 +651,14 @@ $cradle->get('/admin/system/object/:schema1/:id1/unlink/:schema2/:id2', function
     // 2. Prepare Data
     $schema = SystemSchema::i($request->getStage('schema1'));
     $relation = $schema->getRelations($request->getStage('schema2'));
+
+    //if no relation
+    if(empty($relation)) {
+        //try the other way around
+        $schema = SystemSchema::i($request->getStage('schema2'));
+        $relation = $schema->getRelations($request->getStage('schema1'));
+    }
+
     $request->setStage($relation['primary1'], $request->getStage('id1'));
     $request->setStage($relation['primary2'], $request->getStage('id2'));
 
@@ -536,8 +689,6 @@ $cradle->get('/admin/system/object/:schema1/:id1/unlink/:schema2/:id2', function
         //add a flash
         cradle('global')->flash($response->getMessage(), 'error');
     } else {
-        var_dump($schema->getSingular());
-        var_dump($relation);
         //add a flash
         $message = cradle('global')->translate(
             '%s was unlinked from %s',
@@ -570,12 +721,12 @@ $cradle->get('/admin/system/object/:schema1/:id1/unlink/:schema2/:id2', function
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/system/object/:schema1/export/:schema2/:id/:type', function ($request, $response) {
+$cradle->get('/admin/system/object/:schema1/:id/export/:schema2/:type', function ($request, $response) {
     //variable list
     $id = $request->getStage('id');
-    $schema1 = $request->getStage('schema1');
-    $schema2 = SystemSchema::i($request->getStage('schema2'));
-    $request->setStage('filter', $schema2->getPrimaryFieldName(), $id);
+    $schema1 = SystemSchema::i($request->getStage('schema1'));
+    $schema2 = $request->getStage('schema2');
+    $request->setStage('filter', $schema1->getPrimaryFieldName(), $id);
 
     //remove the data from stage
     //because we wont need it anymore
@@ -590,9 +741,9 @@ $cradle->get('/admin/system/object/:schema1/export/:schema2/:id/:type', function
 
     $detailRequest
         //let the event know what schema we are using
-        ->setStage('schema', $schema2->getName())
+        ->setStage('schema', $schema1->getName())
         //table_id, 1 for example
-        ->setStage($schema2->getPrimaryFieldName(), $id);
+        ->setStage($schema1->getPrimaryFieldName(), $id);
 
     //now get the actual table row
     cradle()->trigger('system-object-detail', $detailRequest, $detailResponse);
@@ -601,11 +752,11 @@ $cradle->get('/admin/system/object/:schema1/export/:schema2/:id/:type', function
     $results = $detailResponse->getResults();
     //and determine the title of the table row
     //this will be used on the breadcrumbs and title for example
-    $suggestion = $schema2->getSuggestionFormat($results);
+    $suggestion = $schema1->getSuggestionFormat($results);
 
     //pass all the relational data we collected
     $request
-        ->setStage('relation', 'schema', $schema2->getAll())
+        ->setStage('relation', 'schema', $schema1->getAll())
         ->setStage('relation', 'data', $results)
         ->setStage('relation', 'suggestion', $suggestion);
 
@@ -614,7 +765,7 @@ $cradle->get('/admin/system/object/:schema1/export/:schema2/:id/:type', function
         'get',
         sprintf(
             '/admin/system/object/%s/export/%s',
-            $schema1,
+            $schema2,
             $request->getStage('type')
         ),
         $request,
