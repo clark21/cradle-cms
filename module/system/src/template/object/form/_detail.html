@@ -27,10 +27,7 @@
                                     <tr>
                                         <td>{{../singular}}</td>
                                         <td>
-                                            <a
-                                                href="/admin/system/object/{{../name}}/update/{{scope this ../primary}}"
-                                                target="_blank"
-                                            >
+                                            <a href="/admin/system/object/{{../name}}/update/{{scope this ../primary}}">
                                                 {{suggest ../this this}}
                                             </a>
                                             &nbsp;&nbsp;
@@ -51,10 +48,7 @@
                                 <tr>
                                     <td>{{singular}}</td>
                                     <td>
-                                        <a
-                                            href="/admin/system/object/{{name}}/update/{{scope ../detail primary}}"
-                                            target="_blank"
-                                        >
+                                        <a href="/admin/system/object/{{name}}/update/{{scope ../detail primary}}">
                                             {{suggest this ../detail}}
                                         </a>
                                     </td>
@@ -65,7 +59,17 @@
                             <tr>
                                 <td>{{singular}}</td>
                                 <td>
-                                    <a href="/admin/system/object/{{name}}/search/{{../schema.name}}/{{scope ../detail primary}}" target="_blank">
+                                    <a href="/admin/system/object/{{name}}/search/{{../schema.name}}/{{scope ../detail ../schema.primary}}">
+                                        {{_ 'View All %s' plural}}
+                                    </a>
+                                </td>
+                            </tr>
+                        {{/relations}}
+                        {{#relations schema.name 3}}
+                            <tr>
+                                <td>{{singular}}</td>
+                                <td>
+                                    <a href="/admin/system/object/{{name}}/search/{{../schema.name}}/{{scope ../detail ../schema.primary}}">
                                         {{_ 'View All %s' plural}}
                                     </a>
                                 </td>

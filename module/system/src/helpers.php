@@ -6,13 +6,22 @@ $handlebars->registerHelper('relations', function (...$args) {
     //resolve the arguments
     $options = array_pop($args);
     $schema = array_shift($args);
-    $many = null;
+    $many = -1;
 
     if (isset($args[0])) {
         $many = $args[0];
     }
 
-    $relations = Schema::i($schema)->getRelations($many);
+    if (isset($args[1]) && $args[1]) {
+        $relations = Schema::i($schema)->getReverseRelations($many);
+    } else {
+        $relations = Schema::i($schema)->getRelations($many);
+    }
+
+    if(!is_numeric($many) && count($relations)) {
+        $table = $relations['table'];
+        $relations = [$table => $relations];
+    }
 
     //pass suggestion title field for each relation to the template
     foreach ($relations as $name => $relation) {
@@ -50,7 +59,7 @@ $handlebars->registerHelper('format', function ($schema, $row, $type, $options) 
     return implode('', $formats);
 });
 
-$handlebars->registerHelper('schema_key', function ($schema, $row, $key) {
+$handlebars->registerHelper('schema_row', function ($schema, $row, $key) {
     $schema = Schema::i($schema);
 
     switch ($key) {
@@ -80,7 +89,7 @@ $handlebars->registerHelper('schema_key', function ($schema, $row, $key) {
 });
 
 $handlebars->registerHelper('active', function ($schema, $row, $options) {
-    $schemaKey = cradle('global')->handlebars()->getHelper('schema_key');
+    $schemaKey = cradle('global')->handlebars()->getHelper('schema_row');
     if (!$schemaKey($schema, $row, 'active')) {
         return $options['fn']();
     }

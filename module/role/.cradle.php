@@ -30,21 +30,20 @@ $cradle->package('/module/role')->addMethod('hasPermissions', function($request,
     }
 
     // default redirect
-    $redirect = '/login';
+    $redirect = '/';
 
     // if redirect is set
-    if ($request->hasStage('redirect')) {
+    if ($request->hasStage('redirect_uri')) {
         // set redirect
-        $redirect = $request->getStage('redirect');
+        $redirect = $request->getStage('redirect_uri');
     }
 
     // redirect to login
     if(!$authId) {
         // if no redirect
-        if($request->getStage('redirect') === 'false') {
+        if($request->getStage('redirect_uri') === 'false') {
             // set error
             $response->setError(true, 'Invalid Permissions');
-
             return false;
         }
 
@@ -80,15 +79,6 @@ $cradle->package('/module/role')->addMethod('hasPermissions', function($request,
     if(!$router->getEventHandler()->getMeta()) {
         //the role passes
         return true;
-    }
-
-    // default redirect
-    $redirect = '/';
-
-    // if redirect is set
-    if ($request->hasStage('redirect')) {
-        // set redirect
-        $redirect = $request->getStage('redirect');
     }
 
     // if no redirect

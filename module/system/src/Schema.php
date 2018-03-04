@@ -333,6 +333,11 @@ class Schema extends Registry
                 continue;
             }
 
+            //case for getting a specific relation
+            if(!is_numeric($many) && $relation['name'] !== $many) {
+                continue;
+            }
+
             $name = $table . '_' . $relation['name'];
 
             $results[$name] = [];
@@ -352,6 +357,7 @@ class Schema extends Registry
             $results[$name]['primary1'] = $primary;
             $results[$name]['primary2'] = $results[$name]['primary'];
             $results[$name]['many'] = $relation['many'];
+            $results[$name]['source'] = $this->getAll(false);
 
             //case for relating to itself ie. post_post
             if ($table === $relation['name']) {
@@ -360,7 +366,7 @@ class Schema extends Registry
             }
 
             //case for getting a specific relation
-            if (!is_numeric($many) && $relation['name'] === $many) {
+            if(!is_numeric($many) && $relation['name'] === $many) {
                 return $results[$name];
             }
         }
@@ -422,6 +428,7 @@ class Schema extends Registry
         foreach ($rows as $row) {
             $schema = Schema::i($row['name']);
             $table = $row['name'] . '_' . $name;
+
             $relations = $schema->getRelations();
             if (!isset($relations[$table]['many'])
                 || (
@@ -433,7 +440,7 @@ class Schema extends Registry
             }
 
             $results[$table] = $relations[$table];
-            $results[$table]['source'] = $row['name'];
+            $results[$table]['source'] = $schema->getAll(false);
         }
 
         return $results;

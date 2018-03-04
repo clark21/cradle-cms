@@ -1,6 +1,6 @@
 {{#format ../schema this 'list'}}
     {{#when format '===' 'none'}}
-        {{#has ../../schema.filterable name}}
+        {{#in ../../schema.filterable name}}
             <td>
                 <a href="?{{query 'filter' name value}}">
                     {{value}}
@@ -8,10 +8,10 @@
             </td>
         {{else}}
             <td>{{value}}</td>
-        {{/has}}
+        {{/in}}
     {{/when}}
     {{#when format '===' 'lower'}}
-        {{#has ../../schema.filterable name}}
+        {{#in ../../schema.filterable name}}
             <td>
                 <a href="?{{query 'filter' name value}}">
                     {{lower value}}
@@ -19,10 +19,10 @@
             </td>
         {{else}}
             <td>{{tolower value}}</td>
-        {{/has}}
+        {{/in}}
     {{/when}}
     {{#when format '===' 'upper'}}
-        {{#has ../../schema.filterable name}}
+        {{#in ../../schema.filterable name}}
             <td>
                 <a href="?{{query 'filter' name value}}">
                     {{upper value}}
@@ -30,10 +30,10 @@
             </td>
         {{else}}
             <td>{{upper value}}</td>
-        {{/has}}
+        {{/in}}
     {{/when}}
     {{#when format '===' 'capital'}}
-        {{#has ../../schema.filterable name}}
+        {{#in ../../schema.filterable name}}
             <td>
                 <a href="?{{query 'filter' name value}}">
                     {{capital value}}
@@ -41,7 +41,7 @@
             </td>
         {{else}}
             <td>{{capital value}}</td>
-        {{/has}}
+        {{/in}}
     {{/when}}
     {{#when format '===' 'length'}}
         <td>{{chars value parameters}}</td>
@@ -56,7 +56,7 @@
         <td>{{price value}}</td>
     {{/when}}
     {{#when format '===' 'yes'}}
-        {{#has ../../schema.filterable name}}
+        {{#in ../../schema.filterable name}}
             <td>
                 <a href="?{{query 'filter' name value}}">
                     {{#if value}}Yes{{else}}No{{/if}}
@@ -64,7 +64,7 @@
             </td>
         {{else}}
             <td>{{#if value}}Yes{{else}}No{{/if}}</td>
-        {{/has}}
+        {{/in}}
     {{/when}}
     {{#when format '===' 'date'}}
         <td>

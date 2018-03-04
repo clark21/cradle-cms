@@ -366,6 +366,15 @@ $handlebars->registerHelper('sortcaret', function (...$args) {
 });
 
 /**
+ * Returns the current url encoded, used for recdirect flags
+ *
+ * @return string
+ */
+$handlebars->registerHelper('redirecturl', function () {
+    return urlencode(cradle()->getRequest()->getServer('REQUEST_URI'));
+});
+
+/**
  * Uses a block to generate the pagination
  *
  * @param *int total

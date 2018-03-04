@@ -688,6 +688,13 @@ $cradle->on('system-object-link', function ($request, $response) {
     $schema = SystemSchema::i($data['schema1']);
     $relation = $schema->getRelations($data['schema2']);
 
+    //if no relation
+    if(empty($relation)) {
+        //try the other way around
+        $schema = SystemSchema::i($data['schema2']);
+        $relation = $schema->getRelations($data['schema1']);
+    }
+
     //----------------------------//
     // 2. Validate Data
     if (!isset($data[$relation['primary1']], $data[$relation['primary2']])) {
@@ -710,7 +717,7 @@ $cradle->on('system-object-link', function ($request, $response) {
 
     try {
         $results = $objectSql->link(
-            $data['schema2'],
+            $relation['name'],
             $primary1,
             $primary2
         );
@@ -749,6 +756,13 @@ $cradle->on('system-object-unlink', function ($request, $response) {
 
     $schema = SystemSchema::i($data['schema1']);
     $relation = $schema->getRelations($data['schema2']);
+
+    //if no relation
+    if(empty($relation)) {
+        //try the other way around
+        $schema = SystemSchema::i($data['schema2']);
+        $relation = $schema->getRelations($data['schema1']);
+    }
 
     //----------------------------//
     // 2. Validate Data

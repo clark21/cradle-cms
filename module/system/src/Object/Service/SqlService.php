@@ -342,20 +342,21 @@ class SqlService
             if (//if filter customer is not set
                 !isset($filter[str_replace('_1', '', $relation['primary1'])])
                 //project_customer vs cutomer_project
-                || isset($relations[$relation['name'] . '_' . $relation['source']])
-            ) {
+                || isset($relations[$relation['name'] . '_' . $relation['source']['name']])
+            )
+            {
                 //then skip
                 continue;
             }
 
             //adjust filter, order and searchable for cases like post_post
-            if ($relation['source'] === $this->schema->getName()) {
+            if ($relation['source']['name'] === $this->schema->getName()) {
                 foreach ($filter as $column => $value) {
                     if (isset($relation['fields'][$column])) {
                         //add alias
                         $newCol = sprintf(
                             '%s.%s',
-                            $relation['source'] . '2',
+                            $relation['source']['name'] . '2',
                             $column
                         );
 
@@ -381,7 +382,7 @@ class SqlService
                         //add alias
                         $newCol = sprintf(
                             '%s.%s',
-                            $relation['source'],
+                            $relation['source']['name'],
                             $column
                         );
 
@@ -409,7 +410,7 @@ class SqlService
                         if (isset($relation['fields'][$name])) {
                             $newCol = sprintf(
                                 '%s.%s',
-                                $relation['source'] . '2',
+                                $relation['source']['name'] . '2',
                                 $name
                             );
 
@@ -424,7 +425,7 @@ class SqlService
                         //add alias
                         $newCol = sprintf(
                             '%s.%s',
-                            $relation['source'] . '2',
+                            $relation['source']['name'] . '2',
                             $sort
                         );
 
@@ -439,7 +440,7 @@ class SqlService
             $search
                 ->when(
                     //we need to case for post_post for example
-                    $relation['source'] === $this->schema->getName(),
+                    $relation['source']['name'] === $this->schema->getName(),
                     //this is the post_post way
                     function () use ($table, $schema, $filter, &$relation) {
                         //TODO: I need help with this section
@@ -454,14 +455,14 @@ class SqlService
 
                         $on = sprintf(
                             '%s = %s',
-                            $relation['source']. '2.' .$schema->getPrimaryFieldName(),
+                            $relation['source']['name']. '2.' .$schema->getPrimaryFieldName(),
                             $relation['primary2']
                         );
 
                         $source = sprintf(
                             '%s as %s',
-                            $relation['source'],
-                            $relation['source'] . '2'
+                            $relation['source']['name'],
+                            $relation['source']['name'] . '2'
                         );
 
                         $this->innerJoinOn($source, $on);
@@ -469,9 +470,24 @@ class SqlService
                     //this is the normal way
                     function () use ($table, $filter, &$relation) {
                         $this->innerJoinUsing($table, $relation['primary2']);
-                        $this->innerJoinUsing($relation['source'], $relation['primary1']);
+                        $this->innerJoinUsing($relation['source']['name'], $relation['primary1']);
                     }
                 );
+        }
+
+        //get N:N relations
+        $relations = $this->schema->getRelations(3);
+        foreach ($relations as $table => $relation) {
+            //post_post has already been cased for
+            if ($relation['name'] === $this->schema->getName()) {
+                continue;
+            }
+
+            if (!isset($filter[$relation['primary2']])) {
+                continue;
+            }
+
+            $search->innerJoinUsing($table, $relation['primary1']);
         }
 
         //add filters

@@ -1,5 +1,5 @@
 {{#each schema.fields}}
-    {{#has ../schema.filterable @key}}
+    {{#in ../schema.filterable @key}}
         {{#notin 'password,files,images,textarea,wysiwyg,markdown,none,hide,active' field.type}}
             <div class="form-group">
                 <label for="filter[{{@key}}]">{{label}}</label>
@@ -327,7 +327,7 @@
                             {{@key}}="{{this}}"
                         {{/each}}
                     >
-                        <option>Choose One</option>
+                        <option value="">Choose One</option>
                         {{#each field.options}}
                             <option
                                 value="{{./key}}"
@@ -431,5 +431,5 @@
                 {{/when}}
             </div>
         {{/notin}}
-    {{/has}}
+    {{/in}}
 {{/each}}

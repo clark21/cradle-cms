@@ -62,13 +62,30 @@ jQuery(function($) {
                 // do not set content type
                 contentType: false,
                 // do not proccess data
-                processData: false,
+                processData: 'true',
                 // on error
                 error: function(xhr, status, message) {
                 },
                 // on success
                 success : function(res) {
-                    res = eval('('+res+')');
+                    try {
+                        res = JSON.parse(res);
+                    } catch(e) {
+                        //fix for echos and print_r
+                        res = {
+                            error: false,
+                            message: 'No new messages loaded',
+                            results: {
+                                rows: [],
+                                total: 0
+                            }
+                        }
+                    }
+
+                    //if there's no results
+                    if(typeof res.results === 'undefined') {
+                        return;
+                    }
 
                     var rows = res.results.rows;
                     rows.forEach(function(log, key) {
