@@ -10,7 +10,7 @@
     <i class="fa fa-copy"></i>
 </a>
 
-{{#active this ../schema}}
+{{#active ../schema.name this}}
     <a
         class="text-grey"
         href="/admin/system/object/{{../schema.name}}/update/{{scope this ../schema.primary}}?redirect_uri={{redirecturl}}"

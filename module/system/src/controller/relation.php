@@ -202,10 +202,10 @@ $cradle->get('/admin/system/object/:schema1/:id/link/:schema2', function ($reque
     //this next set will use redirect, so we need to find it out now
     //redirect
     $redirect = sprintf(
-        '/admin/system/object/%s/search/%s/%s',
-        $request->getStage('schema2'),
+        '/admin/system/object/%s/%s/search/%s',
         $request->getStage('schema1'),
-        $request->getStage('id')
+        $request->getStage('id'),
+        $request->getStage('schema2')
     );
 
     //if there is a specified redirect
@@ -220,16 +220,28 @@ $cradle->get('/admin/system/object/:schema1/:id/link/:schema2', function ($reque
 
     //if we can't find the relation
     if (!isset($data['schema']['relations'][$table])) {
-        //set a message
-        $message = cradle('global')->translate('Relation does not exist');
+        //try reverse
+        $table = $relation . '_' . $data['schema']['name'];
+        $relations = $schema->getReverseRelations();
 
-        //if we dont want to redirect
-        if ($redirect === 'false') {
-            return $response->setError(true, $message);
+        //wala talaga
+        if (!isset($relations[$table])) {
+            //set a message
+            $message = cradle('global')->translate('Relation does not exist');
+
+            //if we dont want to redirect
+            if ($redirect === 'false') {
+                return $response->setError(true, $message);
+            }
+
+            cradle('global')->flash($message, 'error');
+            return cradle('global')->redirect($redirect);
         }
 
-        cradle('global')->flash($message, 'error');
-        return cradle('global')->redirect($redirect);
+        //fake it
+        $data['schema']['relations'][$table] = $relations[$table]['source'];
+        $data['schema']['relations'][$table]['primary1'] = $relations[$table]['primary2'];
+        $data['schema']['relations'][$table]['primary2'] = $relations[$table]['primary1'];
     }
 
     //this is the main relation we are dealing with
@@ -263,10 +275,8 @@ $cradle->get('/admin/system/object/:schema1/:id/link/:schema2', function ($reque
     cradle()->trigger('csrf-load', $request, $response);
     $data['csrf'] = $response->getResults('csrf');
 
-    //pass suggestion title field for each relation to the template
-    foreach ($data['schema']['relations'] as $name => $relation) {
-        $data['schema']['relations'][$name]['suggestion_name'] = '_' . $relation['primary2'];
-    }
+    //pass suggestion title field to the template
+    $data['schema']['relations'][$table]['suggestion_name'] = '_' . $data['schema']['relations'][$table]['primary2'];
 
     //determine valid relations
     $data['valid_relations'] = [];
@@ -466,8 +476,8 @@ $cradle->post('/admin/system/object/:schema1/:id/link/:schema2', function ($requ
         $schema = SystemSchema::i($request->getStage('schema2'));
         $relation = $schema->getRelations($request->getStage('schema1'));
 
-        $id1 = $request->getStage($relation['primary2']);
-        $id2 = $request->getStage('id');
+        $id1 = $request->getStage('id');
+        $id2 = $request->getStage($relation['primary1']);
     } else {
         $id1 = $request->getStage('id');
         $id2 = $request->getStage($relation['primary2']);
@@ -577,10 +587,13 @@ $cradle->get('/admin/system/object/:schema1/:id1/link/:schema2/:id2', function (
         //try the other way around
         $schema = SystemSchema::i($request->getStage('schema2'));
         $relation = $schema->getRelations($request->getStage('schema1'));
-    }
 
-    $request->setStage($relation['primary1'], $request->getStage('id1'));
-    $request->setStage($relation['primary2'], $request->getStage('id2'));
+        $request->setStage($relation['primary1'], $request->getStage('id2'));
+        $request->setStage($relation['primary2'], $request->getStage('id1'));
+    } else {
+        $request->setStage($relation['primary1'], $request->getStage('id1'));
+        $request->setStage($relation['primary2'], $request->getStage('id2'));
+    }
 
     //----------------------------//
     // 3. Process Request
@@ -657,10 +670,13 @@ $cradle->get('/admin/system/object/:schema1/:id1/unlink/:schema2/:id2', function
         //try the other way around
         $schema = SystemSchema::i($request->getStage('schema2'));
         $relation = $schema->getRelations($request->getStage('schema1'));
-    }
 
-    $request->setStage($relation['primary1'], $request->getStage('id1'));
-    $request->setStage($relation['primary2'], $request->getStage('id2'));
+        $request->setStage($relation['primary1'], $request->getStage('id2'));
+        $request->setStage($relation['primary2'], $request->getStage('id1'));
+    } else {
+        $request->setStage($relation['primary1'], $request->getStage('id1'));
+        $request->setStage($relation['primary2'], $request->getStage('id2'));
+    }
 
     //----------------------------//
     // 3. Process Request

@@ -192,8 +192,7 @@ jQuery(function($) {
                             skipEmptyLines: true,
                             complete: function(results, file) {
                                 var form = $('<form>')
-                                    .attr('method', 'post')
-                                    .attr('action', url);
+                                    .attr('method', 'post');
 
                                 results.data.forEach(function(row, i) {
                                     var key, name;

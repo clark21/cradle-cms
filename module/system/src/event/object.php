@@ -786,7 +786,7 @@ $cradle->on('system-object-unlink', function ($request, $response) {
 
     try {
         $results = $objectSql->unlink(
-            $data['schema2'],
+            $relation['name'],
             $primary1,
             $primary2
         );

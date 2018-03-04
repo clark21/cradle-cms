@@ -74,6 +74,7 @@ $handlebars->registerHelper('schema_row', function ($schema, $row, $key) {
             if (isset($row[$key])) {
                 return $row[$key];
             }
+
             break;
         case 'created':
             $key = $schema->getCreatedFieldName();
@@ -94,7 +95,7 @@ $handlebars->registerHelper('schema_row', function ($schema, $row, $key) {
 
 $handlebars->registerHelper('active', function ($schema, $row, $options) {
     $schemaKey = cradle('global')->handlebars()->getHelper('schema_row');
-    if (!$schemaKey($schema, $row, 'active')) {
+    if ($schemaKey($schema, $row, 'active')) {
         return $options['fn']();
     }
 
