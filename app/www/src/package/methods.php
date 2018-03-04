@@ -8,14 +8,14 @@
  */
 
 /**
-* Generic template method for app/wwww
-*
-* @param *string $path
-* @param array   $data
-* @param array   $partial
-*
-* @return string
-*/
+ * Generic template method for app/wwww
+ *
+ * @param *string $path
+ * @param array   $data
+ * @param array   $partial
+ *
+ * @return string
+ */
 $cradle->package('/app/www')->addMethod('template', function ($file, array $data = [], $partials = []) {
     // get the root directory
     $root = __DIR__ . '/../template/';
