@@ -205,7 +205,7 @@ $cradle->get('/admin/system/object/:schema/create', function ($request, $respons
 
         //add suggestion value for each relation
         foreach ($data['schema']['relations'] as $name => $relation) {
-            if ($relation['many'] == 2) {
+            if ($relation['many'] > 1) {
                 continue;
             }
 
@@ -362,7 +362,7 @@ $cradle->get('/admin/system/object/:schema/update/:id', function ($request, $res
 
         //add suggestion value for each relation
         foreach ($data['schema']['relations'] as $name => $relation) {
-            if ($relation['many'] == 2) {
+            if ($relation['many'] > 1) {
                 continue;
             }
 

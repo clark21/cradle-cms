@@ -163,8 +163,12 @@ class SqlService
                 ->getRow();
         }
 
-        //get 1:N relations
-        $relations = $this->schema->getRelations(2);
+        //get 1:N, N:N relations
+        $relations = array_merge(
+            $this->schema->getRelations(2),
+            $this->schema->getRelations(3)
+        );
+
         foreach ($relations as $table => $relation) {
             $schema = $this->schema;
             $results[$relation['name']] = $this
@@ -324,7 +328,10 @@ class SqlService
                 );
         }
 
-        $reverseRelations = $this->schema->getReverseRelations(2);
+        $reverseRelations = array_merge(
+            $this->schema->getReverseRelations(2),
+            $this->schema->getReverseRelations(3)
+        );
 
         $schema = $this->schema;
 

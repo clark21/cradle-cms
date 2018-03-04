@@ -20,7 +20,7 @@
     </a>
 
     {{#each ../schema.relations}}
-        {{#when many '==' 2}}
+        {{#in '2,3' many}}
             <a
                 class="text-info"
                 title="View {{plural}}"
@@ -35,7 +35,7 @@
             >
                 <i class="{{icon}}"></i>
             </a>
-        {{/when}}
+        {{/in}}
     {{/each}}
 
     {{#if ../relation.suggestion}}

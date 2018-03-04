@@ -21,8 +21,8 @@
         {{/when}}
     {{/each}}
     {{#each schema.fields}}
-        {{#has ../schema.listable @key}}
-            {{#has ../schema.sortable @key}}
+        {{#in ../schema.listable @key}}
+            {{#in ../schema.sortable @key}}
                 <th>
                     <a href="?{{sorturl 'order' @key}}">
                         {{label}}
@@ -31,7 +31,7 @@
                 </th>
             {{else}}
                 <th>{{label}}</th>
-            {{/has}}
-        {{/has}}
+            {{/in}}
+        {{/in}}
     {{/each}}
 </tr>

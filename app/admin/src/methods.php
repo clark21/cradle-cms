@@ -16,44 +16,38 @@
  *
  * @return string
  */
-$cradle->package('/app/admin')->addMethod('template', function (
-    $path,
-    array $data = array(),
-    $partials = array()
-) {
-
+$cradle->package('/app/admin')->addMethod('template', function ($file, array $data = [], $partials = []) {
     // get the root directory
     $root = __DIR__ . '/template/';
 
-    //render
-    $handlebars = cradle('global')->handlebars();
-
     // check for partials
     if (!is_array($partials)) {
-        $partials = array($partials);
+        $partials = [$partials];
     }
+
+    $paths = [];
 
     foreach ($partials as $partial) {
         //Sample: product_comment => product/_comment
         //Sample: flash => _flash
-        $partialPath = str_replace('_', '/', $partial);
-        $last = strrpos($partialPath, '/');
+        $path = str_replace('_', '/', $partial);
+        $last = strrpos($path, '/');
 
-        if ($last !== false) {
-            $partialPath = substr_replace($partialPath, '/_', $last, 1);
+        if($last !== false) {
+            $path = substr_replace($path, '/_', $last, 1);
         }
 
-        $file = $partialPath . '.html';
+        $path = $path . '.html';
 
-        if (strpos($file, '_') === false) {
-            $file = '_' . $file;
+        if (strpos($path, '_') === false) {
+            $path = '_' . $path;
         }
 
-        // register the partial
-        $handlebars->registerPartial($partial, file_get_contents($root . $file));
+        $paths[$partial] = $root . $path;
     }
 
-    // set the main template
-    $template = $handlebars->compile(file_get_contents($root . $path . '.html'));
-    return $template($data);
+    $file = $root . $file . '.html';
+
+    //render
+    return cradle('global')->template($file, $data, $paths);
 });
