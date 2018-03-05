@@ -788,3 +788,74 @@ $cradle->get('/admin/system/object/:schema1/:id/export/:schema2/:type', function
         $response
     );
 });
+
+/**
+ * Process Ajax Object Import
+ *
+ * @param Request $request
+ * @param Response $response
+ */
+$cradle->post('/admin/system/object/:schema/:id/import/:schema2', function ($request, $response) {
+    //----------------------------//
+    // 1. Route Permissions
+    if (!cradle('/module/role')->hasPermissions($request, $response)) {
+        //Set JSON Content
+        return $response->setContent(json_encode([
+            'error' => true,
+            'message' => 'Unauthorized.'
+        ]));
+    }
+
+    //----------------------------//
+    // 2. Prepare Data
+    $schema = SystemSchema::i($request->getStage('schema'));
+
+    //----------------------------//
+    // 3. Process Request
+    //get schema data
+    cradle()->trigger('system-object-import', $request, $response);
+
+    //----------------------------//
+    // 4. Interpret Results
+    //if the import event returned errors
+    if ($response->isError()) {
+        $errors = [];
+        //loop through each row
+        foreach ($response->getValidation() as $i => $validation) {
+            //and loop through each error
+            foreach ($validation as $key => $error) {
+                //add the error
+                $errors[] = sprintf('ROW %s - %s: %s', $i, $key, $error);
+            }
+        }
+
+        //Set JSON Content
+        return $response->setContent(json_encode([
+            'error' => true,
+            'message' => $response->getMessage(),
+            'errores' => $errors
+        ]));
+    }
+
+    //record logs
+    cradle()->log(
+        sprintf(
+            '%s was Imported',
+            $schema->getPlural()
+        ),
+        $request,
+        $response
+    );
+
+    //add a flash
+    $message = cradle('global')->translate(sprintf(
+        '%s was Imported',
+        $schema->getPlural()
+    ));
+
+    //Set JSON Content
+    return $response->setContent(json_encode([
+        'error' => false,
+        'message' => $message
+    ]));
+});

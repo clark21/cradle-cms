@@ -39,11 +39,10 @@
             class="btn btn-pink"
             data-do="import"
             data-on="click"
-            data-url="import"
-            data-schema="{{schema.name}}"
             {{#if relation.schema.name}}
-                data-relation="{{relation.schema.name}}"
-                data-relation-id="{{scope relation.data relation.schema.primary}}"
+            data-url="/admin/system/object/{{relation.schema.name}}/{{scope relation.data relation.schema.primary}}/import/{{schema.name}}"
+            {{else}}
+            data-url="/admin/system/object/{{schema.name}}/import"
             {{/if}}
             href="javascript:void(0)"
         >

@@ -86,7 +86,7 @@ jQuery(function($) {
                     );
 
                     if (key == 4) {
-                        $('div.dropdown-menu #logs').addClass('notif-scroll');
+                        $('div.dropdown-menu #logs').addClass('scroll');
                     }
                 });
 
@@ -141,19 +141,12 @@ jQuery(function($) {
          */
         $(window).on('import-click', function(e, trigger) {
             var url = $(trigger).attr('data-url');
-            var schema = $(trigger).attr('data-schema');
-            var relation = $(trigger).attr('data-relation');
-            var relation_id = $(trigger).attr('data-relation-id');
-            var non_object = $(trigger).attr('data-non-object');
+            var progress = $(trigger).attr('data-progress');
+            var complete = $(trigger).attr('data-complete');
 
-            //get commplete url
-            var route = '/admin/system/object/' + schema + '/' + url;
-
-            if (typeof non_object !== 'undefined') {
-                route = '/admin/' + schema + '/' + url;
+            if (typeof progress === 'undefined') {
+                progress = "We are importing you data. Please do not refresh page.";
             }
-
-            url = route;
 
             //make a file
             $('<input type="file" />')
@@ -172,38 +165,48 @@ jQuery(function($) {
                     ].join(',')
                 )
                 .change(function() {
+                    var message = '<div>'+progress+'</div>';
+                    var notifier = $.notify(message, 'info', 0);
+
                     $(this).parse({
                         config: {
                             header: true,
                             skipEmptyLines: true,
                             complete: function(results, file) {
-                                var form = $('<form>')
-                                    .attr('method', 'post');
+                                $.post(url, {rows:results.data}, function(response) {
+                                    //process data
+                                    try {
+                                        response = JSON.parse(response);
+                                    } catch(e) {
+                                        //fix for echos and print_r
+                                        response = {
+                                            error: false,
+                                            message: 'No new messages loaded',
+                                            results: {
+                                                rows: [],
+                                                total: 0
+                                            }
+                                        }
+                                    }
 
-                                results.data.forEach(function(row, i) {
-                                    var key, name;
-                                    for(key in row) {
-                                        name = 'rows[' + i + '][' + key + ']';
-                                        $('<input>')
-                                            .attr('type', 'hidden')
-                                            .attr('name', name)
-                                            .attr('value', row[key])
-                                            .appendTo(form);
+                                    if (response.error) {
+                                        $.notify(response.message, 'danger');
+                                    } else {
+                                        if (typeof complete === 'undefined') {
+                                            complete = response.message;
+                                        }
+
+                                        notifier.fadeOut('fast', function() {
+                                            notifier.remove();
+                                        });
+
+                                        $.notify(complete, 'success');
+
+                                        setTimeout(function() {
+                                            window.location.reload();
+                                        }, 1000);
                                     }
                                 });
-
-                                //if relation exists
-                                if (typeof relation !== 'undefined' && typeof relation_id !== 'undefined') {
-                                    var relationField = 'relation[' + relation + ']';
-
-                                    $('<input>')
-                                        .attr('type', 'hidden')
-                                        .attr('name', relationField)
-                                        .attr('value', relation_id)
-                                        .appendTo(form);
-                                }
-
-                                form.hide().appendTo(document.body).submit();
                             },
                             error: function(error, file, input, reason) {
                                 $.notify(error.message, 'error');
@@ -1415,11 +1418,11 @@ jQuery(function($) {
                     type = 'error';
                 }
 
-                toastr.success('We do have the Kapua suite available.', 'Turtle Bay Resort', {timeOut: 20000000})
-
-                toastr[type](message, type[0].toUpperCase() + type.substr(1), {
+                var toast = toastr[type](message, type[0].toUpperCase() + type.substr(1), {
                     timeOut: timeout
                 });
+
+                return toast;
             }
         })
     })();

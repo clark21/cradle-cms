@@ -528,9 +528,9 @@ $cradle->on('system-object-import', function ($request, $response) {
     $schema2 = [];
 
     //check if relation exists
-    if ($request->hasStage('relation')) {
+    if ($request->hasStage('schema2')) {
         $reverserRelations = $schema->getReverseRelations(2);
-        $relation = key($request->getStage('relation'));
+        $relation = $request->getStage('schema2');
         $possibleRelation = sprintf('%s_%s', $relation, $schema->getName());
 
         //check if relation exists
@@ -549,6 +549,7 @@ $cradle->on('system-object-import', function ($request, $response) {
     // 2. Validate Data
     //validate data
     $errors = [];
+
     foreach ($data['rows'] as $i => $row) {
         $error = $schema
             ->model()
@@ -654,7 +655,7 @@ $cradle->on('system-object-import', function ($request, $response) {
             //set the stage to link
             $linkRequest
                 ->setStage($primary1, $rowResponse->getResults($schema->getPrimaryFieldName()))
-                ->setStage($primary2, $request->getStage('relation', $schema2->getName()));
+                ->setStage($primary2, $request->getStage('id'));
 
             //now link it
             cradle()->trigger('system-object-link', $linkRequest, $linkResponse);

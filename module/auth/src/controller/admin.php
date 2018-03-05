@@ -609,10 +609,12 @@ $cradle->get('/admin/auth/restore/:id', function ($request, $response) {
 $cradle->post('/admin/auth/import', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
-    // set redirect
-    $request->setStage('redirect', '/admin/auth/search');
     if (!cradle('/module/role')->hasPermissions($request, $response)) {
-        return;
+        //Set JSON Content
+        return $response->setContent(json_encode([
+            'error' => true,
+            'message' => 'Unauthorized.'
+        ]));
     }
 
     //----------------------------//
@@ -624,20 +626,6 @@ $cradle->post('/admin/auth/import', function ($request, $response) {
 
     //----------------------------//
     // 4. Interpret Results
-    //redirect
-    $redirect = '/admin/auth/search';
-
-    //if there is a specified redirect
-    if ($request->getStage('redirect_uri')) {
-        //set the redirect
-        $redirect = $request->getStage('redirect_uri');
-    }
-
-    //if we dont want to redirect
-    if ($redirect === 'false') {
-        return;
-    }
-
     //if the import event returned errors
     if ($response->isError()) {
         $errors = [];
@@ -650,15 +638,12 @@ $cradle->post('/admin/auth/import', function ($request, $response) {
             }
         }
 
-        //set the flash
-        cradle('global')->flash(
-            $response->getMessage(),
-            'error',
-            $errors
-        );
-
-        //redirect
-        return cradle('global')->redirect($redirect);
+        //Set JSON Content
+        return $response->setContent(json_encode([
+            'error' => true,
+            'message' => $response->getMessage(),
+            'errores' => $errors
+        ]));
     }
 
     //record logs
@@ -671,8 +656,11 @@ $cradle->post('/admin/auth/import', function ($request, $response) {
     //add a flash
     $message = cradle('global')->translate('Auths was Imported');
 
-    cradle('global')->flash($message, 'success');
-    cradle('global')->redirect($redirect);
+    //Set JSON Content
+    return $response->setContent(json_encode([
+        'error' => false,
+        'message' => $message
+    ]));
 });
 
 /**

@@ -964,7 +964,11 @@ $cradle->post('/admin/system/object/:schema/import', function ($request, $respon
     //----------------------------//
     // 1. Route Permissions
     if (!cradle('/module/role')->hasPermissions($request, $response)) {
-        return;
+        //Set JSON Content
+        return $response->setContent(json_encode([
+            'error' => true,
+            'message' => 'Unauthorized.'
+        ]));
     }
 
     //----------------------------//
@@ -978,36 +982,6 @@ $cradle->post('/admin/system/object/:schema/import', function ($request, $respon
 
     //----------------------------//
     // 4. Interpret Results
-    //redirect
-    $redirect = sprintf(
-        '/admin/system/object/%s/search',
-        $schema->getName()
-    );
-
-    //redirect to relation object search
-    if ($request->hasStage('relation')) {
-        $relation_schema = key($request->getStage('relation'));
-        $relation = SystemSchema::i($relation_schema);
-
-        $redirect = sprintf(
-            '/admin/system/object/%s/search/%s/%s',
-            $schema->getName(),
-            $relation->getName(),
-            $request->getStage('relation', $relation->getName())
-        );
-    }
-
-    //if there is a specified redirect
-    if ($request->getStage('redirect_uri')) {
-        //set the redirect
-        $redirect = $request->getStage('redirect_uri');
-    }
-
-    //if we dont want to redirect
-    if ($redirect === 'false') {
-        return;
-    }
-
     //if the import event returned errors
     if ($response->isError()) {
         $errors = [];
@@ -1020,15 +994,12 @@ $cradle->post('/admin/system/object/:schema/import', function ($request, $respon
             }
         }
 
-        //set the flash
-        cradle('global')->flash(
-            $response->getMessage(),
-            'error',
-            $errors
-        );
-
-        //redirect
-        cradle('global')->redirect($redirect);
+        //Set JSON Content
+        return $response->setContent(json_encode([
+            'error' => true,
+            'message' => $response->getMessage(),
+            'errores' => $errors
+        ]));
     }
 
     //record logs
@@ -1047,8 +1018,11 @@ $cradle->post('/admin/system/object/:schema/import', function ($request, $respon
         $schema->getPlural()
     ));
 
-    cradle('global')->flash($message, 'success');
-    cradle('global')->redirect($redirect);
+    //Set JSON Content
+    return $response->setContent(json_encode([
+        'error' => false,
+        'message' => $message
+    ]));
 });
 
 /**
