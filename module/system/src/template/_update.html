@@ -127,6 +127,14 @@
                 </div>
             </div>
             <div class="modal-footer">
+                {{#if disable}}
+                    <input
+                        class="field-disabled"
+                        type="hidden"
+                        name="fields[{{@index}}][disable]"
+                        value="1"
+                    />
+                {{/if}}
                 <button
                     class="btn btn-danger"
                     data-do="modal-cancel"

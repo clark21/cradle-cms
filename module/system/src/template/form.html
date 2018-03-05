@@ -66,22 +66,32 @@
             <div class="form-group">
                 <label class="control-label">Keyword</label>
                 <div>
-                    <input
-                        class="form-control schema-name {{#if errors.name}}is-invalid{{/if}}"
-                        data-do="slugger"
-                        data-source="input.schema-singular"
-                        data-upper="0"
-                        data-space="_"
-                        name="name"
-                        value="{{item.name}}"
-                        placeholder="Enter a unique keyword"
-                        type="text"
-                    />
+                    {{#if item.disable}}
+                        <input
+                            class="form-control"
+                            disabled="disabled"
+                            type="text"
+                            value="{{item.name}}"
+                        />
+                        <input type="hidden" name="name" value="{{item.name}}" />
+                    {{else}}
+                        <input
+                            class="form-control schema-name {{#if errors.name}}is-invalid{{/if}}"
+                            data-do="slugger"
+                            data-source="input.schema-singular"
+                            data-upper="0"
+                            data-space="_"
+                            name="name"
+                            value="{{item.name}}"
+                            placeholder="Enter a unique keyword"
+                            type="text"
+                        />
 
-                    {{#if errors.name}}
-                    <div class="invalid-feedback">
-                        {{errors.name}}
-                    </div>
+                        {{#if errors.name}}
+                        <div class="invalid-feedback">
+                            {{errors.name}}
+                        </div>
+                        {{/if}}
                     {{/if}}
                 </div>
             </div>
@@ -187,15 +197,21 @@
                 <div>
                     {{#each item.relations}}
                         <div class="relation-row" data-index="{{@index}}">
-                            <a
-                                class="text-danger"
-                                data-do="relation-remove"
-                                data-level="1"
-                                data-on="click"
-                                href="javascript:void(0)"
-                            >
-                                <i class="fa fa-times"></i>
-                            </a>
+                            {{#if disable}}
+                                <input type="hidden" name="relations[{{@index}}][disable]" value="1" />
+                                <i class="fas fa-lock"></i>
+                            {{else}}
+                                <a
+                                    class="text-danger"
+                                    data-do="relation-remove"
+                                    data-level="1"
+                                    data-on="click"
+                                    href="javascript:void(0)"
+                                >
+                                    <i class="fas fa-times"></i>
+                                </a>
+                            {{/if}}
+
                             <strong
                                 class="relation-singular"
                                 data-default="??"
@@ -204,43 +220,72 @@
                             >
                                 {{../item.singular}}
                             </strong>
+
                             <i class="fas fa-arrow-right"></i>
-                            <select
-                                class="form-control relation-many"
-                                name="relations[{{@index}}][many]">
-                                <option
-                                    value="0"
-                                    {{#when many '==' 0}}selected{{/when}}
+
+                            {{#if disable}}
+                                <input
+                                    class="form-control"
+                                    disabled="disabled"
+                                    type="text"
+                                    {{#when many '==' 0}}value="0:1"{{/when}}
+                                    {{#when many '==' 1}}value="1:1"{{/when}}
+                                    {{#when many '==' 2}}value="1:N"{{/when}}
+                                    {{#when many '==' 3}}value="N:N"{{/when}}
+                                />
+                                <input type="hidden" name="relations[{{@index}}][many]" value="{{many}}" />
+                            {{else}}
+                                <select
+                                    class="form-control relation-many"
+                                    name="relations[{{@index}}][many]"
                                 >
-                                    1:0
-                                </option>
-                                <option
-                                    value="1"
-                                    {{#when many '==' 1}}selected{{/when}}
-                                >
-                                    1:1
-                                </option>
-                                <option
-                                    value="2"
-                                    {{#when many '==' 2}}selected{{/when}}
-                                >
-                                    1:N
-                                </option>
-                                <option
-                                    value="3"
-                                    {{#when many '==' 3}}selected{{/when}}
-                                >
-                                    N:N
-                                </option>
-                            </select>
+                                    <option
+                                        value="0"
+                                        {{#when many '==' 0}}selected{{/when}}
+                                    >
+                                        1:0
+                                    </option>
+                                    <option
+                                        value="1"
+                                        {{#when many '==' 1}}selected{{/when}}
+                                    >
+                                        1:1
+                                    </option>
+                                    <option
+                                        value="2"
+                                        {{#when many '==' 2}}selected{{/when}}
+                                    >
+                                        1:N
+                                    </option>
+                                    <option
+                                        value="3"
+                                        {{#when many '==' 3}}selected{{/when}}
+                                    >
+                                        N:N
+                                    </option>
+                                </select>
+                            {{/if}}
+
                             <i class="fas fa-arrow-right"></i>
-                            <input
-                                class="form-control relation-name"
-                                name="relations[{{@index}}][name]"
-                                placeholder="Enter Schema Keyword"
-                                type="text"
-                                value="{{name}}"
-                            />
+
+                            {{#if disable}}
+                                <input
+                                    class="form-control"
+                                    disabled="disabled"
+                                    type="text"
+                                    value="{{name}}"
+                                />
+                                <input type="hidden" name="relations[{{@index}}][name]" value="{{name}}" />
+                            {{else}}
+                                <input
+                                    class="form-control relation-name"
+                                    name="relations[{{@index}}][name]"
+                                    placeholder="Enter Schema Keyword"
+                                    type="text"
+                                    value="{{name}}"
+                                />
+                            {{/if}}
+
                         </div>
                     {{/each}}
 
@@ -281,6 +326,9 @@
             </div>
 
             <div class="clear form-group">
+                {{#if disable}}
+                    <input type="hidden" name="disable" value="1" />
+                {{/if}}
                 <button type="submit" class="btn btn-primary">Submit</button>
             </div>
         </div>

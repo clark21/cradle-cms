@@ -66,8 +66,12 @@
                                     <a class="text-info" title="Edit" href="/admin/system/schema/update/{{name}}?redirect_uri={{redirecturl}}">
                                     <i class="fas fa-edit"></i></a>
                                     &nbsp;
-                                    <a class="text-danger" title="Remove" href="/admin/system/schema/remove/{{name}}?redirect={{redirecturl}}"
-                                    class="text-danger remove"><i class="fas fa-times"></i></a>
+                                    {{#if disable}}
+                                        <i class="fas fa-lock fa-fw"></i>
+                                    {{else}}
+                                        <a class="text-danger" title="Remove" href="/admin/system/schema/remove/{{name}}?redirect={{redirecturl}}"
+                                        class="text-danger remove"><i class="fas fa-times"></i></a>
+                                    {{/if}}
                                 {{else}}
                                     <a title="Restore" href="/admin/system/schema/restore/{{name}}?redirect_uri={{redirecturl}}" class="text-success restore">
                                     <i class="fas fa-external-link-alt"></i></a>
