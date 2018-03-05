@@ -1,6 +1,6 @@
 <?php //-->
+include_once __DIR__ . '/src/controller/admin.php';
 include_once __DIR__ . '/src/events.php';
-include_once __DIR__ . '/src/controller.php';
 
 use Cradle\Module\History\Service as HistoryService;
 use Cradle\Module\Utility\ServiceFactory;
