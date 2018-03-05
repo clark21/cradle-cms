@@ -10,6 +10,9 @@
 use Cradle\Module\Auth\Service as AuthService;
 use Cradle\Module\Auth\Validator as AuthValidator;
 
+use Cradle\Module\Role\Service as RoleService;
+use Cradle\Module\Role\Validator as RoleValidator;
+
 use Cradle\Http\Request;
 use Cradle\Http\Response;
 
@@ -349,6 +352,8 @@ $cradle->on('auth-login', function ($request, $response) {
     $authSql = AuthService::get('sql');
     $authRedis = AuthService::get('redis');
     $authElastic = AuthService::get('elastic');
+
+    $roleSql = RoleService::get('sql');
 
     //----------------------------//
     // 2. Validate Data

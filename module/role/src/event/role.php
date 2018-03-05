@@ -10,9 +10,6 @@
 use Cradle\Module\Role\Service as RoleService;
 use Cradle\Module\Role\Validator as RoleValidator;
 
-use Cradle\Module\Auth\Service as AuthService;
-use Cradle\Module\Auth\Validator as AuthValidator;
-
 /**
  * Auth Detail Job
  *
@@ -20,78 +17,26 @@ use Cradle\Module\Auth\Validator as AuthValidator;
  * @param Response $response
  */
 $cradle->on('auth-detail', function ($request, $response) {
-    //----------------------------//
-    // 1. Get Data
-    $data = [];
-    if ($request->hasStage()) {
-        $data = $request->getStage();
+    //if the auth-detail from auth returned an error
+    if($response->isError()) {
+        //do nothing
+        return;
     }
 
-    $id = null;
-    if (isset($data['auth_id'])) {
-        $id = $data['auth_id'];
-    } else if (isset($data['auth_slug'])) {
-        $id = $data['auth_slug'];
-    }
-
-    //----------------------------//
-    // 2. Validate Data
-    //we need an id
-    if (!$id) {
-        return $response->setError(true, 'Invalid ID');
-    }
-
-    //----------------------------//
-    // 3. Prepare Data
-    //no preparation needed
-    //----------------------------//
-    // 4. Process Data
     //this/these will be used a lot
-    $authSql = AuthService::get('sql');
-    $authRedis = AuthService::get('redis');
-    $authElastic = AuthService::get('elastic');
-
     $roleSql = RoleService::get('sql');
-    $roleRedis = RoleService::get('redis');
-    $roleElastic = RoleService::get('elastic');
 
-    $results = null;
+    // get response results
+    $results = $response->getResults();
 
-    //if no flag
-    if (!$request->hasGet('nocache')) {
-        //get it from cache
-        $results = $authRedis->getDetail($id);
-    }
+    // get role detail
+    $roles = $roleSql->getRoleDetail($results['auth_id']);
 
-    //if no results
-    if (!$results) {
-        //if no flag
-        if (!$request->hasGet('noindex')) {
-            //get it from index
-            $results = $authElastic->get($id);
-        }
-
-        //if no results
-        if (!$results) {
-            //get it from auth table database
-            $results = $authSql->get($id);
-            //get it from role table database
-            $roles = $roleSql->getRoleDetail($id);
-            // merge results
-            $results = array_merge($results, $roles);
-        }
-
-        if ($results) {
-            //cache it from database or index
-            $authRedis->createDetail($id, $results);
-        }
-    }
-
-    if (!$results) {
-        return $response->setError(true, 'Not Found');
-    }
-
-    $response->setError(false)->setResults($results);
+    // merge results
+    $results = array_merge($results, $roles);
+    
+    // set response results
+    $response->setResults($results);
 });
 
 /**
