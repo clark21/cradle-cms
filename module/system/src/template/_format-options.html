@@ -147,6 +147,14 @@
         Formula
     </option>
     <option
+        data-fieldset="input"
+        data-placeholder="{\{user_first}} {\{user_last}}"
+        value="custom"
+        {{#when list.format '===' 'formula'}}selected{{/when}}
+    >
+        Custom Format
+    </option>
+    <option
         value="hide"
         {{#when list.format '===' 'hide'}}selected{{/when}}
     >Dont Show</option>
