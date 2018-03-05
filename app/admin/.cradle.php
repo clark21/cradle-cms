@@ -2,8 +2,6 @@
 
 //include the other routes
 //START: GENERATED CONTROLLERS
-include_once __DIR__ . '/src/controller/history.php';
-
 //END: GENERATED CONTROLLERS
 
 //include global events, methods
