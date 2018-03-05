@@ -139,7 +139,7 @@ $handlebars->registerHelper('formula', function ($template, $variables = []) {
     $expression = sprintf('return %s ;', $formula);
 
     try {
-        return eval($expression);
+        return @eval($expression);
     } catch (Throwable $e) {
         return 'Parse Error';
     }
