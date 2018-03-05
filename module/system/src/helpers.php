@@ -54,6 +54,11 @@ $handlebars->registerHelper('format', function ($schema, $row, $type, $options) 
         $format = $field[$type];
         $format['name'] = $name;
         $format['label'] = $field['label'];
+
+        if($field['list']['format'] == 'formula') {
+            $row[$name] = $field['list']['parameters'];
+        }
+
         $format['value'] = $row[$name];
         $format['this'] = $format;
 
