@@ -91,13 +91,31 @@
         <td><a href="{{compile parameters.0 ../this}}">{{compile parameters.1 ../this}}</a></td>
     {{/when}}
     {{#when format '===' 'image'}}
-        <td><img src="{{value}}" width="{{parameters.0}}" height="{{parameters.1}}" /></td>
+        {{#if value}}
+            <td>
+                <img 
+                    src="{{value}}" 
+                    width="{{parameters.0}}" 
+                    onerror="this.src='/images/default-image.png'" 
+                    height="{{parameters.1}}" 
+                />
+            </td>
+        {{else}}
+            <td><img src="/images/default-image.png" width="100" height="100" /></td>
+        {{/if}}
     {{/when}}
     {{#when format '===' 'email'}}
         <td><a href="mailto:{{value}}">{{compile parameters ../this}}</a></td>
     {{/when}}
     {{#when format '===' 'phone'}}
         <td><a href="tel:{{value}}">{{compile parameters ../this}}</a></td>
+    {{/when}}
+    {{#when format '===' 'custom'}}
+        {{#if value}}
+            <td>{{value}}</td>
+        {{else}}
+            <td>{{compile parameters ../this}}</td>
+        {{/if}}
     {{/when}}
     {{#when format '===' 'comma'}}
         <td>{{join value ','}}</td>
