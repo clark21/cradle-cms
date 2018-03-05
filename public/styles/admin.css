@@ -1270,10 +1270,19 @@ body.dragging, body.dragging * {
     font-size: 12px;
 }
 
-.head .nav-notifications .notif-scroll {
+.head .nav-notifications .scroll {
     height: 240px;
     position: relative;
     overflow-y: scroll;
+}
+
+
+.head .nav-notifications .notification-info .notification-message{
+    white-space: nowrap;
+    width: 185px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
 }
 
 /* Foot
