@@ -72,7 +72,7 @@ $cradle->get('/admin/history/search', function ($request, $response) {
     // 3. Render Template
     $class = 'page-admin-history-search page-admin';
     $data['title'] = cradle('global')->translate('History');
-    $body = cradle('/app/admin')->template('history/search', $data);
+    $body = cradle('/module/history')->template('search', $data);
 
     //set content
     $response
@@ -84,19 +84,18 @@ $cradle->get('/admin/history/search', function ($request, $response) {
 }, 'render-admin-page');
 
 /**
- * Show/Read Notification
+ * Show/Read History Logs
  * based on the given data.
  *
  * @param Request $request
  * @param Response $response
  */
-$cradle->post('/ajax/admin/history/:action/notification', function ($request, $response) {
-
+$cradle->get('/ajax/admin/history/:action/logs', function ($request, $response) {
     if (!$request->hasStage('action')) {
         //Set JSON Content
         return $response->setContent(json_encode([
             'error'      => true,
-            'message'    => 'Invalid Notification Action',
+            'message'    => 'Invalid History Action',
         ]));
     }
 
@@ -140,7 +139,7 @@ $cradle->post('/ajax/admin/history/:action/notification', function ($request, $r
             }
 
             //set message
-            $data['message'] = 'New notification loaded';
+            $data['message'] = 'New history logs loaded';
 
             break;
         case 'read':
@@ -158,7 +157,7 @@ $cradle->post('/ajax/admin/history/:action/notification', function ($request, $r
             }
 
             //set message
-            $data['message'] = 'All new notification marked as read';
+            $data['message'] = 'All new history log marked as read';
 
             break;
         default:
@@ -166,7 +165,7 @@ $cradle->post('/ajax/admin/history/:action/notification', function ($request, $r
                 //Set JSON Content
                 return $response->setContent(json_encode([
                     'error'      => true,
-                    'message'    => 'Invalid Notification Action',
+                    'message'    => 'Invalid History Action',
                 ]));
             }
             break;

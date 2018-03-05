@@ -47,105 +47,91 @@ jQuery(function($) {
         });
 
         /**
-         * Search table check all
+         * Show unread history logs
          */
-        $(window).on('show-notif-init', function(e, trigger) {
+        $(window).on('history-init', function(e, trigger) {
             var target = $(trigger);
 
-            $.ajax({
-                url: '/ajax/admin/history/get/notification',
-                type: 'post',
-                // form data
-                data: {},
-                // disable cache
-                cache: false,
-                // do not set content type
-                contentType: false,
-                // do not proccess data
-                processData: 'true',
-                // on error
-                error: function(xhr, status, message) {
-                },
-                // on success
-                success : function(res) {
-                    try {
-                        res = JSON.parse(res);
-                    } catch(e) {
-                        //fix for echos and print_r
-                        res = {
-                            error: false,
-                            message: 'No new messages loaded',
-                            results: {
-                                rows: [],
-                                total: 0
-                            }
+            $.get('/ajax/admin/history/get/logs', function(res) {
+                //process data
+                try {
+                    res = JSON.parse(res);
+                } catch(e) {
+                    //fix for echos and print_r
+                    res = {
+                        error: false,
+                        message: 'No new messages loaded',
+                        results: {
+                            rows: [],
+                            total: 0
                         }
                     }
-
-                    //if there's no results
-                    if(typeof res.results === 'undefined') {
-                        return;
-                    }
-
-                    var rows = res.results.rows;
-                    rows.forEach(function(log, key) {
-                        $('div.dropdown-menu #logs').append('<a class="dropdown-item" href="#">' +
-                                '<img class="rounded-circle" src="/images/default-avatar.png" />' +
-                                '<span class="notification-info">' +
-                                    '<span class="notification-message">' + log.history_activity + '</span>' +
-                                    '<em class="notification-time">' + log.ago + '</em>' +
-                                '</span>' +
-                            '</a>'
-                        );
-
-                        if (key == 4) {
-                            $('div.dropdown-menu #logs').addClass('notif-scroll');
-                        }
-                    });
-
-                    if (rows.length === 0) {
-                        $('div.dropdown-menu #logs').html('<a class="dropdown-item text-center" href="#">' +
-                                '<span class="notification-info">' +
-                                    '<span class="notification-message">No New Notification</span>' +
-                                '</span>' +
-                            '</a>'
-                        );
-
-                        //add class
-                        $('.notification-info').addClass('no-notification');
-
-                        //remove doon
-                        $('a.nav-link.dropdown-toggle').removeAttr('data-do');
-                        $('a.nav-link.dropdown-toggle').removeAttr('data-on');
-                    }
-
-                    $('span#notification').html(res.results.total);
                 }
+
+                //if there's no results
+                if(typeof res.results === 'undefined') {
+                    return;
+                }
+
+                var rows = res.results.rows;
+
+                rows.forEach(function(log, key) {
+                    $('div.dropdown-menu #logs').append('<a class="dropdown-item" href="#">' +
+                            '<img class="rounded-circle" src="/images/default-avatar.png" />' +
+                            '<span class="notification-info">' +
+                                '<span class="notification-message">' + log.history_activity + '</span>' +
+                                '<em class="notification-time">' + log.ago + '</em>' +
+                            '</span>' +
+                        '</a>'
+                    );
+
+                    if (key == 4) {
+                        $('div.dropdown-menu #logs').addClass('notif-scroll');
+                    }
+                });
+
+                if (rows.length === 0) {
+                    $('div.dropdown-menu #logs').html('<a class="dropdown-item text-center" href="#">' +
+                            '<span class="notification-info">' +
+                                '<span class="notification-message">No New History</span>' +
+                            '</span>' +
+                        '</a>'
+                    );
+
+                    //add class
+                    $('.notification-info').addClass('no-notification');
+
+                    //remove doon
+                    $('a.nav-link.dropdown-toggle').removeAttr('data-do');
+                    $('a.nav-link.dropdown-toggle').removeAttr('data-on');
+                }
+
+                $('span#histories').html(res.results.total);
             });
         });
 
         /**
          * Search table check all
          */
-        $(window).on('show-notif-click', function(e, trigger) {
-            var target = $(trigger);
-            $.ajax({
-                url: '/ajax/admin/history/read/notification',
-                type: 'post',
-                // form data
-                data: {},
-                // disable cache
-                cache: false,
-                // do not set content type
-                contentType: false,
-                // do not proccess data
-                processData: false,
-                // on error
-                error: function(xhr, status, message) {
-                },
-                // on success
-                success : function(res) {
-                    $('span#notification').html(0);
+        $(window).on('history-click', function(e, trigger) {
+            $.get('/ajax/admin/history/read/logs', function(res) {
+                //process data
+                try {
+                    res = JSON.parse(res);
+                } catch(e) {
+                    //fix for echos and print_r
+                    res = {
+                        error: false,
+                        message: 'No new messages loaded',
+                        results: {
+                            rows: [],
+                            total: 0
+                        }
+                    }
+                }
+
+                if (!res.error) {
+                    $('span#histories').html(0);
                 }
             });
         });

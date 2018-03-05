@@ -2,7 +2,6 @@
 
 //include the other routes
 //START: GENERATED CONTROLLERS
-include_once __DIR__ . '/src/controller/history.php';
 include_once __DIR__ . '/src/controller/auth.php';
 include_once __DIR__ . '/src/controller/user.php';
 
