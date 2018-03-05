@@ -26,4 +26,5 @@ return cradle()
     ->register('/module/history')
     ->register('/module/role')
     ->register('/module/system')
-    ->register('/module/utility');
+    ->register('/module/utility')
+    ->register('/module/article');

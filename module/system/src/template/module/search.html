@@ -1,0 +1,74 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="/admin/system/schema/search">
+                <i class="fas fa-home"></i> Admin
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <i class="fas fa-cogs"></i> {{title}}
+        </li>
+    </ol>
+</nav>
+
+<div class="main-padding">
+    <h3 class="main-title">
+        <i class="fas fa-cogs"></i> {{number total}} {{title}}
+    </h3>
+
+    <form method="post">
+        <div class="table-overflow">
+        {{#if rows}}
+            <!-- START: TABLE -->
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Actions</th>
+                        <th>Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each rows}}
+                        <tr>
+                            <td>
+                                {{#if uninstall}}
+                                    <a
+                                        class="text-danger"
+                                        href="/admin/system/module/uninstall/{{name}}"
+                                        title="Uninstall Module"
+                                    >
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                {{/if}}
+
+                                {{#if install}}
+                                    <a
+                                        class="text-info"
+                                        href="/admin/system/module/install/{{name}}"
+                                        title="Install Module"
+                                    >
+                                        <i class="fas fa-database"></i>
+                                    </a>
+                                {{/if}}
+
+                                {{#unless actions}} 
+                                    -
+                                {{/unless}}
+                            </td>
+                            <td>
+                               <div><strong>{{label}}</strong></div>
+                               <em>{{description}}</em>
+                            </td>
+                        </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+            <!-- END: TABLE -->
+        {{else}}
+            <!-- START: NO RESULTS -->
+            <div class="well no-results">No Results Found</div>
+            <!-- END: NO RESULTS -->
+        {{/if}}
+        </table>
+    </form>
+</div>
