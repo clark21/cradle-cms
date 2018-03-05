@@ -1,67 +1,13 @@
 <?php //-->
 /**
  * This file is part of a Custom Project.
- * (c) 2017-2019 Acme Inc.
+ * (c) 2016-2018 Acme Products Inc.
  *
  * Copyright and license information can be found at LICENSE.txt
  * distributed with this package.
  */
 
 use Cradle\Module\Utility\File;
-
-/**
- * Process the Verification Page
- *
- * SIGNUP FLOW:
- * - GET /signup
- * - POST /signup
- * - EMAIL
- * - GET /activate/auth_id/hash
- * - GET /login
- *
- * VERIFY FLOW:
- * - GET /verify
- * - POST /verify
- * - EMAIL
- * - GET /activate/auth_id/hash
- * - GET /login
- *
- * @param Request $request
- * @param Response $response
- */
-$cradle->get('/activate/:auth_id/:hash', function ($request, $response) {
-    //get the detail
-    cradle()->trigger('auth-detail', $request, $response);
-
-    //form hash
-    $authId = $response->getResults('auth_id');
-    $authUpdated = $response->getResults('auth_updated');
-    $hash = md5($authId.$authUpdated);
-
-    //check the verification hash
-    if ($hash !== $request->getStage('hash')) {
-        cradle('global')->flash('Invalid verification. Try again.', 'danger');
-        return cradle('global')->redirect('/verify');
-    }
-
-    //activate
-    $request->setStage('auth_active', 1);
-
-    //trigger the job
-    cradle()->trigger('auth-update', $request, $response);
-
-    if ($response->isError()) {
-        cradle('global')->flash('Invalid verification. Try again.', 'danger');
-        return cradle('global')->redirect('/verify');
-    }
-
-    //it was good
-    //add a flash
-    cradle('global')->flash('Activation Successful', 'success');
-
-    //redirect
-    cradle('global')->redirect('/login');
-});
 
 /**
  * Render the Signup Page
@@ -101,7 +47,7 @@ $cradle->get('/signup', function ($request, $response) {
     //Render body
     $class = 'page-auth-signup';
     $title = cradle('global')->translate('Sign Up');
-    $body = cradle('/app/www')->template('signup', $data);
+    $body = cradle('/module/auth')->template('signup', $data);
 
     //Set Content
     $response
@@ -136,7 +82,7 @@ $cradle->get('/login', function ($request, $response) {
     //Render body
     $class = 'page-auth-login';
     $title = cradle('global')->translate('Log In');
-    $body = cradle('/app/www')->template('login', $data);
+    $body = cradle('/module/auth')->template('login', $data);
 
     //Set Content
     $response
@@ -204,7 +150,7 @@ $cradle->get('/account', function ($request, $response) {
     //Render body
     $class = 'page-auth-account';
     $title = cradle('global')->translate('Account Settings');
-    $body = cradle('/app/www')->template('account', $data);
+    $body = cradle('/module/auth')->template('account', $data);
 
     //Set Content
     $response
@@ -245,7 +191,7 @@ $cradle->get('/forgot', function ($request, $response) {
     //Render body
     $class = 'page-auth-forgot';
     $title = cradle('global')->translate('Forgot Password');
-    $body = cradle('/app/www')->template('forgot', $data);
+    $body = cradle('/module/auth')->template('forgot', $data);
 
     //Set Content
     $response
@@ -300,7 +246,7 @@ $cradle->get('/recover/:auth_id/:hash', function ($request, $response) {
     //Render body
     $class = 'page-auth-recover';
     $title = cradle('global')->translate('Recover Password');
-    $body = cradle('/app/www')->template('recover', $data);
+    $body = cradle('/module/auth')->template('recover', $data);
 
     //Set Content
     $response
@@ -340,7 +286,7 @@ $cradle->get('/verify', function ($request, $response) {
     //Render body
     $class = 'page-auth-verify';
     $title = cradle('global')->translate('Verify Account');
-    $body = cradle('/app/www')->template('verify', $data);
+    $body = cradle('/module/auth')->template('verify', $data);
 
     //Set Content
     $response

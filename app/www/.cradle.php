@@ -9,7 +9,6 @@
 
 //include the other routes
 include_once __DIR__ . '/src/controller/static.php';
-include_once __DIR__ . '/src/controller/auth.php';
 
 //include globals, events, methods
 include_once __DIR__ . '/src/package/methods.php';

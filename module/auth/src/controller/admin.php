@@ -8,12 +8,12 @@
  */
 
 /**
- * Render the User Search Page
+ * Render the Auth Search Page
  *
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/user/search', function ($request, $response) {
+$cradle->get('/admin/auth/search', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     if (!cradle('/module/role')->hasPermissions($request, $response)) {
@@ -22,6 +22,7 @@ $cradle->get('/admin/user/search', function ($request, $response) {
 
     //----------------------------//
     // 2. Prepare Data
+
     if (!$request->hasStage('range')) {
         $request->setStage('range', 50);
     }
@@ -30,7 +31,7 @@ $cradle->get('/admin/user/search', function ($request, $response) {
     //we do this to prevent SQL injections
     if (is_array($request->getStage('filter'))) {
         $filterable = [
-            'user_active'
+            'auth_active'
         ];
 
         foreach ($request->getStage('filter') as $key => $value) {
@@ -41,7 +42,7 @@ $cradle->get('/admin/user/search', function ($request, $response) {
     }
 
     //trigger job
-    cradle()->trigger('user-search', $request, $response);
+    cradle()->trigger('auth-search', $request, $response);
 
     //if we only want the raw data
     if ($request->getStage('render') === 'false') {
@@ -52,9 +53,9 @@ $cradle->get('/admin/user/search', function ($request, $response) {
 
     //----------------------------//
     // 3. Render Template
-    $class = 'page-admin-user-search page-admin';
-    $data['title'] = cradle('global')->translate('Users');
-    $body = cradle('/app/admin')->template('user/search', $data);
+    $class = 'page-admin-auth-search page-admin';
+    $data['title'] = cradle('global')->translate('Authentications');
+    $body = cradle('/module/auth')->template('search', $data);
 
     //set content
     $response
@@ -72,16 +73,16 @@ $cradle->get('/admin/user/search', function ($request, $response) {
 });
 
 /**
- * Render the User Create Page
+ * Render the Auth Create Page
  *
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/user/create', function ($request, $response) {
+$cradle->get('/admin/auth/create', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     // set redirect
-    $request->setStage('redirect', '/admin/permission/search');
+    $request->setStage('redirect', '/admin/auth/search');
     if (!cradle('/module/role')->hasPermissions($request, $response)) {
         return;
     }
@@ -99,18 +100,18 @@ $cradle->get('/admin/user/create', function ($request, $response) {
     if (empty($data['item']) && is_numeric($request->getStage('copy'))) {
         //table_id, 1 for example
         $request->setStage(
-            'user_id',
+            'auth_id',
             $request->getStage('copy')
         );
 
         //get the original table row
-        cradle()->trigger('user-detail', $request, $response);
+        cradle()->trigger('auth-detail', $request, $response);
 
         //can we update ?
         if ($response->isError()) {
             //add a flash
             cradle('global')->flash($response->getMessage(), 'error');
-            return cradle('global')->redirect('/admin/user/search');
+            return cradle('global')->redirect('/admin/auth/search');
         }
 
         //pass the item to the template
@@ -119,9 +120,10 @@ $cradle->get('/admin/user/create', function ($request, $response) {
 
     //----------------------------//
     // 3. Render Template
-    $class = 'page-developer-user-create page-admin';
-    $data['title'] = cradle('global')->translate('Create User');
-    $body = cradle('/app/admin')->template('user/form', $data);
+    $class = 'page-developer-auth-create page-admin';
+    $data['title'] = cradle('global')->translate('Create Authentication');
+    $body = cradle('/module/auth')->template('form', $data);
+
 
     //set content
     $response
@@ -139,16 +141,16 @@ $cradle->get('/admin/user/create', function ($request, $response) {
 });
 
 /**
- * Render the User Update Page
+ * Render the Auth Update Page
  *
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/user/update/:user_id', function ($request, $response) {
+$cradle->get('/admin/auth/update/:id', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     // set redirect
-    $request->setStage('redirect', '/admin/permission/search');
+    $request->setStage('redirect', '/admin/auth/search');
     if (!cradle('/module/role')->hasPermissions($request, $response)) {
         return;
     }
@@ -157,15 +159,20 @@ $cradle->get('/admin/user/update/:user_id', function ($request, $response) {
     // 2. Prepare Data
     $data = ['item' => $request->getPost()];
 
+    // get auth id
+    $authId = $request->getStage('id');
+
+    $request->setStage('auth_id', $authId);
+
     //if no item
     if (empty($data['item'])) {
-        cradle()->trigger('user-detail', $request, $response);
+        cradle()->trigger('auth-detail', $request, $response);
 
         //can we update ?
         if ($response->isError()) {
             //add a flash
             cradle('global')->flash($response->getMessage(), 'danger');
-            return cradle('global')->redirect('/admin/user/search');
+            return cradle('global')->redirect('/admin/auth/search');
         }
 
         $data['item'] = $response->getResults();
@@ -178,9 +185,9 @@ $cradle->get('/admin/user/update/:user_id', function ($request, $response) {
 
     //----------------------------//
     // 3. Render Template
-    $class = 'page-developer-user-update page-admin';
-    $data['title'] = cradle('global')->translate('Updating User');
-    $body = cradle('/app/admin')->template('user/form', $data);
+    $class = 'page-developer-auth-update page-admin';
+    $data['title'] = cradle('global')->translate('Updating Authentication');
+    $body = cradle('/module/auth')->template('form', $data);
 
     //Set Content
     $response
@@ -198,16 +205,16 @@ $cradle->get('/admin/user/update/:user_id', function ($request, $response) {
 });
 
 /**
- * Process the User Search Actions
+ * Process the Auth Search Actions
  *
  * @param Request $request
  * @param Response $response
  */
-$cradle->post('/admin/user/search', function ($request, $response) {
+$cradle->post('/admin/auth/search', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     // set redirect
-    $request->setStage('redirect', '/admin/permission/search');
+    $request->setStage('redirect', '/admin/auth/search');
     if (!cradle('/module/role')->hasPermissions($request, $response)) {
         return;
     }
@@ -216,7 +223,7 @@ $cradle->post('/admin/user/search', function ($request, $response) {
     // 2. Prepare Data
 
     //determine route
-    $route = '/admin/user/search';
+    $route = '/admin/auth/search';
 
     //this is for flexibility
     if ($request->hasStage('route')) {
@@ -224,7 +231,7 @@ $cradle->post('/admin/user/search', function ($request, $response) {
     }
 
     $action = $request->getStage('bulk-action');
-    $ids = $request->getStage('user_id');
+    $ids = $request->getStage('auth_id');
 
     if (empty($ids)) {
         $response->setError(true, 'No IDs chosen');
@@ -242,10 +249,10 @@ $cradle->post('/admin/user/search', function ($request, $response) {
         //case for actions
         switch ($action) {
             case 'remove':
-                cradle()->trigger('user-remove', $request, $response);
+                cradle()->trigger('auth-remove', $request, $response);
                 break;
             case 'restore':
-                cradle()->trigger('user-restore', $request, $response);
+                cradle()->trigger('auth-restore', $request, $response);
                 break;
             default:
                 //set an error
@@ -259,7 +266,7 @@ $cradle->post('/admin/user/search', function ($request, $response) {
         } else {
             cradle()->log(
                 sprintf(
-                    'User #%s %s',
+                    'Auth #%s %s',
                     $id,
                     $action
                 ),
@@ -272,7 +279,7 @@ $cradle->post('/admin/user/search', function ($request, $response) {
     //----------------------------//
     // 4. Interpret Results
     //redirect
-    $redirect = '/admin/user/search';
+    $redirect = '/admin/auth/search';
 
     //if there is a specified redirect
     if ($request->getStage('redirect_uri')) {
@@ -306,16 +313,16 @@ $cradle->post('/admin/user/search', function ($request, $response) {
 });
 
 /**
- * Process the User Create Page
+ * Process the Auth Create Page
  *
  * @param Request $request
  * @param Response $response
  */
-$cradle->post('/admin/user/create', function ($request, $response) {
+$cradle->post('/admin/auth/create', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     // set redirect
-    $request->setStage('redirect', '/admin/permission/search');
+    $request->setStage('redirect', '/admin/auth/search');
     if (!cradle('/module/role')->hasPermissions($request, $response)) {
         return;
     }
@@ -323,34 +330,26 @@ $cradle->post('/admin/user/create', function ($request, $response) {
     //----------------------------//
     // 2. Prepare Data
 
-    //user_slug is disallowed
-    $request->removeStage('user_slug');
-
-    //if user_meta has no value make it null
-    if ($request->hasStage('user_meta') && !$request->getStage('user_meta')) {
-        $request->setStage('user_meta', null);
+    //if auth_password has no value make it null
+    if ($request->hasStage('auth_password') && !$request->getStage('auth_password')) {
+        $request->setStage('auth_password', null);
     }
 
-    //if user_files has no value make it null
-    if ($request->hasStage('user_files') && !$request->getStage('user_files')) {
-        $request->setStage('user_files', null);
-    }
+    //auth_type is disallowed
+    $request->removeStage('auth_type');
 
-    //user_type is disallowed
-    $request->removeStage('user_type');
-
-    //user_flag is disallowed
-    $request->removeStage('user_flag');
+    //auth_flag is disallowed
+    $request->removeStage('auth_flag');
 
     //----------------------------//
     // 3. Process Request
-    cradle()->trigger('user-create', $request, $response);
+    cradle()->trigger('auth-create', $request, $response);
 
     //----------------------------//
     // 4. Interpret Results
     if ($response->isError()) {
         //determine route
-        $route = '/admin/user/create';
+        $route = '/admin/auth/create';
 
         //this is for flexibility
         if ($request->hasStage('route')) {
@@ -364,15 +363,15 @@ $cradle->post('/admin/user/create', function ($request, $response) {
     //record logs
     cradle()->log(
         sprintf(
-            'User %s is created',
-            $request->getStage('user_slug')
+            'Auth %s is created',
+            $request->getStage('auth_slug')
         ),
         $request,
         $response
     );
 
     //redirect
-    $redirect = '/admin/user/search';
+    $redirect = '/admin/auth/search';
 
     //if there is a specified redirect
     if ($request->getStage('redirect_uri')) {
@@ -387,7 +386,7 @@ $cradle->post('/admin/user/create', function ($request, $response) {
 
     //add a flash
     cradle('global')->flash(sprintf(
-        'User %s is created',
+        'Auth %s is created',
         $request->getStage('user_slug')
     ));
 
@@ -395,51 +394,47 @@ $cradle->post('/admin/user/create', function ($request, $response) {
 });
 
 /**
- * Process the User Update Page
+ * Process the Auth Update Page
  *
  * @param Request $request
  * @param Response $response
  */
-$cradle->post('/admin/user/update/:user_id', function ($request, $response) {
+$cradle->post('/admin/auth/update/:id', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     // set redirect
-    $request->setStage('redirect', '/admin/user/search');
+    $request->setStage('redirect', '/admin/auth/search');
     if (!cradle('/module/role')->hasPermissions($request, $response)) {
         return;
     }
 
     //----------------------------//
     // 2. Prepare Data
+    // get auth id
+    $authId = $request->getStage('id');
 
-    //user_slug is disallowed
-    $request->removeStage('user_slug');
+    $request->setStage('auth_id', $authId);
 
-    //if user_meta has no value make it null
-    if ($request->hasStage('user_meta') && !$request->getStage('user_meta')) {
-        $request->setStage('user_meta', null);
+    //if auth_password has no value make it null
+    if ($request->hasStage('auth_password') && !$request->getStage('auth_password')) {
+        $request->setStage('auth_password', null);
     }
 
-    //if user_files has no value make it null
-    if ($request->hasStage('user_files') && !$request->getStage('user_files')) {
-        $request->setStage('user_files', null);
-    }
+    //auth_type is disallowed
+    $request->removeStage('auth_type');
 
-    //user_type is disallowed
-    $request->removeStage('user_type');
-
-    //user_flag is disallowed
-    $request->removeStage('user_flag');
+    //auth_flag is disallowed
+    $request->removeStage('auth_flag');
 
     //----------------------------//
     // 3. Process Request
-    cradle()->trigger('user-update', $request, $response);
+    cradle()->trigger('auth-update', $request, $response);
 
     //----------------------------//
     // 4. Interpret Results
     if ($response->isError()) {
         //determine route
-        $route = '/admin/user/update';
+        $route = '/admin/auth/update';
 
         //this is for flexibility
         if ($request->hasStage('route')) {
@@ -453,7 +448,7 @@ $cradle->post('/admin/user/update/:user_id', function ($request, $response) {
     //record logs
     cradle()->log(
         sprintf(
-            'User #%s is updated',
+            'Auth #%s is updated',
             $request->getStage('user_id')
         ),
         $request,
@@ -461,7 +456,7 @@ $cradle->post('/admin/user/update/:user_id', function ($request, $response) {
     );
 
     //redirect
-    $redirect = '/admin/user/search';
+    $redirect = '/admin/auth/search';
 
     //if there is a specified redirect
     if ($request->getStage('redirect_uri')) {
@@ -476,38 +471,41 @@ $cradle->post('/admin/user/update/:user_id', function ($request, $response) {
 
     //add a flash
     cradle('global')->flash(sprintf(
-        'User #%s is updated',
-        $request->getStage('user_id')
+        'Auth #%s is updated',
+        $request->getStage('auth_id')
     ));
 
     cradle('global')->redirect($redirect);
 });
 
 /**
- * Process the User Remove
+ * Process the Auth Remove
  *
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/user/remove/:user_id', function ($request, $response) {
+$cradle->get('/admin/auth/remove/:id', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     // set redirect
-    $request->setStage('redirect', '/admin/user/search');
+    $request->setStage('redirect', '/admin/auth/search');
     if (!cradle('/module/role')->hasPermissions($request, $response)) {
         return;
     }
 
     //----------------------------//
     // 2. Prepare Data
-    // no data to preapre
+    // get auth id
+    $authId = $request->getStage('id');
+
+    $request->setStage('auth_id', $authId);
     //----------------------------//
     // 3. Process Request
-    cradle()->trigger('user-remove', $request, $response);
+    cradle()->trigger('auth-remove', $request, $response);
 
     //----------------------------//
     // 4. Interpret Results
-    $redirect = '/admin/user/search';
+    $redirect = '/admin/auth/search';
 
     //if there is a specified redirect
     if ($request->getStage('redirect_uri')) {
@@ -525,14 +523,14 @@ $cradle->get('/admin/user/remove/:user_id', function ($request, $response) {
         cradle('global')->flash($response->getMessage(), 'error');
     } else {
         //add a flash
-        $message = cradle('global')->translate('User was Removed');
+        $message = cradle('global')->translate('Auth was Removed');
         cradle('global')->flash($message, 'success');
 
         //record logs
         cradle()->log(
             sprintf(
-                'User #%s removed',
-                $request->getStage('user_id')
+                'Auth #%s removed',
+                $request->getStage('auth_id')
             ),
             $request,
             $response
@@ -543,30 +541,31 @@ $cradle->get('/admin/user/remove/:user_id', function ($request, $response) {
 });
 
 /**
- * Process the User Restore
+ * Process the Auth Restore
  *
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/user/restore/:user_id', function ($request, $response) {
+$cradle->get('/admin/auth/restore/:id', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
-    // set redirect
-    $request->setStage('redirect', '/admin/user/search');
     if (!cradle('/module/role')->hasPermissions($request, $response)) {
         return;
     }
 
     //----------------------------//
     // 2. Prepare Data
-    // no data to preapre
+    // get auth id
+    $authId = $request->getStage('id');
+
+    $request->setStage('auth_id', $authId);
     //----------------------------//
     // 3. Process Request
-    cradle()->trigger('user-restore', $request, $response);
+    cradle()->trigger('auth-restore', $request, $response);
 
     //----------------------------//
     // 4. Interpret Results
-    $redirect = '/admin/user/search';
+    $redirect = '/admin/auth/search';
 
     //if there is a specified redirect
     if ($request->getStage('redirect_uri')) {
@@ -584,14 +583,14 @@ $cradle->get('/admin/user/restore/:user_id', function ($request, $response) {
         cradle('global')->flash($response->getMessage(), 'error');
     } else {
         //add a flash
-        $message = cradle('global')->translate('User was Restored');
+        $message = cradle('global')->translate('Auth was Restored');
         cradle('global')->flash($message, 'success');
 
         //record logs
         cradle()->log(
             sprintf(
-                'User #%s restored',
-                $request->getStage('user_id')
+                'Auth #%s restored',
+                $request->getStage('auth_id')
             ),
             $request,
             $response
@@ -602,16 +601,16 @@ $cradle->get('/admin/user/restore/:user_id', function ($request, $response) {
 });
 
 /**
- * Process User Import
+ * Process Auth Import
  *
  * @param Request $request
  * @param Response $response
  */
-$cradle->post('/admin/user/import', function ($request, $response) {
+$cradle->post('/admin/auth/import', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     // set redirect
-    $request->setStage('redirect', '/admin/user/search');
+    $request->setStage('redirect', '/admin/auth/search');
     if (!cradle('/module/role')->hasPermissions($request, $response)) {
         return;
     }
@@ -621,12 +620,12 @@ $cradle->post('/admin/user/import', function ($request, $response) {
     //----------------------------//
     // 3. Process Request
     //get schema data
-    cradle()->trigger('user-import', $request, $response);
+    cradle()->trigger('auth-import', $request, $response);
 
     //----------------------------//
     // 4. Interpret Results
     //redirect
-    $redirect = '/admin/user/search';
+    $redirect = '/admin/auth/search';
 
     //if there is a specified redirect
     if ($request->getStage('redirect_uri')) {
@@ -664,36 +663,36 @@ $cradle->post('/admin/user/import', function ($request, $response) {
 
     //record logs
     cradle()->log(
-        'Users was Imported',
+        'Auths was Imported',
         $request,
         $response
     );
 
     //add a flash
-    $message = cradle('global')->translate('Users was Imported');
+    $message = cradle('global')->translate('Auths was Imported');
 
     cradle('global')->flash($message, 'success');
     cradle('global')->redirect($redirect);
 });
 
 /**
- * Process User Export
+ * Process Auth Export
  *
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/user/export/:type', function ($request, $response) {
+$cradle->get('/admin/auth/export/:type', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     // set redirect
-    $request->setStage('redirect', '/admin/user/search');
+    $request->setStage('redirect', '/admin/auth/search');
     if (!cradle('/module/role')->hasPermissions($request, $response)) {
         return;
     }
 
     //record logs
     cradle()->log(
-        'Users was Exported',
+        'Auths was Exported',
         $request,
         $response
     );
@@ -704,9 +703,9 @@ $cradle->get('/admin/user/export/:type', function ($request, $response) {
     //we do this to prevent SQL injections
     if (is_array($request->getStage('filter'))) {
         $filterable = [
-            'user_id',
-            'user_name',
-            'user_slug'
+            'auth_id',
+            'auth_slug',
+            'user_name'
         ];
 
         foreach ($request->getStage('filter') as $key => $value) {
@@ -720,6 +719,7 @@ $cradle->get('/admin/user/export/:type', function ($request, $response) {
     //we do this to prevent SQL injections
     if (is_array($request->getStage('order'))) {
         $sortable = [
+            'auth_slug',
             'user_name'
         ];
 
@@ -731,14 +731,14 @@ $cradle->get('/admin/user/export/:type', function ($request, $response) {
     }
 
     //trigger job
-    cradle()->trigger('user-search', $request, $response);
+    cradle()->trigger('auth-search', $request, $response);
 
     //get the output type
     $type = $request->getStage('type');
     //get the rows
     $rows = $response->getResults('rows');
     //determine the filename
-    $filename = 'Users-' . date('Y-m-d');
+    $filename = 'Auths-' . date('Y-m-d');
 
     //if the output type is csv
     if ($type === 'csv') {
@@ -746,10 +746,10 @@ $cradle->get('/admin/user/export/:type', function ($request, $response) {
         if (empty($rows)) {
             //at least give the headers
             $rows = [
-                'user_id',
+                'auth_id',
+                'auth_slug',
                 'user_name',
-                'user_slug',
-                'user_type',
+                'auth_type',
             ];
         } else {
             //add the headers
@@ -818,7 +818,7 @@ $cradle->get('/admin/user/export/:type', function ($request, $response) {
         };
 
         //set up the xml template
-        $root = "<?xml version=\"1.0\"?>\n<user></user>";
+        $root = "<?xml version=\"1.0\"?>\n<auth></auth>";
 
         //set the output headers
         $response
@@ -843,4 +843,58 @@ $cradle->get('/admin/user/export/:type', function ($request, $response) {
 
     //set content
     $response->set('json', $rows);
+});
+
+/**
+ * Process the Verification Page
+ *
+ * SIGNUP FLOW:
+ * - GET /signup
+ * - POST /signup
+ * - EMAIL
+ * - GET /activate/auth_id/hash
+ * - GET /login
+ *
+ * VERIFY FLOW:
+ * - GET /verify
+ * - POST /verify
+ * - EMAIL
+ * - GET /activate/auth_id/hash
+ * - GET /login
+ *
+ * @param Request $request
+ * @param Response $response
+ */
+$cradle->get('/activate/:auth_id/:hash', function ($request, $response) {
+    //get the detail
+    cradle()->trigger('auth-detail', $request, $response);
+
+    //form hash
+    $authId = $response->getResults('auth_id');
+    $authUpdated = $response->getResults('auth_updated');
+    $hash = md5($authId.$authUpdated);
+
+    //check the verification hash
+    if ($hash !== $request->getStage('hash')) {
+        cradle('global')->flash('Invalid verification. Try again.', 'danger');
+        return cradle('global')->redirect('/verify');
+    }
+
+    //activate
+    $request->setStage('auth_active', 1);
+
+    //trigger the job
+    cradle()->trigger('auth-update', $request, $response);
+
+    if ($response->isError()) {
+        cradle('global')->flash('Invalid verification. Try again.', 'danger');
+        return cradle('global')->redirect('/verify');
+    }
+
+    //it was good
+    //add a flash
+    cradle('global')->flash('Activation Successful', 'success');
+
+    //redirect
+    cradle('global')->redirect('/login');
 });

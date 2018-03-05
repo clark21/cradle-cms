@@ -1,1 +1,0 @@
-INSERT INTO user (user_name, user_created, user_updated) VALUES ('John Doe', '2018-02-06 05:16:46', '2018-02-06 05:16:46');
