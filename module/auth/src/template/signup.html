@@ -14,7 +14,7 @@
         <!-- START: Panel Body -->
         <div class="panel-body">
             <!-- START: Card Title -->
-            <h5 class="card-title">{{_ 'Login'}}</h5>
+            <h5 class="card-title">{{_ 'Sign up'}}</h5>
             <!-- END: Card Title -->
             <!-- START: Auth Signup Form -->
             <form method="post">
@@ -62,6 +62,22 @@
                     {{/if}}
                 </div>
                 <!-- END: Auth Slug -->
+                <!-- START: User Required Fields -->
+                {{#each schema.fields}}
+                    {{#notin 'none,hide,active,created,updated,email,password' field.type}}
+                        {{#in ../schema.required @key}}
+                            {{#when @key '!=' 'user_name'}}
+                                <div class="form-group{{#has ../errors @key}} has-error{{/has}}">
+                                    {{> partial_fields}}
+                                    {{#has ../errors @key}}
+                                        <span class="help-text">{{scope ../errors @key}}</span>
+                                    {{/has}}
+                                </div>
+                            {{/when}}
+                        {{/in}}
+                    {{/notin}}
+                {{/each}}
+                <!-- END: User Required Fields -->
                 <!-- START: Auth Password -->
                 <div class="form-group{{#if errors.auth_password}} has-error{{/if}}">
                     <div class="input-group">

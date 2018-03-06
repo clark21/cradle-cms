@@ -29,11 +29,23 @@ $cradle->on('auth-create', function ($request, $response) {
         $data = $request->getStage();
     }
 
+    $schema = SystemSchema::i('user');
+
+    //check if user_email exist
+    foreach ($schema->getFields() as $field) {
+        if ($field['name'] === 'email') {
+            $data['user_email'] = $data['auth_slug'];
+
+            //then reset stage
+            $request->setStage($data);
+        }
+    }
+
     //----------------------------//
     // 2. Validate Data
     $errors = AuthValidator::getCreateErrors($data);
 
-    $errors = SystemSchema::i('user')
+    $errors = $schema
         ->model()
         ->validator()
         ->getCreateErrors($data, $errors);
@@ -44,6 +56,7 @@ $cradle->on('auth-create', function ($request, $response) {
             ->setError(true, 'Invalid Parameters')
             ->set('json', 'validation', $errors);
     }
+
 
     //----------------------------//
     // 3. Prepare Data
@@ -625,9 +638,28 @@ $cradle->on('auth-update', function ($request, $response) {
         $data = $request->getStage();
     }
 
+    $schema = SystemSchema::i('user');
+
+    //check if user_email exist
+    if (isset($data['auth_slug'])) {
+        foreach ($schema->getFields() as $field) {
+            if ($field['name'] === 'email') {
+                $data['user_email'] = $data['auth_slug'];
+
+                //then reset stage
+                $request->setStage($data);
+            }
+        }
+    }
+
     //----------------------------//
     // 2. Validate Data
     $errors = AuthValidator::getUpdateErrors($data);
+
+    $errors = $schema
+        ->model()
+        ->validator()
+        ->getUpdateErrors($data, $errors);
 
     //if there are errors
     if (!empty($errors)) {
@@ -638,6 +670,15 @@ $cradle->on('auth-update', function ($request, $response) {
 
     //----------------------------//
     // 3. Prepare Data
+
+    $data = $schema
+        ->model()
+        ->formatter()
+        ->formatData(
+            $data,
+            $this->package('global')->service('s3-main'),
+            $this->package('global')->path('upload')
+        );
 
     if (isset($data['auth_password'])) {
         $data['auth_password'] = md5(strtotime($data['auth_password']));
@@ -652,6 +693,11 @@ $cradle->on('auth-update', function ($request, $response) {
 
     //save auth to database
     $results = $authSql->update($data);
+
+    if(isset($data['user_id'])) {
+        $request->setStage('schema', 'user');
+        cradle()->trigger('system-object-update', $request, $response);
+    }
 
     //index auth
     $authElastic->update($response->getResults('auth_id'));

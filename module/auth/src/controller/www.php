@@ -7,6 +7,7 @@
  * distributed with this package.
  */
 
+use Cradle\Module\System\Schema as SystemSchema;
 use Cradle\Module\Utility\File;
 
 /**
@@ -30,6 +31,10 @@ $cradle->get('/auth/signup', function ($request, $response) {
     //Prepare body
     $data = ['item' => $request->getPost()];
 
+    $userSchema = SystemSchema::i('user');
+
+    $data['schema'] = $userSchema->getAll();
+
     //add CSRF
     cradle()->trigger('csrf-load', $request, $response);
     $data['csrf'] = $response->getResults('csrf');
@@ -41,11 +46,18 @@ $cradle->get('/auth/signup', function ($request, $response) {
     if ($response->isError()) {
         if ($response->getValidation('auth_slug')) {
             $message = $response->getValidation('auth_slug');
-            $response->addValidation('profile_email', $message);
+            $response->addValidation('user_email', $message);
         }
 
         $response->setFlash($response->getMessage(), 'error');
         $data['errors'] = $response->getValidation();
+    }
+
+    //if there are file fields
+    if (!empty($data['schema']['files'])) {
+        //add CDN
+        $config = $this->package('global')->service('s3-main');
+        $data['cdn_config'] = File::getS3Client($config);
     }
 
     //----------------------------//
@@ -53,7 +65,9 @@ $cradle->get('/auth/signup', function ($request, $response) {
     //Render body
     $class = 'page-auth-signup';
     $title = cradle('global')->translate('Sign Up');
-    $body = cradle('/module/auth')->template('signup', $data);
+    $body = cradle('/module/auth')->template('signup', $data, [
+        'partial_fields'
+    ]);
 
     //Set Content
     $response
@@ -159,6 +173,10 @@ $cradle->get('/auth/account', function ($request, $response) {
     //Prepare body
     $data = ['item' => $request->getPost()];
 
+    $userSchema = SystemSchema::i('user');
+
+    $data['schema'] = $userSchema->getAll();
+
     //add CDN
     $config = $this->package('global')->service('s3-main');
     $data['cdn_config'] = File::getS3Client($config);
@@ -168,7 +186,7 @@ $cradle->get('/auth/account', function ($request, $response) {
     $data['csrf'] = $response->getResults('csrf');
 
     //If no post
-    if (!$request->hasPost('profile_name')) {
+    if (!$request->hasPost('user_name')) {
         //set default data
         $data['item'] = $request->getSession('me');
     }
@@ -178,12 +196,21 @@ $cradle->get('/auth/account', function ($request, $response) {
         $data['errors'] = $response->getValidation();
     }
 
+    //if there are file fields
+    if (!empty($data['schema']['files'])) {
+        //add CDN
+        $config = $this->package('global')->service('s3-main');
+        $data['cdn_config'] = File::getS3Client($config);
+    }
+
     //----------------------------//
     // 3. Render Template
     //Render body
     $class = 'page-auth-account';
     $title = cradle('global')->translate('Account Settings');
-    $body = cradle('/module/auth')->template('account', $data);
+    $body = cradle('/module/auth')->template('account', $data, [
+        'partial_fields'
+    ]);
 
     //Set Content
     $response
@@ -407,10 +434,10 @@ $cradle->post('/auth/account', function ($request, $response) {
 
     //----------------------------//
     // 3. Prepare Data
-    //set the auth_id and profile_id
+    //set the auth_id and user_id
     $request->setStage('auth_id', $request->getSession('me', 'auth_id'));
-    $request->setStage('profile_id', $request->getSession('me', 'profile_id'));
-    $request->setStage('permission', $request->getSession('me', 'profile_id'));
+    $request->setStage('user_id', $request->getSession('me', 'user_id'));
+    $request->setStage('permission', $request->getSession('me', 'user_id'));
 
     //remove password if empty
     if (!$request->getStage('auth_password')) {
@@ -445,6 +472,7 @@ $cradle->post('/auth/account', function ($request, $response) {
     //add a flash
     $message = cradle('global')->translate('Update Successful');
     cradle('global')->flash($message, 'success');
+
     cradle('global')->redirect($redirect);
 });
 

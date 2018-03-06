@@ -394,7 +394,7 @@ class Schema extends Registry
             }
 
             foreach ($field['validation'] as $validation) {
-                if ($validation === 'required') {
+                if ($validation['method'] === 'required') {
                     $results[] = $name;
                 }
             }
