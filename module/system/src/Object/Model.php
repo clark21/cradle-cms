@@ -10,7 +10,7 @@ namespace Cradle\Module\System\Object;
 
 use Cradle\Module\System\Schema as SystemSchema;
 
-use Cradle\Module\Utility\Service\NoopService;
+use Cradle\Module\System\Utility\Service\NoopService;
 
 use Cradle\Helper\InstanceTrait;
 

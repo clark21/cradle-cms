@@ -7,7 +7,7 @@
  * distributed with this package.
  */
 
-namespace Cradle\Module\Utility\Service;
+namespace Cradle\Module\System\Utility\Service;
 
 /**
  * Comment Noop Service

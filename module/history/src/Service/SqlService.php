@@ -12,8 +12,8 @@ namespace Cradle\Module\History\Service;
 use PDO as Resource;
 use Cradle\Sql\SqlFactory;
 
-use Cradle\Module\Utility\Service\SqlServiceInterface;
-use Cradle\Module\Utility\Service\AbstractSqlService;
+use Cradle\Module\System\Utility\Service\SqlServiceInterface;
+use Cradle\Module\System\Utility\Service\AbstractSqlService;
 
 /**
  * History SQL Service

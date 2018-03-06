@@ -12,8 +12,8 @@ use Cradle\Module\Role\Service\SqlService;
 use Cradle\Module\Role\Service\RedisService;
 use Cradle\Module\Role\Service\ElasticService;
 
-use Cradle\Module\Utility\Service\NoopService;
-use Cradle\Module\Utility\ServiceInterface;
+use Cradle\Module\System\Utility\Service\NoopService;
+use Cradle\Module\System\Utility\ServiceInterface;
 
 /**
  * Service layer

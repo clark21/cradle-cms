@@ -11,7 +11,7 @@ namespace Cradle\Module\System\Object;
 use Cradle\Module\System\Schema as SystemSchema;
 use Cradle\Module\System\Object\Service as ObjectService;
 
-use Cradle\Module\Utility\Validator as UtilityValidator;
+use Cradle\Module\System\Utility\Validator as UtilityValidator;
 
 use Cradle\Helper\InstanceTrait;
 

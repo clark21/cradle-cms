@@ -7,6 +7,8 @@
  * distributed with this package.
  */
 
+use Cradle\Sink\Faucet\Installer as ModuleInstaller;
+
 /**
  * Render the System Module Search Page
  *
@@ -31,6 +33,9 @@ $cradle->get('/admin/system/module/search', function ($request, $response) {
     
     // modules path
     $path = cradle('global')->path('root') . '/module';
+
+    // load versions
+    $versions = cradle('global')->config('version');
 
     // scan diretory
     $modules = scandir($path);
@@ -87,6 +92,45 @@ $cradle->get('/admin/system/module/search', function ($request, $response) {
         if (isset($methods['uninstall'])) {
             $detail['uninstall'] = true;
             $actions = true;
+        }
+
+        // set version
+        $detail['version'] = null;
+
+        if (isset($versions[$module])) {
+            $detail['version'] = $versions[$module];
+        }
+
+        // do we have version?
+        if (!is_null($detail['version'])) {
+            // get next version
+            $nextVersion = ModuleInstaller::getNextVersion($module);
+
+            // install path
+            $script = sprintf(
+                '%s/%s/install/%s',
+                $path,
+                $module,
+                $nextVersion
+            );
+
+            // set module name
+            $request->setStage('module', $module);
+
+            // get module versions
+            cradle()->trigger('system-module-versions', $request, $response);
+
+            // get versions
+            $history = $response->getResults();
+
+            // get latest version
+            $latest = array_pop($history);
+
+            // version compare
+            if (version_compare($detail['version'], $latest, '<')) {
+                // set latest update
+                $detail['update'] = $latest;
+            }
         }
 
         // set module actions

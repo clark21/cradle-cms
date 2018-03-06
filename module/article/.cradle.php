@@ -1,7 +1,7 @@
 <?php //-->
 
 use Cradle\Module\Article\Service as ArticleService;
-use Cradle\Module\Utility\ServiceFactory;
+use Cradle\Module\System\Utility\ServiceFactory;
 
 ServiceFactory::register('article', ArticleService::class);
 
@@ -12,11 +12,11 @@ $cradle->preprocess(function($request, $response) {
      * Installer
      */
     ->addMethod('install', function ($request, $response) {
-        // call system install
+        // set module
+        $request->setStage('module', 'article');
 
-        // call system install placeholder
-
-        // move schema files to config/admin/schema/:module_name
+        // install schema versions
+        cradle()->trigger('system-module-install', $request, $response);
 
         // do module specific actions
         $response->setError(false, 'Article Module Installed');
@@ -26,6 +26,12 @@ $cradle->preprocess(function($request, $response) {
      * Uninstaller
      */
     ->addMethod('uninstall', function ($request, $response) {
+        // set module
+        $request->setStage('module', 'article');
+
+        // install schema versions
+        cradle()->trigger('system-module-uninstall', $request, $response);
+
         // do module specific actions
         $response->setError(false, 'Article Module Uninstalled');
     });
