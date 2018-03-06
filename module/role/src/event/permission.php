@@ -9,6 +9,9 @@
 
 use Cradle\Module\Role\Validator as RoleValidator;
 
+use Cradle\Http\Request;
+use Cradle\Http\Response;
+
 /**
  * Permission Create Job
  *
@@ -194,11 +197,27 @@ $cradle->on('permission-remove', function ($request, $response) {
 
     //----------------------------//
     // 3. Process Data
+    $labels = [];
     $results['permissions'] = $this->package('global')->config('admin/permissions');
     if (isset($results['permissions'][$id])) {
+        // get labels
+        $labels[] = $results['permissions'][$id]['label'];
+        // unset permission
         unset($results['permissions'][$id]);
+        // return all values
         $results['permissions'] = array_values($results['permissions']);
     }
+
+    // role request
+    $roleRequest = Request::i()
+        // set stage label
+        ->setStage('labels', $labels);
+
+    // role response
+    $roleResponse = Response::i()->load();
+
+    // trigger job
+    cradle()->trigger('role-permissions-update', $roleRequest, $roleResponse);
 
     $path = $this->package('global')->path('config') . '/admin/permissions.php';
 
