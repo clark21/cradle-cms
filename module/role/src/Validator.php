@@ -10,7 +10,7 @@ namespace Cradle\Module\Role;
 
 use Cradle\Module\Role\Service as RoleService;
 
-use Cradle\Module\Utility\Validator as UtilityValidator;
+use Cradle\Module\System\Utility\Validator as UtilityValidator;
 
 /**
  * Validator layer
@@ -61,10 +61,6 @@ class Validator
 
         if (isset($data['role_name']) && empty($data['role_name'])) {
             $errors['role_name'] = 'Role Name is required';
-        }
-
-        if (!isset($data['role_permissions']) || empty($data['role_permissions'])) {
-            $errors['role_permissions'] = 'Role Permissions is required';
         }
 
         return self::getOptionalErrors($data, $errors);

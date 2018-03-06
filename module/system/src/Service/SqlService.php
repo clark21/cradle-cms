@@ -12,8 +12,8 @@ namespace Cradle\Module\System\Service;
 use PDO as Resource;
 use Cradle\Sql\SqlFactory;
 
-use Cradle\Module\Utility\Service\SqlServiceInterface;
-use Cradle\Module\Utility\Service\AbstractSqlService;
+use Cradle\Module\System\Utility\Service\SqlServiceInterface;
+use Cradle\Module\System\Utility\Service\AbstractSqlService;
 
 use Cradle\Module\System\Schema as SystemSchema;
 use Cradle\Module\System\Exception as SystemException;
@@ -476,5 +476,22 @@ class SqlService
     {
         $system = $this->resource->getTables($name);
         return !empty($system);
+    }
+
+    /**
+     * Returns all the table record count
+     * 
+     * @return array
+     */
+    public function getSchemaTableRecordCount($schema = null)
+    {
+        // information schema query
+        $query = sprintf(
+            'SELECT table_name, table_rows FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = "%s"',
+            $schema
+        );
+
+        // send query
+        return $this->resource->query($query);
     }
 }

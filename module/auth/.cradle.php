@@ -4,7 +4,7 @@ include_once __DIR__ . '/src/controller/www.php';
 include_once __DIR__ . '/src/events.php';
 
 use Cradle\Module\Auth\Service as AuthService;
-use Cradle\Module\Utility\ServiceFactory;
+use Cradle\Module\System\Utility\ServiceFactory;
 
 ServiceFactory::register('auth', AuthService::class);
 

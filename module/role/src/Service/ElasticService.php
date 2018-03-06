@@ -15,8 +15,8 @@ use Elasticsearch\Client as Resource;
 
 use Elasticsearch\Common\Exceptions\NoNodesAvailableException;
 
-use Cradle\Module\Utility\Service\ElasticServiceInterface;
-use Cradle\Module\Utility\Service\AbstractElasticService;
+use Cradle\Module\System\Utility\Service\ElasticServiceInterface;
+use Cradle\Module\System\Utility\Service\AbstractElasticService;
 
 /**
  * Role ElasticSearch Service

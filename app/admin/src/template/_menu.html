@@ -6,6 +6,9 @@
             {{/if}}
             <span class="nav-title">
                 <span class="nav-text">{{label}}</span>
+                {{#if records}}
+                    &nbsp;<span class="badge badge-pill badge-primary">{{records}}</span>
+                {{/if}}
                 <span class="nav-right">
                     <i class="fas fa-chevron-down"></i>
                 </span>
@@ -37,6 +40,9 @@
             {{/if}}
             <span class="nav-title">
                 <span class="nav-text">{{label}}</span>
+                {{#if records}}
+                    &nbsp;<span class="badge badge-pill badge-primary">{{records}}</span>
+                {{/if}}
             </span>
         </a>
     </li>

@@ -1,5 +1,6 @@
 <?php //-->
 include_once __DIR__ . '/src/event/auth.php';
+include_once __DIR__ . '/src/event/object.php';
 include_once __DIR__ . '/src/event/role.php';
 include_once __DIR__ . '/src/event/permission.php';
 
@@ -7,7 +8,7 @@ include_once __DIR__ . '/src/controller/permission.php';
 include_once __DIR__ . '/src/controller/role.php';
 
 use Cradle\Module\Role\Service as RoleService;
-use Cradle\Module\Utility\ServiceFactory;
+use Cradle\Module\System\Utility\ServiceFactory;
 
 ServiceFactory::register('role', RoleService::class);
 
@@ -130,4 +131,36 @@ $cradle->package('/module/role')->addMethod('template', function (
     // set the main template
     $template = $handlebars->compile(file_get_contents($root . $path . '.html'));
     return $template($data);
+});
+
+$cradle->preprocess(function($request, $response) {
+    $this->package('/module/role')
+
+    /**
+     * Installer
+     */
+    ->addMethod('install', function ($request, $response) {
+        // set module
+        $request->setStage('module', 'role');
+
+        // install schema versions
+        cradle()->trigger('system-module-install', $request, $response);
+
+        // do module specific actions
+        $response->setError(false, 'Role Module Installed');
+    })
+
+    /**
+     * Uninstaller
+     */
+    ->addMethod('uninstall', function ($request, $response) {
+        // set module
+        $request->setStage('module', 'role');
+
+        // install schema versions
+        cradle()->trigger('system-module-uninstall', $request, $response);
+
+        // do module specific actions
+        $response->setError(false, 'Role Module Uninstalled');
+    });
 });

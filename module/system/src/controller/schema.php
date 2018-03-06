@@ -17,7 +17,7 @@ $cradle->get('/admin/system/schema/search', function ($request, $response) {
     //----------------------------//
     // 1. Route Permissions
     //only for admin
-    cradle('global')->requireLogin('admin');
+    $permissions = $this->package('global')->config('permissions');
 
     //----------------------------//
     // 2. Prepare Data

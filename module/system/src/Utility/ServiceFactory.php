@@ -7,9 +7,9 @@
  * distributed with this package.
  */
 
-namespace Cradle\Module\Utility;
+namespace Cradle\Module\System\Utility;
 
-use Cradle\Module\Utility\Service\NoopService;
+use Cradle\Module\System\Utility\Service\NoopService;
 
 /**
  * Service Factory

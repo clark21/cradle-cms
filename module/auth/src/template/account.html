@@ -40,6 +40,49 @@
                     {{/if}}
                 </div>
                 <!-- END: User Name -->
+
+                <!-- START: User Email -->
+                <div class="form-group{{#if errors.auth_slug}} has-error{{/if}}">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                                <i class = "fas fa-user"></i>
+                            </div>
+                        </div>
+                        <input
+                            autocomplete="name"
+                            type="email"
+                            name="auth_slug"
+                            placeholder="{{_ 'Email'}}"
+                            class="form-control"
+                            value="{{item.auth_slug}}"
+                        />
+                    </div>
+                    {{#if errors.auth_slug}}
+                        <span class="help-text">{{errors.auth_slug}}</span>
+                    {{/if}}
+                </div>
+                <!-- END: User Email -->
+
+                <!-- START: User Required Fields -->
+                {{#each schema.fields}}
+                    {{#notin 'none,hide,active,created,updated,email,password' field.type}}
+                        {{#in ../schema.required @key}}
+                            {{#when @key '!=' 'user_name'}}
+                                <div class="form-group{{#has ../errors @key}} has-error{{/has}}">
+                                    <div>
+                                        {{> partial_fields}}
+                                        {{#has ../errors @key}}
+                                            <span class="help-text">{{scope ../errors @key}}</span>
+                                        {{/has}}
+                                    </div>
+                                </div>
+                            {{/when}}
+                        {{/in}}
+                    {{/notin}}
+                {{/each}}
+                <!-- END: User Required Fields -->
+
                 <!-- START: Auth Password -->
                 <div class="form-group{{#if errors.auth_password}} has-error{{/if}}">
                     <div class="input-group">

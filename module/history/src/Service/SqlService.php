@@ -12,8 +12,8 @@ namespace Cradle\Module\History\Service;
 use PDO as Resource;
 use Cradle\Sql\SqlFactory;
 
-use Cradle\Module\Utility\Service\SqlServiceInterface;
-use Cradle\Module\Utility\Service\AbstractSqlService;
+use Cradle\Module\System\Utility\Service\SqlServiceInterface;
+use Cradle\Module\System\Utility\Service\AbstractSqlService;
 
 /**
  * History SQL Service
@@ -202,18 +202,6 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
                 $rows[$i]['history_meta'] = json_decode($results['history_meta'], true);
             } else {
                 $rows[$i]['history_meta'] = [];
-            }
-
-            if ($results['user_meta']) {
-                $rows[$i]['user_meta'] = json_decode($results['user_meta'], true);
-            } else {
-                $rows[$i]['user_meta'] = [];
-            }
-            
-            if ($results['user_files']) {
-                $rows[$i]['user_files'] = json_decode($results['user_files'], true);
-            } else {
-                $rows[$i]['user_files'] = [];
             }
         }
 

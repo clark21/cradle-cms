@@ -38,6 +38,20 @@ $cradle->on('render-admin-page', function ($request, $response) {
 
     cradle('global')->handlebars()->registerHelper('nav_match', $navMatch);
 
+    // menu request
+    $menuRecordRequest = \Cradle\Http\Request::i();
+    // menu response
+    $menuRecordResponse = \Cradle\Http\Response::i();
+
+    // set navigation
+    $menuRecordRequest->setStage('navigation', $navigation);
+
+    // trigger menu get record count
+    cradle()->trigger('menu-get-record-count', $menuRecordRequest, $menuRecordResponse);
+
+    // get navigation
+    $navigation = $menuRecordResponse->getResults();
+
     $content = cradle('/app/admin')->template(
         '_page',
         array(

@@ -10,7 +10,7 @@ namespace Cradle\Module\Auth;
 
 use Cradle\Module\Auth\Service as AuthService;
 
-use Cradle\Module\Utility\Validator as UtilityValidator;
+use Cradle\Module\System\Utility\Validator as UtilityValidator;
 
 /**
  * Validator layer
@@ -149,20 +149,12 @@ class Validator
         } else if (isset($data['auth_slug']) && !isset($errors['auth_id'])) {
             //get the auth that we are updating
             $row = Service::get('sql')
-                ->search('auth')
-                ->filterByAuthId($data['auth_id'])
-                ->getRow();
+                ->get($data['auth_id']);
 
             //if the auth slug is changing
             if ($row['auth_slug'] !== $data['auth_slug']) {
-                //find the new auth_slug
-                $row = Service::get('sql')
-                    ->search('auth')
-                    ->filterByAuthSlug($data['auth_slug'])
-                    ->getRow();
-
-                //if it is found
-                if ($row) {
+                //check if new auth_slug is taken
+                if (Service::get('sql')->exists($data['auth_slug'])) {
                     $errors['auth_slug'] = 'Already Taken';
                 }
             }
