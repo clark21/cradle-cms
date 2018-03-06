@@ -26,6 +26,12 @@ $cradle->preprocess(function($request, $response) {
      * Uninstaller
      */
     ->addMethod('uninstall', function ($request, $response) {
+        // set module
+        $request->setStage('module', 'article');
+
+        // install schema versions
+        cradle()->trigger('system-module-uninstall', $request, $response);
+
         // do module specific actions
         $response->setError(false, 'Article Module Uninstalled');
     });
