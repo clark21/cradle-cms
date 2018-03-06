@@ -111,18 +111,23 @@ $cradle->on('system-module-uninstall', function ($request, $response) {
         ];
     }
 
+    // load up sql resource
     $database = SystemService::get('sql')->getResource();
 
     //run the scripts
     foreach ($executables as $executable) {
+        // switch between modes
         switch ($executable['mode']) {
+            // php script?
             case 'php':
                 include $executable['script'];
                 break;
+            // sql file?
             case 'sql':
                 $query = file_get_contents($executable['script']);
                 $database->query($query);
                 break;
+            // shell script?
             case 'sh':
                 exec($executable['script']);
                 break;
@@ -132,15 +137,20 @@ $cradle->on('system-module-uninstall', function ($request, $response) {
     //get the current version
     $versionFile = cradle('global')->path('config') . '/version.php';
 
+    // current versions
     $current = [];
+
+    // if version file exists
     if (file_exists($versionFile)) {
         $current = include $versionFile;
     }
 
+    // if module is set on versions
     if (isset($current[$module])) {
         unset($current[$module]);
     }
 
+    // update version file
     $contents = '<?php return ' . var_export($current, true) . ';';
     file_put_contents($versionFile, $contents);
 });
