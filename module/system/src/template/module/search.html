@@ -25,6 +25,7 @@
                     <tr>
                         <th>Actions</th>
                         <th>Name</th>
+                        <th>Version</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -47,7 +48,7 @@
                                         href="/admin/system/module/install/{{name}}"
                                         title="Install Module"
                                     >
-                                        <i class="fas fa-database"></i>
+                                        <i class="fas fa-sync"></i>
                                     </a>
                                 {{/if}}
 
@@ -58,6 +59,26 @@
                             <td>
                                <div><strong>{{label}}</strong></div>
                                <em>{{description}}</em>
+                            </td>
+                            <td>
+                                {{#if version}}
+                                    <div>
+                                        {{version}}
+
+                                        {{#if update}}
+                                            -
+                                            <span class="text-success">
+                                                {{update}} <i class="fas fa-arrow-up"></i>
+                                            </span>
+                                        {{/if}}
+                                    </div>
+
+                                    {{#if update}}
+                                        <em>Update Available!</em>
+                                    {{/if}}
+                                {{else}}
+                                    -
+                                {{/if}}
                             </td>
                         </tr>
                     {{/each}}

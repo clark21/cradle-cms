@@ -12,11 +12,11 @@ $cradle->preprocess(function($request, $response) {
      * Installer
      */
     ->addMethod('install', function ($request, $response) {
-        // call system install
+        // set module
+        $request->setStage('module', 'article');
 
-        // call system install placeholder
-
-        // move schema files to config/admin/schema/:module_name
+        // install schema versions
+        cradle()->trigger('system-module-install', $request, $response);
 
         // do module specific actions
         $response->setError(false, 'Article Module Installed');
