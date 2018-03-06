@@ -7,7 +7,7 @@
  * distributed with this package.
  */
 
-use Cradle\Module\Utility\File;
+use Cradle\Module\System\Utility\File;
 
 /**
  * Render the Signup Page
