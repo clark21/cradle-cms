@@ -63,10 +63,6 @@ class Validator
             $errors['role_name'] = 'Role Name is required';
         }
 
-        if (!isset($data['role_permissions']) || empty($data['role_permissions'])) {
-            $errors['role_permissions'] = 'Role Permissions is required';
-        }
-
         return self::getOptionalErrors($data, $errors);
     }
 

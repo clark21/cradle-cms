@@ -203,18 +203,6 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
             } else {
                 $rows[$i]['history_meta'] = [];
             }
-
-            if ($results['user_meta']) {
-                $rows[$i]['user_meta'] = json_decode($results['user_meta'], true);
-            } else {
-                $rows[$i]['user_meta'] = [];
-            }
-            
-            if ($results['user_files']) {
-                $rows[$i]['user_files'] = json_decode($results['user_files'], true);
-            } else {
-                $rows[$i]['user_files'] = [];
-            }
         }
 
         //return response format

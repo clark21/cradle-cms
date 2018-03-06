@@ -328,6 +328,9 @@ $cradle->on('role-update', function ($request, $response) {
     // 3. Prepare Data
     $permissions = cradle('global')->config('admin/permissions');
 
+    // define role permissions
+    $rolePermissions = [];
+
     // loop through data
     foreach ($data['role_permissions'] as $permission) {
         $key = array_search($permission, array_column($permissions, 'label'));
@@ -337,7 +340,6 @@ $cradle->on('role-update', function ($request, $response) {
     }
 
     $data['role_permissions'] = json_encode($rolePermissions);
-
 
     //----------------------------//
     // 4. Process Data
@@ -548,4 +550,62 @@ $cradle->on('role-auth-unlink', function ($request, $response) {
 
     //return response format
     $response->setError(false)->setResults($results);
+});
+
+/**
+ * Role Permission Update Job
+ *
+ * @param Request $request
+ * @param Response $response
+ */
+$cradle->on('role-permissions-update', function ($request, $response) {
+    //----------------------------//
+    // 1. Get Data
+    $data = [];
+    if ($request->hasStage()) {
+        $data = $request->getStage();
+    }
+
+    //----------------------------//
+    // 2. Validate Data
+    if(!isset($data['labels'])) {
+        return;
+    }
+
+    //----------------------------//
+    // 3. Process Date
+    // empty stage
+    $request->removeStage();
+    // trigger job
+    cradle()->trigger('role-search', $request, $response);
+    // get roles
+    $roles = $response->getResults();
+
+    // loop through rows
+    foreach($roles['rows'] as $role) {
+        foreach($data['labels'] as $label) {
+            // get key
+            $key = array_search($label, array_column($role['role_permissions'], 'label'));
+
+            if(is_int($key)) {
+                // unset permissions if has key
+                unset($role['role_permissions'][$key]);
+                // return all values
+                $role['role_permissions'] = array_values($role['role_permissions']);
+            };
+        }
+
+        // get values label
+        $role['role_permissions'] = array_column($role['role_permissions'], 'label');
+
+        // remove stage
+        $request->removeStage();
+        // set stage role
+        $request->setStage($role);
+        // trigger role update
+        cradle()->trigger('role-update', $request, $response);
+    }
+
+    //return response format
+    $response->setError(false)->setResults([]);
 });
