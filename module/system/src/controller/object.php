@@ -21,7 +21,7 @@ use Cradle\Http\Response;
  */
 $cradle->get('/admin/system/object/:schema/search', function ($request, $response) {
     //----------------------------//
-    // 1. Route Permissions
+    // 1. Security Checks
     if (!cradle('/module/role')->hasPermissions($request, $response)) {
         return;
     }
@@ -151,7 +151,7 @@ $cradle->get('/admin/system/object/:schema/search', function ($request, $respons
  */
 $cradle->get('/admin/system/object/:schema/create', function ($request, $response) {
     //----------------------------//
-    // 1. Route Permissions
+    // 1. Security Checks
     if (!cradle('/module/role')->hasPermissions($request, $response)) {
         return;
     }
@@ -296,7 +296,7 @@ $cradle->get('/admin/system/object/:schema/create', function ($request, $respons
  */
 $cradle->get('/admin/system/object/:schema/update/:id', function ($request, $response) {
     //----------------------------//
-    // 1. Route Permissions
+    // 1. Security Checks
     if (!cradle('/module/role')->hasPermissions($request, $response)) {
         return;
     }
@@ -455,7 +455,7 @@ $cradle->get('/admin/system/object/:schema/update/:id', function ($request, $res
  */
 $cradle->post('/admin/system/object/:schema/search', function ($request, $response) {
     //----------------------------//
-    // 1. Route Permissions
+    // 1. Security Checks
     if (!cradle('/module/role')->hasPermissions($request, $response)) {
         return;
     }
@@ -570,7 +570,7 @@ $cradle->post('/admin/system/object/:schema/search', function ($request, $respon
  */
 $cradle->post('/admin/system/object/:schema/create', function ($request, $response) {
     //----------------------------//
-    // 1. Route Permissions
+    // 1. Security Checks
     if (!cradle('/module/role')->hasPermissions($request, $response)) {
         return;
     }
@@ -696,7 +696,7 @@ $cradle->post('/admin/system/object/:schema/create', function ($request, $respon
  */
 $cradle->post('/admin/system/object/:schema/update/:id', function ($request, $response) {
     //----------------------------//
-    // 1. Route Permissions
+    // 1. Security Checks
     if (!cradle('/module/role')->hasPermissions($request, $response)) {
         return;
     }
@@ -822,7 +822,7 @@ $cradle->post('/admin/system/object/:schema/update/:id', function ($request, $re
  */
 $cradle->get('/admin/system/object/:schema/remove/:id', function ($request, $response) {
     //----------------------------//
-    // 1. Route Permissions
+    // 1. Security Checks
     if (!cradle('/module/role')->hasPermissions($request, $response)) {
         return;
     }
@@ -892,7 +892,7 @@ $cradle->get('/admin/system/object/:schema/remove/:id', function ($request, $res
  */
 $cradle->get('/admin/system/object/:schema/restore/:id', function ($request, $response) {
     //----------------------------//
-    // 1. Route Permissions
+    // 1. Security Checks
     if (!cradle('/module/role')->hasPermissions($request, $response)) {
         return;
     }
@@ -962,7 +962,7 @@ $cradle->get('/admin/system/object/:schema/restore/:id', function ($request, $re
  */
 $cradle->post('/admin/system/object/:schema/import', function ($request, $response) {
     //----------------------------//
-    // 1. Route Permissions
+    // 1. Security Checks
     if (!cradle('/module/role')->hasPermissions($request, $response)) {
         //Set JSON Content
         return $response->setContent(json_encode([
@@ -1033,7 +1033,7 @@ $cradle->post('/admin/system/object/:schema/import', function ($request, $respon
  */
 $cradle->get('/admin/system/object/:schema/export/:type', function ($request, $response) {
     //----------------------------//
-    // 1. Route Permissions
+    // 1. Security Checks
     // set redirect
     $request->setStage('redirect', '/admin/system/object/' . $request->getStage('schema') . '/search');
     if (!cradle('/module/role')->hasPermissions($request, $response)) {

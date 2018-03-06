@@ -22,7 +22,11 @@ use Cradle\Module\Utility\File;
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/signup', function ($request, $response) {
+$cradle->get('/auth/signup', function ($request, $response) {
+    //----------------------------//
+    // 1. Security Checks
+    //----------------------------//
+    // 2. Prepare Data
     //Prepare body
     $data = ['item' => $request->getPost()];
 
@@ -40,10 +44,12 @@ $cradle->get('/signup', function ($request, $response) {
             $response->addValidation('profile_email', $message);
         }
 
-        $response->setFlash($response->getMessage(), 'danger');
+        $response->setFlash($response->getMessage(), 'error');
         $data['errors'] = $response->getValidation();
     }
 
+    //----------------------------//
+    // 3. Render Template
     //Render body
     $class = 'page-auth-signup';
     $title = cradle('global')->translate('Sign Up');
@@ -55,8 +61,14 @@ $cradle->get('/signup', function ($request, $response) {
         ->setPage('class', $class)
         ->setContent($body);
 
+    //if we only want the body
+    if ($request->getStage('render') === 'body') {
+        return;
+    }
+
     //Render blank page
-}, 'render-www-blank');
+    cradle()->trigger('render-www-blank', $request, $response);
+});
 
 /**
  * Render the Login Page
@@ -64,7 +76,11 @@ $cradle->get('/signup', function ($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/login', function ($request, $response) {
+$cradle->get('/auth/login', function ($request, $response) {
+    //----------------------------//
+    // 1. Security Checks
+    //----------------------------//
+    // 2. Prepare Data
     //Prepare body
     $data = ['item' => $request->getPost()];
 
@@ -74,11 +90,13 @@ $cradle->get('/login', function ($request, $response) {
 
 
     if ($response->isError()) {
-        $response->setFlash($response->getMessage(), 'danger');
+        $response->setFlash($response->getMessage(), 'error');
 
         $data['errors'] = $response->getValidation();
     }
 
+    //----------------------------//
+    // 3. Render Template
     //Render body
     $class = 'page-auth-login';
     $title = cradle('global')->translate('Log In');
@@ -90,8 +108,14 @@ $cradle->get('/login', function ($request, $response) {
         ->setPage('class', $class)
         ->setContent($body);
 
+    //if we only want the body
+    if ($request->getStage('render') === 'body') {
+        return;
+    }
+
     //Render blank page
-}, 'render-www-blank');
+    cradle()->trigger('render-www-blank', $request, $response);
+});
 
 /**
  * Process the Logout
@@ -99,9 +123,12 @@ $cradle->get('/login', function ($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/logout', function ($request, $response) {
-    //TODO: Sessions for clusters
-    unset($_SESSION['me']);
+$cradle->get('/auth/logout', function ($request, $response) {
+    //----------------------------//
+    // 1. Security Checks
+    //----------------------------//
+    // 2. Prepare Data
+    $request->removeSession('me');
 
     //add a flash
     cradle('global')->flash('Log Out Successful', 'success');
@@ -121,10 +148,14 @@ $cradle->get('/logout', function ($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/account', function ($request, $response) {
+$cradle->get('/auth/account', function ($request, $response) {
+    //----------------------------//
+    // 1. Security Checks
     //Need to be logged in
     cradle('global')->requireLogin();
 
+    //----------------------------//
+    // 2. Prepare Data
     //Prepare body
     $data = ['item' => $request->getPost()];
 
@@ -143,10 +174,12 @@ $cradle->get('/account', function ($request, $response) {
     }
 
     if ($response->isError()) {
-        $response->setFlash($response->getMessage(), 'danger');
+        $response->setFlash($response->getMessage(), 'error');
         $data['errors'] = $response->getValidation();
     }
 
+    //----------------------------//
+    // 3. Render Template
     //Render body
     $class = 'page-auth-account';
     $title = cradle('global')->translate('Account Settings');
@@ -158,8 +191,14 @@ $cradle->get('/account', function ($request, $response) {
         ->setPage('class', $class)
         ->setContent($body);
 
+    //if we only want the body
+    if ($request->getStage('render') === 'body') {
+        return;
+    }
+
     //Render blank page
-}, 'render-www-blank');
+    cradle()->trigger('render-www-blank', $request, $response);
+});
 
 /**
  * Render the Forgot Page
@@ -175,7 +214,11 @@ $cradle->get('/account', function ($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/forgot', function ($request, $response) {
+$cradle->get('/auth/forgot', function ($request, $response) {
+    //----------------------------//
+    // 1. Security Checks
+    //----------------------------//
+    // 2. Prepare Data
     //Prepare body
     $data = ['item' => $request->getPost()];
 
@@ -184,10 +227,12 @@ $cradle->get('/forgot', function ($request, $response) {
     $data['csrf'] = $response->getResults('csrf');
 
     if ($response->isError()) {
-        $response->setFlash($response->getMessage(), 'danger');
+        $response->setFlash($response->getMessage(), 'error');
         $data['errors'] = $response->getValidation();
     }
 
+    //----------------------------//
+    // 3. Render Template
     //Render body
     $class = 'page-auth-forgot';
     $title = cradle('global')->translate('Forgot Password');
@@ -199,8 +244,14 @@ $cradle->get('/forgot', function ($request, $response) {
         ->setPage('class', $class)
         ->setContent($body);
 
+    //if we only want the body
+    if ($request->getStage('render') === 'body') {
+        return;
+    }
+
     //Render blank page
-}, 'render-www-blank');
+    cradle()->trigger('render-www-blank', $request, $response);
+});
 
 /**
  * Render the Recover Page
@@ -216,7 +267,11 @@ $cradle->get('/forgot', function ($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/recover/:auth_id/:hash', function ($request, $response) {
+$cradle->get('/auth/recover/:auth_id/:hash', function ($request, $response) {
+    //----------------------------//
+    // 1. Security Checks
+    //----------------------------//
+    // 2. Prepare Data
     //get the detail
     cradle()->trigger('auth-detail', $request, $response);
 
@@ -227,8 +282,8 @@ $cradle->get('/recover/:auth_id/:hash', function ($request, $response) {
 
     //check the verification hash
     if ($hash !== $request->getStage('hash')) {
-        cradle('global')->flash('Invalid verification. Try again.', 'danger');
-        return cradle('global')->redirect('/verify');
+        cradle('global')->flash('Invalid verification. Try again.', 'error');
+        return cradle('global')->redirect('/auth/verify');
     }
 
     //Prepare body
@@ -239,10 +294,12 @@ $cradle->get('/recover/:auth_id/:hash', function ($request, $response) {
     $data['csrf'] = $response->getResults('csrf');
 
     if ($response->isError()) {
-        $response->setFlash($response->getMessage(), 'danger');
+        $response->setFlash($response->getMessage(), 'error');
         $data['errors'] = $response->getValidation();
     }
 
+    //----------------------------//
+    // 3. Render Template
     //Render body
     $class = 'page-auth-recover';
     $title = cradle('global')->translate('Recover Password');
@@ -254,8 +311,14 @@ $cradle->get('/recover/:auth_id/:hash', function ($request, $response) {
         ->setPage('class', $class)
         ->setContent($body);
 
+    //if we only want the body
+    if ($request->getStage('render') === 'body') {
+        return;
+    }
+
     //Render blank page
-}, 'render-www-blank');
+    cradle()->trigger('render-www-blank', $request, $response);
+});
 
 /**
  * Render the Verify Page
@@ -270,7 +333,11 @@ $cradle->get('/recover/:auth_id/:hash', function ($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/verify', function ($request, $response) {
+$cradle->get('/auth/verify', function ($request, $response) {
+    //----------------------------//
+    // 1. Security Checks
+    //----------------------------//
+    // 2. Prepare Data
     //Prepare body
     $data = ['item' => $request->getPost()];
 
@@ -279,10 +346,12 @@ $cradle->get('/verify', function ($request, $response) {
     $data['csrf'] = $response->getResults('csrf');
 
     if ($response->isError()) {
-        $response->setFlash($response->getMessage(), 'danger');
+        $response->setFlash($response->getMessage(), 'error');
         $data['errors'] = $response->getValidation();
     }
 
+    //----------------------------//
+    // 3. Render Template
     //Render body
     $class = 'page-auth-verify';
     $title = cradle('global')->translate('Verify Account');
@@ -294,8 +363,14 @@ $cradle->get('/verify', function ($request, $response) {
         ->setPage('class', $class)
         ->setContent($body);
 
+    //if we only want the body
+    if ($request->getStage('render') === 'body') {
+        return;
+    }
+
     //Render blank page
-}, 'render-www-blank');
+    cradle()->trigger('render-www-blank', $request, $response);
+});
 
 /**
  * Process the Account Page
@@ -303,7 +378,23 @@ $cradle->get('/verify', function ($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->post('/account', function ($request, $response) {
+$cradle->post('/auth/account', function ($request, $response) {
+    //----------------------------//
+    // 1. Setup Overrides
+    //determine route
+    $route = '/auth/account';
+    if ($request->hasStage('route')) {
+        $route = $request->getStage('route');
+    }
+
+    //determine redirect
+    $redirect = '/';
+    if ($request->hasGet('redirect_uri')) {
+        $redirect = $request->getGet('redirect_uri');
+    }
+
+    //----------------------------//
+    // 2. Security Checks
     //need to be online
     cradle('global')->requireLogin();
 
@@ -311,9 +402,11 @@ $cradle->post('/account', function ($request, $response) {
     cradle()->trigger('csrf-validate', $request, $response);
 
     if ($response->isError()) {
-        return cradle()->triggerRoute('get', '/account', $request, $response);
+        return cradle()->triggerRoute('get', $route, $request, $response);
     }
 
+    //----------------------------//
+    // 3. Prepare Data
     //set the auth_id and profile_id
     $request->setStage('auth_id', $request->getSession('me', 'auth_id'));
     $request->setStage('profile_id', $request->getSession('me', 'profile_id'));
@@ -328,27 +421,30 @@ $cradle->post('/account', function ($request, $response) {
         $request->removeStage('confirm');
     }
 
+    //----------------------------//
+    // 4. Process Request
     //trigger the job
     cradle()->trigger('auth-update', $request, $response);
 
+    //----------------------------//
+    // 5. Interpret Results
     if ($response->isError()) {
-        return cradle()->triggerRoute('get', '/account', $request, $response);
+        return cradle()->triggerRoute('get', $route, $request, $response);
     }
 
     //it was good
     //update the session
     cradle()->trigger('auth-detail', $request, $response);
-    $_SESSION['me'] = $response->getResults();
+    $request->setSession('me', $response->getResults());
 
-    //add a flash
-    cradle('global')->flash('Update Successful', 'success');
-
-    //redirect
-    $redirect = '/';
-    if ($request->hasGet('redirect_uri')) {
-        $redirect = $request->getGet('redirect_uri');
+    //if we dont want to redirect
+    if ($redirect === 'false') {
+        return;
     }
 
+    //add a flash
+    $message = cradle('global')->translate('Update Successful');
+    cradle('global')->flash($message, 'success');
     cradle('global')->redirect($redirect);
 });
 
@@ -358,39 +454,58 @@ $cradle->post('/account', function ($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->post('/login', function ($request, $response) {
+$cradle->post('/auth/login', function ($request, $response) {
+    //----------------------------//
+    // 1. Setup Overrides
+    //determine route
+    $route = '/auth/login';
+    if ($request->hasStage('route')) {
+        $route = $request->getStage('route');
+    }
+
+    //determine redirect
+    $redirect = '/';
+    if ($request->hasGet('redirect_uri')) {
+        $redirect = $request->getGet('redirect_uri');
+    }
+
+    //----------------------------//
+    // 2. Security Checks
     //csrf check
     cradle()->trigger('csrf-validate', $request, $response);
 
     if ($response->isError()) {
-        return cradle()->triggerRoute('get', '/login', $request, $response);
+        return cradle()->triggerRoute('get', $route, $request, $response);
     }
 
+    //----------------------------//
+    // 3. Prepare Data
+    //----------------------------//
+    // 4. Process Request
     //call the job
     cradle()->trigger('auth-login', $request, $response);
 
+    //----------------------------//
+    // 5. Interpret Results
     if ($response->isError()) {
-        return cradle()->triggerRoute('get', '/login', $request, $response);
-        ;
+        return cradle()->triggerRoute('get', $route, $request, $response);
     }
 
     //it was good
 
     //store to session
     //TODO: Sessions for clusters
-    $_SESSION['me'] = $response->getResults();
+    $request->setSession('me', $response->getResults());
 
-    //redirect
-    if ($request->hasGet('redirect')) {
-        return cradle('global')->redirect($request->getGet('redirect'));
+    //if we dont want to redirect
+    if ($redirect === 'false') {
+        return;
     }
 
-    $redirect = '/';
-    if ($request->hasGet('redirect_uri')) {
-        $redirect = $request->getGet('redirect_uri');
-    }
-
-    return cradle('global')->redirect($redirect);
+    //add a flash
+    $message = cradle('global')->translate('Welcome!');
+    cradle('global')->flash($message, 'success');
+    cradle('global')->redirect($redirect);
 });
 
 /**
@@ -407,24 +522,54 @@ $cradle->post('/login', function ($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->post('/forgot', function ($request, $response) {
+$cradle->post('/auth/forgot', function ($request, $response) {
+    //----------------------------//
+    // 1. Setup Overrides
+    //determine route
+    $route = '/auth/forgot';
+    if ($request->hasStage('route')) {
+        $route = $request->getStage('route');
+    }
+
+    //determine redirect
+    $redirect = '/auth/forgot';
+    if ($request->hasGet('redirect_uri')) {
+        $redirect = $request->getGet('redirect_uri');
+    }
+
+    //----------------------------//
+    // 2. Security Checks
     //csrf check
     cradle()->trigger('csrf-validate', $request, $response);
 
     if ($response->isError()) {
-        return cradle()->triggerRoute('get', '/forgot', $request, $response);
+        return cradle()->triggerRoute('get', $route, $request, $response);
     }
 
+    //----------------------------//
+    // 3. Prepare Data
+    //----------------------------//
+    // 4. Process Request
     //trigger the job
     cradle()->trigger('auth-forgot', $request, $response);
 
+    //----------------------------//
+    // 5. Interpret Results
     if ($response->isError()) {
-        return cradle()->triggerRoute('get', '/forgot', $request, $response);
+        return cradle()->triggerRoute('get', $route, $request, $response);
     }
 
     //its good
-    $response->setFlash('An email with recovery instructions will be sent in a few minutes.', 'success');
-    cradle()->triggerRoute('get', '/forgot', $request, $response);
+
+    //if we dont want to redirect
+    if ($redirect === 'false') {
+        return;
+    }
+
+    //add a flash
+    $message = cradle('global')->translate('An email with recovery instructions will be sent in a few minutes.');
+    cradle('global')->flash($message, 'success');
+    cradle('global')->redirect($redirect);
 });
 
 /**
@@ -441,7 +586,25 @@ $cradle->post('/forgot', function ($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->post('/recover/:auth_id/:hash', function ($request, $response) {
+$cradle->post('/auth/recover/:auth_id/:hash', function ($request, $response) {
+    //----------------------------//
+    // 1. Setup Overrides
+    //determine route
+    $route = sprintf('/auth/recover/%s/%s', $authId, $hash);
+    if ($request->hasStage('route')) {
+        $route = $request->getStage('route');
+    }
+
+    //determine redirect
+    $redirect = '/auth/login';
+    if ($request->hasGet('redirect_uri')) {
+        $redirect = $request->getGet('redirect_uri');
+    }
+
+    //----------------------------//
+    // 2. Security Checks
+    //----------------------------//
+    // 3. Prepare Data
     //get the detail
     cradle()->trigger('auth-detail', $request, $response);
 
@@ -452,32 +615,44 @@ $cradle->post('/recover/:auth_id/:hash', function ($request, $response) {
 
     //check the recovery hash
     if ($hash !== $request->getStage('hash')) {
-        cradle('global')->flash('This recovery page is expired. Please try again.', 'danger');
-        return cradle('global')->redirect('/forgot');
+        $message = cradle('global')->translate('This recovery page is expired. Please try again.');
+
+        //if we dont want to redirect
+        if ($redirect === 'false') {
+            return $response->setError(true, $message);
+        }
+
+        cradle('global')->flash($message, 'error');
+        return cradle('global')->redirect('/auth/forgot');
     }
 
     //csrf check
     cradle()->trigger('csrf-validate', $request, $response);
 
     if ($response->isError()) {
-        $redirect = '/recover/' . $authId . '/' . $hash;
-        return cradle()->triggerRoute('get', $redirect, $request, $response);
+        return cradle()->triggerRoute('get', $route, $request, $response);
     }
 
+    //----------------------------//
+    // 4. Process Request
     //trigger the job
     cradle()->trigger('auth-recover', $request, $response);
 
+    //----------------------------//
+    // 5. Interpret Results
     if ($response->isError()) {
-        $redirect = '/recover/' . $authId . '/' . $hash;
-        return cradle()->triggerRoute('get', $redirect, $request, $response);
+        return cradle()->triggerRoute('get', $route, $request, $response);
     }
 
-    //it was good
-    //add a flash
-    cradle('global')->flash('Recovery Successful', 'success');
+    //if we dont want to redirect
+    if ($redirect === 'false') {
+        return;
+    }
 
-    //redirect
-    cradle('global')->redirect('/login');
+    //add a flash
+    $message = cradle('global')->translate('Recovery Successful');
+    cradle('global')->flash($message, 'success');
+    cradle('global')->redirect($redirect);
 });
 
 /**
@@ -493,43 +668,59 @@ $cradle->post('/recover/:auth_id/:hash', function ($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->post('/signup', function ($request, $response) {
+$cradle->post('/auth/signup', function ($request, $response) {
+    //----------------------------//
+    // 1. Setup Overrides
+    //determine route
+    $route = '/auth/signup';
+    if ($request->hasStage('route')) {
+        $route = $request->getStage('route');
+    }
+
+    //determine redirect
+    $redirect = '/auth/login';
+    if ($request->hasGet('redirect_uri')) {
+        $redirect = $request->getGet('redirect_uri');
+    }
+
+    //----------------------------//
+    // 2. Security Checks
     //csrf check
     cradle()->trigger('csrf-validate', $request, $response);
 
     if ($response->isError()) {
-        return cradle()->triggerRoute('get', '/signup', $request, $response);
+        return cradle()->triggerRoute('get', $route, $request, $response);
     }
 
     //captcha check
     cradle()->trigger('captcha-validate', $request, $response);
 
     if ($response->isError()) {
-        return cradle()->triggerRoute('get', '/signup', $request, $response);
+        return cradle()->triggerRoute('get', $route, $request, $response);
     }
 
-    //set defaults
-    if (!$request->hasStage('auth_permissions')) {
-        $request->setStage('auth_permissions', [
-            'public_profile',
-            'personal_profile'
-        ]);
-    }
-
+    //----------------------------//
+    // 3. Prepare Data
+    //----------------------------//
+    // 4. Process Request
     //trigger the job
     cradle()->trigger('auth-create', $request, $response);
 
+    //----------------------------//
+    // 5. Interpret Results
     if ($response->isError()) {
-        return cradle()->triggerRoute('get', '/signup', $request, $response);
+        return cradle()->triggerRoute('get', $route, $request, $response);
     }
 
-    //it was good
-    //add a flash
-    cradle('global')->flash('Sign Up Successful. Please check your email for verification process.', 'success');
+    //if we dont want to redirect
+    if ($redirect === 'false') {
+        return;
+    }
 
-    //redirect
-    $query = http_build_query($request->get('get'));
-    cradle('global')->redirect('/login?' . $query);
+    //add a flash
+    $message = cradle('global')->translate('Sign Up Successful. Please check your email for verification process.');
+    cradle('global')->flash($message, 'success');
+    cradle('global')->redirect($redirect);
 });
 
 /**
@@ -545,22 +736,50 @@ $cradle->post('/signup', function ($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->post('/verify', function ($request, $response) {
+$cradle->post('/auth/verify', function ($request, $response) {
+    //----------------------------//
+    // 1. Setup Overrides
+    //determine route
+    $route = '/auth/verify';
+    if ($request->hasStage('route')) {
+        $route = $request->getStage('route');
+    }
+
+    //----------------------------//
+    // 2. Security Checks
     //csrf check
     cradle()->trigger('csrf-validate', $request, $response);
 
     if ($response->isError()) {
-        return cradle()->triggerRoute('get', '/verify', $request, $response);
+        return cradle()->triggerRoute('get', $route, $request, $response);
     }
 
+    //----------------------------//
+    // 3. Prepare Data
+    //----------------------------//
+    // 3. Process Request
     //trigger the job
     cradle()->trigger('auth-verify', $request, $response);
 
+    //----------------------------//
+    // 4. Interpret Results
     if ($response->isError()) {
-        return cradle()->triggerRoute('get', '/verify', $request, $response);
+        return cradle()->triggerRoute('get', $route, $request, $response);
+    }
+
+    //determine redirect
+    $redirect = '/auth/verify';
+    if ($request->hasGet('redirect_uri')) {
+        $redirect = $request->getGet('redirect_uri');
+    }
+
+    //if we dont want to redirect
+    if ($redirect === 'false') {
+        return;
     }
 
     //its good
-    $response->setFlash('An email with verification instructions will be sent in a few minutes.', 'success');
-    cradle()->triggerRoute('get', '/verify', $request, $response);
+    $message = cradle('global')->translate('An email with verification instructions will be sent in a few minutes.');
+    cradle('global')->flash($message, 'success');
+    cradle('global')->redirect($redirect);
 });
