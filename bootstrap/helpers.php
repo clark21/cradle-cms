@@ -1,7 +1,7 @@
 <?php //-->
 
 use Cradle\Data\Registry;
-use Cradle\Module\Utility\File;
+use Cradle\Module\System\Utility\File;
 
 /* String Helpers
 ------------------------------------------------------------------------------*/
