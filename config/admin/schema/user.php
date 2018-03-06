@@ -17,6 +17,19 @@
       array (
         'type' => 'text',
       ),
+      'validation' =>
+      array (
+        0 =>
+        array (
+          'method' => 'required',
+          'message' => 'Name is required',
+        ),
+        1 =>
+        array (
+          'method' => 'empty',
+          'message' => 'Cannot be empty',
+        ),
+      ),
       'list' =>
       array (
         'format' => 'none',
