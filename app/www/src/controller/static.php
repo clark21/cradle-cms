@@ -11,7 +11,7 @@ $cradle->get('/', function ($request, $response) {
     $data = [];
 
     //Render body
-    $class = 'page-home branding';
+    $class = 'page-home';
     $title = cradle('global')->translate('Cradle PHP');
     $body = cradle('/app/www')->template('index', $data);
 

@@ -28,6 +28,8 @@
                     aria-expanded="false"
                     data-do="history"
                     data-on="click"
+                    data-init-url="/admin/history/get/logs"
+                    data-url="/admin/history/read/logs"
                 >
                     <i class="fas fa-bell"></i>
                     <span class="badge badge-danger" id="histories">0</span>
@@ -55,7 +57,7 @@
                     <a class="dropdown-item" href="#">Action</a>
                     <a class="dropdown-item" href="#">Another action</a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="/logout?redirect_uri={{request 'server' 'REQUEST_URI'}}">Logout</a>
+                    <a class="dropdown-item" href="/auth/logout?redirect_uri={{request 'server' 'REQUEST_URI'}}">Logout</a>
                 </div>
             </li>
         </ul>

@@ -10,8 +10,7 @@
 use Cradle\Module\Auth\Service as AuthService;
 use Cradle\Module\Auth\Validator as AuthValidator;
 
-use Cradle\Module\Role\Service as RoleService;
-use Cradle\Module\Role\Validator as RoleValidator;
+use Cradle\Module\System\Schema as SystemSchema;
 
 use Cradle\Http\Request;
 use Cradle\Http\Response;
@@ -33,6 +32,11 @@ $cradle->on('auth-create', function ($request, $response) {
     //----------------------------//
     // 2. Validate Data
     $errors = AuthValidator::getCreateErrors($data);
+
+    $errors = SystemSchema::i('user')
+        ->model()
+        ->validator()
+        ->getCreateErrors($data, $errors);
 
     //if there are errors
     if (!empty($errors)) {
@@ -60,24 +64,23 @@ $cradle->on('auth-create', function ($request, $response) {
     //link user
     if (isset($data['user_id'])) {
         $authSql->linkUser($results['auth_id'], $data['user_id']);
-    }
+    } else {
+        //create user
+        if(!$request->getStage('user_name')) {
+            // set user name
+            $request->setStage('user_name', $request->getStage('auth_slug'));
+        }
 
-    //create user
-    if (!isset($data['user_id'])) {
-        // set user name
-        $request->setStage('user_name', $request->getStage('auth_slug'));
-
-        cradle()->trigger('user-create', $request, $response);
+        $request->setStage('schema', 'user');
+        cradle()->trigger('system-object-create', $request, $response);
 
         if ($response->isError()) {
             return;
         }
 
-        $userResult = $response->getResults();
+        $user = $response->getResults();
 
-        if (isset($userResult['user_id'])) {
-            $authSql->linkUser($results['auth_id'], $userResult['user_id']);
-        }
+        $authSql->linkUser($results['auth_id'], $user['user_id']);
     }
 
     //index auth
@@ -352,8 +355,6 @@ $cradle->on('auth-login', function ($request, $response) {
     $authSql = AuthService::get('sql');
     $authRedis = AuthService::get('redis');
     $authElastic = AuthService::get('elastic');
-
-    $roleSql = RoleService::get('sql');
 
     //----------------------------//
     // 2. Validate Data

@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg sticky-top navbar-light bg-light">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#"><img alt="Cradle PHP" src="/images/logo-long.png" /></a>
+        <a class="navbar-brand" href="#"><img width="78" alt="Cradle PHP" src="/images/logo-long.png" /></a>
         <button
             class="navbar-toggler"
             type="button"
@@ -40,21 +40,21 @@
             <ul class="navbar-nav my-2 my-lg-0">
                 {{#request 'session' 'me'}}
                     <li class="nav-item">
-                        <a class="nav-link" href="/account?redirect_uri={{../page.meta.path}}">
+                        <a class="nav-link" href="/auth/account?redirect_uri={{../page.meta.path}}">
                             {{_ 'Account Settings'}}
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/logout?redirect_uri={{../page.meta.path}}">
+                        <a class="nav-link" href="/auth/logout?redirect_uri={{../page.meta.path}}">
                             {{_ 'Logout'}}
                         </a>
                     </li>
                 {{else}}
                     <li class="nav-item">
-                        <a class="nav-link" href="/login?redirect_uri={{page.meta.path}}">{{_ 'Login'}}</a>
+                        <a class="nav-link" href="/auth/login?redirect_uri={{page.meta.path}}">{{_ 'Login'}}</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/signup?redirect_uri={{page.meta.path}}">{{_ 'Signup'}}</a>
+                        <a class="nav-link" href="/auth/signup?redirect_uri={{page.meta.path}}">{{_ 'Signup'}}</a>
                     </li>
                 {{/request}}
             </ul>

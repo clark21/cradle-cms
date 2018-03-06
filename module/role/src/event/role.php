@@ -11,35 +11,6 @@ use Cradle\Module\Role\Service as RoleService;
 use Cradle\Module\Role\Validator as RoleValidator;
 
 /**
- * Auth Detail Job
- *
- * @param Request $request
- * @param Response $response
- */
-$cradle->on('auth-detail', function ($request, $response) {
-    //if the auth-detail from auth returned an error
-    if($response->isError()) {
-        //do nothing
-        return;
-    }
-
-    //this/these will be used a lot
-    $roleSql = RoleService::get('sql');
-
-    // get response results
-    $results = $response->getResults();
-
-    // get role detail
-    $roles = $roleSql->getRoleDetail($results['auth_id']);
-
-    // merge results
-    $results = array_merge($results, $roles);
-    
-    // set response results
-    $response->setResults($results);
-});
-
-/**
  * Role Create Job
  *
  * @param Request $request
@@ -511,7 +482,6 @@ $cradle->on('role-unlinkall-history', function ($request, $response) {
     //return response format
     $response->setError(false)->setResults($results);
 });
-
 
 /**
  * Role Auth Link Job

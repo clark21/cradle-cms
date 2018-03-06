@@ -51,14 +51,19 @@ jQuery(function($) {
          */
         $(window).on('history-init', function(e, trigger) {
             var target = $(trigger);
+            var url = target.attr('data-init-url');
 
-            $.get('/ajax/admin/history/get/logs', function(res) {
+            if (typeof url === 'undefined') {
+                return;
+            }
+
+            $.get(url, function(response) {
                 //process data
                 try {
-                    res = JSON.parse(res);
+                    response = JSON.parse(response);
                 } catch(e) {
                     //fix for echos and print_r
-                    res = {
+                    response = {
                         error: false,
                         message: 'No new messages loaded',
                         results: {
@@ -69,11 +74,11 @@ jQuery(function($) {
                 }
 
                 //if there's no results
-                if(typeof res.results === 'undefined') {
+                if(typeof response.results === 'undefined') {
                     return;
                 }
 
-                var rows = res.results.rows;
+                var rows = response.results.rows;
 
                 rows.forEach(function(log, key) {
                     $('div.dropdown-menu #logs').append('<a class="dropdown-item" href="#">' +
@@ -106,7 +111,7 @@ jQuery(function($) {
                     $('a.nav-link.dropdown-toggle').removeAttr('data-on');
                 }
 
-                $('span#histories').html(res.results.total);
+                $('span#histories').html(response.results.total);
             });
         });
 
@@ -114,13 +119,16 @@ jQuery(function($) {
          * Search table check all
          */
         $(window).on('history-click', function(e, trigger) {
-            $.get('/ajax/admin/history/read/logs', function(res) {
+            var target = $(trigger);
+            var url = target.attr('data-url');
+
+            $.get(url, function(response) {
                 //process data
                 try {
-                    res = JSON.parse(res);
+                    response = JSON.parse(response);
                 } catch(e) {
                     //fix for echos and print_r
-                    res = {
+                    response = {
                         error: false,
                         message: 'No new messages loaded',
                         results: {
@@ -130,7 +138,7 @@ jQuery(function($) {
                     }
                 }
 
-                if (!res.error) {
+                if (!response.error) {
                     $('span#histories').html(0);
                 }
             });
@@ -181,11 +189,7 @@ jQuery(function($) {
                                         //fix for echos and print_r
                                         response = {
                                             error: false,
-                                            message: 'No new messages loaded',
-                                            results: {
-                                                rows: [],
-                                                total: 0
-                                            }
+                                            message: 'No data loaded',
                                         }
                                     }
 

@@ -1,5 +1,5 @@
 <!-- START: Auth Signup Page -->
-<div class="auth-signup-body auth-form container">
+<div class="auth-form container">
     <!-- START: Website Logo -->
     <div class="form-logo">
         <center>
@@ -18,47 +18,91 @@
             <!-- END: Card Title -->
             <!-- START: Auth Signup Form -->
             <form method="post">
-                <!-- START: Profile Name -->
-                <div class="form-group{{#if errors.profile_name}} has-error{{/if}}">
+                <!-- START: User Name -->
+                <div class="form-group{{#if errors.user_name}} has-error{{/if}}">
                     <div class="input-group">
-                        <span class="input-group-addon"><i class = "fa fa-user"></i></span>
-                        <input type="text" name="profile_name" placeholder="{{_ 'Name'}}" class="form-control" value="{{item.profile_name}}" />
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                                <i class = "fas fa-user"></i>
+                            </div>
+                        </div>
+                        <input
+                            autocomplete="name"
+                            type="text"
+                            name="user_name"
+                            placeholder="{{_ 'Name'}}"
+                            class="form-control"
+                            value="{{item.user_name}}"
+                        />
                     </div>
-                    {{#if errors.profile_name}}
-                    <span class="help-text">{{errors.profile_name}}</span>
+                    {{#if errors.user_name}}
+                        <span class="help-text">{{errors.user_name}}</span>
                     {{/if}}
                 </div>
-                <!-- END: Profile Name -->
-                <!-- START: Profile Email -->
-                <div class="form-group{{#if errors.profile_email}} has-error{{/if}}">
+                <!-- END: User Name -->
+                <!-- START: Auth Slug -->
+                <div class="form-group{{#if errors.auth_slug}} has-error{{/if}}">
                     <div class="input-group">
-                        <span class="input-group-addon"><i class = "fa fa-envelope"></i></span>
-                        <input type="email" name="profile_email" placeholder="{{_ 'Email'}}" class="form-control" value="{{item.profile_email}}" />
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                                <i class = "fas fa-envelope"></i>
+                            </div>
+                        </div>
+                        <input
+                            autocomplete="email"
+                            type="text"
+                            name="auth_slug"
+                            placeholder="{{_ 'Email'}}"
+                            class="form-control"
+                            value="{{item.auth_slug}}"
+                        />
                     </div>
-                    {{#if errors.profile_email}}
-                    <span class="help-text">{{errors.profile_email}}</span>
+                    {{#if errors.auth_slug}}
+                        <span class="help-text">{{errors.auth_slug}}</span>
                     {{/if}}
                 </div>
-                <!-- END: Profile Email -->
+                <!-- END: Auth Slug -->
                 <!-- START: Auth Password -->
                 <div class="form-group{{#if errors.auth_password}} has-error{{/if}}">
                     <div class="input-group">
-                        <span class="input-group-addon"><i class = "fa fa-lock"></i></span>
-                        <input type="password" name="auth_password" placeholder ="{{_ 'Password'}}" class="form-control" value="{{item.auth_password}}" />
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                                <i class = "fas fa-lock"></i>
+                            </div>
+                        </div>
+                        <input
+                            autocomplete="off"
+                            type="password"
+                            name="auth_password"
+                            placeholder="{{_ 'Password'}}"
+                            class="form-control"
+                            value=""
+                        />
                     </div>
                     {{#if errors.auth_password}}
-                    <span class="help-text">{{errors.auth_password}}</span>
+                        <span class="help-text">{{errors.auth_password}}</span>
                     {{/if}}
                 </div>
                 <!-- END: Auth Password -->
                 <!-- START: Confirm Password -->
                 <div class="form-group{{#if errors.confirm}} has-error{{/if}}">
                     <div class="input-group">
-                        <span class="input-group-addon"><i class = "fa fa-lock"></i></span>
-                        <input type="password" name="confirm" placeholder="{{_ 'Confirm'}}" class="form-control" value="{{item.confirm}}" />
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                                <i class = "fas fa-lock"></i>
+                            </div>
+                        </div>
+                        <input
+                            autocomplete="off"
+                            type="password"
+                            name="confirm"
+                            placeholder="{{_ 'Confirm'}}"
+                            class="form-control"
+                            value=""
+                        />
                     </div>
                     {{#if errors.confirm}}
-                    <span class="help-text">{{errors.confirm}}</span>
+                        <span class="help-text">{{errors.confirm}}</span>
                     {{/if}}
                 </div>
                 <!-- END: Confirm Password -->
@@ -92,7 +136,7 @@
             <!-- START: Login Option -->
             <div class="form-group">
                 <p class="text-muted text-center">{{_ 'Have an existing account?'}}
-                    <a title="Sign Up" class="brand-text" href="/login?{{query}}">{{_ 'Login Here'}}</a>
+                    <a title="Sign Up" class="brand-text" href="/auth/login?{{query}}">{{_ 'Login Here'}}</a>
                 </p>
             </div>
             <!-- END: Login Option -->

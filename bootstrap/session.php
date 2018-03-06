@@ -53,7 +53,7 @@ return function ($request, $response) {
 
         if (!isset($_SESSION['me']['auth_id'])) {
             $redirect = urlencode($_SERVER['REQUEST_URI']);
-            return cradle()->getDispatcher()->redirect('/login?redirect_uri=' . $redirect);
+            return cradle()->getDispatcher()->redirect('/auth/login?redirect_uri=' . $redirect);
         }
 
         if ($type && $_SESSION['me']['auth_type'] !== $type) {

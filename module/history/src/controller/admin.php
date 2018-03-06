@@ -90,7 +90,7 @@ $cradle->get('/admin/history/search', function ($request, $response) {
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/ajax/admin/history/:action/logs', function ($request, $response) {
+$cradle->get('/admin/history/:action/logs', function ($request, $response) {
     if (!$request->hasStage('action')) {
         //Set JSON Content
         return $response->setContent(json_encode([

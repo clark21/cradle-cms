@@ -1,4 +1,5 @@
 <?php //-->
+include_once __DIR__ . '/src/event/auth.php';
 include_once __DIR__ . '/src/event/role.php';
 include_once __DIR__ . '/src/event/permission.php';
 
