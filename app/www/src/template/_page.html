@@ -77,60 +77,40 @@
         <link rel="stylesheet" type="text/css" href="{{settings 'cdn'}}/components/fontawesome5-webfont/css/fontawesome-all.min.css" />
         <link rel="stylesheet" type="text/css" href="{{settings 'cdn'}}/components/open-sans-fontface/open-sans.css" />
         <link rel="stylesheet" type="text/css" href="{{settings 'cdn'}}/components/bootstrap/dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="{{settings 'cdn'}}/styles/uncompressed/toastr.css" />
         <link rel="stylesheet" type="text/css" href="{{settings 'cdn'}}/styles/www.css" />
 
         <script type="text/javascript" src="{{settings 'cdn'}}/components/jquery/dist/jquery.min.js"></script>
         <script type="text/javascript" src="{{settings 'cdn'}}/components/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="{{settings 'cdn'}}/scripts/uncompressed/toastr.js"></script>
         <script type="text/javascript" src="{{settings 'cdn'}}/scripts/uncompressed/doon.js"></script>
         <script type="text/javascript" src="{{settings 'cdn'}}/scripts/www.js"></script>
     </head>
 
     <body>
-        {{#environment 'production'}}
-        <!-- FACEBOOK CONNECT -->
-        <div id="fb-root"></div>
-        <script>(function(d, s, id) {
-          var js, fjs = d.getElementsByTagName(s)[0];
-          if (d.getElementById(id)) return;
-          js = d.createElement(s); js.id = id;
-          js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.5&appId=319710831501415";
-          fjs.parentNode.insertBefore(js, fjs);
-        }(document, 'script', 'facebook-jssdk'));</script>
-        {{/environment}}
-
         <header class="head">{{> head}}</header>
         <div class="wrapper">
-            {{#if page.flash}}
-                <div data-do="notify" class="notify notify-{{page.flash.type}}">
-                    <span class="message">{{page.flash.message}}</span>
-                </div>
-            {{/if}}
-
             <section class="body">
                 {{{content}}}
             </section>
         </div>
         <footer class="foot">{{> foot}}</footer>
-
-        {{#environment 'production'}}
-        <!-- Google Analytics -->
-        <script type="text/javascript" src="//www.google-analytics.com/analytics.js"></script>
-        <script type="text/javascript">
-        (function() {
-            if(typeof ga === 'undefined') {
-                window.ga = window.ga || function(){
-                    (ga.q = ga.q||[]).push(['{{page.meta.path}}', '{{title}}']);
-                };
-            }
-            ga.l =+ new Date;
-            ga('create', '{{page.meta.ga_tracker}}', 'auto');
-            ga('set', { page: '{{page.meta.path}}', title: '{{title}}' });
-            ga('send', 'pageview');
-        })();
-        </script>
-
-        <!-- TWITTER -->
-        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-        {{/environment}}
+        {{#if page.flash}}
+            <div id="toast-container" class="toast-bottom-right" data-do="notify" data-timeout="10000">
+                <div class="toast toast-{{page.flash.type}}" aria-live="polite">
+                    <div class="toast-title">{{capital page.flash.type}}</div>
+                    <div class="toast-message">
+                        {{page.flash.message}}
+                        {{#if page.flash.list}}
+                            <ul>
+                                {{#each page.flash.list}}
+                                    <li>{{this}}</li>
+                                {{/each}}
+                            </ul>
+                        {{/if}}
+                    </div>
+                </div>
+            </div>
+        {{/if}}
     </body>
 </html>

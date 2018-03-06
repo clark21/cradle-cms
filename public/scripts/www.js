@@ -595,87 +595,6 @@ jQuery(function($) {
             var notifier = $.notify(message + progress, 'info', 0);
             var bar = $('div.progress-bar', notifier);
         });
-
-        var mimeExtensions = {
-            'application/mathml+xml': 'mathml',
-            'application/msword': 'doc',
-            'application/oda': 'oda',
-            'application/ogg': 'ogg',
-            'application/pdf': 'pdf',
-            'application/rdf+xml': 'rdf',
-            'application/vnd.mif': 'mif',
-            'application/vnd.mozilla.xul+xml': 'xul',
-            'application/vnd.ms-excel': 'xls',
-            'application/vnd.ms-powerpoint': 'ppt',
-            'application/vnd.rn-realmedia': 'rm',
-            'application/vnd.wap.wbxml': 'wbmxl',
-            'application/vnd.wap.wmlc': 'wmlc',
-            'application/vnd.wap.wmlscriptc': 'wmlsc',
-            'application/voicexml+xml': 'vxml',
-            'application/x-javascript': 'js',
-            'application/x-shockwave-flash': 'swf',
-            'application/x-tar': 'tar',
-            'application/xhtml+xml': 'xhtml',
-            'application/xml': 'xml',
-            'application/xml-dtd': 'dtd',
-            'application/xslt+xml': 'xslt',
-            'application/zip': 'zip',
-            'audio/basic': 'snd',
-            'audio/midi': 'midi',
-            'audio/mp4a-latm': 'm4p',
-            'audio/mpeg': 'mpga',
-            'audio/x-aiff': 'aiff',
-            'audio/x-mpegurl': 'm3u',
-            'audio/x-pn-realaudio': 'ram',
-            'audio/x-wav': 'wav',
-            'image/bmp': 'bmp',
-            'image/cgm': 'cgm',
-            'image/gif': 'gif',
-            'image/ief': 'ief',
-            'image/jp2': 'jp2',
-            'image/jpg': 'jpg',
-            'image/jpeg': 'jpg',
-            'image/pict': 'pict',
-            'image/png': 'png',
-            'image/svg+xml': 'svg',
-            'image/tiff': 'tiff',
-            'image/vnd.djvu': 'djvu',
-            'image/vnd.wap.wbmp': 'wbmp',
-            'image/x-cmu-raster': 'ras',
-            'image/x-icon': 'ico',
-            'image/x-macpaint': 'pntg',
-            'image/x-portable-anymap': 'pnm',
-            'image/x-portable-bitmap': 'pbm',
-            'image/x-portable-graymap': 'pgm',
-            'image/x-portable-pixmap': 'ppm',
-            'image/x-quicktime': 'qtif',
-            'image/x-rgb': 'rgb',
-            'image/x-xbitmap': 'xbm',
-            'image/x-xpixmap': 'xpm',
-            'image/x-xwindowdump': 'xwd',
-            'model/iges': 'igs',
-            'model/mesh': 'silo',
-            'model/vrml': 'wrl',
-            'text/calendar': 'ifb',
-            'text/css': 'css',
-            'text/html': 'html',
-            'text/plain': 'txt',
-            'text/richtext': 'rtx',
-            'text/rtf': 'rtf',
-            'text/sgml': 'sgml',
-            'text/tab-separated-values': 'tsv',
-            'text/vnd.wap.wml': 'wml',
-            'text/vnd.wap.wmlscript': 'wmls',
-            'text/x-setext': 'etx',
-            'video/mp4': 'mp4',
-            'video/mpeg': 'mpg',
-            'video/quicktime': 'qt',
-            'video/vnd.mpegurl': 'mxu',
-            'video/x-dv': 'dv',
-            'video/x-m4v': 'm4v',
-            'video/x-msvideo': 'avi',
-            'video/x-sgi-movie': 'movie'
-        };
     })();
 
     /**
@@ -693,30 +612,33 @@ jQuery(function($) {
                 $(trigger).fadeOut('fast', function() {
                     $(trigger).remove();
                 });
+
             }, timeout);
         });
 
         $.extend({
             notify: function(message, type, timeout) {
-                type = type || 'info';
-
-                if(typeof timeout === 'undefined') {
-                    timeout = 3000;
+                if(type === 'danger') {
+                    type = 'error';
                 }
 
-                var template = '<div data-do="notify" data-timeout="{TIMEOUT}" class="notify notify-{TYPE}"><span class="message">{MESSAGE}</span></div>';
+                var toast = toastr[type](message, type[0].toUpperCase() + type.substr(1), {
+                    timeOut: timeout
+                });
 
-                var notification = $(template
-                    .replace('{TYPE}', type)
-                    .replace('{MESSAGE}', message)
-                    .replace('{TIMEOUT}', timeout));
-
-                $(document.body).append(notification);
-                return notification.doon();
+                return toast;
             }
         })
     })();
 
-    //activate all scripts
-    $(document.body).doon();
+    //need to load dependencies
+    var icons = [], mimeExtensions = {};
+    $.get('/json/extensions.json', function(response) {
+        mimeExtensions = response;
+        $.get('/json/icons.json', function(response) {
+            icons = response;
+            //activate all scripts
+            $(document.body).doon();
+        });
+    });
 });

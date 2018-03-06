@@ -1,5 +1,5 @@
 <!-- START: Auth Login Page -->
-<div class="auth-login-body auth-form container">
+<div class="auth-form container">
     <!-- START: Website Logo -->
     <div class="form-logo">
         <center>
@@ -19,56 +19,52 @@
             <!-- START: Auth Login Form -->
             <form method="post">
                 <!-- START: Auth Slug -->
-                <div class="form-group">
+                <div class="form-group{{#if errors.auth_slug}} has-error{{/if}}">
                     <div class="input-group">
                         <div class="input-group-prepend">
-                            <span class="input-group-text" id="inputGroupPrepend3">
-                                <i class="fas fa-envelope"></i>
-                            </span>
+                            <div class="input-group-text">
+                                <i class = "fas fa-envelope"></i>
+                            </div>
                         </div>
                         <input
-                            type="email"
+                            autocomplete="email"
+                            type="text"
                             name="auth_slug"
-                            class="form-control {{#if errors.auth_slug}}is-invalid{{/if}}"
-                            id="validationServerUsername"
                             placeholder="{{_ 'Email'}}"
+                            class="form-control"
                             value="{{item.auth_slug}}"
-                            aria-describedby="inputGroupPrepend3">
-                        {{#if errors.auth_slug}}
-                        <div class="invalid-feedback">
-                            {{errors.auth_slug}}
-                        </div>
-                        {{/if}}
+                        />
                     </div>
+                    {{#if errors.auth_slug}}
+                        <span class="help-text">{{errors.auth_slug}}</span>
+                    {{/if}}
                 </div>
                 <!-- END: Auth Slug -->
                 <!-- START: Auth Password -->
-                <div class="form-group">
+                <div class="form-group{{#if errors.auth_password}} has-error{{/if}}">
                     <div class="input-group">
                         <div class="input-group-prepend">
-                            <span class="input-group-text" id="inputGroupPrepend3">
-                                <i class="fas fa-lock"></i>
-                            </span>
+                            <div class="input-group-text">
+                                <i class = "fas fa-lock"></i>
+                            </div>
                         </div>
                         <input
+                            autocomplete="off"
                             type="password"
                             name="auth_password"
-                            class="form-control {{#if errors.auth_password}}is-invalid{{/if}}"
-                            id="validationServerPassword"
                             placeholder="{{_ 'Password'}}"
-                            value="{{item.auth_slug}}"
-                            aria-describedby="inputGroupPrepend3">
-                        {{#if errors.auth_password}}
-                        <div class="invalid-feedback">
-                            {{errors.auth_password}}
-                        </div>
-                        {{/if}}
+                            class="form-control"
+                            value=""
+                        />
                     </div>
+                    {{#if errors.auth_password}}
+                        <span class="help-text">{{errors.auth_password}}</span>
+                    {{/if}}
                 </div>
                 <!-- END: Auth Password -->
                 <!-- START: Forgot Password -->
                 <div class="form-group float-right">
-                    <a title="Forgot Password" href="/forgot?{{query}}">{{_ 'Forgot password'}}</a>
+                    <a title="Forgot Password" href="/auth/forgot?{{query}}">{{_ 'Forgot password'}}</a>
                 </div>
                 <!-- END: Forgot Password -->
                 <!-- START: Form Submit -->
@@ -89,7 +85,7 @@
             <div class="form-group">
                 <p class="text-muted text-center">
                     {{_ "Don't have an account?"}}
-                    <a title="Sign Up" class="brand-text" href="/signup?{{query}}">{{_ 'Sign Up Here'}}</a>
+                    <a title="Sign Up" class="brand-text" href="/auth/signup?{{query}}">{{_ 'Sign Up Here'}}</a>
                 </p>
             </div>
             <!-- END: Signup Option -->
