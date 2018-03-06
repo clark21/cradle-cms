@@ -7,45 +7,47 @@
  * distributed with this package.
  */
 
-namespace Cradle\Module\Utility\Service;
+namespace Cradle\Module\System\Utility;
 
 /**
- * ElasticSearch map interface
+ * SQL map interface
  *
  * @vendor   Acme
  * @package  Utility
  * @author   John Doe <john@acme.com>
  * @standard PSR-2
  */
-interface ElasticServiceInterface
+interface SqlServiceInterface
 {
     /**
-     * Create in index
+     * Create in database
      *
-     * @param *int $id
+     * @param array $data
      *
      * @return array
      */
-    public function create($id);
+    public function create(array $data);
 
     /**
-     * Get detail from index
+     * Get detail from database
      *
-     * @param *int|string $id
+     * @param *int $id
      *
      * @return array
      */
     public function get($id);
 
     /**
-     * Remove from index
+     * Remove from database
+     * PLEASE BECAREFUL USING THIS !!!
+     * It's here for clean up scripts
      *
      * @param *int $id
      */
     public function remove($id);
 
     /**
-     * Search in index
+     * Search in database
      *
      * @param array $data
      *
@@ -54,11 +56,11 @@ interface ElasticServiceInterface
     public function search(array $data = []);
 
     /**
-     * Update to index
+     * Update to database
      *
-     * @param *int $id
+     * @param array $data
      *
      * @return array
      */
-    public function update($id);
+    public function update(array $data);
 }

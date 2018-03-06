@@ -1,7 +1,7 @@
 <?php //-->
 
 use Cradle\Module\Article\Service as ArticleService;
-use Cradle\Module\Utility\ServiceFactory;
+use Cradle\Module\System\Utility\ServiceFactory;
 
 ServiceFactory::register('article', ArticleService::class);
 

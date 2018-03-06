@@ -7,7 +7,7 @@
  * distributed with this package.
  */
 
-namespace Cradle\Module\Utility;
+namespace Cradle\Module\System\Utility;
 
 use Aws\S3\S3Client;
 use Aws\S3\PostObjectV4;

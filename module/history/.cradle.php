@@ -3,7 +3,7 @@ include_once __DIR__ . '/src/controller/admin.php';
 include_once __DIR__ . '/src/events.php';
 
 use Cradle\Module\History\Service as HistoryService;
-use Cradle\Module\Utility\ServiceFactory;
+use Cradle\Module\System\Utility\ServiceFactory;
 
 use Cradle\Http\Request;
 use Cradle\Http\Response;

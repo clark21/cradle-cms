@@ -13,8 +13,8 @@ use Cradle\Module\Role\Service;
 
 use Predis\Client as Resource;
 
-use Cradle\Module\Utility\Service\RedisServiceInterface;
-use Cradle\Module\Utility\Service\AbstractRedisService;
+use Cradle\Module\System\Utility\Service\RedisServiceInterface;
+use Cradle\Module\System\Utility\Service\AbstractRedisService;
 
 /**
  * Role Redis Service

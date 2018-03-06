@@ -10,7 +10,7 @@ namespace Cradle\Module\Role;
 
 use Cradle\Module\Role\Service as RoleService;
 
-use Cradle\Module\Utility\Validator as UtilityValidator;
+use Cradle\Module\System\Utility\Validator as UtilityValidator;
 
 /**
  * Validator layer

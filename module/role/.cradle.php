@@ -7,7 +7,7 @@ include_once __DIR__ . '/src/controller/permission.php';
 include_once __DIR__ . '/src/controller/role.php';
 
 use Cradle\Module\Role\Service as RoleService;
-use Cradle\Module\Utility\ServiceFactory;
+use Cradle\Module\System\Utility\ServiceFactory;
 
 ServiceFactory::register('role', RoleService::class);
 

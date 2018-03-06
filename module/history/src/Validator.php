@@ -10,7 +10,7 @@ namespace Cradle\Module\History;
 
 use Cradle\Module\History\Service as HistoryService;
 
-use Cradle\Module\Utility\Validator as UtilityValidator;
+use Cradle\Module\System\Utility\Validator as UtilityValidator;
 
 /**
  * Validator layer

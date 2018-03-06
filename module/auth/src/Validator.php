@@ -10,7 +10,7 @@ namespace Cradle\Module\Auth;
 
 use Cradle\Module\Auth\Service as AuthService;
 
-use Cradle\Module\Utility\Validator as UtilityValidator;
+use Cradle\Module\System\Utility\Validator as UtilityValidator;
 
 /**
  * Validator layer

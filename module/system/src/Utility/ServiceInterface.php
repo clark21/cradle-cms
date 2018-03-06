@@ -7,7 +7,7 @@
  * distributed with this package.
  */
 
-namespace Cradle\Module\Utility;
+namespace Cradle\Module\System\Utility;
 
 /**
  * Service interface

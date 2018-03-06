@@ -12,8 +12,8 @@ namespace Cradle\Module\System\Service;
 use PDO as Resource;
 use Cradle\Sql\SqlFactory;
 
-use Cradle\Module\Utility\Service\SqlServiceInterface;
-use Cradle\Module\Utility\Service\AbstractSqlService;
+use Cradle\Module\System\Utility\Service\SqlServiceInterface;
+use Cradle\Module\System\Utility\Service\AbstractSqlService;
 
 use Cradle\Module\System\Schema as SystemSchema;
 use Cradle\Module\System\Exception as SystemException;
