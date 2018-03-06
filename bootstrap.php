@@ -14,6 +14,7 @@ return cradle()
     ->preprocess(include('bootstrap/session.php'))
     ->preprocess(include('bootstrap/i18n.php'))
     ->preprocess(include('bootstrap/handlebars.php'))
+
     ->preprocess(include('bootstrap/roles.php'))
 
     //add packages here
