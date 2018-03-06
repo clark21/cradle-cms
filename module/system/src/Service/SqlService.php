@@ -477,4 +477,21 @@ class SqlService
         $system = $this->resource->getTables($name);
         return !empty($system);
     }
+
+    /**
+     * Returns all the table record count
+     * 
+     * @return array
+     */
+    public function getSchemaTableRecordCount($schema = null)
+    {
+        // information schema query
+        $query = sprintf(
+            'SELECT table_name, table_rows FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = "%s"',
+            $schema
+        );
+
+        // send query
+        return $this->resource->query($query);
+    }
 }
