@@ -1068,7 +1068,7 @@ select.form-control {
 }
 
 .page-home .body {
-    padding-top: 0px;
+    padding: 0;
 }
 
 .page-home .splash {
@@ -1081,61 +1081,134 @@ select.form-control {
     text-align: center;
 }
 
-.page-home .section {
+.page-home .section {}
+
+.page-home .section-1 {
+    background-image: url(/images/cradle/banner-bg.png);
+    margin-bottom: -40px;
+    text-align: center;
+}
+
+.page-home .section-1 h2 {
+    color: #FFFFFF;
+    padding: 60px 0 0;
+    font-size: 35px;
+    font-weight: 200;
+}
+
+.page-home .section-1 p {
+    font-size: 20px;
+    margin: auto;
+    max-width: 600px;
+}
+
+.page-home .section-2 {
+    background-color: #9585BF;
+    padding: 60px 0 20px;
+    text-align: center;
+}
+
+.page-home .section-2 h2 {
+    color: #FFFFFF;
+    font-size: 30px;
+    font-weight: 200;
+}
+
+.page-home .section-2 > p {
+    color: #EFEFEF;
+}
+
+.page-home .section-2 h3 {
+    color: #FFFFFF;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.page-home .section-2 .row {
     margin: auto;
     max-width: 900px;
 }
 
-.page-home .section-1 h2 {
-    border-top: 1px solid #DDDDDD;
-    margin-bottom: 20px;
+.page-home .section-2 .icon {
+    background-color: #78BADE;
+    border-radius: 50%;
+    color: #FFFFFF;
+    font-size: 30px;
+    height: 100px;
+    line-height: 100px;
+    margin: 10px auto;
+    text-align: center;
+    width: 100px;
+}
+.page-home .section-3 {
+    background-color: #EFEFEF;
+}
+
+.page-home .section-3 .row {
+    margin: auto;
+    max-width: 900px;
+}
+
+.page-home .section-3 h2 {
+    font-size: 30px;
+    font-weight: 200;
     padding-top: 20px;
 }
 
-.page-home .section-1 .row {
+.page-home .section-3 .row {
     border-top: 1px solid #DDDDDD;
     padding: 20px 0;
 }
 
-.page-home .section-1 img {
+.page-home .section-3 img {
     border: 1px solid #5FA8D4;
     padding: 5px;
     width: 100%;
 }
 
-.page-home .section-1 h3 {
+.page-home .section-3 h3 {
+    font-size: 18px;
+    font-weight: 600;
     margin-bottom: 20px;
 }
 
-.page-home .section-1 p {
+.page-home .section-3 p {
     color: #6A828C;
     font-size: 15px;
     line-height: 28px;
 }
 
-.page-home .section-1 .right .col-1 {
-    text-align: right;
-}
-
-.page-home .section-1 .left .col-1 {
-    text-align: right;
-}
-
-.page-home .section-2 {
+.page-home .section-3 > p {
+    margin-bottom: 20px;
     text-align: center;
 }
 
-.page-home .section-2 h2 {
-    border-top: 1px solid #DDDDDD;
+.page-home .section-3 .right .col-1 {
+    text-align: right;
+}
+
+.page-home .section-3 .left .col-1 {
+    text-align: right;
+}
+
+.page-home .section-4 {
+    margin: auto;
+    max-width: 900px;
+    text-align: center;
+}
+
+.page-home .section-4 h2 {
+    font-size: 30px;
+    font-weight: 200;
     margin-bottom: 20px;
     padding-top: 20px;
 }
 
-.page-home .section-2 .banner a {
+.page-home .section-4 .banner a {
     display: inline-block;
 }
 
-.page-home .section-2 .banner img {
+.page-home .section-4 .banner img {
     display: inline-block;
     filter: grayscale(100%);
     margin: 0 20px 20px;
@@ -1143,16 +1216,16 @@ select.form-control {
     width: 100px;
 }
 
-.page-home .section-2 .banner a:hover img {
+.page-home .section-4 .banner a:hover img {
     filter: none;
     opacity: 1;
 }
 
-.page-home .section-2 ul {
+.page-home .section-4 ul {
     list-style: none;
     margin: 40px 0 0;
 }
 
-.page-home .section-2 li {
+.page-home .section-4 li {
     margin-bottom: 20px;
 }
