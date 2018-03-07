@@ -32,7 +32,7 @@ class Cradle_Module_History_Service_ElasticServiceTest extends PHPUnit_Framework
     }
 
     /**
-     * @covers Cradle\Module\Utility\Service\AbstractElasticService::remove
+     * @covers Cradle\Module\System\Utility\Service\AbstractElasticService::remove
      */
     public function testRemove()
     {
@@ -50,7 +50,7 @@ class Cradle_Module_History_Service_ElasticServiceTest extends PHPUnit_Framework
     }
 
     /**
-     * @covers Cradle\Module\Utility\Service\AbstractElasticService::create
+     * @covers Cradle\Module\System\Utility\Service\AbstractElasticService::create
      */
     public function testCreate()
     {
@@ -67,7 +67,7 @@ class Cradle_Module_History_Service_ElasticServiceTest extends PHPUnit_Framework
     }
 
     /**
-     * @covers Cradle\Module\Utility\Service\AbstractElasticService::get
+     * @covers Cradle\Module\System\Utility\Service\AbstractElasticService::get
      */
     public function testGet()
     {
@@ -99,7 +99,7 @@ class Cradle_Module_History_Service_ElasticServiceTest extends PHPUnit_Framework
     }
 
     /**
-     * @covers Cradle\Module\Utility\Service\AbstractElasticService::update
+     * @covers Cradle\Module\System\Utility\Service\AbstractElasticService::update
      */
     public function testUpdate()
     {

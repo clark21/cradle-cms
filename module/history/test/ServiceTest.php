@@ -12,7 +12,7 @@ use Cradle\Module\History\Service;
 use Cradle\Module\History\Service\SqlService;
 use Cradle\Module\History\Service\RedisService;
 use Cradle\Module\History\Service\ElasticService;
-use Cradle\Module\Utility\Service\NoopService;
+use Cradle\Module\System\Utility\Service\NoopService;
 
 /**
  * Service layer test

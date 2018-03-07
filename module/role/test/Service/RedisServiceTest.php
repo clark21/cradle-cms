@@ -32,7 +32,7 @@ class Cradle_Module_Role_Service_RedisServiceTest extends PHPUnit_Framework_Test
     }
 
     /**
-     * @covers Cradle\Module\Utility\Service\AbstractRedisService::createDetail
+     * @covers Cradle\Module\System\Utility\Service\AbstractRedisService::createDetail
      */
     public function testCreateDetail()
     {
@@ -47,7 +47,7 @@ class Cradle_Module_Role_Service_RedisServiceTest extends PHPUnit_Framework_Test
     }
 
     /**
-     * @covers Cradle\Module\Utility\Service\AbstractRedisService::createSearch
+     * @covers Cradle\Module\System\Utility\Service\AbstractRedisService::createSearch
      */
     public function testCreateSearch()
     {
@@ -62,7 +62,7 @@ class Cradle_Module_Role_Service_RedisServiceTest extends PHPUnit_Framework_Test
     }
 
     /**
-     * @covers Cradle\Module\Utility\Service\AbstractRedisService::getDetail
+     * @covers Cradle\Module\System\Utility\Service\AbstractRedisService::getDetail
      */
     public function testGetDetail()
     {
@@ -77,7 +77,7 @@ class Cradle_Module_Role_Service_RedisServiceTest extends PHPUnit_Framework_Test
     }
 
     /**
-     * @covers Cradle\Module\Utility\Service\AbstractRedisService::hasDetail
+     * @covers Cradle\Module\System\Utility\Service\AbstractRedisService::hasDetail
      */
     public function testHasDetail()
     {
@@ -92,7 +92,7 @@ class Cradle_Module_Role_Service_RedisServiceTest extends PHPUnit_Framework_Test
     }
 
     /**
-     * @covers Cradle\Module\Utility\Service\AbstractRedisService::getSearch
+     * @covers Cradle\Module\System\Utility\Service\AbstractRedisService::getSearch
      */
     public function testGetSearch()
     {
@@ -109,7 +109,7 @@ class Cradle_Module_Role_Service_RedisServiceTest extends PHPUnit_Framework_Test
     }
 
     /**
-     * @covers Cradle\Module\Utility\Service\AbstractRedisService::hasSearch
+     * @covers Cradle\Module\System\Utility\Service\AbstractRedisService::hasSearch
      */
     public function testHasSearch()
     {
@@ -124,7 +124,7 @@ class Cradle_Module_Role_Service_RedisServiceTest extends PHPUnit_Framework_Test
     }
 
     /**
-     * @covers Cradle\Module\Utility\Service\AbstractRedisService::removeDetail
+     * @covers Cradle\Module\System\Utility\Service\AbstractRedisService::removeDetail
      */
     public function testRemoveDetail()
     {
@@ -139,7 +139,7 @@ class Cradle_Module_Role_Service_RedisServiceTest extends PHPUnit_Framework_Test
     }
 
     /**
-     * @covers Cradle\Module\Utility\Service\AbstractRedisService::removeSearch
+     * @covers Cradle\Module\System\Utility\Service\AbstractRedisService::removeSearch
      */
     public function testRemoveSearch()
     {

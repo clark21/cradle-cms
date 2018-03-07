@@ -53,8 +53,8 @@ class Cradle_Module_Auth_EventsTest extends PHPUnit_Framework_TestCase
      * @covers Cradle\Module\Auth\Validator::getCreateErrors
      * @covers Cradle\Module\Auth\Validator::getOptionalErrors
      * @covers Cradle\Module\Auth\Service\SqlService::create
-     * @covers Cradle\Module\Utility\Service\AbstractElasticService::create
-     * @covers Cradle\Module\Utility\Service\AbstractRedisService::createDetail
+     * @covers Cradle\Module\System\Utility\Service\AbstractElasticService::create
+     * @covers Cradle\Module\System\Utility\Service\AbstractRedisService::createDetail
      */
     public function testAuthCreate()
     {
@@ -73,8 +73,8 @@ class Cradle_Module_Auth_EventsTest extends PHPUnit_Framework_TestCase
      * auth-detail
      *
      * @covers Cradle\Module\Auth\Service\SqlService::get
-     * @covers Cradle\Module\Utility\Service\AbstractElasticService::get
-     * @covers Cradle\Module\Utility\Service\AbstractRedisService::getDetail
+     * @covers Cradle\Module\System\Utility\Service\AbstractElasticService::get
+     * @covers Cradle\Module\System\Utility\Service\AbstractRedisService::getDetail
      */
     public function testAuthDetail()
     {
@@ -88,12 +88,12 @@ class Cradle_Module_Auth_EventsTest extends PHPUnit_Framework_TestCase
      * auth-remove
      *
      * @covers Cradle\Module\Auth\Service\SqlService::get
-     * @covers Cradle\Module\Utility\Service\AbstractElasticService::get
-     * @covers Cradle\Module\Utility\Service\AbstractRedisService::getDetail
+     * @covers Cradle\Module\System\Utility\Service\AbstractElasticService::get
+     * @covers Cradle\Module\System\Utility\Service\AbstractRedisService::getDetail
      * @covers Cradle\Module\Auth\Service\SqlService::update
-     * @covers Cradle\Module\Utility\Service\AbstractElasticService::update
-     * @covers Cradle\Module\Utility\Service\AbstractRedisService::removeDetail
-     * @covers Cradle\Module\Utility\Service\AbstractRedisService::removeSearch
+     * @covers Cradle\Module\System\Utility\Service\AbstractElasticService::update
+     * @covers Cradle\Module\System\Utility\Service\AbstractRedisService::removeDetail
+     * @covers Cradle\Module\System\Utility\Service\AbstractRedisService::removeSearch
      */
     public function testAuthRemove()
     {
@@ -107,12 +107,12 @@ class Cradle_Module_Auth_EventsTest extends PHPUnit_Framework_TestCase
      * auth-restore
      *
      * @covers Cradle\Module\Auth\Service\SqlService::get
-     * @covers Cradle\Module\Utility\Service\AbstractElasticService::get
-     * @covers Cradle\Module\Utility\Service\AbstractRedisService::getDetail
+     * @covers Cradle\Module\System\Utility\Service\AbstractElasticService::get
+     * @covers Cradle\Module\System\Utility\Service\AbstractRedisService::getDetail
      * @covers Cradle\Module\Auth\Service\SqlService::update
-     * @covers Cradle\Module\Utility\Service\AbstractElasticService::update
-     * @covers Cradle\Module\Utility\Service\AbstractRedisService::removeDetail
-     * @covers Cradle\Module\Utility\Service\AbstractRedisService::removeSearch
+     * @covers Cradle\Module\System\Utility\Service\AbstractElasticService::update
+     * @covers Cradle\Module\System\Utility\Service\AbstractRedisService::removeDetail
+     * @covers Cradle\Module\System\Utility\Service\AbstractRedisService::removeSearch
      */
     public function testAuthRestore()
     {
@@ -128,7 +128,7 @@ class Cradle_Module_Auth_EventsTest extends PHPUnit_Framework_TestCase
      *
      * @covers Cradle\Module\Auth\Service\SqlService::search
      * @covers Cradle\Module\Auth\Service\ElasticService::search
-     * @covers Cradle\Module\Utility\Service\AbstractRedisService::getSearch
+     * @covers Cradle\Module\System\Utility\Service\AbstractRedisService::getSearch
      */
     public function testAuthSearch()
     {
@@ -140,12 +140,12 @@ class Cradle_Module_Auth_EventsTest extends PHPUnit_Framework_TestCase
      * auth-update
      *
      * @covers Cradle\Module\Auth\Service\SqlService::get
-     * @covers Cradle\Module\Utility\Service\AbstractElasticService::get
-     * @covers Cradle\Module\Utility\Service\AbstractRedisService::getDetail
+     * @covers Cradle\Module\System\Utility\Service\AbstractElasticService::get
+     * @covers Cradle\Module\System\Utility\Service\AbstractRedisService::getDetail
      * @covers Cradle\Module\Auth\Service\SqlService::update
-     * @covers Cradle\Module\Utility\Service\AbstractElasticService::update
-     * @covers Cradle\Module\Utility\Service\AbstractRedisService::removeDetail
-     * @covers Cradle\Module\Utility\Service\AbstractRedisService::removeSearch
+     * @covers Cradle\Module\System\Utility\Service\AbstractElasticService::update
+     * @covers Cradle\Module\System\Utility\Service\AbstractRedisService::removeDetail
+     * @covers Cradle\Module\System\Utility\Service\AbstractRedisService::removeSearch
      */
     public function testAuthUpdate()
     {

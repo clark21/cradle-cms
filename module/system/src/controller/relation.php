@@ -7,7 +7,7 @@
  * distributed with this package.
  */
 
-use Cradle\Module\Utility\File;
+use Cradle\Module\System\Utility\File;
 use Cradle\Module\System\Schema as SystemSchema;
 
 use Cradle\Http\Request;

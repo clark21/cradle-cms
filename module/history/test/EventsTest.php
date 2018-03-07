@@ -53,8 +53,8 @@ class Cradle_Module_History_EventsTest extends PHPUnit_Framework_TestCase
      * @covers Cradle\Module\History\Validator::getCreateErrors
      * @covers Cradle\Module\History\Validator::getOptionalErrors
      * @covers Cradle\Module\History\Service\SqlService::create
-     * @covers Cradle\Module\Utility\Service\AbstractElasticService::create
-     * @covers Cradle\Module\Utility\Service\AbstractRedisService::createDetail
+     * @covers Cradle\Module\System\Utility\Service\AbstractElasticService::create
+     * @covers Cradle\Module\System\Utility\Service\AbstractRedisService::createDetail
      */
     public function testHistoryCreate()
     {
@@ -73,8 +73,8 @@ class Cradle_Module_History_EventsTest extends PHPUnit_Framework_TestCase
      * history-detail
      *
      * @covers Cradle\Module\History\Service\SqlService::get
-     * @covers Cradle\Module\Utility\Service\AbstractElasticService::get
-     * @covers Cradle\Module\Utility\Service\AbstractRedisService::getDetail
+     * @covers Cradle\Module\System\Utility\Service\AbstractElasticService::get
+     * @covers Cradle\Module\System\Utility\Service\AbstractRedisService::getDetail
      */
     public function testHistoryDetail()
     {
@@ -88,12 +88,12 @@ class Cradle_Module_History_EventsTest extends PHPUnit_Framework_TestCase
      * history-remove
      *
      * @covers Cradle\Module\History\Service\SqlService::get
-     * @covers Cradle\Module\Utility\Service\AbstractElasticService::get
-     * @covers Cradle\Module\Utility\Service\AbstractRedisService::getDetail
+     * @covers Cradle\Module\System\Utility\Service\AbstractElasticService::get
+     * @covers Cradle\Module\System\Utility\Service\AbstractRedisService::getDetail
      * @covers Cradle\Module\History\Service\SqlService::update
-     * @covers Cradle\Module\Utility\Service\AbstractElasticService::update
-     * @covers Cradle\Module\Utility\Service\AbstractRedisService::removeDetail
-     * @covers Cradle\Module\Utility\Service\AbstractRedisService::removeSearch
+     * @covers Cradle\Module\System\Utility\Service\AbstractElasticService::update
+     * @covers Cradle\Module\System\Utility\Service\AbstractRedisService::removeDetail
+     * @covers Cradle\Module\System\Utility\Service\AbstractRedisService::removeSearch
      */
     public function testHistoryRemove()
     {
@@ -107,12 +107,12 @@ class Cradle_Module_History_EventsTest extends PHPUnit_Framework_TestCase
      * history-restore
      *
      * @covers Cradle\Module\History\Service\SqlService::get
-     * @covers Cradle\Module\Utility\Service\AbstractElasticService::get
-     * @covers Cradle\Module\Utility\Service\AbstractRedisService::getDetail
+     * @covers Cradle\Module\System\Utility\Service\AbstractElasticService::get
+     * @covers Cradle\Module\System\Utility\Service\AbstractRedisService::getDetail
      * @covers Cradle\Module\History\Service\SqlService::update
-     * @covers Cradle\Module\Utility\Service\AbstractElasticService::update
-     * @covers Cradle\Module\Utility\Service\AbstractRedisService::removeDetail
-     * @covers Cradle\Module\Utility\Service\AbstractRedisService::removeSearch
+     * @covers Cradle\Module\System\Utility\Service\AbstractElasticService::update
+     * @covers Cradle\Module\System\Utility\Service\AbstractRedisService::removeDetail
+     * @covers Cradle\Module\System\Utility\Service\AbstractRedisService::removeSearch
      */
     public function testHistoryRestore()
     {
@@ -128,7 +128,7 @@ class Cradle_Module_History_EventsTest extends PHPUnit_Framework_TestCase
      *
      * @covers Cradle\Module\History\Service\SqlService::search
      * @covers Cradle\Module\History\Service\ElasticService::search
-     * @covers Cradle\Module\Utility\Service\AbstractRedisService::getSearch
+     * @covers Cradle\Module\System\Utility\Service\AbstractRedisService::getSearch
      */
     public function testHistorySearch()
     {
@@ -140,12 +140,12 @@ class Cradle_Module_History_EventsTest extends PHPUnit_Framework_TestCase
      * history-update
      *
      * @covers Cradle\Module\History\Service\SqlService::get
-     * @covers Cradle\Module\Utility\Service\AbstractElasticService::get
-     * @covers Cradle\Module\Utility\Service\AbstractRedisService::getDetail
+     * @covers Cradle\Module\System\Utility\Service\AbstractElasticService::get
+     * @covers Cradle\Module\System\Utility\Service\AbstractRedisService::getDetail
      * @covers Cradle\Module\History\Service\SqlService::update
-     * @covers Cradle\Module\Utility\Service\AbstractElasticService::update
-     * @covers Cradle\Module\Utility\Service\AbstractRedisService::removeDetail
-     * @covers Cradle\Module\Utility\Service\AbstractRedisService::removeSearch
+     * @covers Cradle\Module\System\Utility\Service\AbstractElasticService::update
+     * @covers Cradle\Module\System\Utility\Service\AbstractRedisService::removeDetail
+     * @covers Cradle\Module\System\Utility\Service\AbstractRedisService::removeSearch
      */
     public function testHistoryUpdate()
     {
