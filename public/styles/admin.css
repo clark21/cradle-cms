@@ -124,6 +124,10 @@ select.form-control {
     color: #FEE188 !important;
 }
 
+.text-orange {
+    color: #F0854F !important;
+}
+
 .text-grey {
     color: #A0A0A0 !important;
 }
@@ -134,6 +138,246 @@ select.form-control {
 
 .text-white {
     color: #F9F9F9 !important;
+}
+
+/* Badge
+------------------------------*/
+.badge-default {
+    background-color: #ABBAC3;
+    color: #FFFFFF;
+}
+
+.badge-primary {
+    background-color: #428BCA;
+    color: #FFFFFF;
+}
+
+.badge-info {
+    background-color: #6FB3E0;
+    color: #FFFFFF;
+}
+
+.badge-warning {
+    background-color: #FFB752;
+    color: #FFFFFF;
+}
+
+.badge-success {
+    background-color: #87B87F;
+    color: #FFFFFF;
+}
+
+.badge-danger {
+    background-color: #D15B47;
+    color: #FFFFFF;
+}
+
+.badge-inverse {
+    background-color: #555555;
+    color: #FFFFFF;
+}
+
+.badge-pink {
+    background-color: #D6487E;
+    color: #FFFFFF;
+}
+
+.badge-purple {
+    background-color: #9585BF;
+    color: #FFFFFF;
+}
+
+.badge-yellow {
+    background-color: #FEE188;
+    color: #996633;
+}
+
+.badge-orange {
+    background-color: #F0854F;
+    color: #FFFFFF;
+}
+
+.badge-grey {
+    background-color: #A0A0A0;
+    color: #FFFFFF;
+}
+
+.badge-light {
+    background-color: #E7E7E7;
+    color: #888888;
+}
+
+.badge-outline {
+    background-color: transparent;
+    color: #FFFFFF;
+}
+
+/* Field - Buttons
+------------------------------*/
+.btn {
+    border-radius: 0;
+    margin-bottom: 0;
+}
+
+.btn-default {
+    background-color: #ABBAC3;
+    border-color: #ABBAC3;
+    color: #FFFFFF;
+}
+
+.btn-default:hover {
+    background-color: #8B9AA3;
+    border-color: #ABBAC3;
+    color: #FFFFFF;
+}
+
+.btn-primary {
+    background-color: #428BCA;
+    border-color: #428BCA;
+    color: #FFFFFF;
+}
+
+.btn-primary:hover {
+    background-color: #1B6AAA;
+    border-color: #428BCA;
+}
+
+.btn-info {
+    background-color: #6FB3E0;
+    border-color: #6FB3E0;
+    color: #FFFFFF;
+}
+
+.btn-info:hover {
+    background-color: #4F99C6;
+    border-color: #6FB3E0;
+}
+
+.btn-warning {
+    background-color: #FFB752;
+    border-color: #FFB752;
+    color: #FFFFFF;
+}
+
+.btn-warning:hover {
+    background-color: #E59729;
+    border-color: #FFB752;
+    color: #FFFFFF;
+}
+
+.btn-success {
+    background-color: #87B87F;
+    border-color: #87B87F;
+    color: #FFFFFF;
+}
+
+.btn-success:hover {
+    background-color: #629B58;
+    border-color: #87B87F;
+}
+
+.btn-danger {
+    background-color: #D15B47;
+    border-color: #D15B47;
+    color: #FFFFFF;
+}
+
+.btn-danger:hover {
+    background-color: #B74635;
+    border-color: #D15B47;
+}
+
+.btn-inverse {
+    background-color: #555555;
+    border-color: #555555;
+    color: #FFFFFF;
+}
+
+.btn-inverse:hover {
+    background-color: #303030;
+    border-color: #555555;
+    color: #FFFFFF;
+}
+
+.btn-pink {
+    background-color: #D6487E;
+    border-color: #D6487E;
+    color: #FFFFFF;
+}
+
+.btn-pink:hover {
+    background-color: #B73766;
+    border-color: #D6487E;
+    color: #FFFFFF;
+}
+
+.btn-purple {
+    background-color: #9585BF;
+    border-color: #9585BF;
+    color: #FFFFFF;
+}
+
+.btn-purple:hover {
+    background-color: #7461AA;
+    border-color: #9585BF;
+    color: #FFFFFF;
+}
+
+.btn-yellow {
+    background-color: #FEE188;
+    border-color: #FEE188;
+    color: #996633;
+}
+
+.btn-yellow:hover {
+    background-color: #F7D05B;
+    border-color: #FEE188;
+}
+
+.btn-orange {
+    background-color: #F0854F;
+    border-color: #F0854F;
+    color: #FFFFFF;
+}
+
+.btn-orange:hover {
+    background-color: #FF9057;
+    border-color: #FEE188;
+}
+
+.btn-grey {
+    background-color: #A0A0A0;
+    border-color: #A0A0A0;
+    color: #FFFFFF;
+}
+
+.btn-grey:hover {
+    background-color: #888888;
+    border-color: #A0A0A0;
+    color: #FFFFFF;
+}
+
+.btn-light {
+    background-color: #E7E7E7;
+    border-color: #E7E7E7;
+    color: #888888;
+}
+
+.btn-light:hover {
+    background-color: #D9D9D9;
+    border-color: #E7E7E7;
+}
+
+.btn-outline {
+    background-color: transparent;
+    border-color: #FFFFFF;
+    color: #FFFFFF;
+}
+
+.btn-outline:hover {
+    background-color: transparent;
+    border-color: #CCCCCC;
+    color: #CCCCCC;
 }
 
 /* Field - Checkbox
@@ -308,163 +552,6 @@ select.form-control {
     border-color: #CCCCCC !important;
     box-shadow: none !important;
     color: #BBB888;
-}
-
-/* Field - Buttons
-------------------------------*/
-.btn {
-    border-radius: 0;
-    margin-bottom: 0;
-}
-
-.btn-default {
-    background-color: #ABBAC3;
-    border-color: #ABBAC3;
-    color: #FFFFFF;
-}
-
-.btn-default:hover {
-    background-color: #8B9AA3;
-    border-color: #ABBAC3;
-    color: #FFFFFF;
-}
-
-.btn-primary {
-    background-color: #428BCA;
-    border-color: #428BCA;
-    color: #FFFFFF;
-}
-
-.btn-primary:hover {
-    background-color: #1B6AAA;
-    border-color: #428BCA;
-}
-
-.btn-info {
-    background-color: #6FB3E0;
-    border-color: #6FB3E0;
-    color: #FFFFFF;
-}
-
-.btn-info:hover {
-    background-color: #4F99C6;
-    border-color: #6FB3E0;
-}
-
-.btn-warning {
-    background-color: #FFB752;
-    border-color: #FFB752;
-    color: #FFFFFF;
-}
-
-.btn-warning:hover {
-    background-color: #E59729;
-    border-color: #FFB752;
-    color: #FFFFFF;
-}
-
-.btn-success {
-    background-color: #87B87F;
-    border-color: #87B87F;
-    color: #FFFFFF;
-}
-
-.btn-success:hover {
-    background-color: #629B58;
-    border-color: #87B87F;
-}
-
-.btn-danger {
-    background-color: #D15B47;
-    border-color: #D15B47;
-    color: #FFFFFF;
-}
-
-.btn-danger:hover {
-    background-color: #B74635;
-    border-color: #D15B47;
-}
-
-.btn-inverse {
-    background-color: #555555;
-    border-color: #555555;
-    color: #FFFFFF;
-}
-
-.btn-inverse:hover {
-    background-color: #303030;
-    border-color: #555555;
-    color: #FFFFFF;
-}
-
-.btn-pink {
-    background-color: #D6487E;
-    border-color: #D6487E;
-    color: #FFFFFF;
-}
-
-.btn-pink:hover {
-    background-color: #B73766;
-    border-color: #D6487E;
-    color: #FFFFFF;
-}
-
-.btn-purple {
-    background-color: #9585BF;
-    border-color: #9585BF;
-    color: #FFFFFF;
-}
-
-.btn-purple:hover {
-    background-color: #7461AA;
-    border-color: #9585BF;
-    color: #FFFFFF;
-}
-
-.btn-yellow {
-    background-color: #FEE188;
-    border-color: #FEE188;
-    color: #996633;
-}
-
-.btn-yellow:hover {
-    background-color: #F7D05B;
-    border-color: #FEE188;
-}
-
-.btn-grey {
-    background-color: #A0A0A0;
-    border-color: #A0A0A0;
-    color: #FFFFFF;
-}
-
-.btn-grey:hover {
-    background-color: #888888;
-    border-color: #A0A0A0;
-    color: #FFFFFF;
-}
-
-.btn-light {
-    background-color: #E7E7E7;
-    border-color: #E7E7E7;
-    color: #888888;
-}
-
-.btn-light:hover {
-    background-color: #D9D9D9;
-    border-color: #E7E7E7;
-}
-
-.btn-outline {
-    background-color: transparent;
-    border-color: #FFFFFF;
-    color: #FFFFFF;
-}
-
-.btn-outline:hover {
-    background-color: transparent;
-    border-color: #CCCCCC;
-    color: #CCCCCC;
 }
 
 /* Ace Editor
@@ -995,64 +1082,6 @@ select.form-control {
     border: 2px solid orange;
 }
 
-/* Widget - Menu Builder
-------------------------------*/
-.menu-builder {
-    margin-top: 10px;
-}
-
-.menu-builder > .btn {
-    margin-bottom: 10px;
-}
-
-.menu-builder-list {
-    list-style: none;
-    padding: 0;
-}
-
-.menu-builder-list .menu-builder-list {
-    padding-left: 36px;
-}
-
-.menu-builder-item {
-    width: 100%;
-}
-
-.menu-builder-input {
-    margin-bottom: 10px;
-}
-
-body.dragging, body.dragging * {
-    cursor: move !important;
-}
-
-.menu-builder .menu-builder-item.dragged {
-    position: absolute;
-    opacity: 0.5;
-    z-index: 2000;
-}
-
-.menu-builder li.placeholder {
-    height:0;
-    padding:0;
-    position: relative;
-    width: 100%;
-}
-
-.menu-builder li.placeholder:before {
-    border-top: 10px solid transparent;
-    border-bottom: 10px solid transparent;
-    border-left: 10px solid #DF0000;
-    content: " ";
-    height: 0;
-    left: 0;
-    opacity: 0.8;
-    position: absolute;
-    top:-15px;
-    width: 0;
-    z-index: 1000;
-}
-
 /* UI - Box
 ------------------------------*/
 .box {
@@ -1234,6 +1263,125 @@ body.dragging, body.dragging * {
     color: #888888;
 }
 
+/* UI - Pretty Print
+------------------------------*/
+.prettyprint .com {
+    color: #93A1A1;
+}
+
+.prettyprint .lit {
+    color: #195F91;
+}
+
+.prettyprint .pun,
+.prettyprint .opn,
+.prettyprint .clo {
+    color: #93A1A1;
+}
+
+.prettyprint .fun {
+    color: #DC322F;
+}
+
+.prettyprint .str,
+.prettyprint .atv {
+    color: #D14D14;
+}
+
+.prettyprint .kwd,
+.prettyprint .tag {
+    color: #1E347B;
+}
+
+.prettyprint .typ,
+.prettyprint .atn,
+.prettyprint .dec,
+.prettyprint .var {
+    color: teal;
+}
+
+.prettyprint .pln { 
+    color: #48484C;
+}
+
+.prettyprint {
+    padding: 8px;
+    background-color: #F7F7F9;
+    border: 1px solid #E1E1E8;
+}
+.prettyprint.linenums {
+    box-shadow: inset 40px 0 0 #FBFBFC, inset 41px 0 0 #ECECF0;
+}
+
+.prettyprint ol.linenums {
+    margin: 0;
+}
+
+.prettyprint ol.linenums li {
+    padding-left: 12px;
+    color: #BEBEC5;
+    line-height: 20px;
+    text-shadow: 0 1px 0 #FFFFFF;
+}
+
+/* UI - Menu Builder
+------------------------------*/
+.menu-builder {
+    margin-top: 10px;
+}
+
+.menu-builder > .btn {
+    margin-bottom: 10px;
+}
+
+.menu-builder-list {
+    list-style: none;
+    padding: 0;
+}
+
+.menu-builder-list .menu-builder-list {
+    padding-left: 36px;
+}
+
+.menu-builder-item {
+    width: 100%;
+}
+
+.menu-builder-input {
+    margin-bottom: 10px;
+}
+
+body.dragging, body.dragging * {
+    cursor: move !important;
+}
+
+.menu-builder .menu-builder-item.dragged {
+    position: absolute;
+    opacity: 0.5;
+    z-index: 2000;
+}
+
+.menu-builder li.placeholder {
+    height:0;
+    padding:0;
+    position: relative;
+    width: 100%;
+}
+
+.menu-builder li.placeholder:before {
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 10px solid #DF0000;
+    content: " ";
+    height: 0;
+    left: 0;
+    opacity: 0.8;
+    position: absolute;
+    top:-15px;
+    width: 0;
+    z-index: 1000;
+}
+
 /* Head
 ------------------------------*/
 
@@ -1343,6 +1491,10 @@ body.dragging, body.dragging * {
     position: absolute !important;
     right: 0;
     top: 4px;
+}
+
+.body .sidebar .nav-item.active .badge {
+    display: none;
 }
 
 .body .sidebar .nav-link {

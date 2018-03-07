@@ -7,12 +7,12 @@ jQuery(function($) {
         var env = $('html').attr('data-env');
         // get app cdn
         var cdn = $('html').attr('data-cdn');
-        
+
         // set default cdn root
         if (!cdn.length) {
             cdn = '/';
         }
-        
+
         // default system js root
         var systemJsRoot = cdn + 'scripts/uncompressed';
 
@@ -871,6 +871,77 @@ jQuery(function($) {
         });
 
         /**
+         * Code Editor - Ace
+         */
+        $(window).on('code-editor-init', function(e, target) {
+            acquire.load(
+                'system/ace/ace',
+                function() {
+                    target = $(target);
+
+                    var mode = target.attr('data-mode');
+                    var width = target.attr('data-height') || 0;
+                    var height = target.attr('data-height') || 500;
+
+                    var container = $('<section>')
+                        .addClass('form-control')
+                        .addClass('code-editor-container');
+
+                    if(width) {
+                        container.width(width);
+                    }
+
+                    if(height) {
+                        container.height(height);
+                    }
+
+                    target.after(container);
+
+                    var editor = ace.edit(container[0]);
+
+                    if(mode) {
+                        // set mode
+                        editor.getSession().setMode('ace/mode/' + mode);
+                    }
+
+                    // set editor default value
+                    editor.setValue(target.val());
+
+                    target.closest('form').submit(function() {
+                        target.val(editor.getValue());
+                    });
+                }
+            );
+        });
+
+        /**
+         * Markdown Editor -
+         */
+        $(window).on('markdown-editor-init', function(e, target) {
+            acquire.load(
+                '/styles/uncompressed/markdown.css',
+                'system/ace/ace',
+                'system/markdown.js',
+                function() {
+                    target = $(target);
+
+                    var width = target.attr('data-height') || 0;
+                    var height = target.attr('data-height') || 500;
+
+                    if(width) {
+                        target.width(width);
+                    }
+
+                    if(height) {
+                        target.height(height);
+                    }
+
+                    target.markdownEditor();
+                }
+            );
+        });
+
+        /**
          * Generate Slug
          */
         $(window).on('slugger-init', function(e, target) {
@@ -944,31 +1015,6 @@ jQuery(function($) {
                     $(target).select2();
                 }
             );
-        });
-
-        /**
-         * Code Editor - Ace
-         */
-        $(window).on('code-editor-init', function(e, target) {
-            target = $(target);
-
-            var editor = ace.edit("editor");
-
-            editor.getSession().setMode("ace/mode/html");
-            editor.setTheme("ace/theme/chaos");
-            editor.setValue('<!DOCTYPE html> \n'+
-                '<html> \n'+
-                '\t<head> \n'+
-                '\t\t<title>Ace Editor</title> \n'+
-                '\t</head> \n'+
-                '\t<body> \n'+
-                '\t</body> \n'+
-                '</html>');
-            editor.getValue();
-
-            setInterval(function() {
-                $('#editor-raw').val(editor.getValue());
-            }, 200);
         });
 
         /**
@@ -1494,6 +1540,22 @@ jQuery(function($) {
 
                 reindex(root, 1);
             });
+        });
+
+        /**
+         * Prettyfy
+         */
+        $(window).on('prettify-init', function(e, target) {
+            var loaded = false;
+            acquire.load(
+                'system/prettify/prettify',
+                function() {
+                    if(!loaded) {
+                        PR.prettyPrint();
+                        loaded = true;
+                    }
+                }
+            );
         });
     })();
 

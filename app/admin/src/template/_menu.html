@@ -6,12 +6,6 @@
             {{/if}}
             <span class="nav-title">
                 <span class="nav-text">{{label}}</span>
-                {{#if records}}
-                    &nbsp;
-                    <span class="badge badge-pill badge-secondary">
-                        {{number_format_short records 1}}
-                    </span>
-                {{/if}}
                 <span class="nav-right">
                     <i class="fas fa-chevron-down"></i>
                 </span>
@@ -44,9 +38,10 @@
             <span class="nav-title">
                 <span class="nav-text">{{label}}</span>
                 {{#if records}}
-                    &nbsp;
-                    <span class="badge badge-pill badge-secondary">
-                        {{number_format_short records 1}}
+                    <span class="nav-right">
+                        <span class="badge badge-pill badge-default">
+                            {{number_format_short records 1}}
+                        </span>
                     </span>
                 {{/if}}
             </span>
