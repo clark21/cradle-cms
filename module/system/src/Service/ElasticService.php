@@ -137,13 +137,81 @@ class ElasticService extends AbstractElasticService implements ElasticServiceInt
      *
      *
      */
-    public function populate() {
+    public function populate(array $data = []) {
         // no schema validation
         if(is_null($this->schema)) {
             throw SystemException::forNoSchema();
         }
+        
+        $exists = false;
+        try {
+            // check if index exist
+            $exists = $this->resource->indices()->exists(['index' => $this->schema->getName()]);
+        } catch (\Throwable $e) {
+            // return false if something went wrong
+            return false;
+        }
 
-        die('sdf');
+        // no index available for this schema
+        if (!$exists) {
+            // just return false
+            return false;
+        }
+
+        // get object services
+        $objectSql = $this->schema->model()->service('sql');
+        $objectElastic = $this->schema->model()->service('elastic');
+        $objectRedis = $this->schema->model()->service('redis');
+        
+        // primary field
+        $primary = $this->schema->getPrimaryFieldName();
+        
+        // get data from sql
+        // set range to 1 so we dont have to exhaus sql server by pulling just the total entry
+        $data = $objectSql->search(['range' => 1]);
+        // get total entry
+        $total = isset($data['total']) && is_numeric($data['total']) ? $data['total'] : 0;
+        // set current to 0 if current is not set
+        $current = isset($data['current']) && is_numeric($data['current']) ? $data['current'] : 0;
+        $range = 10; // do 10 at a time
+        for ($i = 0; $i < $total; $i++) {
+            if ($i + $current > $total) {
+                // this is the end :'(
+                break;
+            }
+
+            // if end is set
+            if (isset($data['end']) && is_numeric($data['end'])) {
+                if($current + $i > $data['end']) {
+                    // end this
+                    break;
+                }
+                
+            }
+            
+            // set request params
+            $stage = ['start' => $current, 'range' => $current + $range];
+            // get entries
+            $entries = $objectSql->search($stage);
+            $entries = $entries['rows'];
+            
+            // loop thru entries
+            foreach ($entries as $entry) {
+                if (!$objectElastic->create($entry[$primary])) {
+                    // nothing to do
+                    return false;
+                }
+                
+            }
+
+            // increment current
+            $current = $current + $range;
+        }
+
+        // dont forget to flush redis
+        
+        $objectRedis->removeSearch();
+        return true;
     }
     
     /**

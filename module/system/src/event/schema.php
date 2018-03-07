@@ -254,7 +254,12 @@ $cradle->on('system-schema-populate-elastic', function($request, $response) {
     
     // 4. Process Data
     $schema = SystemSchema::i($data['name']);
-    $schema->service('elastic')->populate();
+    $populate = $schema->service('elastic')->populate($data);
+    // check populate result
+    if (!$populate) {
+        return $response->setError(true, 'Something went wrong during elastic poulate');
+    }
+    
     $response->setError(false);
 });
 

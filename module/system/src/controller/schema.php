@@ -305,7 +305,7 @@ $cradle->get('/admin/system/schema/elastic/search', function ($request, $respons
     //----------------------------//
     // 3. Render Template
     $class = 'page-admin-system-schema-search page-admin';
-    $data['title'] = cradle('global')->translate('System Elastic Mapping');
+    $data['title'] = cradle('global')->translate('System Elastic');
     $body = cradle('/module/system')->template('elastic/search', $data);
 
     //set content
@@ -341,7 +341,7 @@ $cradle->get('/admin/system/schema/elastic/create/:name', function ($request, $r
     $nextUrl = '/admin/system/schema/elastic/search';
     // check if there are errors
     if ($response->isError()) {
-        cradle('global')->flash($response->getMessage(), 'danger');
+        cradle('global')->flash($response->getMessage(), 'error');
         cradle('global')->redirect($nextUrl);
     }
 
@@ -368,7 +368,7 @@ $cradle->get('/admin/system/schema/elastic/map/:name', function ($request, $resp
     cradle()->trigger('system-schema-map-elastic', $request, $response);
     // intercept errors
     if ($response->isError()) {
-        cradle('global')->flash($response->getMessage(), 'danger');
+        cradle('global')->flash($response->getMessage(), 'error');
         cradle('global')->redirect($nextUrl);
     }
 
@@ -388,7 +388,16 @@ $cradle->get('/admin/system/schema/elastic/populate/:name', function ($request, 
     // only for admin
     cradle('global')->requireLogin('admin');
 
+    $nextUrl = '/admin/system/schema/elastic/search';
     cradle()->trigger('system-schema-populate-elastic', $request, $response);
+    // intercept error
+    if ($response->isError()) {
+        cradle('global')->flash($response->getMessage(), 'error');
+        cradle('global')->redirect($nextUrl);
+    }
+
+    cradle('global')->flash('Successully populated ' . $request->getStage('name') . '.', 'success');
+    cradle('global')->redirect($nextUrl);
 });
 
 /**
