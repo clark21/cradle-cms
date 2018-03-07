@@ -1,35 +1,4 @@
-jQuery(function($) {
-    /**
-     * Acquire Config
-     */
-    (function() {
-        // get app env
-        var env = $('html').attr('data-env');
-        // get app cdn
-        var cdn = $('html').attr('data-cdn');
-
-        // set default cdn root
-        if (!cdn.length) {
-            cdn = '/';
-        }
-
-        // default system js root
-        var systemJsRoot = cdn + 'scripts/uncompressed';
-
-        // if prod
-        if(env === 'production') {
-            // should point to compressed
-            systemJsRoot = cdn + 'scripts/compressed';
-        }
-
-        // configure acquire
-        acquire.config({
-            system: {
-                root : systemJsRoot
-            }
-        });
-    })();
-
+jQuery(function(require, $) {
     /**
      * General Search
      */
@@ -179,7 +148,7 @@ jQuery(function($) {
          * Importer init
          */
         $(window).on('import-init', function(e, trigger) {
-            acquire('system/papaparse');
+            require('system/papaparse');
         });
 
         /**
@@ -778,7 +747,7 @@ jQuery(function($) {
                 });
             };
 
-            acquire('system/cropper', onAcquire);
+            require('system/cropper', onAcquire);
         });
 
         /**
@@ -851,7 +820,7 @@ jQuery(function($) {
                 + '</div>'
             + '</div>';
 
-            acquire.load(
+            require.load(
                 'system/wysihtml',
                 'system/wysihtml-commands',
                 'system/wysihtml-table',
@@ -874,7 +843,7 @@ jQuery(function($) {
          * Code Editor - Ace
          */
         $(window).on('code-editor-init', function(e, target) {
-            acquire.load(
+            require.load(
                 'system/ace/ace',
                 function() {
                     target = $(target);
@@ -918,7 +887,7 @@ jQuery(function($) {
          * Markdown Editor -
          */
         $(window).on('markdown-editor-init', function(e, target) {
-            acquire.load(
+            require.load(
                 '/styles/uncompressed/markdown.css',
                 'system/ace/ace',
                 'system/markdown.js',
@@ -984,7 +953,7 @@ jQuery(function($) {
          * Mask
          */
         $(window).on('mask-field-init', function(e, target) {
-            acquire(
+            require(
                 'system/mask',
                 function() {
                     var format = $(target).attr('data-format');
@@ -997,7 +966,7 @@ jQuery(function($) {
          * Mask
          */
         $(window).on('knob-field-init', function(e, target) {
-            acquire(
+            require(
                 'system/knob',
                 function() {
                     $(target).knob();
@@ -1009,7 +978,7 @@ jQuery(function($) {
          * Select
          */
         $(window).on('select-field-init', function(e, target) {
-            acquire(
+            require(
                 'system/select2',
                 function() {
                     $(target).select2();
@@ -1052,7 +1021,7 @@ jQuery(function($) {
                 target.ionRangeSlider(params);
             };
 
-            acquire(
+            require(
                 'system/ion',
                 onAcquire
             );
@@ -1062,7 +1031,7 @@ jQuery(function($) {
          * Date Field
          */
         $(window).on('date-field-init', function(e, target) {
-            acquire(
+            require(
                 'system/flatpickr',
                 function() {
                     $(target).flatpickr({
@@ -1076,7 +1045,7 @@ jQuery(function($) {
          * Time Field
          */
         $(window).on('time-field-init', function(e, target) {
-            acquire(
+            require(
                 'system/flatpickr',
                 function() {
                     $(target).flatpickr({
@@ -1092,7 +1061,7 @@ jQuery(function($) {
          * DateTime Field
          */
         $(window).on('datetime-field-init', function(e, target) {
-            acquire(
+            require(
                 'system/flatpickr',
                 function() {
                     $(target).flatpickr({
@@ -1107,7 +1076,7 @@ jQuery(function($) {
          * Date Range Field
          */
         $(window).on('date-range-field-init', function(e, target) {
-            acquire(
+            require(
                 'system/flatpickr',
                 function() {
                     $(target).flatpickr({
@@ -1122,7 +1091,7 @@ jQuery(function($) {
          * DateTime Range Field
          */
         $(window).on('datetime-range-field-init', function(e, target) {
-            acquire(
+            require(
                 'system/flatpickr',
                 function() {
                     $(target).flatpickr({
@@ -1524,7 +1493,7 @@ jQuery(function($) {
                     listen(this).doon();
                 });
 
-            acquire('system/sortable', function() {
+            require('system/sortable', function() {
                 var root = $('ol.menu-builder-list:first');
 
                 root.sortable({
@@ -1547,7 +1516,7 @@ jQuery(function($) {
          */
         $(window).on('prettify-init', function(e, target) {
             var loaded = false;
-            acquire.load(
+            require.load(
                 'system/prettify/prettify',
                 function() {
                     if(!loaded) {
@@ -1577,10 +1546,46 @@ jQuery(function($) {
 
             }, timeout);
         });
+    })();
 
-        acquire(
-            'system/toastr',
-            function() {
+    /**
+     * Acquire Config
+     */
+    (function() {
+        // get app env
+        var env = $('html').attr('data-env');
+        // get app cdn
+        var cdn = $('html').attr('data-cdn');
+
+        // set default cdn root
+        if (!cdn.length) {
+            cdn = '/';
+        }
+
+        // default system js root
+        var systemJsRoot = cdn + 'scripts/uncompressed';
+
+        // if prod
+        if(env === 'production') {
+            // should point to compressed
+            systemJsRoot = cdn + 'scripts/compressed';
+        }
+
+        // configure require
+        require.config({
+            system: {
+                root : systemJsRoot
+            }
+        });
+    })();
+
+    //need to load dependencies
+    var icons = [], mimeExtensions = {};
+    require('/json/extensions.json', function(response) {
+        mimeExtensions = response;
+        require('/json/icons.json', function(response) {
+            icons = response;
+            require('system/toastr', function() {
                 $.extend({
                     notify: function(message, type, timeout) {
                         if(type === 'danger') {
@@ -1594,18 +1599,10 @@ jQuery(function($) {
                         return toast;
                     }
                 });
-            }
-        );
-    })();
 
-    //need to load dependencies
-    var icons = [], mimeExtensions = {};
-    $.get('/json/extensions.json', function(response) {
-        mimeExtensions = response;
-        $.get('/json/icons.json', function(response) {
-            icons = response;
-            //activate all scripts
-            $(document.body).doon();
+                //activate all scripts
+                $(document.body).doon();
+            });
         });
     });
-});
+}.bind(null, window.acquire));
