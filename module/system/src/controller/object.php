@@ -252,6 +252,11 @@ $cradle->get('/admin/system/object/:schema/create', function ($request, $respons
         $data['valid_relations'][] = $relation['name'];
     }
 
+    //if we only want the data
+    if ($request->getStage('render') === 'false') {
+        return $response->setJson($data);
+    }
+
     //----------------------------//
     // 3. Render Template
     //set the class name
