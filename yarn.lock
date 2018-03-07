@@ -53,6 +53,10 @@ decamelize@^1.0.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/decamelize/-/decamelize-1.2.0.tgz#f6534d15148269b20352e7bee26f501f9a191290"
 
+doon@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/doon/-/doon-1.0.0.tgz#5cce1fab7be8dc80a8561f86d722261e55d3e6dc"
+
 flatpickr@^4.3.2:
   version "4.3.2"
   resolved "https://registry.yarnpkg.com/flatpickr/-/flatpickr-4.3.2.tgz#6a477043c075ef36c3ff54fadb49b936a64d635f"
@@ -74,6 +78,10 @@ handlebars@^4.0.11:
     source-map "^0.4.4"
   optionalDependencies:
     uglify-js "^2.6"
+
+inputmask@^3.3.11:
+  version "3.3.11"
+  resolved "https://registry.yarnpkg.com/inputmask/-/inputmask-3.3.11.tgz#1421c94ae28c3dcd1b4d26337b508bb34998e2d8"
 
 ion-rangeslider@^2.2.0:
   version "2.2.0"
@@ -214,3 +222,11 @@ yargs@~3.10.0:
     cliui "^2.1.0"
     decamelize "^1.0.0"
     window-size "0.1.0"
+
+yarn-acquire@^0.0.6:
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/yarn-acquire/-/yarn-acquire-0.0.6.tgz#88e4acdb9655ee0bb2093fcbef2da792de5f86c5"
+
+yarn-cropper@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/yarn-cropper/-/yarn-cropper-0.0.1.tgz#e9c2fbb303250e9d10d6e34384e46952cd4b9f9d"
