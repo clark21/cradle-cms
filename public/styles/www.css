@@ -1251,3 +1251,19 @@ select.form-control {
 .page-home .section-4 li {
     margin-bottom: 20px;
 }
+
+.page-home .section-5 {
+    background-color: #FAE194;
+    padding: 40px;
+}
+
+.page-home .section-5 h2 {
+    font-weight: 200;
+    margin-bottom: 20px;
+}
+
+.page-home .section-5 .btn {
+    margin: auto;
+    padding: 10px 20px;
+    width: 300px;
+}
