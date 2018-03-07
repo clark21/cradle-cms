@@ -12,7 +12,7 @@ $cradle->get('/', function ($request, $response) {
 
     //Render body
     $class = 'page-home';
-    $title = cradle('global')->translate('Cradle PHP');
+    $title = cradle('global')->translate('Cradle OMS');
     $body = cradle('/app/www')->template('index', $data);
 
     //Set Content

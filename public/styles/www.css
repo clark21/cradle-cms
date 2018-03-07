@@ -1131,10 +1131,14 @@ select.form-control {
     padding-top: 20px;
 }
 
+.page-home .section-2 .banner a {
+    display: inline-block;
+}
+
 .page-home .section-2 .banner img {
     display: inline-block;
     filter: grayscale(100%);
-    margin: 0 20px;
+    margin: 0 20px 20px;
     opacity: .4;
     width: 100px;
 }

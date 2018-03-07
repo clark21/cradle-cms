@@ -1,6 +1,8 @@
 bin
 vendor
 
+.DS_Store
+
 config/services.php
 config/settings.php
 config/roles.php
