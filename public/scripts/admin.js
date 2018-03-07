@@ -1,5 +1,36 @@
 jQuery(function($) {
     /**
+     * Acquire Config
+     */
+    (function() {
+        // get app env
+        var env = $('html').attr('data-env');
+        // get app cdn
+        var cdn = $('html').attr('data-cdn');
+        
+        // set default cdn root
+        if (!cdn.length) {
+            cdn = '/';
+        }
+        
+        // default system js root
+        var systemJsRoot = cdn + 'scripts/uncompressed';
+
+        // if prod
+        if(env === 'production') {
+            // should point to compressed
+            systemJsRoot = cdn + 'scripts/compressed';
+        }
+
+        // configure acquire
+        acquire.config({
+            system: {
+                root : systemJsRoot
+            }
+        });
+    })();
+
+    /**
      * General Search
      */
     (function() {
@@ -142,6 +173,13 @@ jQuery(function($) {
                     $('span#histories').html(0);
                 }
             });
+        });
+
+        /**
+         * Importer init
+         */
+        $(window).on('import-init', function(e, trigger) {
+            acquire('system/papaparse');
         });
 
         /**
@@ -564,179 +602,183 @@ jQuery(function($) {
          * data-multiple="1"
          */
         $(window).on('file-field-init', function(e, target) {
-            var template = {
-                previewFile:
-                    '<div class="file-field-preview-container">'
-                    + '<i class="fas fa-file text-info"></i>'
-                    + '<span class="file-field-extension">{EXTENSION}</span>'
-                    + '</div>',
-                previewImage:
-                    '<div class="file-field-preview-container">'
-                    + '<img src="{DATA}" height="50" />'
-                    + '</div>',
-                actions:
-                    '<td class="file-field-actions">'
-                        + '<a class="text-info file-field-move-up" href="javascript:void(0)">'
-                            + '<i class="fas fa-arrow-up"></i>'
-                        + '</a>'
-                        + '&nbsp;&nbsp;&nbsp;'
-                        + '<a class="text-info file-field-move-down" href="javascript:void(0)">'
-                            + '<i class="fas fa-arrow-down"></i>'
-                        + '</a>'
-                        + '&nbsp;&nbsp;&nbsp;'
-                        + '<a class="btn btn-danger file-field-remove" href="javascript:void(0)">'
-                            + '<i class="fas fa-times"></i>'
-                        + '</a>'
-                    + '</td>',
-                row:
-                    '<tr class="file-field-item">'
-                    + '<td class="file-field-preview">{PREVIEW}</td>'
-                    + '<td class="file-field-name">'
-                        + '{FILENAME}'
-                        + '<input name="{NAME}" type="hidden" value="{DATA}" />'
-                    + '</td>'
-                    + '{ACTIONS}'
-                    + '</tr>'
-            };
-
-            //current
-            var container = $(target);
-            var body = $('tbody', container);
-            var foot = $('tfoot', container);
-
-            var noresults = $('tr.file-field-none', body);
-
-            //get meta data
-
-            //for hidden fields
-            var name = container.attr('data-name');
-
-            //for file field
-            var multiple = container.attr('data-multiple');
-            var accept = container.attr('data-accept') || false;
-            var classes = container.attr('data-class');
-            var width = parseInt(container.attr('data-width') || 0);
-            var height = parseInt(container.attr('data-height') || 0);
-
-            //make a file
-            var file = $('<input type="file" />').hide();
-
-            if(multiple) {
-                file.attr('multiple', 'multiple');
-            }
-
-            if(accept) {
-                file.attr('accept', accept);
-            }
-
-            foot.append(file);
-
-            $('button.file-field-upload', container).click(function(e) {
-                file.click();
-            });
-
-            var listen = function(row, body) {
-                $('a.file-field-remove', row).click(function() {
-                    row.remove();
-                    if($('tr', body).length < 2) {
-                        noresults.show();
-                    }
-                });
-
-                $('a.file-field-move-up', row).click(function() {
-                    var prev = row.prev();
-
-                    if(prev.length && !prev.hasClass('file-field-none')) {
-                        prev.before(row);
-                    }
-                });
-
-                $('a.file-field-move-down', row).click(function() {
-                    var next = row.next();
-
-                    if(next.length) {
-                        next.after(row);
-                    }
-                });
-            };
-
-            var generate = function(file, name, width, height, row) {
-                var reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = function () {
-                    var extension = file.name.split('.').pop();
-
-                    if(file.name.indexOf('.') === -1) {
-                        extension = 'unknown';
-                    }
-
-                    var preview = template.previewFile.replace('{EXTENSION}', extension);
-
-                    if(file.type.indexOf('image/') === 0) {
-                        preview = template.previewImage.replace('{DATA}', reader.result);
-                    }
-
-                    noresults.hide();
-
-                    row = $(
-                        row
-                            .replace('{NAME}', name)
-                            .replace('{DATA}', reader.result)
-                            .replace('{PREVIEW}', preview)
-                            .replace('{FILENAME}', file.name)
-                    ).appendTo(body);
-
-                    listen(row, body);
-
-                    if(file.type.indexOf('image/') === 0 && (width !== 0 || height !== 0)) {
-                        //so we can crop
-                        $.cropper(file, width, height, function(data) {
-                            $('div.file-field-preview-container img', row).attr('src', data);
-                            $('input[type="hidden"]', row).val(data);
-                        });
-                    }
-
-                    //add mime type
-                    if(typeof mimeExtensions[file.type] !== 'string') {
-                        mimeExtensions[file.type] = extension;
-                    }
+            var onAcquire = function() {
+                var template = {
+                    previewFile:
+                        '<div class="file-field-preview-container">'
+                        + '<i class="fas fa-file text-info"></i>'
+                        + '<span class="file-field-extension">{EXTENSION}</span>'
+                        + '</div>',
+                    previewImage:
+                        '<div class="file-field-preview-container">'
+                        + '<img src="{DATA}" height="50" />'
+                        + '</div>',
+                    actions:
+                        '<td class="file-field-actions">'
+                            + '<a class="text-info file-field-move-up" href="javascript:void(0)">'
+                                + '<i class="fas fa-arrow-up"></i>'
+                            + '</a>'
+                            + '&nbsp;&nbsp;&nbsp;'
+                            + '<a class="text-info file-field-move-down" href="javascript:void(0)">'
+                                + '<i class="fas fa-arrow-down"></i>'
+                            + '</a>'
+                            + '&nbsp;&nbsp;&nbsp;'
+                            + '<a class="btn btn-danger file-field-remove" href="javascript:void(0)">'
+                                + '<i class="fas fa-times"></i>'
+                            + '</a>'
+                        + '</td>',
+                    row:
+                        '<tr class="file-field-item">'
+                        + '<td class="file-field-preview">{PREVIEW}</td>'
+                        + '<td class="file-field-name">'
+                            + '{FILENAME}'
+                            + '<input name="{NAME}" type="hidden" value="{DATA}" />'
+                        + '</td>'
+                        + '{ACTIONS}'
+                        + '</tr>'
                 };
-            };
 
-            file.change(function() {
-                if(!this.files || !this.files[0]) {
-                    return;
+                //current
+                var container = $(target);
+                var body = $('tbody', container);
+                var foot = $('tfoot', container);
+
+                var noresults = $('tr.file-field-none', body);
+
+                //get meta data
+
+                //for hidden fields
+                var name = container.attr('data-name');
+
+                //for file field
+                var multiple = container.attr('data-multiple');
+                var accept = container.attr('data-accept') || false;
+                var classes = container.attr('data-class');
+                var width = parseInt(container.attr('data-width') || 0);
+                var height = parseInt(container.attr('data-height') || 0);
+
+                //make a file
+                var file = $('<input type="file" />').hide();
+
+                if(multiple) {
+                    file.attr('multiple', 'multiple');
                 }
 
-                if(!multiple) {
-                    $('tr', body).each(function() {
-                        if($(this).hasClass('file-field-none')) {
-                            return;
+                if(accept) {
+                    file.attr('accept', accept);
+                }
+
+                foot.append(file);
+
+                $('button.file-field-upload', container).click(function(e) {
+                    file.click();
+                });
+
+                var listen = function(row, body) {
+                    $('a.file-field-remove', row).click(function() {
+                        row.remove();
+                        if($('tr', body).length < 2) {
+                            noresults.show();
+                        }
+                    });
+
+                    $('a.file-field-move-up', row).click(function() {
+                        var prev = row.prev();
+
+                        if(prev.length && !prev.hasClass('file-field-none')) {
+                            prev.before(row);
+                        }
+                    });
+
+                    $('a.file-field-move-down', row).click(function() {
+                        var next = row.next();
+
+                        if(next.length) {
+                            next.after(row);
+                        }
+                    });
+                };
+
+                var generate = function(file, name, width, height, row) {
+                    var reader = new FileReader();
+                    reader.readAsDataURL(file);
+                    reader.onload = function () {
+                        var extension = file.name.split('.').pop();
+
+                        if(file.name.indexOf('.') === -1) {
+                            extension = 'unknown';
                         }
 
-                        $(this).remove();
-                    })
-                }
+                        var preview = template.previewFile.replace('{EXTENSION}', extension);
 
-                for(var row, path = '', i = 0; i < this.files.length; i++, path = '') {
-                    row = template.row.replace('{ACTIONS}', '');
-                    if(multiple) {
-                        path = '[]' + path;
-                        row = template.row.replace('{ACTIONS}', template.actions);
+                        if(file.type.indexOf('image/') === 0) {
+                            preview = template.previewImage.replace('{DATA}', reader.result);
+                        }
+
+                        noresults.hide();
+
+                        row = $(
+                            row
+                                .replace('{NAME}', name)
+                                .replace('{DATA}', reader.result)
+                                .replace('{PREVIEW}', preview)
+                                .replace('{FILENAME}', file.name)
+                        ).appendTo(body);
+
+                        listen(row, body);
+
+                        if(file.type.indexOf('image/') === 0 && (width !== 0 || height !== 0)) {
+                            //so we can crop
+                            $.cropper(file, width, height, function(data) {
+                                $('div.file-field-preview-container img', row).attr('src', data);
+                                $('input[type="hidden"]', row).val(data);
+                            });
+                        }
+
+                        //add mime type
+                        if(typeof mimeExtensions[file.type] !== 'string') {
+                            mimeExtensions[file.type] = extension;
+                        }
+                    };
+                };
+
+                file.change(function() {
+                    if(!this.files || !this.files[0]) {
+                        return;
                     }
 
-                    path = name + path;
-                    generate(this.files[i], path, width, height, row);
-                }
-            });
+                    if(!multiple) {
+                        $('tr', body).each(function() {
+                            if($(this).hasClass('file-field-none')) {
+                                return;
+                            }
 
-            $('tr', body).each(function() {
-                if($(this).hasClass('file-field-none')) {
-                    return;
-                }
+                            $(this).remove();
+                        })
+                    }
 
-                listen($(this), body)
-            });
+                    for(var row, path = '', i = 0; i < this.files.length; i++, path = '') {
+                        row = template.row.replace('{ACTIONS}', '');
+                        if(multiple) {
+                            path = '[]' + path;
+                            row = template.row.replace('{ACTIONS}', template.actions);
+                        }
+
+                        path = name + path;
+                        generate(this.files[i], path, width, height, row);
+                    }
+                });
+
+                $('tr', body).each(function() {
+                    if($(this).hasClass('file-field-none')) {
+                        return;
+                    }
+
+                    listen($(this), body)
+                });
+            };
+
+            acquire('system/cropper', onAcquire);
         });
 
         /**
@@ -809,14 +851,23 @@ jQuery(function($) {
                 + '</div>'
             + '</div>';
 
-            var toolbar = $(template);
-            $(target).before(toolbar);
+            acquire.load(
+                'system/wysihtml',
+                'system/wysihtml-commands',
+                'system/wysihtml-table',
+                'system/wysihtml-toolbar',
+                'system/wysihtml-parser',
+                function() {
+                    var toolbar = $(template);
+                    $(target).before(toolbar);
 
-            var e = new wysihtml.Editor(target, {
-                toolbar:        toolbar[0],
-                parserRules:    wysihtmlParserRules,
-                stylesheets:  '/styles/admin.css'
-            });
+                    var e = new wysihtml.Editor(target, {
+                        toolbar:        toolbar[0],
+                        parserRules:    wysihtmlParserRules,
+                        stylesheets:  '/styles/admin.css'
+                    });
+                }
+            );
         });
 
         /**
@@ -862,22 +913,37 @@ jQuery(function($) {
          * Mask
          */
         $(window).on('mask-field-init', function(e, target) {
-            var format = $(target).attr('data-format');
-            $(target).inputmask(format);
+            acquire(
+                'system/mask',
+                function() {
+                    var format = $(target).attr('data-format');
+                    $(target).inputmask(format);
+                }
+            );
         });
 
         /**
          * Mask
          */
         $(window).on('knob-field-init', function(e, target) {
-            $(target).knob();
+            acquire(
+                'system/knob',
+                function() {
+                    $(target).knob();
+                }
+            );
         });
 
         /**
          * Select
          */
         $(window).on('select-field-init', function(e, target) {
-            $(target).select2();
+            acquire(
+                'system/select2',
+                function() {
+                    $(target).select2();
+                }
+            );
         });
 
         /**
@@ -909,85 +975,117 @@ jQuery(function($) {
          * Multirange
          */
         $(window).on('multirange-field-init', function(e, target) {
-            target = $(target);
+            var onAcquire = function() {
+                target = $(target);
 
-            var params = {};
-            // loop all attributes
-            $.each(target[0].attributes,function(index, attr) {
-                // skip if data do and on
-                if (attr.name == 'data-do' || attr.name == 'data-on') {
-                    return true;
-                }
-
-                // look for attr with data- as prefix
-                if (attr.name.search(/data-/g) > -1) {
-                    // get parameter name
-                    var key = attr.name
-                        .replace('data-', '')
-                        .replace('-', '_');
-
-                    // prepare parameter
-                    params[key] = attr.value;
-
-                    // if value is boolean
-                    if(attr.value == 'true') {
-                        params[key] = attr.value == 'true' ? true : false;
+                var params = {};
+                // loop all attributes
+                $.each(target[0].attributes,function(index, attr) {
+                    // skip if data do and on
+                    if (attr.name == 'data-do' || attr.name == 'data-on') {
+                        return true;
                     }
-                }
-            });
 
-            target.ionRangeSlider(params);
+                    // look for attr with data- as prefix
+                    if (attr.name.search(/data-/g) > -1) {
+                        // get parameter name
+                        var key = attr.name
+                            .replace('data-', '')
+                            .replace('-', '_');
+
+                        // prepare parameter
+                        params[key] = attr.value;
+
+                        // if value is boolean
+                        if(attr.value == 'true') {
+                            params[key] = attr.value == 'true' ? true : false;
+                        }
+                    }
+                });
+
+                target.ionRangeSlider(params);
+            };
+
+            acquire(
+                'system/ion',
+                onAcquire
+            );
         });
 
         /**
          * Date Field
          */
         $(window).on('date-field-init', function(e, target) {
-            $(target).flatpickr({
-                dateFormat: "Y-m-d",
-            });
+            acquire(
+                'system/flatpickr',
+                function() {
+                    $(target).flatpickr({
+                        dateFormat: "Y-m-d",
+                    });
+                }
+            );
         });
 
         /**
          * Time Field
          */
         $(window).on('time-field-init', function(e, target) {
-            $(target).flatpickr({
-                enableTime: true,
-                noCalendar: true,
-                dateFormat: "H:i",
-            });
+            acquire(
+                'system/flatpickr',
+                function() {
+                    $(target).flatpickr({
+                        enableTime: true,
+                        noCalendar: true,
+                        dateFormat: "H:i",
+                    });
+                }
+            );
         });
 
         /**
          * DateTime Field
          */
         $(window).on('datetime-field-init', function(e, target) {
-            $(target).flatpickr({
-                enableTime: true,
-                dateFormat: "Y-m-d H:i",
-            });
+            acquire(
+                'system/flatpickr',
+                function() {
+                    $(target).flatpickr({
+                        enableTime: true,
+                        dateFormat: "Y-m-d H:i",
+                    });
+                }
+            );
         });
 
         /**
          * Date Range Field
          */
         $(window).on('date-range-field-init', function(e, target) {
-            $(target).flatpickr({
-                mode: "range",
-                dateFormat: "Y-m-d",
-            });
+            acquire(
+                'system/flatpickr',
+                function() {
+                    $(target).flatpickr({
+                        mode: "range",
+                        dateFormat: "Y-m-d",
+                    });
+                }
+            );
         });
 
         /**
          * DateTime Range Field
          */
         $(window).on('datetime-range-field-init', function(e, target) {
-            $(target).flatpickr({
-                mode: "range",
-                enableTime: true,
-                dateFormat: "Y-m-d H:i",
-            });
+            acquire(
+                'system/flatpickr',
+                function() {
+                    $(target).flatpickr({
+                        mode: "range",
+                        enableTime: true,
+                        dateFormat: "Y-m-d H:i",
+                    });
+                }
+            );
         });
 
         /**
@@ -1380,20 +1478,22 @@ jQuery(function($) {
                     listen(this).doon();
                 });
 
-            var root = $('ol.menu-builder-list:first');
+            acquire('system/sortable', function() {
+                var root = $('ol.menu-builder-list:first');
 
-            root.sortable({
-                onDrop: function ($item, container, _super, event) {
-                    $item.removeClass(container.group.options.draggedClass).removeAttr('style');
-                    $('body').removeClass(container.group.options.bodyClass);
+                root.sortable({
+                    onDrop: function ($item, container, _super, event) {
+                        $item.removeClass(container.group.options.draggedClass).removeAttr('style');
+                        $('body').removeClass(container.group.options.bodyClass);
 
-                    setTimeout(function() {
-                        reindex(root, 1);
-                    }, 10);
-                }
+                        setTimeout(function() {
+                            reindex(root, 1);
+                        }, 10);
+                    }
+                });
+
+                reindex(root, 1);
             });
-
-            reindex(root, 1);
         });
     })();
 
@@ -1416,19 +1516,24 @@ jQuery(function($) {
             }, timeout);
         });
 
-        $.extend({
-            notify: function(message, type, timeout) {
-                if(type === 'danger') {
-                    type = 'error';
-                }
+        acquire(
+            'system/toastr',
+            function() {
+                $.extend({
+                    notify: function(message, type, timeout) {
+                        if(type === 'danger') {
+                            type = 'error';
+                        }
 
-                var toast = toastr[type](message, type[0].toUpperCase() + type.substr(1), {
-                    timeOut: timeout
+                        var toast = toastr[type](message, type[0].toUpperCase() + type.substr(1), {
+                            timeOut: timeout
+                        });
+
+                        return toast;
+                    }
                 });
-
-                return toast;
             }
-        })
+        );
     })();
 
     //need to load dependencies
