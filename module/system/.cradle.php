@@ -14,6 +14,9 @@ include_once __DIR__ . '/src/controller/rest.php';
 include_once __DIR__ . '/src/controller/menu.php';
 include_once __DIR__ . '/src/controller/static.php';
 
+include_once __DIR__ . '/src/controller/www/object.php';
+include_once __DIR__ . '/src/controller/www/relation.php';
+
 use Cradle\Module\System\Service as SystemService;
 use Cradle\Module\System\Object\Service as ObjectService;
 use Cradle\Module\System\Utility\ServiceFactory;
