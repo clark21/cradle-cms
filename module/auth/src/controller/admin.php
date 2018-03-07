@@ -83,6 +83,7 @@ $cradle->get('/admin/auth/create', function ($request, $response) {
     // 1. Route Permissions
     // set redirect
     $request->setStage('redirect', '/admin/auth/search');
+
     if (!cradle('/module/role')->hasPermissions($request, $response)) {
         return;
     }
@@ -151,6 +152,7 @@ $cradle->get('/admin/auth/update/:id', function ($request, $response) {
     // 1. Route Permissions
     // set redirect
     $request->setStage('redirect', '/admin/auth/search');
+
     if (!cradle('/module/role')->hasPermissions($request, $response)) {
         return;
     }
@@ -215,6 +217,7 @@ $cradle->post('/admin/auth/search', function ($request, $response) {
     // 1. Route Permissions
     // set redirect
     $request->setStage('redirect', '/admin/auth/search');
+
     if (!cradle('/module/role')->hasPermissions($request, $response)) {
         return;
     }
@@ -323,6 +326,7 @@ $cradle->post('/admin/auth/create', function ($request, $response) {
     // 1. Route Permissions
     // set redirect
     $request->setStage('redirect', '/admin/auth/search');
+
     if (!cradle('/module/role')->hasPermissions($request, $response)) {
         return;
     }
@@ -404,6 +408,7 @@ $cradle->post('/admin/auth/update/:id', function ($request, $response) {
     // 1. Route Permissions
     // set redirect
     $request->setStage('redirect', '/admin/auth/search');
+
     if (!cradle('/module/role')->hasPermissions($request, $response)) {
         return;
     }
@@ -489,6 +494,7 @@ $cradle->get('/admin/auth/remove/:id', function ($request, $response) {
     // 1. Route Permissions
     // set redirect
     $request->setStage('redirect', '/admin/auth/search');
+
     if (!cradle('/module/role')->hasPermissions($request, $response)) {
         return;
     }
@@ -674,6 +680,7 @@ $cradle->get('/admin/auth/export/:type', function ($request, $response) {
     // 1. Route Permissions
     // set redirect
     $request->setStage('redirect', '/admin/auth/search');
+    
     if (!cradle('/module/role')->hasPermissions($request, $response)) {
         return;
     }

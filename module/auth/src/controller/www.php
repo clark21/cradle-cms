@@ -93,6 +93,12 @@ $cradle->get('/auth/signup', function ($request, $response) {
 $cradle->get('/auth/login', function ($request, $response) {
     //----------------------------//
     // 1. Security Checks
+    // double check if session exists
+    if (!empty($request->getSession('me'))) {
+        // redirect to home
+        return cradle('global')->redirect('/');
+    }
+
     //----------------------------//
     // 2. Prepare Data
     //Prepare body
