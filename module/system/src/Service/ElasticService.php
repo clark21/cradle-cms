@@ -15,6 +15,8 @@ use Cradle\Module\System\Schema as SystemSchema;
 use Elasticsearch\Client as Resource;
 
 use Elasticsearch\Common\Exceptions\NoNodesAvailableException;
+use Elasticsearch\Common\Exceptions\Missing404Exception;
+use Elasticsearch\Common\Exceptions\BadRequest400Exception;
 
 use Cradle\Module\Utility\Service\ElasticServiceInterface;
 use Cradle\Module\Utility\Service\AbstractElasticService;
@@ -50,6 +52,100 @@ class ElasticService extends AbstractElasticService implements ElasticServiceInt
         $this->sql = Service::get('sql');
     }
 
+    /*
+     * Create elastic map
+     *
+     * @param array $data
+    */
+    public function createMap() {
+        if(is_null($this->schema)) {
+            throw SystemException::forNoSchema();
+        }
+        
+        // translate data first to sql
+        $data = $this->schema->toSql();
+        
+        // then translate it to elastic mapping
+        $mapping = $this->schema->toElastic($data);
+        // get schema path
+        $path = cradle()->package('global')->path('config') . '/admin/schema/elastic';
+        
+        if(!is_dir($path)) {
+            mkdir($path, 0777);
+        }
+
+        // save mapping
+        file_put_contents(
+            $path . '/' . $data['name'] . '.php',
+            '<?php //-->' . "\n return " .
+            var_export($mapping, true) . ';'
+        );
+        
+
+    }
+
+    /*
+     * Map elastic
+     *
+     */
+    public function map() {
+        // no schema validation
+        if(is_null($this->schema)) {
+            throw SystemException::forNoSchema();
+        }
+
+        $table = $this->schema->getName();
+        $path = cradle()->package('global')->path('config') . '/admin/schema/elastic/' . $table . '.php';
+        
+        // if mapped file doesn't exist,
+        // do nothing
+        if (!file_exists($path)) {
+            return false;
+        }
+
+        $data = include_once($path);
+        
+        $index = cradle()->package('global')->service('elastic-main');
+        // try mapping 
+        try {
+            $index->indices()->create(['index' => $table]);
+            $index->indices()->putMapping([
+                'index' => $table,
+                'type' => 'main',
+                'body' => [
+                    '_source' => [
+                        'enabled' => true
+                    ],
+                    'properties' => $data[$table]
+                ]
+            ]);
+        } catch (NoNodesAvailableException $e) {
+            //because there is no reason to continue;
+            return false;
+        } catch (BadRequest400Exception $e) {
+            //already mapped
+            return false;
+        } catch (\Throwable $e) { die('gfgf');
+            // something is not right
+            return false;
+        }
+
+        return true;
+    }
+
+    /* Populate elastic
+     *
+     *
+     */
+    public function populate() {
+        // no schema validation
+        if(is_null($this->schema)) {
+            throw SystemException::forNoSchema();
+        }
+
+        die('sdf');
+    }
+    
     /**
      * Search in index
      *

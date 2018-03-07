@@ -779,6 +779,54 @@ class Schema extends Registry
     }
 
     /**
+     * Transforms to elastic data
+     *
+     * @return array
+     */
+    public function toElastic($data) {
+        // check table name
+        if (!isset($data['name'])) {
+            return;
+        }
+        
+        $map = [];
+        $map[$data['primary']] = ['type' => 'integer'];
+
+        foreach ($data['columns'] as $field => $v) {
+            switch (strtolower($v['type'])) {
+                case 'datetime' :
+                case 'date' :
+                    $map[$field] = [
+                        'type'=> 'date',
+                        'format' => 'yyyy-MM-dd HH:mm:ss'];
+                    
+                    break;
+                case 'int' :
+                case 'smallint': 
+                    $map[$field] = ['type' => 'integer'];
+                    break;
+                case 'float' :
+                    $map[$field] = ['type' => 'float'];
+                    break;
+                case 'json' :
+                    $map[$field] = ['type' => 'object'];
+                    break;
+                default :
+                    $map[$field] = ['type' => 'string'];
+                    if (isset($v['index']) && $v['index'] == 1) {
+                        $map[$field]['fields'] = ['keyword' => [
+                            'type' => 'keyword']];
+                    }
+                    
+                    break;
+            }
+            
+        }
+        
+        return [$data['name'] => $map];
+    }
+    
+    /**
      * @var array $fieldTyles
      */
     protected static $fieldTypes = [

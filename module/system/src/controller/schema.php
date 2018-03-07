@@ -279,6 +279,119 @@ $cradle->get('/admin/system/schema/update/:name', function ($request, $response)
 });
 
 /**
+ * Render the Object Search Page
+ *
+ * @param Request $request
+ * @param Response $response
+ */
+$cradle->get('/admin/system/schema/elastic/search', function ($request, $response) {
+    //----------------------------//
+    // 1. Route Permissions
+    //only for admin
+    cradle('global')->requireLogin('admin');
+
+    //----------------------------//
+
+    //trigger job
+    cradle()->trigger('system-schema-search-elastic', $request, $response);
+
+    //if we only want the raw data
+    if($request->getStage('render') === 'false') {
+        return;
+    }
+
+    $data = $response->getResults();
+
+    //----------------------------//
+    // 3. Render Template
+    $class = 'page-admin-system-schema-search page-admin';
+    $data['title'] = cradle('global')->translate('System Elastic Mapping');
+    $body = cradle('/module/system')->template('elastic/search', $data);
+
+    //set content
+    $response
+        ->setPage('title', $data['title'])
+        ->setPage('class', $class)
+        ->setContent($body);
+
+    //if we only want the body
+    if($request->getStage('render') === 'body') {
+        return;
+    }
+
+    //render page
+    cradle()->trigger('render-admin-page', $request, $response);
+});
+
+/**
+ * Create elastic schema
+ *
+ * @param Request $request
+ * @param Response $response
+ */
+$cradle->get('/admin/system/schema/elastic/create/:name', function ($request, $response) {
+    //----------------------------//
+    // 1. Route Permissions
+    //only for admin
+    cradle('global')->requireLogin('admin');
+    
+    // trigger create elastic schema event
+    cradle()->trigger('system-schema-create-elastic', $request, $response);
+
+    $nextUrl = '/admin/system/schema/elastic/search';
+    // check if there are errors
+    if ($response->isError()) {
+        cradle('global')->flash($response->getMessage(), 'danger');
+        cradle('global')->redirect($nextUrl);
+    }
+
+    // process is successfull
+    cradle('global')->flash('Elastic schema for ' . $request->getStage('name') . ' generated successfully.', 'success');
+    cradle('global')->redirect($nextUrl);
+});
+
+/**
+ * Create elastic schema
+ *
+ * @param Request $request
+ * @param Response $response
+ */
+$cradle->get('/admin/system/schema/elastic/map/:name', function ($request, $response) {
+    //----------------------------//
+    // 1. Route Permissions
+    //only for admin
+    cradle('global')->requireLogin('admin');
+
+    // redirect url
+    $nextUrl = '/admin/system/schema/elastic/search';
+    // trigger map elastic schema event
+    cradle()->trigger('system-schema-map-elastic', $request, $response);
+    // intercept errors
+    if ($response->isError()) {
+        cradle('global')->flash($response->getMessage(), 'danger');
+        cradle('global')->redirect($nextUrl);
+    }
+
+    cradle('global')->flash(ucwords($request->getStage('name')) . ' mapped successfully', 'success');
+    cradle('global')->redirect($nextUrl);
+});
+
+/**
+ * Populate elastic schema
+ *
+ * @param Request $request
+ * @param Response $response
+ */
+$cradle->get('/admin/system/schema/elastic/populate/:name', function ($request, $response) {
+    //----------------------------//
+    // 1. Route permissions
+    // only for admin
+    cradle('global')->requireLogin('admin');
+
+    cradle()->trigger('system-schema-populate-elastic', $request, $response);
+});
+
+/**
  * Process the Object Create Page
  *
  * @param Request $request

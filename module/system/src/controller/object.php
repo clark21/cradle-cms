@@ -138,7 +138,7 @@ $cradle->get('/admin/system/object/:schema/search', function ($request, $respons
     if ($request->getStage('render') === 'body') {
         return;
     }
-
+    
     //render page
     cradle()->trigger('render-admin-page', $request, $response);
 });

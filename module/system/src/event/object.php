@@ -70,6 +70,7 @@ $cradle->on('system-object-create', function ($request, $response) {
     $objectSql = $schema->model()->service('sql');
     $objectRedis = $schema->model()->service('redis');
     $objectElastic = $schema->model()->service('elastic');
+    
     //save object to database
     $results = $objectSql->create($data);
 

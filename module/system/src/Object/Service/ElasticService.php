@@ -49,6 +49,57 @@ class ElasticService extends AbstractElasticService implements ElasticServiceInt
         $this->resource = $resource;
         $this->sql = Service::get('sql');
     }
+    
+    /**
+     * Create in index
+     *
+     * @param *int $id
+     *
+     * @return array
+     */
+    public function create($id)
+    {
+        $exists = false;
+        try {
+            // check if index exist
+            $exists = $this->resource->indices()->exists(['index' => $this->schema->getName()]);
+        } catch (\Throwable $e) {
+            // return false if something went wrong
+            return false;
+        }
+
+        // if index doesnt exist
+        if (!$exists) {
+            // do nothing
+            return false;
+        }
+        
+        // set schema to sql
+        $this->sql->setSchema($this->schema);
+        // get data from sql
+        $body = $this->sql->get($this->schema->getPrimaryFieldName(), $id);
+        
+        if (!is_array($body) || empty($body)) {
+            return false;
+        }
+        
+        try {
+            return $this->resource->index([
+                'index' => $this->schema->getName(),
+                'type' => static::INDEX_TYPE,
+                'id' => $id,
+                'body' => $body
+            ]);
+        } catch (NoNodesAvailableException $e) {
+            return false;
+        } catch (BadRequest400Exception $e) {
+            return false;
+        } catch (\Throwable $e) {
+            // catch all throwable
+            // if something went wrong, dont panic, just return false
+            return false;
+        }
+    }
 
     /**
      * Search in index
@@ -59,11 +110,33 @@ class ElasticService extends AbstractElasticService implements ElasticServiceInt
      */
     public function search(array $data = [])
     {
+        // schema should be set
+        if (!isset($data['schema'])) {
+            return false;
+        }
+
+        $object = $data['schema'];
+        // check schema data
+        $path = cradle()->package('global')->path('config') . '/admin/schema/' . $object . '.php';
+        if (!file_exists($path)) {
+            return false;
+        }
+
+        // 4. Process Data
+        $schema = SystemSchema::i($object);
+        
+        if(is_null($schema)) {
+            throw SystemException::forNoSchema();
+        }
+        
+        $searchable = $schema->getSearchableFieldNames();
+        $primary = $schema->getPrimaryFieldName();
+        
         //set the defaults
         $filter = [];
         $range = 50;
         $start = 0;
-        $order = ['object_id' => 'asc'];
+        $order = [$primary => 'asc'];
         $count = 0;
 
         //merge passed data with default data
@@ -86,7 +159,6 @@ class ElasticService extends AbstractElasticService implements ElasticServiceInt
         //prepare the search object
         $search = [];
 
-
         //keyword search
         if (isset($data['q'])) {
             if (!is_array($data['q'])) {
@@ -96,9 +168,7 @@ class ElasticService extends AbstractElasticService implements ElasticServiceInt
             foreach ($data['q'] as $keyword) {
                 $search['query']['bool']['filter'][]['query_string'] = [
                     'query' => $keyword . '*',
-                    'fields' => [
-                        'object_singular','object_plural','object_detail',
-                    ],
+                    'fields' => $searchable,
                     'default_operator' => 'AND'
                 ];
             }
@@ -108,10 +178,12 @@ class ElasticService extends AbstractElasticService implements ElasticServiceInt
         //generic full match filters
 
         //object_active
-        if (!isset($filter['object_active'])) {
-            $filter['object_active'] = 1;
+        $activeField = $schema->getActiveFieldName();
+        if ($activeField) {
+            if (!isset($filter[$activeField])) {
+                $filter[$activeField] = 1;
+            }
         }
-
 
         foreach ($filter as $key => $value) {
             $search['query']['bool']['filter'][]['term'][$key] = $value;
@@ -121,16 +193,20 @@ class ElasticService extends AbstractElasticService implements ElasticServiceInt
         foreach ($order as $sort => $direction) {
             $search['sort'] = [$sort => $direction];
         }
-
+        
         try {
             $results = $this->resource->search([
-                'index' => static::INDEX_NAME,
+                'index' => $object,
                 'type' => static::INDEX_TYPE,
                 'body' => $search,
                 'size' => $range,
                 'from' => $start
             ]);
         } catch (NoNodesAvailableException $e) {
+            return false;
+        } catch (\Throwable $e) {
+            // catch throwable,
+            // this means it will use sql as source of data
             return false;
         }
 
@@ -140,7 +216,7 @@ class ElasticService extends AbstractElasticService implements ElasticServiceInt
         foreach ($results['hits']['hits'] as $item) {
             $rows[] = $item['_source'];
         }
-
+        
         //return response format
         return [
             'rows' => $rows,
@@ -159,5 +235,64 @@ class ElasticService extends AbstractElasticService implements ElasticServiceInt
     {
         $this->schema = $schema;
         return $this;
+    }
+
+    
+    /**
+     * Remove from index
+     *
+     * @param *int $id
+     */
+    public function remove($id)
+    {
+        try {
+            return $this->resource->delete([
+                'index' => $this->schema->getName(),
+                'type' => static::INDEX_TYPE,
+                'id' => $id
+            ]);
+        } catch (NoNodesAvailableException $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Update to index
+     *
+     * @param *int $id
+     *
+     * @return array
+     */
+    public function update($id)
+    {
+        // set schema to sql
+        $this->sql->setSchema($this->schema);
+        // get data from sql
+        $body = $this->sql->get($this->schema->getPrimaryFieldName(), $id);
+
+        if (!is_array($body) || empty($body)) {
+            return false;
+        }
+
+        try {
+            return $this->resource->update(
+                [
+                    'index' => $this->schema->getName(),
+                    'type' => static::INDEX_TYPE,
+                    'id' => $id,
+                    'body' => [
+                        'doc' => $body
+                    ]
+                ]
+            );
+        } catch (Missing404Exception $e) {
+            return false;
+        } catch (NoNodesAvailableException $e) {
+            return false;
+        } catch (\Throwable $e) {
+            // catch all throwable
+            // if something went wrong, dont panic, just return false
+            return false;
+        }
     }
 }
