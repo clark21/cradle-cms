@@ -2,6 +2,7 @@
   "dependencies": {
     "ace-editor-builds": "^1.2.4",
     "bootstrap": "^4.0.0",
+    "bootstrap-markdown-editor-4": "^3.0.0",
     "doon": "^1.0.0",
     "flatpickr": "^4.3.2",
     "fontawesome5-webfont": "^5.0.4",
