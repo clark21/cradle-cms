@@ -1067,6 +1067,10 @@ select.form-control {
     background-color: #5FA8D4;
 }
 
+.page-home .head .navbar {
+    background-color: #93CDDB !important;
+}
+
 .page-home .body {
     padding: 0;
 }
@@ -1089,6 +1093,11 @@ select.form-control {
     text-align: center;
 }
 
+.page-home .section-1.loggedin {
+    margin-bottom: 0;
+    padding-bottom: 60px;
+}
+
 .page-home .section-1 h2 {
     color: #FFFFFF;
     padding: 60px 0 0;
@@ -1100,6 +1109,19 @@ select.form-control {
     font-size: 20px;
     margin: auto;
     max-width: 600px;
+}
+
+.page-home .section-1 .sample {
+    position: relative;
+}
+
+.page-home .section-1 .sample .btn {
+    padding: 10px 20px;
+    position: absolute;
+    left: 50%;
+    margin-left: -150px;
+    top: 30px;
+    width: 300px;
 }
 
 .page-home .section-2 {
