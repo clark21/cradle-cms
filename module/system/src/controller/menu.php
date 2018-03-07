@@ -71,10 +71,18 @@ $cradle->post('/admin/system/menu', function ($request, $response) {
         chmod($path, 0777);
     }
 
+    // set empty item
+    $item = [];
+
+    // set item
+    if($request->getPost('item')) {
+        $item = $request->getPost('item');
+    }
+
     file_put_contents(
         $path,
         '<?php //-->' . "\n return " .
-        var_export($request->getPost('item'), true) . ';'
+        var_export($item, true) . ';'
     );
 
     //----------------------------//
