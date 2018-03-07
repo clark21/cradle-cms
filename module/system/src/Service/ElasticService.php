@@ -105,11 +105,10 @@ class ElasticService extends AbstractElasticService implements ElasticServiceInt
 
         $data = include_once($path);
         
-        $index = cradle()->package('global')->service('elastic-main');
         // try mapping 
         try {
-            $index->indices()->create(['index' => $table]);
-            $index->indices()->putMapping([
+            $this->resource->indices()->create(['index' => $table]);
+            $this->resource->indices()->putMapping([
                 'index' => $table,
                 'type' => 'main',
                 'body' => [
@@ -125,7 +124,7 @@ class ElasticService extends AbstractElasticService implements ElasticServiceInt
         } catch (BadRequest400Exception $e) {
             //already mapped
             return false;
-        } catch (\Throwable $e) { die('gfgf');
+        } catch (\Throwable $e) {
             // something is not right
             return false;
         }
@@ -133,9 +132,10 @@ class ElasticService extends AbstractElasticService implements ElasticServiceInt
         return true;
     }
 
-    /* Populate elastic
+    /**
+     * Populate elastic
      *
-     *
+     * @params array $data
      */
     public function populate(array $data = []) {
         // no schema validation
@@ -197,7 +197,8 @@ class ElasticService extends AbstractElasticService implements ElasticServiceInt
             
             // loop thru entries
             foreach ($entries as $entry) {
-                if (!$objectElastic->create($entry[$primary])) {
+                $create = $objectElastic->create($entry[$primary]);
+                if (!$create) {
                     // nothing to do
                     return false;
                 }
@@ -212,6 +213,26 @@ class ElasticService extends AbstractElasticService implements ElasticServiceInt
         
         $objectRedis->removeSearch();
         return true;
+    }
+    
+    /*
+     * Populate elastic
+     *
+     *
+     */
+    public function flush() {
+        // no schema validation
+        if(is_null($this->schema)) {
+            throw SystemException::forNoSchema();
+        }
+
+        // flush elastic schema
+        try {
+            $this->resource->indices()->delete(['index' => $this->schema->getName()]);
+            return true;
+        } catch(\Throwable $e) {
+            return false;
+        }
     }
     
     /**

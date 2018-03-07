@@ -401,6 +401,30 @@ $cradle->get('/admin/system/schema/elastic/populate/:name', function ($request, 
 });
 
 /**
+ * Flush elastic schema
+ *
+ * @param Request $request
+ * @param Response $response
+ */
+$cradle->get('/admin/system/schema/elastic/flush/:name', function ($request, $response) {
+    //----------------------------//
+    // 1. Route permissions
+    // only for admin
+    cradle('global')->requireLogin('admin');
+
+    $nextUrl = '/admin/system/schema/elastic/search';
+    cradle()->trigger('system-schema-flush-elastic', $request, $response);
+    // intercept error
+    if ($response->isError()) {
+        cradle('global')->flash($response->getMessage(), 'error');
+        cradle('global')->redirect($nextUrl);
+    }
+
+    cradle('global')->flash('Successfully flushed ' . $request->getStage('name') . '.', 'success');
+    cradle('global')->redirect($nextUrl);
+});
+
+/**
  * Process the Object Create Page
  *
  * @param Request $request
