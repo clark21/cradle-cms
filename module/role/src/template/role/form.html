@@ -23,6 +23,9 @@
                 class="form-control {{#if errors.role_name}}is-invalid{{/if}}"
                 placeholder="Super Admin"
                 name="role_name"
+                {{#when item.role_flag '==' '1'}}
+                readonly="readonly"
+                {{/when}}
                 value="{{item.role_name}}"
                 type="text">
             {{#if errors.role_name}}

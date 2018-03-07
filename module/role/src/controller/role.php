@@ -322,7 +322,20 @@ $cradle->get('/admin/role/remove/:role_id', function ($request, $response) {
 
     //----------------------------//
     // 2. Prepare Data
-    // no data to preapre
+    // trigger role detail
+    cradle()->trigger('role-detail', $request, $response);
+
+    // get role details
+    $data['item'] = $response->getResults();
+
+    // not removable
+    if($data['item']['role_flag'] == 1) {
+        //add a flash
+        cradle('global')->flash('Invalid Action', 'error');
+        //redirect
+        return cradle('global')->redirect('/admin/role/search');
+    }
+
     //----------------------------//
     // 3. Process Request
     cradle()->trigger('role-remove', $request, $response);
