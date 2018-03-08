@@ -751,7 +751,7 @@ jQuery(function($) {
 
             $.require([
                 'cdn/json/extensions.json',
-                'components/cropper/cropper.min.js'
+                'components/yarn-cropper/cropper.min.js'
             ], onAcquire);
         });
 
