@@ -21,9 +21,4 @@ return cradle()
     ->register('cblanquera/cradle-captcha')
     ->register('cradlephp/sink-faucet')
 
-    ->register('/module/auth')
-    ->register('/module/history')
-    ->register('/module/role')
-    ->register('/module/system')
-    ->register('/module/utility')
-    ->register('/module/article');
+    ->register('/module/system');

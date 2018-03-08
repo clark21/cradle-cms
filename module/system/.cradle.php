@@ -74,3 +74,41 @@ $cradle->preprocess(function($request, $response) {
         return cradle('global')->template($file, $data, $paths);
     });
 });
+
+/**
+ * Dynamic Module Loader.
+ * 
+ * @param \Cradle\Framework $cradle
+ * @return void
+ */
+(function($cradle) {
+    // get the modules path
+    $path = __DIR__ . '/../';
+
+    // scan the modules directory
+    $modules = scandir($path, 0);
+
+    // iterate on each modules
+    foreach($modules as $module) {
+        // skip some things ..
+        if ($module === '.' || $module === '..' || $module === '/') {
+            continue;
+        }
+
+        // system module?
+        if ($module === 'system') {
+            continue;
+        }
+
+        // initializer path
+        $initializer = sprintf('%s/%s/.cradle.php', $path, $module);
+
+        // does initializer exists?
+        if (!file_exists($initializer)) {
+            continue;
+        }
+
+        // register module namespace
+        $cradle->register(sprintf('/module/%s', $module));
+    }
+})($cradle);
