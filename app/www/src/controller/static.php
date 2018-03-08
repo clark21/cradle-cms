@@ -7,7 +7,6 @@
  * @param Response $response
  */
 $cradle->get('/', function ($request, $response) {
-    throw new Exception('Nooooooooooooooo!');
     //Prepare body
     $data = [];
 
