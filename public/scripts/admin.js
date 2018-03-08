@@ -1139,7 +1139,7 @@ jQuery(function($) {
          */
         $(window).on('icon-field-init', function(e, target) {
             $.require('cdn/json/icons.json', function(icons) {
-                var target = $(target);
+                target = $(target);
 
                 var targetLevel = parseInt(target.attr('data-target-parent')) || 0;
 
