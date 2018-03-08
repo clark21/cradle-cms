@@ -19,7 +19,7 @@
     "select2": "^4.0.6-rc.1",
     "toastr": "^2.1.4",
     "wysihtml": "^0.6.0-beta1",
-    "yarn-acquire": "^0.0.7",
+    "yarn-acquire": "^0.0.8",
     "yarn-cropper": "^0.0.1"
   },
   "scripts": {

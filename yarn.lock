@@ -227,9 +227,9 @@ yargs@~3.10.0:
     decamelize "^1.0.0"
     window-size "0.1.0"
 
-yarn-acquire@^0.0.7:
-  version "0.0.7"
-  resolved "https://registry.yarnpkg.com/yarn-acquire/-/yarn-acquire-0.0.7.tgz#99b658fb0588fe123d3220582b700ebd7cf11c13"
+yarn-acquire@^0.0.8:
+  version "0.0.8"
+  resolved "https://registry.yarnpkg.com/yarn-acquire/-/yarn-acquire-0.0.8.tgz#13294aafb155ad7ec23ba5cdfd2ba4c94a4c8a34"
 
 yarn-cropper@^0.0.1:
   version "0.0.1"
