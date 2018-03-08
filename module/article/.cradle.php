@@ -19,7 +19,7 @@ $cradle->preprocess(function($request, $response) {
         cradle()->trigger('system-module-install', $request, $response);
 
         // do module specific actions
-        $response->setError(false, 'Article Module Installed');
+        $response->setError(false, 'Article module has been successfully installed/updated');
     })
 
     /**
@@ -33,6 +33,6 @@ $cradle->preprocess(function($request, $response) {
         cradle()->trigger('system-module-uninstall', $request, $response);
 
         // do module specific actions
-        $response->setError(false, 'Article Module Uninstalled');
+        $response->setError(false, 'Article module has been successfully uninstalled');
     });
 });
