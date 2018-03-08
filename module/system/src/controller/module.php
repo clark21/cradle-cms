@@ -44,7 +44,7 @@ $cradle->get('/admin/system/module/search', function ($request, $response) {
     $configurable = [];
 
     // iterate on each modules
-    foreach($modules as $module) {
+    foreach ($modules as $module) {
         if ($module == '.' || $module == '..') {
             continue;
         }
@@ -161,7 +161,7 @@ $cradle->get('/admin/system/module/search', function ($request, $response) {
 
 /**
  * Process the System Module Install Page
- * 
+ *
  * @param Request $request
  * @param Response $response
  */
@@ -181,7 +181,7 @@ $cradle->get('/admin/system/module/install/:name', function ($request, $response
     try {
         // load module init file
         $module = cradle(sprintf('/module/%s', $request->getStage('name')));
-    } catch(Cradle\Resolver\ResolverException $e) {
+    } catch (Cradle\Resolver\ResolverException $e) {
         // set flash
         cradle('global')->flash('Module does not exists', 'error');
 
@@ -234,7 +234,7 @@ $cradle->get('/admin/system/module/install/:name', function ($request, $response
 
 /**
  * Process the System Module Uninstall Page
- * 
+ *
  * @param Request $request
  * @param Response $response
  */
@@ -254,7 +254,7 @@ $cradle->get('/admin/system/module/uninstall/:name', function ($request, $respon
     try {
         // load module init file
         $module = cradle(sprintf('/module/%s', $request->getStage('name')));
-    } catch(Cradle\Resolver\ResolverException $e) {
+    } catch (Cradle\Resolver\ResolverException $e) {
         // set flash
         cradle('global')->flash('Module does not exists', 'error');
 

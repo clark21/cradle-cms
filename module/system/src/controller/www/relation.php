@@ -224,12 +224,12 @@ $cradle->get('/system/object/:schema1/:id1/unlink/:schema2/:id2', function ($req
 $cradle->get('/system/object/:schema1/:id/export/:schema2/:type', function ($request, $response) {
     //----------------------------//
     $route = sprintf(
-            '/admin/system/object/%s/%s/export/%s/%s',
-            $request->getStage('schema1'),
-            $request->getStage('id'),
-            $request->getStage('schema2'),
-            $request->getStage('type')
-        );
+        '/admin/system/object/%s/%s/export/%s/%s',
+        $request->getStage('schema1'),
+        $request->getStage('id'),
+        $request->getStage('schema2'),
+        $request->getStage('type')
+    );
 
     //now let the original search take over
     cradle()->triggerRoute(

@@ -33,7 +33,7 @@ $cradle->package('/app/www')->addMethod('template', function ($file, array $data
         $path = str_replace('_', '/', $partial);
         $last = strrpos($path, '/');
 
-        if($last !== false) {
+        if ($last !== false) {
             $path = substr_replace($path, '/_', $last, 1);
         }
 

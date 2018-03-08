@@ -147,42 +147,42 @@ $handlebars->registerHelper('formula', function ($template, $variables = []) {
 
 /**
  * Formats the given number to it's short form
- * 
+ *
  * Based of: https://gist.github.com/RadGH/84edff0cc81e6326029c
- * 
+ *
  * @param *string number
  * @param *int precision
  */
 $handlebars->registerHelper('number_format_short', function ($number, $precision = 1) {
     if ($number < 900) {
-		// 0 - 900
-		$number_format = number_format($number, $precision);
-		$suffix = '';
-	} else if ($number < 900000) {
-		// 0.9k-850k
-		$number_format = number_format($number / 1000, $precision);
-		$suffix = 'K';
-	} else if ($number < 900000000) {
-		// 0.9m-850m
-		$number_format = number_format($number / 1000000, $precision);
-		$suffix = 'M';
-	} else if ($number < 900000000000) {
-		// 0.9b-850b
-		$number_format = number_format($number / 1000000000, $precision);
-		$suffix = 'B';
-	} else {
-		// 0.9t+
-		$number_format = number_format($number / 1000000000000, $precision);
-		$suffix = 'T';
+        // 0 - 900
+        $number_format = number_format($number, $precision);
+        $suffix = '';
+    } else if ($number < 900000) {
+        // 0.9k-850k
+        $number_format = number_format($number / 1000, $precision);
+        $suffix = 'K';
+    } else if ($number < 900000000) {
+        // 0.9m-850m
+        $number_format = number_format($number / 1000000, $precision);
+        $suffix = 'M';
+    } else if ($number < 900000000000) {
+        // 0.9b-850b
+        $number_format = number_format($number / 1000000000, $precision);
+        $suffix = 'B';
+    } else {
+        // 0.9t+
+        $number_format = number_format($number / 1000000000000, $precision);
+        $suffix = 'T';
     }
     
     // Remove unecessary zeroes after decimal. "1.0" -> "1"; "1.00" -> "1"
     // Intentionally does not affect partials, eg "1.50" -> "1.50"
-	if ($precision > 0) {
-		$dotzero  = '.' . str_repeat('0', $precision);
-		$number_format = str_replace($dotzero, '', $number_format);
-	}
-	return $number_format . $suffix;
+    if ($precision > 0) {
+        $dotzero  = '.' . str_repeat('0', $precision);
+        $number_format = str_replace($dotzero, '', $number_format);
+    }
+    return $number_format . $suffix;
 });
 
 /* Date Helpers

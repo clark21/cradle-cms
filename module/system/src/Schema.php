@@ -334,7 +334,7 @@ class Schema extends Registry
             }
 
             //case for getting a specific relation
-            if(!is_numeric($many) && $relation['name'] !== $many) {
+            if (!is_numeric($many) && $relation['name'] !== $many) {
                 continue;
             }
 
@@ -366,7 +366,7 @@ class Schema extends Registry
             }
 
             //case for getting a specific relation
-            if(!is_numeric($many) && $relation['name'] === $many) {
+            if (!is_numeric($many) && $relation['name'] === $many) {
                 return $results[$name];
             }
         }

@@ -352,7 +352,7 @@ class SqlService
 
         //get 1:N reverse relations
         $relations = $this->schema->getReverseRelations(2);
-        foreach($relations as $table => $relation) {
+        foreach ($relations as $table => $relation) {
             //deal with post_post at a later time
             if ($relation['source']['name'] === $relation['name']) {
                 continue;
@@ -371,7 +371,7 @@ class SqlService
 
         //get N:N reverse relations
         $relations = $this->schema->getReverseRelations(3);
-        foreach($relations as $table => $relation) {
+        foreach ($relations as $table => $relation) {
             //deal with post_post at a later time
             if ($relation['source']['name'] === $relation['name']) {
                 continue;
@@ -391,7 +391,7 @@ class SqlService
         //now deal with post_post
         $circular = $this->schema->getRelations($this->schema->getName());
         //if there is a post_post and they are trying to filter by it
-        if(!empty($circular) && isset($filter[$circular['primary']])) {
+        if (!empty($circular) && isset($filter[$circular['primary']])) {
             //they mean to filter by the parent
             $filter[$circular['primary1']] = $filter[$circular['primary']];
 

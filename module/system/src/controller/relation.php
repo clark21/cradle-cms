@@ -29,13 +29,13 @@ $cradle->get('/admin/system/object/:schema1/:id/search/:schema2', function ($req
     $relation = $schema->getRelations($request->getStage('schema2'));
 
     //if no relation
-    if(empty($relation)) {
+    if (empty($relation)) {
         //try the other way around
         $schema = SystemSchema::i($request->getStage('schema2'));
         $relation = $schema->getRelations($request->getStage('schema1'));
     }
 
-    if(empty($relation) || $relation['many'] < 2) {
+    if (empty($relation) || $relation['many'] < 2) {
         $redirect = sprintf(
             '/admin/system/object/%s/search',
             $request->getStage('schema1')
@@ -476,7 +476,7 @@ $cradle->post('/admin/system/object/:schema1/:id/link/:schema2', function ($requ
     $relation = $schema->getRelations($request->getStage('schema2'));
 
     //if no relation
-    if(empty($relation)) {
+    if (empty($relation)) {
         //try the other way around
         $schema = SystemSchema::i($request->getStage('schema2'));
         $relation = $schema->getRelations($request->getStage('schema1'));
@@ -588,7 +588,7 @@ $cradle->get('/admin/system/object/:schema1/:id1/link/:schema2/:id2', function (
     $relation = $schema->getRelations($request->getStage('schema2'));
 
     //if no relation
-    if(empty($relation)) {
+    if (empty($relation)) {
         //try the other way around
         $schema = SystemSchema::i($request->getStage('schema2'));
         $relation = $schema->getRelations($request->getStage('schema1'));
@@ -671,7 +671,7 @@ $cradle->get('/admin/system/object/:schema1/:id1/unlink/:schema2/:id2', function
     $relation = $schema->getRelations($request->getStage('schema2'));
 
     //if no relation
-    if(empty($relation)) {
+    if (empty($relation)) {
         //try the other way around
         $schema = SystemSchema::i($request->getStage('schema2'));
         $relation = $schema->getRelations($request->getStage('schema1'));

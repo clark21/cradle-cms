@@ -6,8 +6,6 @@
     <file>module/history/src</file>
     <file>module/role/src</file>
     <file>module/system/src</file>
-    <file>module/user/src</file>
-    <file>module/utility/src</file>
 
     <file>app/admin/src</file>
     <file>app/api/src</file>

@@ -18,7 +18,7 @@ $handlebars->registerHelper('relations', function (...$args) {
         $relations = Schema::i($schema)->getRelations($many);
     }
 
-    if(!is_numeric($many) && count($relations)) {
+    if (!is_numeric($many) && count($relations)) {
         $table = $relations['table'];
         $relations = [$table => $relations];
     }
@@ -58,7 +58,7 @@ $handlebars->registerHelper('format', function ($schema, $row, $type, $options) 
         if (!isset($row[$name])) {
             $format['value'] = null;
         } else {
-            $format['value'] = $row[$name];            
+            $format['value'] = $row[$name];
         }
 
         $format['this'] = $format;

@@ -17,7 +17,7 @@ use Cradle\Module\Role\Service as RoleService;
  */
 $cradle->on('auth-detail', function ($request, $response) {
     //if the auth-detail from auth returned an error
-    if($response->isError()) {
+    if ($response->isError()) {
         //do nothing
         return;
     }

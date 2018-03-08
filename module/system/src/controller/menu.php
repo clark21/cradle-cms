@@ -75,7 +75,7 @@ $cradle->post('/admin/system/menu', function ($request, $response) {
     $item = [];
 
     // set item
-    if($request->getPost('item')) {
+    if ($request->getPost('item')) {
         $item = $request->getPost('item');
     }
 

@@ -480,7 +480,7 @@ class SqlService
 
     /**
      * Returns all the table record count
-     * 
+     *
      * @return array
      */
     public function getSchemaTableRecordCount($schema = null)

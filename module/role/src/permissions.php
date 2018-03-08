@@ -45,4 +45,4 @@
         'method'    => 'get',
         'path'      => '/admin/system/object/%s/export/*'
     ]
-];
+ ];

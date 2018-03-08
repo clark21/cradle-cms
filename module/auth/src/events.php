@@ -79,7 +79,7 @@ $cradle->on('auth-create', function ($request, $response) {
         $authSql->linkUser($results['auth_id'], $data['user_id']);
     } else {
         //create user
-        if(!$request->getStage('user_name')) {
+        if (!$request->getStage('user_name')) {
             // set user name
             $request->setStage('user_name', $request->getStage('auth_slug'));
         }
@@ -694,7 +694,7 @@ $cradle->on('auth-update', function ($request, $response) {
     //save auth to database
     $results = $authSql->update($data);
 
-    if(isset($data['user_id'])) {
+    if (isset($data['user_id'])) {
         $request->setStage('schema', 'user');
         cradle()->trigger('system-object-update', $request, $response);
     }

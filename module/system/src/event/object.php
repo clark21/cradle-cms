@@ -690,7 +690,7 @@ $cradle->on('system-object-link', function ($request, $response) {
     $relation = $schema->getRelations($data['schema2']);
 
     //if no relation
-    if(empty($relation)) {
+    if (empty($relation)) {
         //try the other way around
         $schema = SystemSchema::i($data['schema2']);
         $relation = $schema->getRelations($data['schema1']);
@@ -759,7 +759,7 @@ $cradle->on('system-object-unlink', function ($request, $response) {
     $relation = $schema->getRelations($data['schema2']);
 
     //if no relation
-    if(empty($relation)) {
+    if (empty($relation)) {
         //try the other way around
         $schema = SystemSchema::i($data['schema2']);
         $relation = $schema->getRelations($data['schema1']);

@@ -47,7 +47,7 @@ $cradle->on('object-permission-make', function ($request, $response) {
 
     $lists = [];
     // loop all permissions
-    foreach($permissions as $permission) {
+    foreach ($permissions as $permission) {
         // format label
         $label = sprintf($permission['label'], ucwords($data['name']));
 
@@ -55,7 +55,7 @@ $cradle->on('object-permission-make', function ($request, $response) {
         $key = array_search($label, array_column($results['permissions'], 'label'));
 
         // continue if has key
-        if(is_int($key)) {
+        if (is_int($key)) {
             continue;
         }
 
@@ -122,7 +122,7 @@ $cradle->on('object-permission-remove', function ($request, $response) {
     $permissionLabels = [];
 
     // loop all permissions
-    foreach($permissions as $permission) {
+    foreach ($permissions as $permission) {
         // format label
         $label = sprintf($permission['label'], ucwords($data['name']));
 
@@ -132,7 +132,7 @@ $cradle->on('object-permission-remove', function ($request, $response) {
         $key = array_search($label, array_column($results['permissions'], 'label'));
 
         // unset permissions if has key
-        if(is_int($key)) {
+        if (is_int($key)) {
             unset($results['permissions'][$key]);
             $results['permissions'] = array_values($results['permissions']);
         };

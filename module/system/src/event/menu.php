@@ -9,7 +9,7 @@
 
 /**
  * Menu Get Record Count Job
- * 
+ *
  * @param Request $request
  * @param Response $response
  */
@@ -25,18 +25,19 @@ $cradle->on('menu-get-record-count', function ($request, $response) {
         ->getSchemaTableRecordCount($schema);
 
     // map navigation
-    function map_navigation($navigation, $recordCount) {
+    function map_navigation($navigation, $recordCount)
+    {
         // iterate on each navigation
-        foreach($navigation as $key => $value) {
+        foreach ($navigation as $key => $value) {
             // do we have child navigation?
-            if (isset($value['children']) 
+            if (isset($value['children'])
             && is_array($value['children'])) {
                 // recurse through child navigations
                 $navigation[$key]['children'] = map_navigation($value['children'], $recordCount);
             }
 
             // iterate on each record count
-            foreach($recordCount as $count) {
+            foreach ($recordCount as $count) {
                 // build out the criteria
                 $criteria = sprintf('/%s/search', $count['table_name']);
 

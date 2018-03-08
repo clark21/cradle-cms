@@ -12,7 +12,7 @@ use Cradle\Sink\Faucet\Installer as ModuleInstaller;
 
 /**
  * System Module Install Job
- * 
+ *
  * @param Request $request
  * @param Response $response
  */
@@ -43,7 +43,7 @@ $cradle->on('system-module-install', function ($request, $response) {
     try {
         // execute installer
         ModuleInstaller::install($module);
-    } catch(\Exception $e) {
+    } catch (\Exception $e) {
         // set error
         return $response->setError(true, 'Unable to install module');
     }
@@ -51,7 +51,7 @@ $cradle->on('system-module-install', function ($request, $response) {
 
 /**
  * System Module Uninstall Job
- * 
+ *
  * @param Request $request
  * @param Response $request
  */
@@ -103,7 +103,7 @@ $cradle->on('system-module-uninstall', function ($request, $response) {
 
         $executables[] = [
             'script' => sprintf(
-                '%s/%s', 
+                '%s/%s',
                 $uninstall,
                 $file
             ),
@@ -157,12 +157,12 @@ $cradle->on('system-module-uninstall', function ($request, $response) {
 
 /**
  * System Module Versions Job
- * 
+ *
  * Returns the valid list of module
  * version history in descending order.
- * This is based at the getNextVersion 
+ * This is based at the getNextVersion
  * function of the Faucet\Installer class.
- * 
+ *
  * @param Request $request
  * @param Response $response
  */
@@ -176,7 +176,7 @@ $cradle->on('system-module-versions', function ($request, $response) {
     $install = $root . '/' . $module . '/install';
 
     //if there is no install
-    if(!is_dir($install)) {
+    if (!is_dir($install)) {
         return '0.0.1';
     }
 
