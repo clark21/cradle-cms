@@ -156,8 +156,6 @@ $cradle->on('object-permission-remove', function ($request, $response) {
         var_export($results['permissions'], true) . ';'
     );
 
-    cradle()->trigger('role-permission-update', $request, $response);
-
     //return response format
     $response->setError(false)->setResults([
         'rows' => $results['permissions'],

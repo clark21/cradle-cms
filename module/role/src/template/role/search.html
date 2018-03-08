@@ -45,7 +45,7 @@
                 </thead>
                 <tbody>
                     {{#each rows}}
-                        <tr data-id="{{role_id}}" {{#when role_id '==' '1'}}class="table-info"{{/when}}>
+                        <tr data-id="{{role_id}}" {{#when role_id '===' '1'}}class="table-info"{{/when}}>
                             <td>
                                 {{#if ../filter.role_active}}
                                     <a class="text-info" title="Edit" href="/admin/role/update/{{role_id}}">

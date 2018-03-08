@@ -33,9 +33,16 @@ $cradle->get('/admin/permission/search', function ($request, $response) {
 
     // check if file
     if (!is_file($path)) {
+        $permission[] = [
+            'label' => 'Front End Access',
+            'method' => 'all',
+            'path' => '(?!/admin)/**'
+        ];
+
         file_put_contents(
             $path,
-            '<?php //-->' . "\n return [];"
+            '<?php //-->' . "\n return " .
+            var_export($permission, true) . ';'
         );
     }
 

@@ -54,14 +54,6 @@ $cradle->on('system-schema-create', function ($request, $response) {
 
     //----------------------------//
     // 4. Process Data
-
-    $objectRequest = Request::i()
-        ->setStage('name', $data['name']);
-
-    $objectResponse = Response::i()->load();
-
-    cradle()->trigger('object-permission-make', $objectRequest, $objectResponse);
-
     $schema = SystemSchema::i($data);
     $table = $schema->getName();
 
@@ -150,13 +142,6 @@ $cradle->on('system-schema-remove', function ($request, $response) {
 
     //----------------------------//
     // 4. Process Data
-    $objectRequest = Request::i()
-        ->setStage('name', $data['name']);
-
-    $objectResponse = Response::i()->load();
-
-    cradle()->trigger('object-permission-remove', $objectRequest, $objectResponse);
-
     $schema = SystemSchema::i($data);
     $table = $schema->getName();
     //this/these will be used a lot
@@ -211,13 +196,6 @@ $cradle->on('system-schema-restore', function ($request, $response) {
 
     //----------------------------//
     // 4. Process Data
-    $objectRequest = Request::i()
-        ->setStage('name', $data['name']);
-
-    $objectResponse = Response::i()->load();
-
-    cradle()->trigger('object-permission-make', $objectRequest, $objectResponse);
-
     $schema = SystemSchema::i($data);
     $table = $schema->getName();
     //this/these will be used a lot
@@ -351,12 +329,6 @@ $cradle->on('system-schema-update', function ($request, $response) {
 
     //----------------------------//
     // 4. Process Data
-    $objectRequest = Request::i()
-        ->setStage('name', $data['name']);
-
-    $objectResponse = Response::i()->load();
-
-    cradle()->trigger('object-permission-make', $objectRequest, $objectResponse);
 
     $schema = SystemSchema::i($data);
     $table = $schema->getName();
