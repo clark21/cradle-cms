@@ -305,7 +305,7 @@ $cradle->get('/admin/system/schema/elastic/search', function ($request, $respons
     //----------------------------//
     // 3. Render Template
     $class = 'page-admin-system-schema-search page-admin';
-    $data['title'] = cradle('global')->translate('System Elastic');
+    $data['title'] = cradle('global')->translate('System Elastic Schema');
     $body = cradle('/module/system')->template('elastic/search', $data);
 
     //set content
