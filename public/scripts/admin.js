@@ -1598,6 +1598,24 @@ jQuery(function($) {
     })();
 
     /**
+     * Admin Theme Top
+     */
+    (function() {
+        $('body.theme-top aside.sidebar div.show').removeClass('show');
+        $('body.theme-top aside.sidebar a[data-toggle="collapse"]').click(function() {
+            var trigger = this;
+            $('body.theme-top aside.sidebar > ul.nav > li.nav-item').each(function() {
+                console.log('clack')
+                if($.contains(this, trigger)) {
+                    return;
+                }
+
+                $('div.show', this).removeClass('show');
+            })
+        });
+    })();
+
+    /**
      * Initialize
      */
     (function() {
