@@ -15,7 +15,7 @@
  * @param Throwable $error
  */
 $cradle->error(function ($request, $response, $error) {
-    return;
+    // return;
     //if this error has already been handled
     if ($response->hasContent()) {
         return;
@@ -38,7 +38,7 @@ $cradle->error(function ($request, $response, $error) {
             ->setPage('class', $class)
             ->setContent($body);
 
-        $this->trigger('render-web-page', $request, $response);
+        $this->trigger('render-www-blank', $request, $response);
 
         return true;
     }
@@ -55,7 +55,7 @@ $cradle->error(function ($request, $response, $error) {
             ->setPage('class', $class)
             ->setContent($body);
 
-        $this->trigger('render-web-page', $request, $response);
+        $this->trigger('render-www-blank', $request, $response);
 
         if (!isset($config['error_email'])
             || $config['error_email'] === '<EMAIL ADDRESS>'
