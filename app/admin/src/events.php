@@ -52,13 +52,22 @@ $cradle->on('render-admin-page', function ($request, $response) {
     // get navigation
     $navigation = $menuRecordResponse->getResults();
 
+    //path
+    $path = $request->getPath('string');
+    if (strpos($path, '?') !== false) {
+        $path = substr($path, 0, strpos($path, '?'));
+    }
+
+    $response->addMeta('path', $path);
+
     $content = cradle('/app/admin')->template(
         '_page',
         array(
             'page' => $response->getPage(),
             'results' => $response->getResults(),
             'content' => $response->getContent(),
-            'navigation' => $navigation
+            'navigation' => $navigation,
+            'i18n' => $request->getSession('i18n')
         ),
         array(
             'head',
