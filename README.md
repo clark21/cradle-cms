@@ -1,3 +1,7 @@
+```
+DEVELOPMENT MODE: Cradle OMS is in development and has not passed testing. We do not recommend using this in live environments. If you would [like to contribute](#contribute) please read on.
+```
+
 # All the Back End You'll Ever Need
 
 **Cradle** is a feature rich, modern admin builder. Build apps faster. Developer friendly. Open Source.
@@ -109,3 +113,24 @@ Carefully chosen agnostic technologies that can be used with any major server st
 - [Doon](https://github.com/cblanquera/doon)
 - [WYSIHTML](http://wysihtml.com/)
 - [Acquire](https://github.com/cblanquera/acquire)
+
+<a name="#contribute"></a>
+## Contributing to Cradle
+
+Thank you for considering to contribute to Cradle. Before contributing, please [read the CradlePHP docs](https://cradle.github.io).
+
+Bug fixes will be reviewed as soon as possible. Minor features will also be considered, but give me time to review it and get back to you. Major features will **only** be considered on the `master` branch.
+
+1. Fork the Repository.
+2. Fire up your local terminal and switch to the version you would like to
+contribute to.
+3. Make your changes.
+4. Always make sure to sign-off (-s) on all commits made (git commit -s -m "Commit message")
+
+## Making pull requests
+
+1. Please ensure to run [phpunit](https://phpunit.de/) and
+[phpcs](https://github.com/squizlabs/PHP_CodeSniffer) before making a pull request.
+2. Push your code to your remote forked version.
+3. Go back to your forked version on GitHub and submit a pull request.
+4. All pull requests will be passed to [Travis CI](https://travis-ci.org/CradlePHP/framework) to be tested. Also note that [Coveralls](https://coveralls.io/github/CradlePHP/framework) is also used to analyze the coverage of your contribution.
