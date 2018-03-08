@@ -1003,7 +1003,7 @@ $cradle->post('/admin/system/object/:schema/import', function ($request, $respon
         return $response->setContent(json_encode([
             'error' => true,
             'message' => $response->getMessage(),
-            'errores' => $errors
+            'errors' => $errors
         ]));
     }
 

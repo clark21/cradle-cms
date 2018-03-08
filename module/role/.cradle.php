@@ -75,7 +75,7 @@ $cradle->package('/module/role')->addMethod('hasPermissions', function($request,
     }
 
     // process router
-    $router->process($request, $response);
+    $router->process($request, $response, 1);
 
     //let's interpret the results
     if(!$router->getEventHandler()->getMeta()) {
