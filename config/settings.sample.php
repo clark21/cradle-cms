@@ -1,6 +1,6 @@
 <?php //-->
 return array(
-    'enviroment' => 'dev',
+    'environment' => 'dev',
     'debug_mode' => E_ALL,
     'server_timezone' => 'GMT',
     'error_email' => '<EMAIL ADDRESS>',

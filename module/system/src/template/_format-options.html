@@ -1,20 +1,20 @@
-<option value="none">No Filter</option>
+<option value="none"{{#when format '===' 'none'}} selected{{/when}}>No Filter</option>
 <optgroup class="filter-group-string" label="String Filters">
     <option
         value="lower"
-        {{#when list.format '===' 'lower'}}selected{{/when}}
+        {{#when format '===' 'lower'}}selected{{/when}}
     >
         Lower Case
     </option>
     <option
         value="upper"
-        {{#when list.format '===' 'upper'}}selected{{/when}}
+        {{#when format '===' 'upper'}}selected{{/when}}
     >
         Upper Case
     </option>
     <option
         value="capital"
-        {{#when list.format '===' 'capital'}}selected{{/when}}
+        {{#when format '===' 'capital'}}selected{{/when}}
     >
         Capitalize
     </option>
@@ -22,7 +22,7 @@
         data-fieldset="input"
         data-placeholder="How many characters"
         value="length"
-        {{#when list.format '===' 'length'}}selected{{/when}}
+        {{#when format '===' 'length'}}selected{{/when}}
     >
         Character Length
     </option>
@@ -30,7 +30,7 @@
         data-fieldset="input"
         data-placeholder="How many words"
         value="words"
-        {{#when list.format '===' 'words'}}selected{{/when}}
+        {{#when format '===' 'words'}}selected{{/when}}
     >
         Word Length
     </option>
@@ -38,19 +38,19 @@
 <optgroup class="filter-group-number" label="Number Filters">
     <option
         value="number"
-        {{#when list.format '===' 'number'}}selected{{/when}}
+        {{#when format '===' 'number'}}selected{{/when}}
     >
         Comma Format
     </option>
     <option
         value="price"
-        {{#when list.format '===' 'price'}}selected{{/when}}
+        {{#when format '===' 'price'}}selected{{/when}}
     >
         Price Format
     </option>
     <option
         value="yes"
-        {{#when list.format '===' 'yes'}}selected{{/when}}
+        {{#when format '===' 'yes'}}selected{{/when}}
     >
         Yes/No
     </option>
@@ -60,7 +60,7 @@
         data-fieldset="input"
         data-placeholder="Date Format"
         value="date"
-        {{#when list.format '===' 'date'}}selected{{/when}}
+        {{#when format '===' 'date'}}selected{{/when}}
     >
         Date Format
     </option>
@@ -68,7 +68,7 @@
         data-fieldset="input"
         data-placeholder="Date Format"
         value="relative"
-        {{#when list.format '===' 'relative'}}selected{{/when}}
+        {{#when format '===' 'relative'}}selected{{/when}}
     >
         Relative Format
     </option>
@@ -78,7 +78,7 @@
         data-fieldset="input"
         data-placeholder="Allowed Tags ie: <a><b><i>..."
         value="strip"
-        {{#when list.format '===' 'strip'}}selected{{/when}}
+        {{#when format '===' 'strip'}}selected{{/when}}
     >
         Strip HTML
     </option>
@@ -87,7 +87,7 @@
         data-placeholder-1="Label or {value}"
         data-placeholder-2="ie. /node/{node_id}"
         value="link"
-        {{#when list.format '===' 'link'}}selected{{/when}}
+        {{#when format '===' 'link'}}selected{{/when}}
     >
         Link
     </option>
@@ -96,7 +96,7 @@
         data-placeholder-1="Width"
         data-placeholder-2="Height"
         value="image"
-        {{#when list.format '===' 'image'}}selected{{/when}}
+        {{#when format '===' 'image'}}selected{{/when}}
     >
         Image
     </option>
@@ -104,7 +104,7 @@
         data-fieldset="input"
         data-placeholder="Label or {value}"
         value="email"
-        {{#when list.format '===' 'email'}}selected{{/when}}
+        {{#when format '===' 'email'}}selected{{/when}}
     >
         Email
     </option>
@@ -112,7 +112,7 @@
         data-fieldset="input"
         data-placeholder="Label or {value}"
         value="phone"
-        {{#when list.format '===' 'phone'}}selected{{/when}}
+        {{#when format '===' 'phone'}}selected{{/when}}
     >
         Phone
     </option>
@@ -120,19 +120,19 @@
 <optgroup class="filter-group-json" label="JSON Filters">
     <option
         value="comma"
-        {{#when list.format '===' 'comma'}}selected{{/when}}
+        {{#when format '===' 'comma'}}selected{{/when}}
     >
         Comma Separated
     </option>
     <option
         value="space"
-        {{#when list.format '===' 'space'}}selected{{/when}}
+        {{#when format '===' 'space'}}selected{{/when}}
     >
         Space Separated
     </option>
     <option
         value="tag"
-        {{#when list.format '===' 'tag'}}selected{{/when}}
+        {{#when format '===' 'tag'}}selected{{/when}}
     >
         Tags
     </option>
@@ -142,7 +142,7 @@
         data-fieldset="input"
         data-placeholder="({value_a} * {value_b}) / {value_c}"
         value="formula"
-        {{#when list.format '===' 'formula'}}selected{{/when}}
+        {{#when format '===' 'formula'}}selected{{/when}}
     >
         Formula
     </option>
@@ -150,12 +150,12 @@
         data-fieldset="input"
         data-placeholder="{\{user_first}} {\{user_last}}"
         value="custom"
-        {{#when list.format '===' 'formula'}}selected{{/when}}
+        {{#when format '===' 'custom'}}selected{{/when}}
     >
         Custom Format
     </option>
     <option
         value="hide"
-        {{#when list.format '===' 'hide'}}selected{{/when}}
+        {{#when format '===' 'hide'}}selected{{/when}}
     >Dont Show</option>
 </optgroup>
