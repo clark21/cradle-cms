@@ -1,4 +1,4 @@
-jQuery(function(require, $) {
+jQuery(function($) {
     /**
      * General Search
      */
@@ -148,7 +148,7 @@ jQuery(function(require, $) {
          * Importer init
          */
         $(window).on('import-init', function(e, trigger) {
-            require('components/papaparse/papaparse.min.js');
+            $.require('components/papaparse/papaparse.min.js');
         });
 
         /**
@@ -747,7 +747,7 @@ jQuery(function(require, $) {
                 });
             };
 
-            require([
+            $.require([
                 'cdn/json/extensions.json',
                 'components/cropper/cropper.min.js'
             ], onAcquire);
@@ -960,7 +960,7 @@ jQuery(function(require, $) {
          * Mask
          */
         $(window).on('mask-field-init', function(e, target) {
-            require(
+            $.require(
                 'components/inputmask/dist/min/jquery.inputmask.bundle.min.js',
                 function() {
                     var format = $(target).attr('data-format');
@@ -973,7 +973,7 @@ jQuery(function(require, $) {
          * Mask
          */
         $(window).on('knob-field-init', function(e, target) {
-            require(
+            $.require(
                 'components/jquery-knob/dist/jquery.knob.min.js',
                 function() {
                     $(target).knob();
@@ -985,7 +985,7 @@ jQuery(function(require, $) {
          * Select
          */
         $(window).on('select-field-init', function(e, target) {
-            require(
+            $.require(
                 [
                     'components/select2/dist/css/select2.min.css',
                     'components/select2/dist/js/select2.full.min.js'
@@ -1031,7 +1031,7 @@ jQuery(function(require, $) {
                 target.ionRangeSlider(params);
             };
 
-            require(
+            $.require(
                 [
                     'components/ion-rangeSlider/css/ion.rangeSlider.css',
                     'components/ion-rangeSlider/css/ion.rangeSlider.skinFlat.css',
@@ -1045,7 +1045,7 @@ jQuery(function(require, $) {
          * Date Field
          */
         $(window).on('date-field-init', function(e, target) {
-            require(
+            $.require(
                 [
                     'components/flatpickr/dist/flatpickr.min.css',
                     'components/flatpickr/dist/flatpickr.min.js'
@@ -1062,7 +1062,7 @@ jQuery(function(require, $) {
          * Time Field
          */
         $(window).on('time-field-init', function(e, target) {
-            require(
+            $.require(
                 [
                     'components/flatpickr/dist/flatpickr.min.css',
                     'components/flatpickr/dist/flatpickr.min.js'
@@ -1081,7 +1081,7 @@ jQuery(function(require, $) {
          * DateTime Field
          */
         $(window).on('datetime-field-init', function(e, target) {
-            require(
+            $.require(
                 [
                     'components/flatpickr/dist/flatpickr.min.css',
                     'components/flatpickr/dist/flatpickr.min.js'
@@ -1099,7 +1099,7 @@ jQuery(function(require, $) {
          * Date Range Field
          */
         $(window).on('date-range-field-init', function(e, target) {
-            require(
+            $.require(
                 [
                     'components/flatpickr/dist/flatpickr.min.css',
                     'components/flatpickr/dist/flatpickr.min.js'
@@ -1117,7 +1117,7 @@ jQuery(function(require, $) {
          * DateTime Range Field
          */
         $(window).on('datetime-range-field-init', function(e, target) {
-            require(
+            $.require(
                 [
                     'components/flatpickr/dist/flatpickr.min.css',
                     'components/flatpickr/dist/flatpickr.min.js'
@@ -1136,7 +1136,7 @@ jQuery(function(require, $) {
          * Icon field
          */
         $(window).on('icon-field-init', function(e, target) {
-            require('cdn/json/icons.json', function(icons) {
+            $.require('cdn/json/icons.json', function(icons) {
                 var target = $(target);
 
                 var targetLevel = parseInt(target.attr('data-target-parent')) || 0;
@@ -1210,7 +1210,7 @@ jQuery(function(require, $) {
          * Direct CDN Upload
          */
         $(window).on('cdn-upload-submit', function(e, target) {
-            require('cdn/json/extensions.json', function(extensions) {
+            $.require('cdn/json/extensions.json', function(extensions) {
                 //setup cdn configuration
                 var container = $(target);
                 var config = { form: {}, inputs: {} };
@@ -1526,7 +1526,7 @@ jQuery(function(require, $) {
                     listen(this).doon();
                 });
 
-            require('components/jquery-sortable/source/js/jquery-sortable-min.js', function() {
+            $.require('components/jquery-sortable/source/js/jquery-sortable-min.js', function() {
                 var root = $('ol.menu-builder-list:first');
 
                 root.sortable({
@@ -1611,7 +1611,7 @@ jQuery(function(require, $) {
         });
 
         //need to load dependencies
-        require(
+        $.require(
             [
                 'components/toastr/build/toastr.min.css',
                 'components/toastr/build/toastr.min.js'
@@ -1622,4 +1622,4 @@ jQuery(function(require, $) {
             }
         );
     })();
-}.bind(null, window.acquire));
+});
