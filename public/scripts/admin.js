@@ -148,7 +148,7 @@ jQuery(function(require, $) {
          * Importer init
          */
         $(window).on('import-init', function(e, trigger) {
-            require('system/papaparse');
+            require('components/papaparse/papaparse.min.js');
         });
 
         /**
@@ -571,7 +571,7 @@ jQuery(function(require, $) {
          * data-multiple="1"
          */
         $(window).on('file-field-init', function(e, target) {
-            var onAcquire = function() {
+            var onAcquire = function(extensions) {
                 var template = {
                     previewFile:
                         '<div class="file-field-preview-container">'
@@ -705,8 +705,8 @@ jQuery(function(require, $) {
                         }
 
                         //add mime type
-                        if(typeof mimeExtensions[file.type] !== 'string') {
-                            mimeExtensions[file.type] = extension;
+                        if(typeof extensions[file.type] !== 'string') {
+                            extensions[file.type] = extension;
                         }
                     };
                 };
@@ -747,7 +747,10 @@ jQuery(function(require, $) {
                 });
             };
 
-            require('system/cropper', onAcquire);
+            require([
+                'cdn/json/extensions.json',
+                'components/cropper/cropper.min.js'
+            ], onAcquire);
         });
 
         /**
@@ -821,11 +824,13 @@ jQuery(function(require, $) {
             + '</div>';
 
             require.load(
-                'system/wysihtml',
-                'system/wysihtml-commands',
-                'system/wysihtml-table',
-                'system/wysihtml-toolbar',
-                'system/wysihtml-parser',
+                [
+                    'components/wysihtml/dist/minified/wysihtml.min.js',
+                    'components/wysihtml/dist/minified/wysihtml.all-commands.min.js',
+                    'components/wysihtml/dist/minified/wysihtml.table_editing.min.js',
+                    'components/wysihtml/dist/minified/wysihtml.toolbar.min.js',
+                    'components/wysihtml/parser_rules/advanced_unwrap.js'
+                ],
                 function() {
                     var toolbar = $(template);
                     $(target).before(toolbar);
@@ -844,7 +849,7 @@ jQuery(function(require, $) {
          */
         $(window).on('code-editor-init', function(e, target) {
             require.load(
-                'system/ace/ace',
+                'components/ace-editor-builds/src/ace.js',
                 function() {
                     target = $(target);
 
@@ -888,9 +893,11 @@ jQuery(function(require, $) {
          */
         $(window).on('markdown-editor-init', function(e, target) {
             require.load(
-                '/styles/uncompressed/markdown.css',
-                'system/ace/ace',
-                'system/markdown.js',
+                [
+                    'components/bootstrap-markdown-editor-4/dist/css/bootstrap-markdown-editor.min.css',
+                    'components/ace-editor-builds/src/ace.js',
+                    'components/bootstrap-markdown-editor-4/dist/js/bootstrap-markdown-editor.min.js'
+                ],
                 function() {
                     target = $(target);
 
@@ -954,7 +961,7 @@ jQuery(function(require, $) {
          */
         $(window).on('mask-field-init', function(e, target) {
             require(
-                'system/mask',
+                'components/inputmask/dist/min/jquery.inputmask.bundle.min.js',
                 function() {
                     var format = $(target).attr('data-format');
                     $(target).inputmask(format);
@@ -967,7 +974,7 @@ jQuery(function(require, $) {
          */
         $(window).on('knob-field-init', function(e, target) {
             require(
-                'system/knob',
+                'components/jquery-knob/dist/jquery.knob.min.js',
                 function() {
                     $(target).knob();
                 }
@@ -979,7 +986,10 @@ jQuery(function(require, $) {
          */
         $(window).on('select-field-init', function(e, target) {
             require(
-                'system/select2',
+                [
+                    'components/select2/dist/css/select2.min.css',
+                    'components/select2/dist/js/select2.full.min.js'
+                ],
                 function() {
                     $(target).select2();
                 }
@@ -1022,7 +1032,11 @@ jQuery(function(require, $) {
             };
 
             require(
-                'system/ion',
+                [
+                    'components/ion-rangeSlider/css/ion.rangeSlider.css',
+                    'components/ion-rangeSlider/css/ion.rangeSlider.skinFlat.css',
+                    'components/ion-rangeSlider/js/ion.rangeSlider.min.js'
+                ],
                 onAcquire
             );
         });
@@ -1032,7 +1046,10 @@ jQuery(function(require, $) {
          */
         $(window).on('date-field-init', function(e, target) {
             require(
-                'system/flatpickr',
+                [
+                    'components/flatpickr/dist/flatpickr.min.css',
+                    'components/flatpickr/dist/flatpickr.min.js'
+                ],
                 function() {
                     $(target).flatpickr({
                         dateFormat: "Y-m-d",
@@ -1046,7 +1063,10 @@ jQuery(function(require, $) {
          */
         $(window).on('time-field-init', function(e, target) {
             require(
-                'system/flatpickr',
+                [
+                    'components/flatpickr/dist/flatpickr.min.css',
+                    'components/flatpickr/dist/flatpickr.min.js'
+                ],
                 function() {
                     $(target).flatpickr({
                         enableTime: true,
@@ -1062,7 +1082,10 @@ jQuery(function(require, $) {
          */
         $(window).on('datetime-field-init', function(e, target) {
             require(
-                'system/flatpickr',
+                [
+                    'components/flatpickr/dist/flatpickr.min.css',
+                    'components/flatpickr/dist/flatpickr.min.js'
+                ],
                 function() {
                     $(target).flatpickr({
                         enableTime: true,
@@ -1077,7 +1100,10 @@ jQuery(function(require, $) {
          */
         $(window).on('date-range-field-init', function(e, target) {
             require(
-                'system/flatpickr',
+                [
+                    'components/flatpickr/dist/flatpickr.min.css',
+                    'components/flatpickr/dist/flatpickr.min.js'
+                ],
                 function() {
                     $(target).flatpickr({
                         mode: "range",
@@ -1092,7 +1118,10 @@ jQuery(function(require, $) {
          */
         $(window).on('datetime-range-field-init', function(e, target) {
             require(
-                'system/flatpickr',
+                [
+                    'components/flatpickr/dist/flatpickr.min.css',
+                    'components/flatpickr/dist/flatpickr.min.js'
+                ],
                 function() {
                     $(target).flatpickr({
                         mode: "range",
@@ -1107,51 +1136,53 @@ jQuery(function(require, $) {
          * Icon field
          */
         $(window).on('icon-field-init', function(e, target) {
-            var target = $(target);
+            require('cdn/json/icons.json', function(icons) {
+                var target = $(target);
 
-            var targetLevel = parseInt(target.attr('data-target-parent')) || 0;
+                var targetLevel = parseInt(target.attr('data-target-parent')) || 0;
 
-            var suggestion = $('<div>')
-                .addClass('input-suggestion')
-                .addClass('icon-field')
-                .hide();
+                var suggestion = $('<div>')
+                    .addClass('input-suggestion')
+                    .addClass('icon-field')
+                    .hide();
 
-            var parent = target;
-            for(var i = 0; i < targetLevel; i++) {
-                parent = parent.parent();
-            }
+                var parent = target;
+                for(var i = 0; i < targetLevel; i++) {
+                    parent = parent.parent();
+                }
 
-            parent.after(suggestion);
+                parent.after(suggestion);
 
-            target.click(function() {
-                    suggestion.show();
-                })
-                .blur(function() {
-                    setTimeout(function() {
-                        suggestion.hide();
-                    }, 100);
+                target.click(function() {
+                        suggestion.show();
+                    })
+                    .blur(function() {
+                        setTimeout(function() {
+                            suggestion.hide();
+                        }, 100);
+                    });
+
+                icons.forEach(function(icon) {
+                    $('<i>')
+                        .addClass(icon)
+                        .addClass('fa-fw')
+                        .appendTo(suggestion)
+                        .click(function() {
+                            var input = target.parent().find('input').eq(0);
+                            input.val(this.className.replace(' fa-fw', ''));
+
+                            var preview = target.parent().find('i').eq(0);
+                            if(!preview.parent().hasClass('icon-suggestion')) {
+                                preview[0].className = this.className;
+                            }
+
+                            suggestion.hide();
+                            target.focus();
+                        });
                 });
 
-            icons.forEach(function(icon) {
-                $('<i>')
-                    .addClass(icon)
-                    .addClass('fa-fw')
-                    .appendTo(suggestion)
-                    .click(function() {
-                        var input = target.parent().find('input').eq(0);
-                        input.val(this.className.replace(' fa-fw', ''));
-
-                        var preview = target.parent().find('i').eq(0);
-                        if(!preview.parent().hasClass('icon-suggestion')) {
-                            preview[0].className = this.className;
-                        }
-
-                        suggestion.hide();
-                        target.focus();
-                    });
+                $('i', target.attr('data-target'));
             });
-
-            $('i', target.attr('data-target'));
         });
 
         /**
@@ -1179,171 +1210,173 @@ jQuery(function(require, $) {
          * Direct CDN Upload
          */
         $(window).on('cdn-upload-submit', function(e, target) {
-            //setup cdn configuration
-            var container = $(target);
-            var config = { form: {}, inputs: {} };
+            require('cdn/json/extensions.json', function(extensions) {
+                //setup cdn configuration
+                var container = $(target);
+                var config = { form: {}, inputs: {} };
 
-            //though we upload this with s3 you may be using cloudfront
-            config.cdn = container.attr('data-cdn');
-            config.progress = container.attr('data-progress');
-            config.complete = container.attr('data-complete');
+                //though we upload this with s3 you may be using cloudfront
+                config.cdn = container.attr('data-cdn');
+                config.progress = container.attr('data-progress');
+                config.complete = container.attr('data-complete');
 
-            //form configuration
-            config.form['enctype'] = container.attr('data-enctype');
-            config.form['method'] = container.attr('data-method');
-            config.form['action'] = container.attr('data-action');
+                //form configuration
+                config.form['enctype'] = container.attr('data-enctype');
+                config.form['method'] = container.attr('data-method');
+                config.form['action'] = container.attr('data-action');
 
-            //inputs configuration
-            config.inputs['acl'] = container.attr('data-acl');
-            config.inputs['key'] = container.attr('data-key');
-            config.inputs['X-Amz-Credential'] = container.attr('data-credential');
-            config.inputs['X-Amz-Algorithm'] = container.attr('data-algorythm');
-            config.inputs['X-Amz-Date'] = container.attr('data-date');
-            config.inputs['Policy'] = container.attr('data-policy');
-            config.inputs['X-Amz-Signature'] = container.attr('data-signature');
+                //inputs configuration
+                config.inputs['acl'] = container.attr('data-acl');
+                config.inputs['key'] = container.attr('data-key');
+                config.inputs['X-Amz-Credential'] = container.attr('data-credential');
+                config.inputs['X-Amz-Algorithm'] = container.attr('data-algorythm');
+                config.inputs['X-Amz-Date'] = container.attr('data-date');
+                config.inputs['Policy'] = container.attr('data-policy');
+                config.inputs['X-Amz-Signature'] = container.attr('data-signature');
 
-            var id = 0,
-                // /upload/123abc for example
-                prefix = config.inputs.key,
-                //the total of files to be uploaded
-                total = 0,
-                //the amount of uploads complete
-                completed = 0;
+                var id = 0,
+                    // /upload/123abc for example
+                    prefix = config.inputs.key,
+                    //the total of files to be uploaded
+                    total = 0,
+                    //the amount of uploads complete
+                    completed = 0;
 
-            //hiddens will have base 64
-            $('input[type="hidden"]', target).each(function() {
-                var hidden = $(this);
-                var data = hidden.val();
-                //check for base 64
-                if(data.indexOf(';base64,') === -1) {
+                //hiddens will have base 64
+                $('input[type="hidden"]', target).each(function() {
+                    var hidden = $(this);
+                    var data = hidden.val();
+                    //check for base 64
+                    if(data.indexOf(';base64,') === -1) {
+                        return;
+                    }
+
+                    //parse out the base 64 so we can make a file
+                    var base64 = data.split(';base64,');
+                    var mime = base64[0].split(':')[1];
+
+                    var extension = extensions[mime] || 'unknown';
+                    //this is what hidden will be assigned to when it's uploaded
+                    var path = prefix + (++id) + '.' + extension;
+
+                    //EPIC: Base64 to File Object
+                    var byteCharacters = window.atob(base64[1]);
+                    var byteArrays = [];
+
+                    for (var offset = 0; offset < byteCharacters.length; offset += 512) {
+                        var slice = byteCharacters.slice(offset, offset + 512);
+
+                        var byteNumbers = new Array(slice.length);
+
+                        for (var i = 0; i < slice.length; i++) {
+                            byteNumbers[i] = slice.charCodeAt(i);
+                        }
+
+                        var byteArray = new Uint8Array(byteNumbers);
+
+                        byteArrays.push(byteArray);
+                    }
+
+                    var file = new File(byteArrays, {type: mime});
+
+                    //This Code is to verify that we are
+                    //encoding the file data correctly
+                    //see: http://stackoverflow.com/questions/16245767/creating-a-blob-from-a-base64-string-in-javascript
+                    //var reader  = new FileReader();
+                    //var preview = $('<img>').appendTo(target)[0];
+                    //reader.addEventListener("load", function () {
+                    //    preview.src = reader.result;
+                    //}, false);
+                    //reader.readAsDataURL(file);
+                    //return;
+
+                    //add on to the total
+                    total ++;
+
+                    //prepare the S3 form to upload just this file
+                    var form = new FormData();
+                    for(var name in config.inputs) {
+                        if(name === 'key') {
+                            form.append('key', path);
+                            continue;
+                        }
+
+                        form.append(name, config.inputs[name]);
+                    }
+
+                    //lastly add this file object
+                    form.append('file', file);
+
+                    // Need to use jquery ajax
+                    // so that auth can catch
+                    // up request, and append access
+                    // token into it
+                    $.ajax({
+                        url: config.form.action,
+                        type: config.form.method,
+                        // form data
+                        data: form,
+                        // disable cache
+                        cache: false,
+                        // do not set content type
+                        contentType: false,
+                        // do not proccess data
+                        processData: false,
+                        // on error
+                        error: function(xhr, status, message) {
+                            notifier.fadeOut('fast', function() {
+                                notifier.remove();
+                            });
+
+                            $.notify(message, 'danger');
+                        },
+                        // on success
+                        success : function() {
+                            //now we can reassign hidden value from
+                            //base64 to CDN Link
+                            hidden.val(config.cdn + '/' + path);
+
+                            //if there is more to upload
+                            if ((++completed) < total) {
+                                //update bar
+                                var percent = Math.floor((completed / total) * 100);
+                                bar.css('width', percent + '%').html(percent + '%');
+
+                                //do nothing else
+                                return;
+                            }
+
+                            notifier.fadeOut('fast', function() {
+                                notifier.remove();
+                            });
+
+                            $.notify(config.complete, 'success');
+
+                            //all hidden fields that could have possibly
+                            //been converted has been converted
+                            //submit the form
+                            target.submit();
+                        }
+                    });
+                });
+
+                //if there is nothing to upload
+                if(!total) {
+                    //let the form submit as normal
                     return;
                 }
 
-                //parse out the base 64 so we can make a file
-                var base64 = data.split(';base64,');
-                var mime = base64[0].split(':')[1];
+                //otherwise we are uploading something, so we need to wait
+                e.preventDefault();
 
-                var extension = mimeExtensions[mime] || 'unknown';
-                //this is what hidden will be assigned to when it's uploaded
-                var path = prefix + (++id) + '.' + extension;
+                var message = '<div>' + config.progress + '</div>';
+                var progress = '<div class="progress"><div class="progress-bar"'
+                + 'role="progressbar" aria-valuenow="2" aria-valuemin="0"'
+                + 'aria-valuemax="100" style="min-width: 2em; width: 0%;">0%</div></div>';
 
-                //EPIC: Base64 to File Object
-                var byteCharacters = window.atob(base64[1]);
-                var byteArrays = [];
-
-                for (var offset = 0; offset < byteCharacters.length; offset += 512) {
-                    var slice = byteCharacters.slice(offset, offset + 512);
-
-                    var byteNumbers = new Array(slice.length);
-
-                    for (var i = 0; i < slice.length; i++) {
-                        byteNumbers[i] = slice.charCodeAt(i);
-                    }
-
-                    var byteArray = new Uint8Array(byteNumbers);
-
-                    byteArrays.push(byteArray);
-                }
-
-                var file = new File(byteArrays, {type: mime});
-
-                //This Code is to verify that we are
-                //encoding the file data correctly
-                //see: http://stackoverflow.com/questions/16245767/creating-a-blob-from-a-base64-string-in-javascript
-                //var reader  = new FileReader();
-                //var preview = $('<img>').appendTo(target)[0];
-                //reader.addEventListener("load", function () {
-                //    preview.src = reader.result;
-                //}, false);
-                //reader.readAsDataURL(file);
-                //return;
-
-                //add on to the total
-                total ++;
-
-                //prepare the S3 form to upload just this file
-                var form = new FormData();
-                for(var name in config.inputs) {
-                    if(name === 'key') {
-                        form.append('key', path);
-                        continue;
-                    }
-
-                    form.append(name, config.inputs[name]);
-                }
-
-                //lastly add this file object
-                form.append('file', file);
-
-                // Need to use jquery ajax
-                // so that auth can catch
-                // up request, and append access
-                // token into it
-                $.ajax({
-                    url: config.form.action,
-                    type: config.form.method,
-                    // form data
-                    data: form,
-                    // disable cache
-                    cache: false,
-                    // do not set content type
-                    contentType: false,
-                    // do not proccess data
-                    processData: false,
-                    // on error
-                    error: function(xhr, status, message) {
-                        notifier.fadeOut('fast', function() {
-                            notifier.remove();
-                        });
-
-                        $.notify(message, 'danger');
-                    },
-                    // on success
-                    success : function() {
-                        //now we can reassign hidden value from
-                        //base64 to CDN Link
-                        hidden.val(config.cdn + '/' + path);
-
-                        //if there is more to upload
-                        if ((++completed) < total) {
-                            //update bar
-                            var percent = Math.floor((completed / total) * 100);
-                            bar.css('width', percent + '%').html(percent + '%');
-
-                            //do nothing else
-                            return;
-                        }
-
-                        notifier.fadeOut('fast', function() {
-                            notifier.remove();
-                        });
-
-                        $.notify(config.complete, 'success');
-
-                        //all hidden fields that could have possibly
-                        //been converted has been converted
-                        //submit the form
-                        target.submit();
-                    }
-                });
+                var notifier = $.notify(message + progress, 'info', 0);
+                var bar = $('div.progress-bar', notifier);
             });
-
-            //if there is nothing to upload
-            if(!total) {
-                //let the form submit as normal
-                return;
-            }
-
-            //otherwise we are uploading something, so we need to wait
-            e.preventDefault();
-
-            var message = '<div>' + config.progress + '</div>';
-            var progress = '<div class="progress"><div class="progress-bar"'
-            + 'role="progressbar" aria-valuenow="2" aria-valuemin="0"'
-            + 'aria-valuemax="100" style="min-width: 2em; width: 0%;">0%</div></div>';
-
-            var notifier = $.notify(message + progress, 'info', 0);
-            var bar = $('div.progress-bar', notifier);
         });
     })();
 
@@ -1493,7 +1526,7 @@ jQuery(function(require, $) {
                     listen(this).doon();
                 });
 
-            require('system/sortable', function() {
+            require('components/jquery-sortable/source/js/jquery-sortable-min.js', function() {
                 var root = $('ol.menu-builder-list:first');
 
                 root.sortable({
@@ -1517,7 +1550,7 @@ jQuery(function(require, $) {
         $(window).on('prettify-init', function(e, target) {
             var loaded = false;
             require.load(
-                'system/prettify/prettify',
+                'components/google-code-prettify/src/prettify.js',
                 function() {
                     if(!loaded) {
                         PR.prettyPrint();
@@ -1546,63 +1579,47 @@ jQuery(function(require, $) {
 
             }, timeout);
         });
-    })();
 
-    /**
-     * Acquire Config
-     */
-    (function() {
-        // get app env
-        var env = $('html').attr('data-env');
-        // get app cdn
-        var cdn = $('html').attr('data-cdn');
+        $.extend({
+            notify: function(message, type, timeout) {
+                if(type === 'danger') {
+                    type = 'error';
+                }
 
-        // set default cdn root
-        if (!cdn.length) {
-            cdn = '/';
-        }
+                var toast = toastr[type](message, type[0].toUpperCase() + type.substr(1), {
+                    timeOut: timeout
+                });
 
-        // default system js root
-        var systemJsRoot = cdn + 'scripts/uncompressed';
-
-        // if prod
-        if(env === 'production') {
-            // should point to compressed
-            systemJsRoot = cdn + 'scripts/compressed';
-        }
-
-        // configure require
-        require.config({
-            system: {
-                root : systemJsRoot
+                return toast;
             }
         });
     })();
 
-    //need to load dependencies
-    var icons = [], mimeExtensions = {};
-    require('/json/extensions.json', function(response) {
-        mimeExtensions = response;
-        require('/json/icons.json', function(response) {
-            icons = response;
-            require('system/toastr', function() {
-                $.extend({
-                    notify: function(message, type, timeout) {
-                        if(type === 'danger') {
-                            type = 'error';
-                        }
+    /**
+     * Initialize
+     */
+    (function() {
+        var cdn = $('html').attr('data-cdn') || '';
+        // configure require
+        require.config({
+            cdn: {
+                root : cdn
+            },
+            components: {
+                root : cdn + '/components'
+            }
+        });
 
-                        var toast = toastr[type](message, type[0].toUpperCase() + type.substr(1), {
-                            timeOut: timeout
-                        });
-
-                        return toast;
-                    }
-                });
-
+        //need to load dependencies
+        require(
+            [
+                'components/toastr/build/toastr.min.css',
+                'components/toastr/build/toastr.min.js'
+            ],
+            function() {
                 //activate all scripts
                 $(document.body).doon();
-            });
-        });
-    });
+            }
+        );
+    })();
 }.bind(null, window.acquire));
