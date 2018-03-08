@@ -22,7 +22,7 @@ use Cradle\Http\Response;
 $cradle->get('/system/object/:schema1/:id/search/:schema2', function ($request, $response) {
     //----------------------------//
     // get json data only
-    // $request->setStage('render', 'false');
+    $request->setStage('render', 'false');
 
     //now let the original search take over
     cradle()->triggerRoute(
