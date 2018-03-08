@@ -82,20 +82,20 @@ We considered all UI elements in our admin to be flexible and usable anywhere in
 
 Carefully chosen agnostic technologies that can be used with any major server stack.
 
-[![PHP 7](https://github.com/CradlePHP/oms/blob/master/public/images/cradle/php.png?raw=true){:height="100" width="100"}](http://php.net/archive/2018.php#id2018-03-02-1)
-[![MySQL 5.7](https://github.com/CradlePHP/oms/blob/master/public/images/cradle/mysql.png?raw=true){:height="100" width="100"}](https://dev.mysql.com/doc/relnotes/mysql/5.7/en/)
-[![ELK Stack](https://github.com/CradlePHP/oms/blob/master/public/images/cradle/elastic.png?raw=true){:height="100" width="100"}](https://www.elastic.co/)
-[![Redis](https://github.com/CradlePHP/oms/blob/master/public/images/cradle/redis.png?raw=true){:height="100" width="100"}](https://redis.io/)
-[![RabbitMQ](https://github.com/CradlePHP/oms/blob/master/public/images/cradle/rabbit.png?raw=true){:height="100" width="100"}](https://www.rabbitmq.com/)
-[![Bootstrap 4](https://github.com/CradlePHP/oms/blob/master/public/images/cradle/bootstrap.png?raw=true){:height="100" width="100"}](https://getbootstrap.com/)
-[![jQuery](https://github.com/CradlePHP/oms/blob/master/public/images/cradle/jquery.png?raw=true){:height="100" width="100"}](https://jquery.com/)
-[![Font Awesome 5](https://github.com/CradlePHP/oms/blob/master/public/images/cradle/fontawesome.png?raw=true){:height="100" width="100"}](https://fontawesome.com/)
-[![Yarn](https://github.com/CradlePHP/oms/blob/master/public/images/cradle/yarn.png?raw=true){:height="100" width="100"}](https://yarnpkg.com/en/)
-[![Handlebars](https://github.com/CradlePHP/oms/blob/master/public/images/cradle/handlebars.png?raw=true){:height="100" width="100"}](https://handlebarsjs.com/)
-[![Travis CI](https://github.com/CradlePHP/oms/blob/master/public/images/cradle/travis.png?raw=true){:height="100" width="100"}](https://travis-ci.org/)
-[![Codeception](https://github.com/CradlePHP/oms/blob/master/public/images/cradle/codecept.png?raw=true){:height="100" width="100"}](https://codeception.com/)
-[![Docker](https://github.com/CradlePHP/oms/blob/master/public/images/cradle/docker.png?raw=true){:height="100" width="100"}](https://www.docker.com/)
-[![AWS S3](https://github.com/CradlePHP/oms/blob/master/public/images/cradle/s3.png?raw=true){:height="100" width="100"}](https://aws.amazon.com/s3/)
+[<img alt="PHP 7" src="https://github.com/CradlePHP/oms/blob/master/public/images/cradle/php.png?raw=true" />](http://php.net/archive/2018.php#id2018-03-02-1)
+[<img alt="MySQL 5.7" src="https://github.com/CradlePHP/oms/blob/master/public/images/cradle/mysql.png?raw=true" />](https://dev.mysql.com/doc/relnotes/mysql/5.7/en/)
+[<img alt="ELK Stack" src="https://github.com/CradlePHP/oms/blob/master/public/images/cradle/elastic.png?raw=true" />](https://www.elastic.co/)
+[<img alt="Redis" src="https://github.com/CradlePHP/oms/blob/master/public/images/cradle/redis.png?raw=true" />](https://redis.io/)
+[<img alt="RabbitMQ" src="https://github.com/CradlePHP/oms/blob/master/public/images/cradle/rabbit.png?raw=true" />](https://www.rabbitmq.com/)
+[<img alt="Bootstrap 4" src="https://github.com/CradlePHP/oms/blob/master/public/images/cradle/bootstrap.png?raw=true" />](https://getbootstrap.com/)
+[<img alt="jQuery" src="https://github.com/CradlePHP/oms/blob/master/public/images/cradle/jquery.png?raw=true" />](https://jquery.com/)
+[<img alt="Font Awesome 5" src="https://github.com/CradlePHP/oms/blob/master/public/images/cradle/fontawesome.png?raw=true" />](https://fontawesome.com/)
+[<img alt="Yarn" src="https://github.com/CradlePHP/oms/blob/master/public/images/cradle/yarn.png?raw=true" />](https://yarnpkg.com/en/)
+[<img alt="Handlebars" src="https://github.com/CradlePHP/oms/blob/master/public/images/cradle/handlebars.png?raw=true" />](https://handlebarsjs.com/)
+[<img alt="Travis CI" src="https://github.com/CradlePHP/oms/blob/master/public/images/cradle/travis.png?raw=true" />](https://travis-ci.org/)
+[<img alt="Codeception" src="https://github.com/CradlePHP/oms/blob/master/public/images/cradle/codecept.png?raw=true" />](https://codeception.com/)
+[<img alt="Docker" src="https://github.com/CradlePHP/oms/blob/master/public/images/cradle/docker.png?raw=true" />](https://www.docker.com/)
+[<img alt="AWS S3" src="https://github.com/CradlePHP/oms/blob/master/public/images/cradle/s3.png?raw=true" />](https://aws.amazon.com/s3/)
 
 ### Other Libraries We Used
 
