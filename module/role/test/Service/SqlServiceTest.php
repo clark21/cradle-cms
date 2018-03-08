@@ -7,6 +7,8 @@
  * distributed with this package.
  */
 
+use PHPUnit\Framework\TestCase;
+
 use Cradle\Module\Role\Service;
 
 /**
@@ -17,7 +19,7 @@ use Cradle\Module\Role\Service;
  * @package  Role
  * @author   John Doe <john@acme.com>
  */
-class Cradle_Module_Role_Service_SqlServiceTest extends PHPUnit_Framework_TestCase
+class Cradle_Module_Role_Service_SqlServiceTest extends TestCase
 {
     /**
      * @var SqlService $object
@@ -128,5 +130,5 @@ class Cradle_Module_Role_Service_SqlServiceTest extends PHPUnit_Framework_TestCa
         $this->assertTrue(!empty($actual));
         $this->assertEquals(999, $actual['role_id']);
     }
-    
+
 }

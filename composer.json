@@ -34,8 +34,7 @@
             "Cradle\\Module\\History\\": "module/history/src/",
             "Cradle\\Module\\Role\\": "module/role/src/",
             "Cradle\\Module\\System\\": "module/system/src/",
-            "Cradle\\Module\\Auth\\": "module/auth/src/",
-            "Cradle\\Module\\Utility\\": "module/utility/src/"
+            "Cradle\\Module\\Auth\\": "module/auth/src/"
         }
     },
     "config": {

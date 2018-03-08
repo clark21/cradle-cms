@@ -7,6 +7,8 @@
  * distributed with this package.
  */
 
+use PHPUnit\Framework\TestCase;
+
 use Cradle\Module\Role\Service;
 
 /**
@@ -16,7 +18,7 @@ use Cradle\Module\Role\Service;
  * @package  Role
  * @author   John Doe <john@acme.com>
  */
-class Cradle_Module_Role_Service_ElasticServiceTest extends PHPUnit_Framework_TestCase
+class Cradle_Module_Role_Service_ElasticServiceTest extends TestCase
 {
     /**
      * @var ElasticService $object

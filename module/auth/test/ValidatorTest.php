@@ -7,6 +7,8 @@
  * distributed with this package.
  */
 
+use PHPUnit\Framework\TestCase;
+
 use Cradle\Module\Auth\Validator;
 
 /**
@@ -16,7 +18,7 @@ use Cradle\Module\Auth\Validator;
  * @package  Auth
  * @author   John Doe <john@acme.com>
  */
-class Cradle_Module_Auth_ValidatorTest extends PHPUnit_Framework_TestCase
+class Cradle_Module_Auth_ValidatorTest extends TestCase
 {
     /**
      * @covers Cradle\Module\Auth\Validator::getCreateErrors

@@ -7,6 +7,8 @@
  * distributed with this package.
  */
 
+use PHPUnit\Framework\TestCase;
+
 use Cradle\Module\History\Service;
 
 /**
@@ -17,7 +19,7 @@ use Cradle\Module\History\Service;
  * @package  History
  * @author   John Doe <john@acme.com>
  */
-class Cradle_Module_History_Service_SqlServiceTest extends PHPUnit_Framework_TestCase
+class Cradle_Module_History_Service_SqlServiceTest extends TestCase
 {
     /**
      * @var SqlService $object
@@ -117,5 +119,5 @@ class Cradle_Module_History_Service_SqlServiceTest extends PHPUnit_Framework_Tes
         $this->assertEquals(999, $actual['history_id']);
         $this->assertEquals(999, $actual['user_id']);
     }
-    
+
 }

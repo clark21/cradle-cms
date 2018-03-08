@@ -7,6 +7,8 @@
  * distributed with this package.
  */
 
+use PHPUnit\Framework\TestCase;
+
 use Cradle\Module\Role\Validator;
 
 /**
@@ -16,7 +18,7 @@ use Cradle\Module\Role\Validator;
  * @package  Role
  * @author   John Doe <john@acme.com>
  */
-class Cradle_Module_Role_ValidatorTest extends PHPUnit_Framework_TestCase
+class Cradle_Module_Role_ValidatorTest extends TestCase
 {
     /**
      * @covers Cradle\Module\Role\Validator::getCreateErrors

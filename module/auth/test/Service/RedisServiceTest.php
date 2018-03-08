@@ -7,6 +7,8 @@
  * distributed with this package.
  */
 
+use PHPUnit\Framework\TestCase;
+
 use Cradle\Module\Auth\Service;
 
 /**
@@ -16,7 +18,7 @@ use Cradle\Module\Auth\Service;
  * @package  Auth
  * @author   John Doe <john@acme.com>
  */
-class Cradle_Module_Auth_Service_RedisServiceTest extends PHPUnit_Framework_TestCase
+class Cradle_Module_Auth_Service_RedisServiceTest extends TestCase
 {
     /**
      * @var RedisService $object

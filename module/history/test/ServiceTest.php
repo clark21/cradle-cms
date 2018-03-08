@@ -7,6 +7,8 @@
  * distributed with this package.
  */
 
+use PHPUnit\Framework\TestCase;
+
 use Cradle\Module\History\Service;
 
 use Cradle\Module\History\Service\SqlService;
@@ -21,7 +23,7 @@ use Cradle\Module\System\Utility\Service\NoopService;
  * @package  History
  * @author   John Doe <john@acme.com>
  */
-class Cradle_Module_History_ServiceTest extends PHPUnit_Framework_TestCase
+class Cradle_Module_History_ServiceTest extends TestCase
 {
     /**
      * @covers Cradle\Module\History\Service::get

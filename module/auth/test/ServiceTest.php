@@ -7,6 +7,8 @@
  * distributed with this package.
  */
 
+use PHPUnit\Framework\TestCase;
+
 use Cradle\Module\Auth\Service;
 
 use Cradle\Module\Auth\Service\SqlService;
@@ -21,7 +23,7 @@ use Cradle\Module\System\Utility\Service\NoopService;
  * @package  Auth
  * @author   John Doe <john@acme.com>
  */
-class Cradle_Module_Auth_ServiceTest extends PHPUnit_Framework_TestCase
+class Cradle_Module_Auth_ServiceTest extends TestCase
 {
     /**
      * @covers Cradle\Module\Auth\Service::get

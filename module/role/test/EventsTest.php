@@ -7,6 +7,8 @@
  * distributed with this package.
  */
 
+use PHPUnit\Framework\TestCase;
+
 use Cradle\Http\Request;
 use Cradle\Http\Response;
 
@@ -17,7 +19,7 @@ use Cradle\Http\Response;
  * @package  Role
  * @author   John Doe <john@acme.com>
  */
-class Cradle_Module_Role_EventsTest extends PHPUnit_Framework_TestCase
+class Cradle_Module_Role_EventsTest extends TestCase
 {
     /**
      * @var Request $request

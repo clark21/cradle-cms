@@ -7,6 +7,8 @@
  * distributed with this package.
  */
 
+use PHPUnit\Framework\TestCase;
+
 use Cradle\Module\Auth\Service;
 
 /**
@@ -17,7 +19,7 @@ use Cradle\Module\Auth\Service;
  * @package  Auth
  * @author   John Doe <john@acme.com>
  */
-class Cradle_Module_Auth_Service_SqlServiceTest extends PHPUnit_Framework_TestCase
+class Cradle_Module_Auth_Service_SqlServiceTest extends TestCase
 {
     /**
      * @var SqlService $object
@@ -86,13 +88,13 @@ class Cradle_Module_Auth_Service_SqlServiceTest extends PHPUnit_Framework_TestCa
      * @covers Cradle\Module\Auth\Service\SqlService::exists
      */
     public function testExists()
-    { 
+    {
         $actual = $this->object->exists('john@doe.com');
         // it returns a boolean so we're expecting it to be true because
         // the slug provided is saved in the database
         $this->assertTrue($actual);
     }
-    
+
 
     /**
      * @covers Cradle\Module\Auth\Service\SqlService::remove
@@ -129,5 +131,5 @@ class Cradle_Module_Auth_Service_SqlServiceTest extends PHPUnit_Framework_TestCa
         $this->assertEquals(999, $actual['auth_id']);
         $this->assertEquals(999, $actual['user_id']);
     }
-    
+
 }
