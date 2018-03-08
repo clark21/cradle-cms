@@ -216,11 +216,15 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
      *
      * @return bool
      */
-    public function exists($authSlug)
+    public function exists($authSlug, $authPassword = false)
     {
         $search = $this->resource
             ->search('auth')
             ->filterByAuthSlug($authSlug);
+
+        if ($authPassword) {
+            $search->filterByAuthPassword(md5($authPassword));
+        }
 
         return !!$search->getRow();
     }
