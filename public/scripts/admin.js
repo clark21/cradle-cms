@@ -237,164 +237,166 @@ jQuery(function($) {
          * Suggestion Field
          */
         $(window).on('suggestion-field-init', function(e, target) {
-            target = $(target);
+            $.require('components/handlebars/dist/handlebars.js', function() {
+                target = $(target);
 
-            var container = $('<ul>').appendTo(target);
+                var container = $('<ul>').appendTo(target);
 
-            var searching = false,
-                prevent = false,
-                value = target.attr('data-value'),
-                format = target.attr('data-format'),
-                targetLabel = target.attr('data-target-label'),
-                targetValue = target.attr('data-target-value'),
-                url = target.attr('data-url')
-                template = '<li class="suggestion-item">{VALUE}</li>';
+                var searching = false,
+                    prevent = false,
+                    value = target.attr('data-value'),
+                    format = target.attr('data-format'),
+                    targetLabel = target.attr('data-target-label'),
+                    targetValue = target.attr('data-target-value'),
+                    url = target.attr('data-url')
+                    template = '<li class="suggestion-item">{VALUE}</li>';
 
-            if(!targetLabel || !targetValue || !url || !value) {
-                return;
-            }
+                if(!targetLabel || !targetValue || !url || !value) {
+                    return;
+                }
 
-            targetLabel = $(targetLabel);
-            targetValue = $(targetValue);
+                targetLabel = $(targetLabel);
+                targetValue = $(targetValue);
 
-            var loadSuggestions = function(list, callback) {
-                container.html('');
+                var loadSuggestions = function(list, callback) {
+                    container.html('');
 
-                list.forEach(function(item) {
-                    var label = '';
-                    //if there is a format, yay.
-                    if (format) {
-                        label = Handlebars.compile(format)(item);
-                    //otherwise best guess?
-                    } else {
-                        for (var key in item) {
-                            if(
-                                //if it is not a string
-                                typeof item[key] !== 'string'
-                                //it's a string but is like a number
-                                || !isNaN(parseFloat(item[key]))
-                                //it's a string and is not like a number
-                                // but the first character is like a number
-                                || !isNaN(parseFloat(item[key][0]))
-                            ) {
-                                continue;
+                    list.forEach(function(item) {
+                        var label = '';
+                        //if there is a format, yay.
+                        if (format) {
+                            label = Handlebars.compile(format)(item);
+                        //otherwise best guess?
+                        } else {
+                            for (var key in item) {
+                                if(
+                                    //if it is not a string
+                                    typeof item[key] !== 'string'
+                                    //it's a string but is like a number
+                                    || !isNaN(parseFloat(item[key]))
+                                    //it's a string and is not like a number
+                                    // but the first character is like a number
+                                    || !isNaN(parseFloat(item[key][0]))
+                                ) {
+                                    continue;
+                                }
+
+                                label = item[key];
                             }
-
-                            label = item[key];
                         }
-                    }
 
-                    //if still no label
-                    if(!label.length) {
-                        //just get the first one, i guess.
-                        for (var key in item) {
-                            label = item[key];
-                            break;
+                        //if still no label
+                        if(!label.length) {
+                            //just get the first one, i guess.
+                            for (var key in item) {
+                                label = item[key];
+                                break;
+                            }
                         }
-                    }
 
-                    item = { label: label, value: item[value] };
-                    var row = template.replace('{VALUE}', item.label);
+                        item = { label: label, value: item[value] };
+                        var row = template.replace('{VALUE}', item.label);
 
-                    row = $(row).click(function() {
-                        callback(item);
-                        target.addClass('d-none');
+                        row = $(row).click(function() {
+                            callback(item);
+                            target.addClass('d-none');
+                        });
+
+                        container.append(row);
                     });
 
-                    container.append(row);
-                });
-
-                if(list.length) {
-                    target.removeClass('d-none');
-                } else {
-                    target.addClass('d-none');
-                }
-            };
-
-            targetLabel
-                .keypress(function(e) {
-                    //if enter
-                    if(e.keyCode == 13 && prevent) {
-                        e.preventDefault();
+                    if(list.length) {
+                        target.removeClass('d-none');
+                    } else {
+                        target.addClass('d-none');
                     }
-                })
-                .keydown(function(e) {
-                    //if backspace
-                    if(e.keyCode == 8) {
-                        //undo the value
-                        targetValue.val('');
-                    }
+                };
 
-                    prevent = false;
-                    if(!target.hasClass('d-none')) {
-                        switch(e.keyCode) {
-                            case 40: //down
-                                var next = $('li.hover', target).removeClass('hover').index() + 1;
-
-                                if(next === $('li', target).length) {
-                                    next = 0;
-                                }
-
-                                $('li:eq('+next+')', target).addClass('hover');
-
-                                return;
-                            case 38: //up
-                                var prev = $('li.hover', target).removeClass('hover').index() - 1;
-
-                                if(prev < 0) {
-                                    prev = $('li', target).length - 1;
-                                }
-
-                                $('li:eq('+prev+')', target).addClass('hover');
-
-                                return;
-                            case 13: //enter
-                                if($('li.hover', target).length) {
-                                    $('li.hover', target)[0].click();
-                                    prevent = true;
-                                }
-                                return;
-                            case 37:
-                            case 39:
-                                return;
+                targetLabel
+                    .keypress(function(e) {
+                        //if enter
+                        if(e.keyCode == 13 && prevent) {
+                            e.preventDefault();
                         }
-                    }
+                    })
+                    .keydown(function(e) {
+                        //if backspace
+                        if(e.keyCode == 8) {
+                            //undo the value
+                            targetValue.val('');
+                        }
 
-                    if(searching) {
-                        return;
-                    }
+                        prevent = false;
+                        if(!target.hasClass('d-none')) {
+                            switch(e.keyCode) {
+                                case 40: //down
+                                    var next = $('li.hover', target).removeClass('hover').index() + 1;
 
-                    setTimeout(function() {
-                        if (targetLabel.val() == '') {
+                                    if(next === $('li', target).length) {
+                                        next = 0;
+                                    }
+
+                                    $('li:eq('+next+')', target).addClass('hover');
+
+                                    return;
+                                case 38: //up
+                                    var prev = $('li.hover', target).removeClass('hover').index() - 1;
+
+                                    if(prev < 0) {
+                                        prev = $('li', target).length - 1;
+                                    }
+
+                                    $('li:eq('+prev+')', target).addClass('hover');
+
+                                    return;
+                                case 13: //enter
+                                    if($('li.hover', target).length) {
+                                        $('li.hover', target)[0].click();
+                                        prevent = true;
+                                    }
+                                    return;
+                                case 37:
+                                case 39:
+                                    return;
+                            }
+                        }
+
+                        if(searching) {
                             return;
                         }
 
-                        searching = true;
-                        $.ajax({
-                            url : url.replace('{QUERY}', targetLabel.val()),
-                            type : 'GET',
-                            success : function(response) {
-                                var list = [];
-
-                                if(typeof response.results !== 'undefined'
-                                    && typeof response.results.rows !== 'undefined'
-                                    && response.results.rows instanceof Array
-                                ) {
-                                    list = response.results.rows;
-                                }
-
-                                loadSuggestions(list, function(item) {
-                                    targetValue.val(item.value);
-                                    targetLabel.val(item.label).trigger('keyup');
-                                });
-
-                                searching = false;
-                            }, error : function() {
-                                searching = false;
+                        setTimeout(function() {
+                            if (targetLabel.val() == '') {
+                                return;
                             }
-                        });
-                    }, 1);
-                });
+
+                            searching = true;
+                            $.ajax({
+                                url : url.replace('{QUERY}', targetLabel.val()),
+                                type : 'GET',
+                                success : function(response) {
+                                    var list = [];
+
+                                    if(typeof response.results !== 'undefined'
+                                        && typeof response.results.rows !== 'undefined'
+                                        && response.results.rows instanceof Array
+                                    ) {
+                                        list = response.results.rows;
+                                    }
+
+                                    loadSuggestions(list, function(item) {
+                                        targetValue.val(item.value);
+                                        targetLabel.val(item.label).trigger('keyup');
+                                    });
+
+                                    searching = false;
+                                }, error : function() {
+                                    searching = false;
+                                }
+                            });
+                        }, 1);
+                    });
+            });
         });
 
         /**
@@ -1613,6 +1615,7 @@ jQuery(function($) {
         //need to load dependencies
         $.require(
             [
+                'components/doon/doon.min.js',
                 'components/toastr/build/toastr.min.css',
                 'components/toastr/build/toastr.min.js'
             ],
