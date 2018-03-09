@@ -75,6 +75,12 @@
 </optgroup>
 <optgroup class="filter-group-html" label="HTML Filters">
     <option
+        value="html"
+        {{#when format '===' 'html'}}selected{{/when}}
+    >
+        Raw HTML
+    </option>
+    <option
         data-fieldset="input"
         data-placeholder="Allowed Tags ie: <a><b><i>..."
         value="strip"

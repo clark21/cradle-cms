@@ -5,6 +5,9 @@
             {{#when format '===' 'none'}}
                 <td>{{value}}</td>
             {{/when}}
+            {{#when format '===' 'html'}}
+                <td>{{{value}}}</td>
+            {{/when}}
             {{#when format '===' 'lower'}}
                 <td>{{lower value}}</td>
             {{/when}}
@@ -48,22 +51,22 @@
                 </td>
             {{/when}}
             {{#when format '===' 'strip'}}
-                <td>{{strip value parameters}}</td>
+                <td>{{{strip value parameters}}}</td>
             {{/when}}
             {{#when format '===' 'link'}}
-                <td><a href="{{compile parameters.0 ../this}}">{{compile parameters.1 ../this}}</a></td>
+                <td><a href="{{compile parameters.0 ../this}}">{{compile parameters.1 ../detail}}</a></td>
             {{/when}}
             {{#when format '===' 'image'}}
                 <td><img src="{{value}}" width="{{parameters.0}}" height="{{parameters.1}}" /></td>
             {{/when}}
             {{#when format '===' 'email'}}
-                <td><a href="mailto:{{value}}">{{compile parameters ../this}}</a></td>
+                <td><a href="mailto:{{value}}">{{compile parameters ../detail}}</a></td>
             {{/when}}
             {{#when format '===' 'phone'}}
-                <td><a href="tel:{{value}}">{{compile parameters ../this}}</a></td>
+                <td><a href="tel:{{value}}">{{compile parameters ../detail}}</a></td>
             {{/when}}
             {{#when format '===' 'custom'}}
-                <td>{{{compile parameters ../this}}}</td>
+                <td>{{{compile parameters ../detail}}}</td>
             {{/when}}
             {{#when format '===' 'comma'}}
                 <td>{{join value ','}}</td>
@@ -80,7 +83,7 @@
             {{/when}}
             {{#when format '===' 'formula'}}
                 <td>
-                    {{formula parameters ../this}}
+                    {{formula parameters ../detail}}
                 </td>
             {{/when}}
         </tr>
