@@ -446,44 +446,54 @@
         </thead>
         <tbody>
             {{#scope ../item @key}}
-                <tr class="file-field-none" style="display:none;">
-                    <td colspan="5">
-                        <div class="alert alert-info">No Files Selected</div>
-                    </td>
-                </tr>
-                <tr class="file-field-item" data-index="{INDEX}">
-                    <td class="file-field-preview">
-                        {{#fileinfo this}}
-                            {{#in 'jpg,jpeg,png,gif' extension}}
-                                <div class="file-field-preview-container">
-                                    <img src="{{../this}}" height="50" />
-                                </div>
-                            {{else}}
-                                <div class="file-field-preview-container">
-                                    <i class="fas fa-file text-info"></i>
-                                    <span class="file-field-extension">{{extension}}</span>
-                                </div>
-                            {{/in}}
-                        {{/fileinfo}}
-                    </td>
-                    <td class="file-field-name">
-                        {{this}}
-                        <input name="{{../@key}}" type="hidden" value="{{this}}" />
-                    </td>
-                    <td class="file-field-actions">
-                        <a class="text-info file-field-move-up" href="javascript:void(0)">
-                            <i class="fas fa-arrow-up"></i>
-                        </a>
-                        &nbsp;&nbsp;&nbsp;'
-                        <a class="text-info file-field-move-down" href="javascript:void(0)">
-                            <i class="fas fa-arrow-down"></i>
-                        </a>
-                        &nbsp;&nbsp;&nbsp;'
-                        <a class="btn btn-danger file-field-remove" href="javascript:void(0)">
-                            <i class="fas fa-times"></i>
-                        </a>
-                    </td>
-                </tr>
+                {{#if this.length}}
+                    {{#each this}}
+                        <tr class="file-field-none" style="display:none;">
+                            <td colspan="5">
+                                <div class="alert alert-info">No Files Selected</div>
+                            </td>
+                        </tr>
+                        <tr class="file-field-item" data-index="{{@index}}">
+                            <td class="file-field-preview">
+                                {{#fileinfo this}}
+                                    {{#in 'jpg,jpeg,png,gif' extension}}
+                                        <div class="file-field-preview-container">
+                                            <img src="{{../this}}" height="50" />
+                                        </div>
+                                    {{else}}
+                                        <div class="file-field-preview-container">
+                                            <i class="fas fa-file text-info"></i>
+                                            <span class="file-field-extension">{{extension}}</span>
+                                        </div>
+                                    {{/in}}
+                                {{/fileinfo}}
+                            </td>
+                            <td class="file-field-name">
+                                {{this}}
+                                <input name="{{../../@key}}" type="hidden" value="{{this}}" />
+                            </td>
+                            <td class="file-field-actions">
+                                <a class="text-info file-field-move-up" href="javascript:void(0)">
+                                    <i class="fas fa-arrow-up"></i>
+                                </a>
+                                &nbsp;&nbsp;&nbsp;'
+                                <a class="text-info file-field-move-down" href="javascript:void(0)">
+                                    <i class="fas fa-arrow-down"></i>
+                                </a>
+                                &nbsp;&nbsp;&nbsp;'
+                                <a class="btn btn-danger file-field-remove" href="javascript:void(0)">
+                                    <i class="fas fa-times"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    {{/each}}
+                {{else}}
+                    <tr class="file-field-none">
+                        <td colspan="5">
+                            <div class="alert alert-info">No Files Selected</div>
+                        </td>
+                    </tr>
+                {{/if}}
             {{else}}
                 <tr class="file-field-none">
                     <td colspan="5">
@@ -552,7 +562,7 @@
             {{else}}
                 <tr class="file-field-none">
                     <td colspan="5">
-                        <div class="alert alert-info">No File Selected</div>
+                        <div class="alert alert-info">No Image Selected</div>
                     </td>
                 </tr>
             {{/scope}}
@@ -564,7 +574,7 @@
                         class="file-field-upload btn btn-info"
                         type="button"
                     >
-                        Choose File
+                        Choose Image
                     </button>
                 </td>
             </tr>
@@ -591,48 +601,58 @@
         </thead>
         <tbody>
             {{#scope ../item @key}}
-                <tr class="file-field-none" style="display:none;">
-                    <td colspan="5">
-                        <div class="alert alert-info">No Files Selected</div>
-                    </td>
-                </tr>
-                <tr class="file-field-item" data-index="{INDEX}">
-                    <td class="file-field-preview">
-                        {{#fileinfo this}}
-                            {{#in 'jpg,jpeg,png,gif' extension}}
-                                <div class="file-field-preview-container">
-                                    <img src="{{../this}}" height="50" />
-                                </div>
-                            {{else}}
-                                <div class="file-field-preview-container">
-                                    <i class="fas fa-file text-info"></i>
-                                    <span class="file-field-extension">{{extension}}</span>
-                                </div>
-                            {{/in}}
-                        {{/fileinfo}}
-                    </td>
-                    <td class="file-field-name">
-                        {{this}}
-                        <input name="{{../@key}}" type="hidden" value="{{this}}" />
-                    </td>
-                    <td class="file-field-actions">
-                        <a class="text-info file-field-move-up" href="javascript:void(0)">
-                            <i class="fas fa-arrow-up"></i>
-                        </a>
-                        &nbsp;&nbsp;&nbsp;'
-                        <a class="text-info file-field-move-down" href="javascript:void(0)">
-                            <i class="fas fa-arrow-down"></i>
-                        </a>
-                        &nbsp;&nbsp;&nbsp;'
-                        <a class="btn btn-danger file-field-remove" href="javascript:void(0)">
-                            <i class="fas fa-times"></i>
-                        </a>
-                    </td>
-                </tr>
+                {{#if this.length}}
+                    {{#each this}}
+                        <tr class="file-field-none" style="display:none;">
+                            <td colspan="5">
+                                <div class="alert alert-info">No Images Selected</div>
+                            </td>
+                        </tr>
+                        <tr class="file-field-item" data-index="{{@index}}">
+                            <td class="file-field-preview">
+                                {{#fileinfo this}}
+                                    {{#in 'jpg,jpeg,png,gif' extension}}
+                                        <div class="file-field-preview-container">
+                                            <img src="{{../this}}" height="50" />
+                                        </div>
+                                    {{else}}
+                                        <div class="file-field-preview-container">
+                                            <i class="fas fa-file text-info"></i>
+                                            <span class="file-field-extension">{{extension}}</span>
+                                        </div>
+                                    {{/in}}
+                                {{/fileinfo}}
+                            </td>
+                            <td class="file-field-name">
+                                {{this}}
+                                <input name="{{../../@key}}" type="hidden" value="{{this}}" />
+                            </td>
+                            <td class="file-field-actions">
+                                <a class="text-info file-field-move-up" href="javascript:void(0)">
+                                    <i class="fas fa-arrow-up"></i>
+                                </a>
+                                &nbsp;&nbsp;&nbsp;'
+                                <a class="text-info file-field-move-down" href="javascript:void(0)">
+                                    <i class="fas fa-arrow-down"></i>
+                                </a>
+                                &nbsp;&nbsp;&nbsp;'
+                                <a class="btn btn-danger file-field-remove" href="javascript:void(0)">
+                                    <i class="fas fa-times"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    {{/each}}
+                {{else}}
+                    <tr class="file-field-none">
+                        <td colspan="5">
+                            <div class="alert alert-info">No Images Selected</div>
+                        </td>
+                    </tr>
+                {{/if}}
             {{else}}
                 <tr class="file-field-none">
                     <td colspan="5">
-                        <div class="alert alert-info">No Files Selected</div>
+                        <div class="alert alert-info">No Images Selected</div>
                     </td>
                 </tr>
             {{/scope}}
@@ -644,7 +664,7 @@
                         class="file-field-upload btn btn-info"
                         type="button"
                     >
-                        Choose Files
+                        Choose Images
                     </button>
                 </td>
             </tr>
