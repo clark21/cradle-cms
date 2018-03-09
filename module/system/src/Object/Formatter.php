@@ -85,6 +85,22 @@ class Formatter
                 case 'meta':
                 case 'checkboxes':
                 case 'multirange':
+                    //if it's an array already
+                    if(is_array($data[$name]) || is_object($data[$name])) {
+                        $data[$name] = json_encode($data[$name]);
+                        break;
+                    }
+
+                    //if it's a json string
+                    if(strpos($data[$name], '{') === 0
+                        || strpos($data[$name], '[') === 0
+                    )
+                    {
+                        break;
+                    }
+
+                    //it can only be comma separated
+                    $data[$name] = explode(',', $data[$name]);
                     $data[$name] = json_encode($data[$name]);
                     break;
                 case 'created':

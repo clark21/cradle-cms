@@ -1096,6 +1096,36 @@ $cradle->get('/admin/system/object/:schema/export/:type', function ($request, $r
     //determine the filename
     $filename = $schema->getPlural() . '-' . date('Y-m-d');
 
+    //flatten all json columns
+    foreach ($rows as $i => $row) {
+        foreach ($row as $key => $value) {
+            //transform oobject to array
+            if (is_object($value)) {
+                $value = (array) $value;
+            }
+
+            //if array, let's flatten
+            if (is_array($value)) {
+                //if no count
+                if (!count($value)) {
+                    $rows[$i][$key] = '';
+                    continue;
+                }
+
+                //if regular array
+                if (isset($value[0])) {
+                    $rows[$i][$key] = implode(',', $value);
+                    continue;
+                }
+
+                $rows[$i][$key] = json_encode($value);
+                continue;
+            }
+
+            //provision for any other conversions needed
+        }
+    }
+
     //if the output type is csv
     if ($type === 'csv') {
         //if there are no rows
