@@ -660,22 +660,24 @@
             {{@key}}="{{this}}"
         {{/each}}
     >
-        {{#loop ../item @key}}
-            <div class="tag">
-                <input
-                    class="tag-input text-field"
-                    type="text"
-                    name="{{../@key}}[]"
-                    value="{{this}}"
-                />
-                <a
-                    class="remove"
-                    href="javascript:void(0)"
-                >
-                    <i class="fa fa-times"></i>
-                </a>
-            </div>
-        {{/loop}}
+        {{#scope ../item @key}}
+            {{#each this}}
+                <div class="tag">
+                    <input
+                        class="tag-input text-field"
+                        type="text"
+                        name="{{../../@key}}[]"
+                        value="{{this}}"
+                    />
+                    <a
+                        class="remove"
+                        href="javascript:void(0)"
+                    >
+                        <i class="fa fa-times"></i>
+                    </a>
+                </div>
+            {{/each}}
+        {{/scope}}
     </div>
 {{/when}}
 {{#when field.type '===' 'meta'}}
