@@ -1761,6 +1761,17 @@ jQuery(function($) {
     })();
 
     /**
+     * Admin Configuration
+     */
+    (function() {
+        $(window).on('configuration-select-change', function(e, target) {
+            target = $(target);
+
+            window.location.search = '?type=' + target.val();
+        });
+    })();
+
+    /**
      * Initialize
      */
     (function() {
