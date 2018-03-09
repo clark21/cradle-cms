@@ -1,0 +1,33 @@
+<li class="permission-item">
+    <div class="permission-input input-group">
+        <input
+            class="form-control"
+            data-name="label"
+            placeholder="Label"
+            type="text"
+            value="{{label}}"
+        />
+        <select
+            class="form-control"
+            data-name="method">
+                <option value="">Method</option>
+                <option value="get" {{#when method '==' 'get'}}selected="selected"{{/when}}>GET</option>
+                <option value="post" {{#when method '==' 'post'}}selected="selected"{{/when}}>POST</option>
+                <option value="put" {{#when method '==' 'put'}}selected="selected"{{/when}}>PUT</option>
+                <option value="delete" {{#when method '==' 'delete'}}selected="selected"{{/when}}>DELETE</option>
+                <option value="all" {{#when method '==' 'all'}}selected="selected"{{/when}}>ALL</option>
+        </select>
+        <input
+            class="form-control"
+            data-name="path"
+            placeholder="/some/path"
+            type="text"
+            value="{{path}}"
+        />
+        <div class="input-group-append">
+            <button class="btn btn-danger permission-action-remove" type="button">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+</li>

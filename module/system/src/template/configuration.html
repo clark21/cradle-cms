@@ -1,0 +1,72 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="/admin/system/schema/search">
+                <i class="fas fa-home"></i> Admin
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <i class="fas fa-wrench"></i> System Configuration
+        </li>
+    </ol>
+</nav>
+
+<div class="main-padding">
+    <h3 class="main-title">
+        <i class="fas fa-wrench"></i> System Configuration
+    </h3>
+
+    <form class="configuration-type" method="get">
+        <div class="form-group">
+            <label class="control-label">Select Configuration</label>
+            <div>
+                <select class="form-control" name="type" data-do="configuration-select" data-on="change">
+                    <option
+                        value="none"
+                        {{#when type '==' 'none'}}selected{{/when}}
+                    >
+                        - Select Configuration -
+                    </option>
+                    <option
+                        value="general"
+                        {{#when type '==' 'general'}}selected{{/when}}                        
+                    >
+                        General Settings
+                    </option>
+                    <option
+                        value="deploy"
+                        {{#when type '==' 'deploy'}}selected{{/when}}                        
+                    >
+                        Deployment Settings
+                    </option>
+                    <option
+                        value="rest-jwt"
+                        {{#when type '==' 'rest-jwt'}}selected{{/when}}                        
+                    >
+                        Rest API JWT Configuration
+                    </option>
+                    <option
+                        value="service"
+                        {{#when type '==' 'service'}}selected{{/when}}                        
+                    >
+                        System Services
+                    </option>
+                    <option
+                        value="test"
+                        {{#when type '==' 'test'}}selected{{/when}}                        
+                    >
+                        Test Suite
+                    </option>
+                </select>
+            </div>
+        </div>
+    </form>
+
+    <form class="configuration-builder" data-do="configuration-builder" data-depth="3" method="post">
+        <ol class="configuration-builder-list">
+            {{#each item}}
+                {{> configuration_item}}
+            {{/each}}
+        </ol>
+    </form>
+</div>

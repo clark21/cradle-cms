@@ -45,21 +45,23 @@
                 </thead>
                 <tbody>
                     {{#each rows}}
-                        <tr data-id="{{role_id}}" {{#when role_id '===' '1'}}class="table-info"{{/when}}>
+                        <tr data-id="{{role_id}}" {{#if role_flag}}class="table-info"{{/if}}>
                             <td>
                                 {{#if ../filter.role_active}}
+                                    <a class="text-purple" title="Copy" href="/admin/role/create/?copy={{role_id}}">
+                                    <i class="fas fa-copy"></i></a>
+                                    &nbsp;
                                     <a class="text-info" title="Edit" href="/admin/role/update/{{role_id}}">
                                     <i class="fas fa-edit"></i></a>
                                     &nbsp;
-                                    {{#when role_flag '!==' '1'}}
+                                    {{#unless role_flag}}
                                     <a class="text-danger" title="Remove" href="/admin/role/remove/{{role_id}}"
                                     class="text-danger remove"><i class="fas fa-times"></i></a>
-                                    {{/when}}
+                                    {{/unless}}
                                 {{else}}
                                     <a title="Restore" href="/admin/role/restore/{{role_id}}" class="text-success restore">
                                     <i class="fas fa-external-link-alt"></i></a>
                                 {{/if}}
-
                             </td>
                             <td>
                                 <a href="/admin/role/update/{{role_id}}"><i class="{{icon}}"></i> {{role_name}}</a>

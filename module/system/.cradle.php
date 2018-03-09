@@ -1,11 +1,13 @@
 <?php //-->
 include_once __DIR__ . '/src/event/auth.php';
+include_once __DIR__ . '/src/event/configuration.php';
 include_once __DIR__ . '/src/event/schema.php';
 include_once __DIR__ . '/src/event/module.php';
 include_once __DIR__ . '/src/event/menu.php';
 include_once __DIR__ . '/src/event/object.php';
 include_once __DIR__ . '/src/event/rest.php';
 
+include_once __DIR__ . '/src/controller/configuration.php';
 include_once __DIR__ . '/src/controller/schema.php';
 include_once __DIR__ . '/src/controller/module.php';
 include_once __DIR__ . '/src/controller/object.php';

@@ -55,7 +55,7 @@
                                     <a
                                         class="text-info"
                                         href="/admin/system/module/install/{{name}}"
-                                        title="Install Module"
+                                        title="{{#if version}}Update Module{{else}}Install Module{{/if}}"
                                         onclick="return window.confirm('Are you sure you want to install/update this module? This might clear your data.');"
                                     >
                                         {{#if version}}

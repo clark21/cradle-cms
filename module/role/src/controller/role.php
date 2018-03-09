@@ -8,6 +8,9 @@
  */
  use Cradle\Module\Role\Validator as RoleValidator;
 
+ use Cradle\Http\Request;
+ use Cradle\Http\Response;
+
 /**
  * Render the Role Search Page
  *
@@ -88,52 +91,33 @@ $cradle->get('/admin/role/create', function ($request, $response) {
 
     //----------------------------//
     // 2. Prepare Data
-    // get path file
-    $path = $this->package('global')->path('config') . '/admin/permissions.php';
-
-    // check if file
-    if (!is_file($path)) {
-        $permission[] = [
-            'label' => 'Front End Access',
-            'method' => 'all',
-            'path' => '(?!/admin)/**'
-        ];
-
-        file_put_contents(
-            $path,
-            '<?php //-->' . "\n return " .
-            var_export($permission, true) . ';'
-        );
-    }
-
     $data = ['item' => $request->getPost()];
+
+    if($request->hasStage('copy')) {
+        $rowRequest = Request::i()
+            ->setStage('role_id', $request->getStage('copy'));
+
+        $rowResponse = Response::i()->load();
+
+        cradle()->trigger('role-detail', $rowRequest, $rowResponse);
+
+        $data['item'] = [
+            'role_permissions' => $rowResponse->getResults('role_permissions')
+        ];
+    }
 
     if ($response->isError()) {
         $response->setFlash($response->getMessage(), 'error');
         $data['errors'] = $response->getValidation();
     }
 
-    $permissions = cradle('global')->config('admin/permissions');
-
-    $data['permissions'] = $permissions;
-
-    if (isset($data['item']['role_permissions'])) {
-        $rolePermissions = array_keys($data['item']['role_permissions']);
-
-        // loop through data
-        foreach ($rolePermissions as $permission) {
-            $key = array_search($permission, array_column($data['permissions'], 'label'));
-            if (is_int($key)) {
-                $data['permissions'][$key]['checked'] = true;
-            }
-        }
-    }
-
     //----------------------------//
     // 3. Render Template
     $class = 'page-developer-role-create page-admin';
     $data['title'] = 'Create Role';
-    $body = cradle('/module/role')->template('role/form', $data);
+    $body = cradle('/module/role')->template('role/form', $data, [
+        'role_permission'
+    ]);
 
     //set content
     $response
@@ -167,44 +151,21 @@ $cradle->get('/admin/role/update/:role_id', function ($request, $response) {
     // get role details
     $data['item'] = $response->getResults();
 
-    // premissions
-    $permissions = cradle('global')->config('admin/permissions');
-
-    $data['permissions'] = $permissions;
-
-    // loop through data
-    foreach ($data['item']['role_permissions'] as $permission) {
-        $key = array_search($permission['label'], array_column($data['permissions'], 'label'));
-        if (is_int($key)) {
-            $data['permissions'][$key]['checked'] = true;
-        }
-    }
-
     if (!empty($request->getPost())) {
         // get post stored as item
         $data['item'] = $request->getPost();
 
         // get any errors
         $data['errors'] = $response->getValidation();
-
-        if (isset($data['item']['role_permissions'])) {
-            $rolePermissions = array_keys($data['item']['role_permissions']);
-
-            // loop through data
-            foreach ($rolePermissions as $permission) {
-                $key = array_search($permission, array_column($data['permissions'], 'label'));
-                if (is_int($key)) {
-                    $data['permissions'][$key]['checked'] = true;
-                }
-            }
-        }
     }
 
     //----------------------------//
     // 3. Render Template
     $class = 'page-developer-role-update page-admin';
     $data['title'] = 'Update Role';
-    $body = cradle('/module/role')->template('role/form', $data);
+    $body = cradle('/module/role')->template('role/form', $data, [
+        'role_permission'
+    ]);
 
     //Set Content
     $response
@@ -233,16 +194,6 @@ $cradle->post('/admin/role/create', function ($request, $response) {
     //----------------------------//
     // 2. Prepare Data
     $data = $request->getStage();
-
-    $permissions = cradle('global')->config('admin/permissions');
-
-    // get roles
-    if (isset($data['role_permissions'])) {
-        // return all keys of role permissions
-        $data['role_permissions'] = array_keys($data['role_permissions']);
-        // set to request role permissions
-        $request->setStage('role_permissions', $data['role_permissions']);
-    }
 
     //----------------------------//
     // 3. Process Request
@@ -282,16 +233,6 @@ $cradle->post('/admin/role/update/:role_id', function ($request, $response) {
     //----------------------------//
     // 2. Prepare Data
     $data = $request->getStage();
-
-    $permissions = cradle('global')->config('admin/permissions');
-
-    // get roles
-    if (isset($data['role_permissions'])) {
-        // return all keys of role permissions
-        $data['role_permissions'] = array_keys($data['role_permissions']);
-        // set to request role permissions
-        $request->setStage('role_permissions', $data['role_permissions']);
-    }
 
     //----------------------------//
     // 3. Process Request

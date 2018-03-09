@@ -37,19 +37,9 @@ $cradle->on('role-create', function ($request, $response) {
 
     //----------------------------//
     // 3. Prepare Data
-    $permissions = cradle('global')->config('admin/permissions');
-
-    $rolePermissions = [];
-
-    // loop through data
-    foreach ($data['role_permissions'] as $permission) {
-        $key = array_search($permission, array_column($permissions, 'label'));
-        if (is_int($key)) {
-            $rolePermissions[] = $permissions[$key];
-        }
+    if($data['role_permissions']) {
+        $data['role_permissions'] = json_encode($data['role_permissions']);
     }
-
-    $data['role_permissions'] = json_encode($rolePermissions);
 
     //----------------------------//
     // 4. Process Data
@@ -326,20 +316,9 @@ $cradle->on('role-update', function ($request, $response) {
 
     //----------------------------//
     // 3. Prepare Data
-    $permissions = cradle('global')->config('admin/permissions');
-
-    // define role permissions
-    $rolePermissions = [];
-
-    // loop through data
-    foreach ($data['role_permissions'] as $permission) {
-        $key = array_search($permission, array_column($permissions, 'label'));
-        if (is_int($key)) {
-            $rolePermissions[] = $permissions[$key];
-        }
+    if($data['role_permissions']) {
+        $data['role_permissions'] = json_encode($data['role_permissions']);
     }
-
-    $data['role_permissions'] = json_encode($rolePermissions);
 
     //----------------------------//
     // 4. Process Data
