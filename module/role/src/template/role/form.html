@@ -1,3 +1,15 @@
+<style>
+    .permission-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    .permission-list .permission-input {
+        margin-top: 10px;
+    }
+</style>
+
+
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item">
@@ -16,16 +28,16 @@
 
 <div class="main-padding">
     <h3 class="main-title"><i class="fa fa-key"></i> {{title}}</h3>
-    <form enctype="multipart/form-data" method="post">
+    <form enctype="multipart/form-data" method="post" data-do="permission-field">
         <div class="form-group">
             <label class="control-label">Role Name</label>
             <input
                 class="form-control {{#if errors.role_name}}is-invalid{{/if}}"
                 placeholder="Super Admin"
                 name="role_name"
-                {{#when item.role_flag '==' '1'}}
+                {{#if item.role_flag}}
                 readonly="readonly"
-                {{/when}}
+                {{/if}}
                 value="{{item.role_name}}"
                 type="text">
             {{#if errors.role_name}}
@@ -36,62 +48,22 @@
         </div>
         <div class="table-overflow {{#if errors.role_permissions}}form-control is-invalid{{/if}}">
             <label class="control-label">Permissions</label>
-            {{#if permissions}}
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>
-                            <label class="checkbox checkbox-1">
-                                <input type="checkbox" data-do="table-checkall">
-                                <span></span>
-                            </label>
-                        </th>
-                        <th>Label</th>
-                        <th>Method</th>
-                        <th>Path</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {{#each permissions}}
-                    <tr>
-                        <td>
-                            <label class="checkbox checkbox-1">
-                                <input
-                                    type="checkbox"
-                                    name="role_permissions[{{label}}]"
-                                    {{#if checked}}
-                                    checked="checked"
-                                    {{/if}}>
-                                <span></span>
-                            </label>
-                        </td>
-                        <td>{{label}}</td>
-                        <td>{{method}}</td>
-                        <td>{{path}}</td>
-                    </tr>
-                {{/each}}
-                </tbody>
-            </table>
-            {{else}}
-            <!-- START: NO RESULTS -->
-            <div class="alert alert-info no-results">
-                <center>No Results Found.</center>
-                <center>Go to this <a href="/admin/permission/create">link</a> to create permissions.</center>
-            </div>
-            <!-- END: NO RESULTS -->
-            {{/if}}
+            <div
         </div>
-        {{#if errors.role_permissions}}
-        <div class="invalid-feedback">
-            {{errors.role_permissions}}
-        </div>
-        {{/if}}
-        {{#if permissions}}
+        <button type="button" class="btn btn-success permission-action-add">
+            <i class="fas fa-plus"></i>
+            Add Permission
+        </button>
+        <ul class="permission-list">
+            {{#each item.role_permissions}}
+                {{> role_permission}}
+            {{/each}}
+        </ul>
         <div class="clear form-group">
             <hr/>
             <input type="hidden" name="csrf" value="" />
             <button type="submit" class="btn btn-primary">Submit</button>
         </div>
-        {{/if}}
+        <span class="help-text has-error"></span>
     </form>
 </div>

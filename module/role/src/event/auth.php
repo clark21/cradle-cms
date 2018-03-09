@@ -37,3 +37,29 @@ $cradle->on('auth-detail', function ($request, $response) {
     // set response results
     $response->setResults($results);
 });
+
+
+/**
+ * Auth Create Job
+ *
+ * @param Request $request
+ * @param Response $response
+ */
+$cradle->on('auth-create', function ($request, $response) {
+    //if the auth-detail from auth returned an error
+    if ($response->isError()) {
+        //do nothing
+        return;
+    }
+
+    //this/these will be used a lot
+    $roleSql = RoleService::get('sql');
+
+    // get response results
+    $results = $response->getResults();
+
+    $roleSql->linkAuth(1, $results['auth_id']);
+
+    // set response results
+    $response->setResults($results);
+});

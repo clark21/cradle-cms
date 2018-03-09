@@ -1564,6 +1564,151 @@ jQuery(function($) {
     })();
 
     /**
+     * Other UI
+     */
+    (function() {
+        $(window).on('permission-field-init', function(e, target) {
+            var itemTemplate =
+                '<li class="permission-item">'
+                    + '<div class="permission-input input-group">'
+                        + '<input '
+                            + 'class="form-control"'
+                            + 'data-name="label"'
+                            + 'placeholder="Label"'
+                            + 'type="text"'
+                        + '/>'
+                        + '<select '
+                            + 'class="form-control"'
+                            + 'data-name="method">'
+                            + '<option value="">Method</option>'
+                            + '<option value="get">GET</option>'
+                            + '<option value="post">POST</option>'
+                            + '<option value="put">PUT</option>'
+                            + '<option value="delete">DELETE</option>'
+                            + '<option value="all">ALL</option>'
+                        + '</select>'
+                        + '<input '
+                            + 'class="form-control"'
+                            + 'data-name="path"'
+                            + 'placeholder="/some/path"'
+                            + 'type="text"'
+                        + '/>'
+                        + '<div class="input-group-append">'
+                            + '<button class="btn btn-danger permission-action-remove" type="button">'
+                                + '<i class="fas fa-times"></i>'
+                            + '</button>'
+                        + '</div>'
+                    + '</div>'
+                + '</li>';
+
+            var message = $(target).attr('data-error') || 'Some items were empty';
+
+            var reindex = function(list, path) {
+                path = path || 'role_permissions';
+                path += '[{INDEX}]';
+                $(list).children('li.permission-item').each(function(i) {
+                    var newPath = path.replace('{INDEX}', i);
+                    $('div.permission-input:first', this).find('.form-control').each(function() {
+                        var name = $(this).attr('data-name');
+                        if(!name.length) {
+                            return;
+                        }
+
+                        $(this).attr('name', newPath + '[' + name + ']');
+                    });
+                });
+            };
+
+            var listen = function(item) {
+                item = $(item);
+
+                //on button add click
+                $('button.permission-action-add:first', item).click(function() {
+                    //make the template
+                    var newItem = $(
+                        itemTemplate
+                    ).doon();
+
+                    //append the template
+                    $('ul.permission-list:first', item).append(newItem);
+
+                    listen(newItem);
+
+                    reindex($('ul.permission-list:first', target));
+                });
+
+                //on button remove click
+                $('button.permission-action-remove:first', item).click(function() {
+                    $(this).closest('li.permission-item').remove();
+
+                    reindex($('ul.permission-list:first', target));
+                });
+
+                return item;
+            };
+
+            var checkForm = function(e) {
+                var errors = false;
+                $('input[data-name="label"]', target).each(function() {
+                    if(!$(this).val().trim().length) {
+                        $(this).parent().addClass('has-error');
+                        errors = true;
+                    }
+                });
+
+                $('input[data-name="path"]', target).each(function() {
+                    if(!$(this).val().trim().length) {
+                        $(this).parent().addClass('has-error');
+                        errors = true;
+                    }
+                });
+
+                $('select[data-name="method"]', target).each(function() {
+                    if(!$(this).val()) {
+                        $(this).parent().addClass('has-error');
+                        errors = true;
+                    }
+                });
+
+                if(errors) {
+                    $('span.help-text', target).html(message);
+                    e.preventDefault();
+                    return false;
+                }
+            };
+
+            //listen to the root
+            listen(target)
+                .submit(checkForm)
+                //find all the current elements
+                .find('li.permission-item')
+                .each(function() {
+                    listen(this).doon();
+                });
+
+            var root = $('ul.permission-list:first');
+
+            reindex(root);
+        });
+
+        /**
+         * Prettyfy
+         */
+        $(window).on('prettify-init', function(e, target) {
+            var loaded = false;
+            require.load(
+                'components/google-code-prettify/src/prettify.js',
+                function() {
+                    if(!loaded) {
+                        PR.prettyPrint();
+                        loaded = true;
+                    }
+                }
+            );
+        });
+    })();
+
+    /**
      * Notifier
      */
     (function() {

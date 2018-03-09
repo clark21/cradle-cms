@@ -1,10 +1,7 @@
 <?php //-->
 include_once __DIR__ . '/src/event/auth.php';
-include_once __DIR__ . '/src/event/object.php';
 include_once __DIR__ . '/src/event/role.php';
-include_once __DIR__ . '/src/event/permission.php';
 
-include_once __DIR__ . '/src/controller/permission.php';
 include_once __DIR__ . '/src/controller/role.php';
 
 use Cradle\Module\Role\Service as RoleService;
