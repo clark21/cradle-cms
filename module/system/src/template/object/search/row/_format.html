@@ -93,11 +93,11 @@
     {{#when format '===' 'image'}}
         {{#if value}}
             <td>
-                <img 
-                    src="{{value}}" 
-                    width="{{parameters.0}}" 
-                    onerror="this.src='/images/default-image.png'" 
-                    height="{{parameters.1}}" 
+                <img
+                    src="{{value}}"
+                    width="{{parameters.0}}"
+                    onerror="this.src='/images/default-image.png'"
+                    height="{{parameters.1}}"
                 />
             </td>
         {{else}}
@@ -111,11 +111,7 @@
         <td><a href="tel:{{value}}">{{compile parameters ../this}}</a></td>
     {{/when}}
     {{#when format '===' 'custom'}}
-        {{#if value}}
-            <td>{{value}}</td>
-        {{else}}
-            <td>{{compile parameters ../this}}</td>
-        {{/if}}
+        <td>{{{compile parameters ../this}}}</td>
     {{/when}}
     {{#when format '===' 'comma'}}
         <td>{{join value ','}}</td>
@@ -131,8 +127,6 @@
         </td>
     {{/when}}
     {{#when format '===' 'formula'}}
-        <td>
-            {{formula parameters ../this}}
-        </td>
+        <td>{{formula parameters ../this}}</td>
     {{/when}}
 {{/format}}
