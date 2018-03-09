@@ -62,6 +62,9 @@
             {{#when format '===' 'phone'}}
                 <td><a href="tel:{{value}}">{{compile parameters ../this}}</a></td>
             {{/when}}
+            {{#when format '===' 'custom'}}
+                <td>{{{compile parameters ../this}}}</td>
+            {{/when}}
             {{#when format '===' 'comma'}}
                 <td>{{join value ','}}</td>
             {{/when}}
@@ -71,7 +74,7 @@
             {{#when format '===' 'tag'}}
                 <td>
                     {{#each value}}
-                        <div class="tag">{{this}}</div>
+                        <div class="badge badge-orange">{{this}}</div>
                     {{/each}}
                 </td>
             {{/when}}
