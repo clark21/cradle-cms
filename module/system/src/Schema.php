@@ -99,6 +99,7 @@ class Schema extends Registry
             'searchable' => $this->getSearchableFieldNames(),
             'slugable' => $this->getSlugableFieldNames(),
             'sortable' => $this->getSortableFieldNames(),
+            'uuids' => $this->getUuidFieldNames(),
             'unique' => $this->getUniqueFieldNames(),
             'updated' => $this->getUpdatedFieldName()
         ]);
@@ -597,6 +598,29 @@ class Schema extends Registry
     }
 
     /**
+     * Returns uuid fields
+     *
+     * @return string|false
+     */
+    public function getUuidFieldNames()
+    {
+        $results = [];
+        if (!isset($this->data['fields']) || empty($this->data['fields'])) {
+            return $results;
+        }
+
+        $table = $this->data['name'];
+        foreach ($this->data['fields'] as $field) {
+            $name = $table . '_' . $field['name'];
+            if ($field['field']['type'] === 'uuid') {
+                $results[] = $name;
+            }
+        }
+
+        return $results;
+    }
+
+    /**
      * Returns updated field
      *
      * @return string|false
@@ -903,6 +927,10 @@ class Schema extends Registry
         ],
         'multirange' => [
             'type' => 'JSON'
+        ],
+        'uuid' => [
+            'type' => 'VARCHAR',
+            'length' => 255
         ],
         'active' => [
             'type' => 'INT',

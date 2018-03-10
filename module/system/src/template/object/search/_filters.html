@@ -3,7 +3,7 @@
         {{#notin 'password,files,images,textarea,wysiwyg,markdown,none,hide,active' field.type}}
             <div class="form-group">
                 <label for="filter[{{@key}}]">{{label}}</label>
-                {{#in 'text,slug,file,image' field.type}}
+                {{#in 'text,slug,file,image,uuid' field.type}}
                     <input
                         class="form-control"
                         name="filter[{{@key}}]"

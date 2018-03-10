@@ -169,7 +169,7 @@
             {{/relations}}
 
             {{#each schema.fields}}
-                {{#notin 'none,hide,active,created,updated' field.type}}
+                {{#notin 'none,hide,active,created,updated,uuid' field.type}}
                     <div class="form-group{{#has ../errors @key}} has-error{{/has}}">
                         <label class="control-label">{{label}}</label>
                         <div>

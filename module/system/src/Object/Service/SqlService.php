@@ -63,8 +63,8 @@ class SqlService
         }
 
         $table = $this->schema->getName();
-        $created = $this->schema->getCreatedFieldName($data);
-        $updated = $this->schema->getUpdatedFieldName($data);
+        $created = $this->schema->getCreatedFieldName();
+        $updated = $this->schema->getUpdatedFieldName();
 
         if ($created) {
             $data[$created] = date('Y-m-d H:i:s');
@@ -72,6 +72,12 @@ class SqlService
 
         if ($updated) {
             $data[$updated] = date('Y-m-d H:i:s');
+        }
+
+        $uuids = $this->schema->getUuidFieldNames();
+
+        foreach($uuids as $uuid) {
+            $data[$uuid] = sha1(uniqid());
         }
 
         return $this

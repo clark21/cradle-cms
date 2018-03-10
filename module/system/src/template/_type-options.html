@@ -310,6 +310,19 @@
     <option
         data-default="1"
         data-filterable="1"
+        data-format="string"
+        data-index="filterable|searchable"
+        data-searchable="1"
+        data-sortable="0"
+        data-validation="0"
+        value="uuid"
+        {{#when field.type '===' 'uuid'}}selected{{/when}}
+    >
+        Unique ID
+    </option>
+    <option
+        data-default="1"
+        data-filterable="1"
         data-format="number"
         data-index="filterable|sortable"
         data-name="active"
@@ -351,14 +364,5 @@
         {{#when field.type '===' 'updated'}}selected{{/when}}
     >
         Updated
-    </option>
-    <option
-        data-index="searchable|filterable|sortable"
-        data-fieldset="attributes"
-        data-format="string|number|date|html|json"
-        value="custom"
-        {{#when field.type '===' 'custom'}}selected{{/when}}
-    >
-        Custom Field
     </option>
 </optgroup>
