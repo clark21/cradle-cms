@@ -115,6 +115,16 @@
         {{/each}}
     >{{{scope ../item @key}}}</textarea>
 {{/when}}
+{{#when field.type '===' 'markdown'}}
+    <textarea
+        class="form-control"
+        data-do="markdown-editor"
+        name="{{@key}}"
+        {{#each field.attributes}}
+            {{@key}}="{{this}}"
+        {{/each}}
+    >{{{scope ../item @key}}}</textarea>
+{{/when}}
 {{#when field.type '===' 'number'}}
     <input
         autocomplete="{{name}}"

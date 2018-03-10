@@ -5,9 +5,6 @@
             {{#when format '===' 'none'}}
                 <td>{{value}}</td>
             {{/when}}
-            {{#when format '===' 'html'}}
-                <td>{{{value}}}</td>
-            {{/when}}
             {{#when format '===' 'lower'}}
                 <td>{{lower value}}</td>
             {{/when}}
@@ -22,6 +19,12 @@
             {{/when}}
             {{#when format '===' 'words'}}
                 <td>{{words value parameters}}</td>
+            {{/when}}
+            {{#when format '===' 'html'}}
+                <td>{{{value}}}</td>
+            {{/when}}
+            {{#when format '===' 'markdown'}}
+                <td>{{{markdown value}}}</td>
             {{/when}}
             {{#when format '===' 'number'}}
                 <td>{{number value}}</td>

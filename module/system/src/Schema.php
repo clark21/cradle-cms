@@ -820,6 +820,9 @@ class Schema extends Registry
         'wysiwyg' => [
             'type' => 'TEXT'
         ],
+        'markdown' => [
+            'type' => 'TEXT'
+        ],
         'number' => [
             'type' => 'INT'
         ],

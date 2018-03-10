@@ -89,11 +89,20 @@
     <option
         data-index="searchable"
         data-fieldset="attributes"
-        data-format="string|date|html"
+        data-format="string|html"
         value="wysiwyg"
         {{#when field.type '===' 'wysiwyg'}}selected{{/when}}
     >
         WYSIWYG Field
+    </option>
+    <option
+        data-index="searchable"
+        data-fieldset="attributes"
+        data-format="string|html"
+        value="markdown"
+        {{#when field.type '===' 'markdown'}}selected{{/when}}
+    >
+        Markdown Field
     </option>
 </optgroup>
 <optgroup label="Number Fields">

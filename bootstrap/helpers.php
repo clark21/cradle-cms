@@ -90,6 +90,19 @@ $handlebars->registerHelper('strip', function ($html, $options) {
     return strip_tags($html, $allowable);
 });
 
+/**
+ * Parses Markdown
+ *
+ * @param *string HTML string
+ * @param string  Allowable tags
+ *
+ * @return string
+ */
+$handlebars->registerHelper('markdown', function ($markdown, $options) {
+    $parsedown = new Parsedown;
+    return $parsedown->text($markdown);
+});
+
 /* Number Helpers
 ------------------------------------------------------------------------------*/
 /**
@@ -175,7 +188,7 @@ $handlebars->registerHelper('number_format_short', function ($number, $precision
         $number_format = number_format($number / 1000000000000, $precision);
         $suffix = 'T';
     }
-    
+
     // Remove unecessary zeroes after decimal. "1.0" -> "1"; "1.00" -> "1"
     // Intentionally does not affect partials, eg "1.50" -> "1.50"
     if ($precision > 0) {

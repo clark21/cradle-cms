@@ -10,17 +10,6 @@
             <td>{{value}}</td>
         {{/in}}
     {{/when}}
-    {{#when format '===' 'html'}}
-        {{#in ../../schema.filterable name}}
-            <td>
-                <a href="?{{query 'filter' name value}}">
-                    {{{value}}}
-                </a>
-            </td>
-        {{else}}
-            <td>{{{value}}}</td>
-        {{/in}}
-    {{/when}}
     {{#when format '===' 'lower'}}
         {{#in ../../schema.filterable name}}
             <td>
@@ -59,6 +48,20 @@
     {{/when}}
     {{#when format '===' 'words'}}
         <td>{{words value parameters}}</td>
+    {{/when}}
+    {{#when format '===' 'html'}}
+        {{#in ../../schema.filterable name}}
+            <td>
+                <a href="?{{query 'filter' name value}}">
+                    {{{value}}}
+                </a>
+            </td>
+        {{else}}
+            <td>{{{value}}}</td>
+        {{/in}}
+    {{/when}}
+    {{#when format '===' 'markdown'}}
+        <td>{{{markdown value}}}</td>
     {{/when}}
     {{#when format '===' 'number'}}
         <td>{{number value}}</td>

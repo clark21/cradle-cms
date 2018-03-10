@@ -89,6 +89,12 @@
         Strip HTML
     </option>
     <option
+        value="markdown"
+        {{#when format '===' 'markdown'}}selected{{/when}}
+    >
+        Markdown
+    </option>
+    <option
         data-fieldset="pair"
         data-placeholder-1="Label or {value}"
         data-placeholder-2="ie. /node/{node_id}"
