@@ -65,7 +65,44 @@ $cradle->get('/admin/system/configuration', function ($request, $response) {
             $data['item'] = [];
     }
 
-    $data = array_merge($request->getStage(), $data['item']);
+    $data['type'] = $request->getStage('type');
+
+    //
+    // We need to normalize the configuration
+    // so that we can do recursive templating
+    // on the front end.
+    //
+    function normalize($configuration) {
+        // normalized array
+        $normalized = [];
+
+        // iterate on each configuration
+        foreach($configuration as $key => $value) {
+            // if config is an array
+            if (is_array($value)) {
+                // loop through
+                $normalized[] = [
+                    'key' => $key,
+                    'value' => null,
+                    'children' => normalize($value)
+                ];
+
+                continue;
+            }
+
+            // set config data
+            $normalized[] = [
+                'key' => $key,
+                'value' => $value,
+                'children' => null
+            ];
+        }
+
+        return $normalized;
+    }
+
+    // normalize config
+    $data['item'] = normalize($data['item']);
 
     //----------------------------//
     // 3. Render Template

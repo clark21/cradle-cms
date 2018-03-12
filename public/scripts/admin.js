@@ -1764,7 +1764,7 @@ jQuery(function($) {
      * Admin Configuration
      */
     (function() {
-        $(window).on('configuration-select-change', function(e, target) {
+        $(window).on('config-select-change', function(e, target) {
             target = $(target);
 
             window.location.search = '?type=' + target.val();

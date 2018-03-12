@@ -4,6 +4,7 @@ vendor
 
 .DS_Store
 
+config/deploy.php
 config/services.php
 config/settings.php
 config/roles.php
