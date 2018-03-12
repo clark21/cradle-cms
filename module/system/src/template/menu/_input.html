@@ -3,6 +3,23 @@
         <button class="menu-builder-handle btn btn-light" type="button">
             <i class="fas fa-arrows-alt fa-fw"></i>
         </button>
+        <button class="menu-builder-handle btn btn-default" type="button">
+            <i
+                {{#if icon}}
+                    class="{{icon}} fa-fw"
+                {{else}}
+                    class="fas fa-question fa-fw"
+                {{/if}}
+                data-do="icon-field"
+                data-target-parent="3"
+            ></i>
+            <input
+                class="form-control"
+                data-name="icon"
+                type="hidden"
+                value="{{icon}}"
+            />
+        </button>
     </div>
     <input
         class="form-control"
@@ -14,7 +31,7 @@
     <input
         class="form-control"
         data-name="path"
-        placeholder="Value"
+        placeholder="/some/path"
         type="text"
         value="{{path}}"
     />
