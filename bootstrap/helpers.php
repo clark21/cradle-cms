@@ -680,8 +680,8 @@ $handlebars->registerHelper('compile', function ($template, $variables) {
  */
 $handlebars->registerHelper('partial', function ($name, $variables) {
     $handlebars = cradle('global')->handlebars();
-    $partial = $handlebars->getPartial($name);
-    $template = $handlebars->compile($partial);
+    $partial = $handlebars->getPartial($name);    
+    $template = $handlebars->compile($partial);    
     return $template($variables);
 });
 
