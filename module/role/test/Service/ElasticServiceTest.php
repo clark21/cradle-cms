@@ -42,6 +42,7 @@ class Cradle_Module_Role_Service_ElasticServiceTest extends TestCase
 
         //if it's false, it's not enabled
         if($actual === false) {
+            $this->assertTrue(!$actual);
             return;
         }
 
@@ -60,6 +61,7 @@ class Cradle_Module_Role_Service_ElasticServiceTest extends TestCase
 
         //if it's false, it's not enabled
         if($actual === false) {
+            $this->assertTrue(!$actual);
             return;
         }
 
@@ -77,6 +79,7 @@ class Cradle_Module_Role_Service_ElasticServiceTest extends TestCase
 
         //if it's false, it's not enabled
         if($actual === false) {
+            $this->assertTrue(!$actual);
             return;
         }
 
@@ -92,6 +95,7 @@ class Cradle_Module_Role_Service_ElasticServiceTest extends TestCase
 
         //if it's false, it's not enabled
         if($actual === false) {
+            $this->assertTrue(!$actual);
             return;
         }
 
@@ -111,6 +115,7 @@ class Cradle_Module_Role_Service_ElasticServiceTest extends TestCase
 
         //if it's false, it's not enabled
         if($actual === false) {
+            $this->assertTrue(!$actual);
             return;
         }
 

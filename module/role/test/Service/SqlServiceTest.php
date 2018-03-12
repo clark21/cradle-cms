@@ -40,7 +40,12 @@ class Cradle_Module_Role_Service_SqlServiceTest extends TestCase
     public function testCreate()
     {
         $actual = $this->object->create([
-            'role_name' => 'Apple',
+            'role_name' => 'Moderator',
+            'role_permissions' => json_encode([
+                'path' => '/admin/role/*',
+                'label' => 'Role Access',
+                'method' => 'all'
+            ])
         ]);
 
         $id = $this->object->getResource()->getLastInsertedId();
@@ -95,40 +100,4 @@ class Cradle_Module_Role_Service_SqlServiceTest extends TestCase
         $this->assertTrue(!empty($actual));
         $this->assertEquals($id, $actual['role_id']);
     }
-
-    /**
-     * @covers Cradle\Module\Role\Service\SqlService::linkHistory
-     */
-    public function testLinkHistory()
-    {
-        $actual = $this->object->linkHistory(999, 999);
-
-        $this->assertTrue(!empty($actual));
-        $this->assertEquals(999, $actual['role_id']);
-        $this->assertEquals(999, $actual['history_id']);
-    }
-
-    /**
-     * @covers Cradle\Module\Role\Service\SqlService::unlinkHistory
-     */
-    public function testUnlinkHistory()
-    {
-        $actual = $this->object->unlinkHistory(999, 999);
-
-        $this->assertTrue(!empty($actual));
-        $this->assertEquals(999, $actual['role_id']);
-        $this->assertEquals(999, $actual['history_id']);
-    }
-
-    /**
-     * @covers Cradle\Module\Role\Service\SqlService::unlinkHistory
-     */
-    public function testUnlinkAllHistory()
-    {
-        $actual = $this->object->unlinkAllHistory(999);
-
-        $this->assertTrue(!empty($actual));
-        $this->assertEquals(999, $actual['role_id']);
-    }
-
 }

@@ -159,4 +159,29 @@ class Cradle_Module_Role_EventsTest extends TestCase
         $this->assertEquals('Apple', $this->response->getResults('role_name'));
         $this->assertEquals(self::$id, $this->response->getResults('role_id'));
     }
+
+    /**
+     * role-auth-link
+     *
+     * @covers Cradle\Module\Role\Service\SqlService::get
+     * @covers Cradle\Module\System\Utility\Service\AbstractElasticService::get
+     * @covers Cradle\Module\System\Utility\Service\AbstractRedisService::getDetail
+     * @covers Cradle\Module\Role\Service\SqlService::update
+     * @covers Cradle\Module\System\Utility\Service\AbstractElasticService::update
+     * @covers Cradle\Module\System\Utility\Service\AbstractRedisService::removeDetail
+     * @covers Cradle\Module\System\Utility\Service\AbstractRedisService::removeSearch
+     */
+    public function testRoleAuthLink()
+    {
+        $this->request->setStage([
+            'role_id' => 1,
+            'auth_id' => 1,
+        ]);
+
+        cradle()->inspect($this->request->getStage()); exit;
+
+        cradle()->trigger('role-auth-link', $this->request, $this->response);
+
+        //$this->assertEquals(self::$id, $this->response->getResults('role_id'));
+    }
 }
