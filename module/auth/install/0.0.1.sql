@@ -6,6 +6,6 @@ KEY `auth_updated` (`auth_updated`),
 KEY `auth_password` (`auth_password`),
 KEY `auth_type` (`auth_type`));
 
-DROP TABLE IF EXISTS `auth_user`;
+DROP TABLE IF EXISTS `auth_profile`;
 
-CREATE TABLE `auth_user` (`auth_id` int(10) UNSIGNED NOT NULL, `user_id` int(10) UNSIGNED NOT NULL, PRIMARY KEY (`auth_id`, `user_id`));
+CREATE TABLE `auth_profile` (`auth_id` int(10) UNSIGNED NOT NULL, `profile_id` int(10) UNSIGNED NOT NULL, PRIMARY KEY (`auth_id`, `profile_id`));

@@ -67,10 +67,10 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
     public function get($id)
     {
         $search = $this->resource->search('history');
-        
-        $search->innerJoinUsing('history_user', 'history_id');
-        $search->innerJoinUsing('user', 'user_id');
-        
+
+        $search->innerJoinUsing('history_profile', 'history_id');
+        $search->innerJoinUsing('profile', 'profile_id');
+
         $search->filterByHistoryId($id);
 
         $results = $search->getRow();
@@ -79,16 +79,16 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
             return $results;
         }
 
-        if ($results['user_meta']) {
-            $results['user_meta'] = json_decode($results['user_meta'], true);
+        if ($results['profile_meta']) {
+            $results['profile_meta'] = json_decode($results['profile_meta'], true);
         } else {
-            $results['user_meta'] = [];
+            $results['profile_meta'] = [];
         }
 
-        if ($results['user_files']) {
-            $results['user_files'] = json_decode($results['user_files'], true);
+        if ($results['profile_files']) {
+            $results['profile_files'] = json_decode($results['profile_files'], true);
         } else {
-            $results['user_files'] = [];
+            $results['profile_files'] = [];
         }
 
         return $results;
@@ -126,7 +126,7 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
         $count = 0;
 
         $keywords = null;
-        
+
         if (isset($data['filter']) && is_array($data['filter'])) {
             $filter = $data['filter'];
         }
@@ -151,22 +151,22 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
             }
         }
 
-        
+
         if (!isset($filter['history_active'])) {
             $filter['history_active'] = 1;
         }
-        
+
 
         $search = $this->resource
             ->search('history')
             ->setStart($start)
             ->setRange($range);
 
-        
+
         //join user
-        $search->innerJoinUsing('history_user', 'history_id');
-        $search->innerJoinUsing('user', 'user_id');
-        
+        $search->innerJoinUsing('history_profile', 'history_id');
+        $search->innerJoinUsing('profile', 'profile_id');
+
 
         //add filters
         foreach ($filter as $column => $value) {
@@ -228,32 +228,32 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
             ->get();
     }
     /**
-     * Links user
+     * Links profile
      *
      * @param *int $historyPrimary
-     * @param *int $userPrimary
+     * @param *int $profilePrimary
      */
-    public function linkUser($historyPrimary, $userPrimary)
+    public function linkUser($historyPrimary, $profilePrimary)
     {
         return $this->resource
             ->model()
             ->setHistoryId($historyPrimary)
-            ->setUserId($userPrimary)
-            ->insert('history_user');
+            ->setProfileId($profilePrimary)
+            ->insert('history_profile');
     }
 
     /**
-     * Unlinks user
+     * Unlinks profile
      *
      * @param *int $historyPrimary
-     * @param *int $userPrimary
+     * @param *int $profilePrimary
      */
-    public function unlinkUser($historyPrimary, $userPrimary)
+    public function unlinkUser($historyPrimary, $profilePrimary)
     {
         return $this->resource
             ->model()
             ->setHistoryId($historyPrimary)
-            ->setUserId($userPrimary)
-            ->remove('history_user');
+            ->setProfileId($profilePrimary)
+            ->remove('history_profile');
     }
 }

@@ -29,12 +29,12 @@ $cradle->on('auth-create', function ($request, $response) {
         $data = $request->getStage();
     }
 
-    $schema = SystemSchema::i('user');
+    $schema = SystemSchema::i('profile');
 
     //check if user_email exist
     foreach ($schema->getFields() as $field) {
         if ($field['name'] === 'email') {
-            $data['user_email'] = $data['auth_slug'];
+            $data['profile_email'] = $data['auth_slug'];
 
             //then reset stage
             $request->setStage($data);
@@ -61,7 +61,7 @@ $cradle->on('auth-create', function ($request, $response) {
     //----------------------------//
     // 3. Prepare Data
     if (isset($data['auth_password'])) {
-        $data['auth_password'] = md5(strtotime($data['auth_password']));
+        $data['auth_password'] = md5($data['auth_password']);
     }
 
     //----------------------------//
@@ -74,17 +74,17 @@ $cradle->on('auth-create', function ($request, $response) {
     //save auth to database
     $results = $authSql->create($data);
 
-    //link user
-    if (isset($data['user_id'])) {
-        $authSql->linkUser($results['auth_id'], $data['user_id']);
+    //link profile
+    if (isset($data['profile_id'])) {
+        $authSql->linkProfile($results['auth_id'], $data['profile_id']);
     } else {
-        //create user
-        if (!$request->getStage('user_name')) {
-            // set user name
-            $request->setStage('user_name', $request->getStage('auth_slug'));
+        //create profile
+        if (!$request->getStage('profile_name')) {
+            // set profile name
+            $request->setStage('profile_name', $request->getStage('auth_slug'));
         }
 
-        $request->setStage('schema', 'user');
+        $request->setStage('schema', 'profile');
         cradle()->trigger('system-object-create', $request, $response);
 
         if ($response->isError()) {
@@ -93,7 +93,7 @@ $cradle->on('auth-create', function ($request, $response) {
 
         $user = $response->getResults();
 
-        $authSql->linkUser($results['auth_id'], $user['user_id']);
+        $authSql->linkProfile($results['auth_id'], $user['profile_id']);
     }
 
     //index auth
@@ -309,12 +309,12 @@ $cradle->on('auth-forgot-mail', function ($request, $response) {
 });
 
 /**
- * Links Authentication to user
+ * Links Authentication to profile
  *
  * @param Request $request
  * @param Response $response
  */
-$cradle->on('auth-link-user', function ($request, $response) {
+$cradle->on('auth-link-profile', function ($request, $response) {
     //----------------------------//
     // 1. Get Data
     $data = [];
@@ -324,7 +324,7 @@ $cradle->on('auth-link-user', function ($request, $response) {
 
     //----------------------------//
     // 2. Validate Data
-    if (!isset($data['auth_id'], $data['user_id'])) {
+    if (!isset($data['auth_id'], $data['profile_id'])) {
         return $response->setError(true, 'No ID provided');
     }
 
@@ -335,9 +335,9 @@ $cradle->on('auth-link-user', function ($request, $response) {
     $authRedis = AuthService::get('redis');
     $authElastic = AuthService::get('elastic');
 
-    $results = $authSql->linkUser(
+    $results = $authSql->linkProfile(
         $data['auth_id'],
-        $data['user_id']
+        $data['profile_id']
     );
 
     //index post
@@ -574,12 +574,12 @@ $cradle->on('auth-search', function ($request, $response) {
 });
 
 /**
- * Unlinks Authentication from user
+ * Unlinks Authentication from profile
  *
  * @param Request $request
  * @param Response $response
  */
-$cradle->on('auth-unlink-user', function ($request, $response) {
+$cradle->on('auth-unlink-profile', function ($request, $response) {
     //----------------------------//
     // 1. Get Data
     $data = [];
@@ -589,7 +589,7 @@ $cradle->on('auth-unlink-user', function ($request, $response) {
 
     //----------------------------//
     // 2. Validate Data
-    if (!isset($data['auth_id'], $data['user_id'])) {
+    if (!isset($data['auth_id'], $data['profile_id'])) {
         return $response->setError(true, 'No ID provided');
     }
 
@@ -600,9 +600,9 @@ $cradle->on('auth-unlink-user', function ($request, $response) {
     $authRedis = AuthService::get('redis');
     $authElastic = AuthService::get('elastic');
 
-    $results = $authSql->unlinkUser(
+    $results = $authSql->unlinkProfile(
         $data['auth_id'],
-        $data['user_id']
+        $data['profile_id']
     );
 
     //index post
@@ -638,13 +638,13 @@ $cradle->on('auth-update', function ($request, $response) {
         $data = $request->getStage();
     }
 
-    $schema = SystemSchema::i('user');
+    $schema = SystemSchema::i('profile');
 
     //check if user_email exist
     if (isset($data['auth_slug'])) {
         foreach ($schema->getFields() as $field) {
             if ($field['name'] === 'email') {
-                $data['user_email'] = $data['auth_slug'];
+                $data['profile_email'] = $data['auth_slug'];
 
                 //then reset stage
                 $request->setStage($data);
@@ -681,7 +681,7 @@ $cradle->on('auth-update', function ($request, $response) {
         );
 
     if (isset($data['auth_password'])) {
-        $data['auth_password'] = md5(strtotime($data['auth_password']));
+        $data['auth_password'] = md5($data['auth_password']);
     }
 
     //----------------------------//
@@ -694,8 +694,8 @@ $cradle->on('auth-update', function ($request, $response) {
     //save auth to database
     $results = $authSql->update($data);
 
-    if (isset($data['user_id'])) {
-        $request->setStage('schema', 'user');
+    if (isset($data['profile_id'])) {
+        $request->setStage('schema', 'profile');
         cradle()->trigger('system-object-update', $request, $response);
     }
 

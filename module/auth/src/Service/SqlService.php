@@ -68,8 +68,8 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
     {
         $search = $this->resource->search('auth');
 
-        $search->innerJoinUsing('auth_user', 'auth_id');
-        $search->innerJoinUsing('user', 'user_id');
+        $search->innerJoinUsing('auth_profile', 'auth_id');
+        $search->innerJoinUsing('profile', 'profile_id');
 
         if (is_numeric($id)) {
             $search->filterByAuthId($id);
@@ -153,8 +153,8 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
 
 
         //join user
-        $search->innerJoinUsing('auth_user', 'auth_id');
-        $search->innerJoinUsing('user', 'user_id');
+        $search->innerJoinUsing('auth_profile', 'auth_id');
+        $search->innerJoinUsing('profile', 'profile_id');
 
 
         //add filters
@@ -171,7 +171,7 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
                 $where = [];
                 $where[] = 'LOWER(auth_slug) LIKE %s';
                 $or[] = '%' . strtolower($keyword) . '%';
-                $where[] = 'LOWER(user_name) LIKE %s';
+                $where[] = 'LOWER(profile_name) LIKE %s';
                 $or[] = '%' . strtolower($keyword) . '%';
                 array_unshift($or, '(' . implode(' OR ', $where) . ')');
 
@@ -230,32 +230,32 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
     }
 
     /**
-     * Links user
+     * Links profile
      *
      * @param *int $authPrimary
-     * @param *int $userPrimary
+     * @param *int $profilePrimary
      */
-    public function linkUser($authPrimary, $userPrimary)
+    public function linkProfile($authPrimary, $profilePrimary)
     {
         return $this->resource
             ->model()
             ->setAuthId($authPrimary)
-            ->setUserId($userPrimary)
-            ->insert('auth_user');
+            ->setProfileId($profilePrimary)
+            ->insert('auth_profile');
     }
 
     /**
-     * Unlinks user
+     * Unlinks profile
      *
      * @param *int $authPrimary
-     * @param *int $userPrimary
+     * @param *int $profilePrimary
      */
-    public function unlinkUser($authPrimary, $userPrimary)
+    public function unlinkProfile($authPrimary, $profilePrimary)
     {
         return $this->resource
             ->model()
             ->setAuthId($authPrimary)
-            ->setUserId($userPrimary)
-            ->remove('auth_user');
+            ->setProfileId($profilePrimary)
+            ->remove('auth_profile');
     }
 }
