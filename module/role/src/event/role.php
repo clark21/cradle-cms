@@ -37,7 +37,7 @@ $cradle->on('role-create', function ($request, $response) {
 
     //----------------------------//
     // 3. Prepare Data
-    if($data['role_permissions']) {
+    if ($data['role_permissions']) {
         $data['role_permissions'] = json_encode($data['role_permissions']);
     }
 
@@ -316,7 +316,7 @@ $cradle->on('role-update', function ($request, $response) {
 
     //----------------------------//
     // 3. Prepare Data
-    if($data['role_permissions']) {
+    if ($data['role_permissions']) {
         $data['role_permissions'] = json_encode($data['role_permissions']);
     }
 

@@ -52,8 +52,8 @@ $cradle->on('history-create', function ($request, $response) {
     //save history to database
     $results = $historySql->create($data);
     //link user
-    if (isset($data['user_id'])) {
-        $historySql->linkUser($results['history_id'], $data['user_id']);
+    if (isset($data['profile_id'])) {
+        $historySql->linkProfile($results['history_id'], $data['profile_id']);
     }
 
     //index history
@@ -348,12 +348,12 @@ $cradle->on('history-update', function ($request, $response) {
 });
 
 /**
- * Links History to user
+ * Links History to profile
  *
  * @param Request $request
  * @param Response $response
  */
-$cradle->on('history-link-user', function ($request, $response) {
+$cradle->on('history-link-profile', function ($request, $response) {
     //----------------------------//
     // 1. Get Data
     $data = [];
@@ -363,7 +363,7 @@ $cradle->on('history-link-user', function ($request, $response) {
 
     //----------------------------//
     // 2. Validate Data
-    if (!isset($data['history_id'], $data['user_id'])) {
+    if (!isset($data['history_id'], $data['profile_id'])) {
         return $response->setError(true, 'No ID provided');
     }
 
@@ -376,7 +376,7 @@ $cradle->on('history-link-user', function ($request, $response) {
 
     $results = $historySql->linkUser(
         $data['history_id'],
-        $data['user_id']
+        $data['profile_id']
     );
 
     //index post
@@ -390,12 +390,12 @@ $cradle->on('history-link-user', function ($request, $response) {
 });
 
 /**
- * Unlinks History from user
+ * Unlinks History from profile
  *
  * @param Request $request
  * @param Response $response
  */
-$cradle->on('history-unlink-user', function ($request, $response) {
+$cradle->on('history-unlink-profile', function ($request, $response) {
     //----------------------------//
     // 1. Get Data
     $data = [];
@@ -416,9 +416,9 @@ $cradle->on('history-unlink-user', function ($request, $response) {
     $historyRedis = HistoryService::get('redis');
     $historyElastic = HistoryService::get('elastic');
 
-    $results = $historySql->unlinkUser(
+    $results = $historySql->unlinkProfile(
         $data['history_id'],
-        $data['user_id']
+        $data['profile_id']
     );
 
     //index post

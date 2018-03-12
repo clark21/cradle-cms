@@ -93,7 +93,7 @@ $cradle->get('/admin/role/create', function ($request, $response) {
     // 2. Prepare Data
     $data = ['item' => $request->getPost()];
 
-    if($request->hasStage('copy')) {
+    if ($request->hasStage('copy')) {
         $rowRequest = Request::i()
             ->setStage('role_id', $request->getStage('copy'));
 

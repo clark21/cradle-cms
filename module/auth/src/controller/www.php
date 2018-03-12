@@ -31,7 +31,7 @@ $cradle->get('/auth/signup', function ($request, $response) {
     //Prepare body
     $data = ['item' => $request->getPost()];
 
-    $userSchema = SystemSchema::i('user');
+    $userSchema = SystemSchema::i('profile');
 
     $data['schema'] = $userSchema->getAll();
 
@@ -179,7 +179,7 @@ $cradle->get('/auth/account', function ($request, $response) {
     //Prepare body
     $data = ['item' => $request->getPost()];
 
-    $userSchema = SystemSchema::i('user');
+    $userSchema = SystemSchema::i('profile');
 
     $data['schema'] = $userSchema->getAll();
 
@@ -192,7 +192,7 @@ $cradle->get('/auth/account', function ($request, $response) {
     $data['csrf'] = $response->getResults('csrf');
 
     //If no post
-    if (!$request->hasPost('user_name')) {
+    if (!$request->hasPost('profile_name')) {
         //set default data
         $data['item'] = $request->getSession('me');
     }
@@ -440,10 +440,10 @@ $cradle->post('/auth/account', function ($request, $response) {
 
     //----------------------------//
     // 3. Prepare Data
-    //set the auth_id and user_id
+    //set the auth_id and profile_id
     $request->setStage('auth_id', $request->getSession('me', 'auth_id'));
-    $request->setStage('user_id', $request->getSession('me', 'user_id'));
-    $request->setStage('permission', $request->getSession('me', 'user_id'));
+    $request->setStage('profile_id', $request->getSession('me', 'profile_id'));
+    $request->setStage('permission', $request->getSession('me', 'profile_id'));
 
     //remove password if empty
     if (!$request->getStage('auth_password')) {

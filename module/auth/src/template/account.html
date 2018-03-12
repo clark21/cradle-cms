@@ -19,7 +19,7 @@
             <!-- START: Auth Signup Form -->
             <form method="post">
                 <!-- START: User Name -->
-                <div class="form-group{{#if errors.user_name}} has-error{{/if}}">
+                <div class="form-group{{#if errors.profile_name}} has-error{{/if}}">
                     <div class="input-group">
                         <div class="input-group-prepend">
                             <div class="input-group-text">
@@ -29,10 +29,10 @@
                         <input
                             autocomplete="name"
                             type="text"
-                            name="user_name"
+                            name="profile_name"
                             placeholder="{{_ 'Name'}}"
                             class="form-control"
-                            value="{{item.user_name}}"
+                            value="{{item.profile_name}}"
                         />
                     </div>
                     {{#if errors.user_name}}

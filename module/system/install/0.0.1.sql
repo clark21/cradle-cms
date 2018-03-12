@@ -1,11 +1,11 @@
-DROP TABLE IF EXISTS `user`;
+DROP TABLE IF EXISTS `profile`;
 
 CREATE TABLE `user` (
-  `user_id` int(10) UNSIGNED NOT NULL,
-  `user_name` varchar(255) NOT NULL,
-  `user_active` int(1) UNSIGNED NOT NULL DEFAULT '1',
-  `user_created` datetime NOT NULL,
-  `user_updated` datetime NOT NULL
+  `profile_id` int(10) UNSIGNED NOT NULL,
+  `profile_name` varchar(255) NOT NULL,
+  `profile_active` int(1) UNSIGNED NOT NULL DEFAULT '1',
+  `profile_created` datetime NOT NULL,
+  `profile_updated` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -13,21 +13,21 @@ CREATE TABLE `user` (
 --
 
 --
--- Indexes for table `user`
+-- Indexes for table `profile`
 --
-ALTER TABLE `user`
-  ADD PRIMARY KEY (`user_id`),
-  ADD KEY `user_active` (`user_active`),
-  ADD KEY `user_created` (`user_created`),
-  ADD KEY `user_updated` (`user_updated`),
-  ADD KEY `user_name` (`user_name`);
+ALTER TABLE `profile`
+  ADD PRIMARY KEY (`profile_id`),
+  ADD KEY `profile_active` (`profile_active`),
+  ADD KEY `profile_created` (`profile_created`),
+  ADD KEY `profile_updated` (`profile_updated`),
+  ADD KEY `profile_name` (`profile_name`);
 
 --
 -- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT for table `user`
+-- AUTO_INCREMENT for table `profile`
 --
-ALTER TABLE `user`
-  MODIFY `user_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+ALTER TABLE `profile`
+  MODIFY `profile_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
