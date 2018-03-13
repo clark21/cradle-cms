@@ -13,7 +13,7 @@
  * @param Request $request
  * @param Response $response
  */
-$cradle->get('/admin/system/configuration', function ($request, $response) {
+$cradle->get('/admin/system/configuration', function ($request, $response) {  
     //----------------------------//
     // 1. Security Checks
     //only for admin
