@@ -680,7 +680,7 @@ $cradle->get('/admin/auth/export/:type', function ($request, $response) {
     // 1. Route Permissions
     // set redirect
     $request->setStage('redirect', '/admin/auth/search');
-    
+
     if (!cradle('/module/role')->hasPermissions($request, $response)) {
         return;
     }
@@ -700,7 +700,7 @@ $cradle->get('/admin/auth/export/:type', function ($request, $response) {
         $filterable = [
             'auth_id',
             'auth_slug',
-            'user_name'
+            'profile_name'
         ];
 
         foreach ($request->getStage('filter') as $key => $value) {
@@ -715,7 +715,7 @@ $cradle->get('/admin/auth/export/:type', function ($request, $response) {
     if (is_array($request->getStage('order'))) {
         $sortable = [
             'auth_slug',
-            'user_name'
+            'profile_name'
         ];
 
         foreach ($request->getStage('order') as $key => $value) {
@@ -743,7 +743,7 @@ $cradle->get('/admin/auth/export/:type', function ($request, $response) {
             $rows = [
                 'auth_id',
                 'auth_slug',
-                'user_name',
+                'profile_name',
                 'auth_type',
             ];
         } else {
@@ -761,8 +761,8 @@ $cradle->get('/admin/auth/export/:type', function ($request, $response) {
         $file = tmpfile();
         //for each row
         foreach ($rows as $row) {
-            $row['user_meta'] = !empty($row['user_meta']) ? json_encode($row['user_meta']) : '';
-            $row['user_files'] = !empty($row['user_files']) ? json_encode($row['user_files']) : '';
+            $row['profile_meta'] = !empty($row['profile_meta']) ? json_encode($row['profile_meta']) : '';
+            $row['profile_files'] = !empty($row['profile_files']) ? json_encode($row['profile_files']) : '';
 
             //add it to the tmp file as a csv
             fputcsv($file, array_values($row));
