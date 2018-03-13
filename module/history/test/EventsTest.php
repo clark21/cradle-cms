@@ -62,7 +62,7 @@ class Cradle_Module_History_EventsTest extends TestCase
     {
         $this->request->setStage([
             'history_activity' => 'admin created a cashback',
-            'user_id' => 1,
+            'profile_id' => 1,
         ]);
 
         cradle()->trigger('history-create', $this->request, $this->response);
@@ -154,7 +154,7 @@ class Cradle_Module_History_EventsTest extends TestCase
         $this->request->setStage([
             'history_id' => self::$id,
             'history_activity' => 'admin created a cashback',
-            'user_id' => 1,
+            'profile_id' => 1,
         ]);
 
         cradle()->trigger('history-update', $this->request, $this->response);

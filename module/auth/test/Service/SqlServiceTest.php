@@ -40,7 +40,7 @@ class Cradle_Module_Auth_Service_SqlServiceTest extends TestCase
     public function testCreate()
     {
         $actual = $this->object->create([
-            'auth_slug' => 'john@doe.com',
+            'auth_slug' => 'jane@doe.com',
         ]);
 
         $id = $this->object->getResource()->getLastInsertedId();
@@ -78,7 +78,7 @@ class Cradle_Module_Auth_Service_SqlServiceTest extends TestCase
         $id = $this->object->getResource()->getLastInsertedId();
         $actual = $this->object->update([
             'auth_id' => $id,
-            'auth_slug' => 'john@doe.com',
+            'auth_slug' => 'jane@doe.com',
         ]);
 
         $this->assertEquals($id, $actual['auth_id']);
@@ -89,7 +89,7 @@ class Cradle_Module_Auth_Service_SqlServiceTest extends TestCase
      */
     public function testExists()
     {
-        $actual = $this->object->exists('john@doe.com');
+        $actual = $this->object->exists('jane@doe.com');
         // it returns a boolean so we're expecting it to be true because
         // the slug provided is saved in the database
         $this->assertTrue($actual);
@@ -109,27 +109,27 @@ class Cradle_Module_Auth_Service_SqlServiceTest extends TestCase
     }
 
     /**
-     * @covers Cradle\Module\Auth\Service\SqlService::linkUser
+     * @covers Cradle\Module\Auth\Service\SqlService::linkProfile
      */
-    public function testLinkUser()
+    public function testLinkProfile()
     {
-        $actual = $this->object->linkUser(999, 999);
+        $actual = $this->object->linkProfile(999, 999);
 
         $this->assertTrue(!empty($actual));
         $this->assertEquals(999, $actual['auth_id']);
-        $this->assertEquals(999, $actual['user_id']);
+        $this->assertEquals(999, $actual['profile_id']);
     }
 
     /**
-     * @covers Cradle\Module\Auth\Service\SqlService::unlinkUser
+     * @covers Cradle\Module\Auth\Service\SqlService::unlinkProfile
      */
-    public function testUnlinkUser()
+    public function testUnlinkProfile()
     {
-        $actual = $this->object->unlinkUser(999, 999);
+        $actual = $this->object->unlinkProfile(999, 999);
 
         $this->assertTrue(!empty($actual));
         $this->assertEquals(999, $actual['auth_id']);
-        $this->assertEquals(999, $actual['user_id']);
+        $this->assertEquals(999, $actual['profile_id']);
     }
 
 }

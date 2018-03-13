@@ -374,7 +374,7 @@ $cradle->on('history-link-profile', function ($request, $response) {
     $historyRedis = HistoryService::get('redis');
     $historyElastic = HistoryService::get('elastic');
 
-    $results = $historySql->linkUser(
+    $results = $historySql->linkProfile(
         $data['history_id'],
         $data['profile_id']
     );

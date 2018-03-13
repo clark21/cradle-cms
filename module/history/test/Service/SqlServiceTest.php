@@ -36,6 +36,7 @@ class Cradle_Module_History_Service_SqlServiceTest extends TestCase
 
     /**
      * @covers Cradle\Module\History\Service\SqlService::create
+     * @covers Cradle\Module\History\Service\SqlService::linkProfile
      */
     public function testCreate()
     {
@@ -43,9 +44,13 @@ class Cradle_Module_History_Service_SqlServiceTest extends TestCase
             'history_activity' => 'admin created a cashback',
         ]);
 
-        $id = $this->object->getResource()->getLastInsertedId();
+        $this->assertEquals(1, $actual['history_id']);
 
-        $this->assertEquals($id, $actual['history_id']);
+        $profile = $this->object->linkProfile($actual['history_id'], 1);
+
+        $this->assertTrue(!empty($profile));
+        $this->assertEquals($actual['history_id'], $profile['history_id']);
+        $this->assertEquals(1, $profile['profile_id']);
     }
 
     /**
@@ -67,7 +72,9 @@ class Cradle_Module_History_Service_SqlServiceTest extends TestCase
 
         $this->assertArrayHasKey('rows', $actual);
         $this->assertArrayHasKey('total', $actual);
+
         $this->assertEquals(1, $actual['rows'][0]['history_id']);
+        $this->assertEquals(1, $actual['rows'][0]['profile_id']);
     }
 
     /**
@@ -97,27 +104,27 @@ class Cradle_Module_History_Service_SqlServiceTest extends TestCase
     }
 
     /**
-     * @covers Cradle\Module\History\Service\SqlService::linkUser
+     * @covers Cradle\Module\History\Service\SqlService::linkProfile
      */
-    public function testLinkUser()
+    public function testLinkProfile()
     {
-        $actual = $this->object->linkUser(999, 999);
+        $actual = $this->object->linkProfile(999, 999);
 
         $this->assertTrue(!empty($actual));
         $this->assertEquals(999, $actual['history_id']);
-        $this->assertEquals(999, $actual['user_id']);
+        $this->assertEquals(999, $actual['profile_id']);
     }
 
     /**
-     * @covers Cradle\Module\History\Service\SqlService::unlinkUser
+     * @covers Cradle\Module\History\Service\SqlService::unlinkProfile
      */
-    public function testUnlinkUser()
+    public function testUnlinkProfile()
     {
-        $actual = $this->object->unlinkUser(999, 999);
+        $actual = $this->object->unlinkProfile(999, 999);
 
         $this->assertTrue(!empty($actual));
         $this->assertEquals(999, $actual['history_id']);
-        $this->assertEquals(999, $actual['user_id']);
+        $this->assertEquals(999, $actual['profile_id']);
     }
 
 }

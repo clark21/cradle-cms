@@ -79,13 +79,13 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
             return $results;
         }
 
-        if ($results['profile_meta']) {
+        if (isset($results['profile_meta'])) {
             $results['profile_meta'] = json_decode($results['profile_meta'], true);
         } else {
             $results['profile_meta'] = [];
         }
 
-        if ($results['profile_files']) {
+        if (isset($results['profile_files'])) {
             $results['profile_files'] = json_decode($results['profile_files'], true);
         } else {
             $results['profile_files'] = [];
@@ -233,7 +233,7 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
      * @param *int $historyPrimary
      * @param *int $profilePrimary
      */
-    public function linkUser($historyPrimary, $profilePrimary)
+    public function linkProfile($historyPrimary, $profilePrimary)
     {
         return $this->resource
             ->model()
@@ -248,7 +248,7 @@ class SqlService extends AbstractSqlService implements SqlServiceInterface
      * @param *int $historyPrimary
      * @param *int $profilePrimary
      */
-    public function unlinkUser($historyPrimary, $profilePrimary)
+    public function unlinkProfile($historyPrimary, $profilePrimary)
     {
         return $this->resource
             ->model()
