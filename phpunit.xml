@@ -13,13 +13,11 @@
     bootstrap="phpunit.php"
 >
     <testsuites>
-        <testsuite name="System Test Suite">
-        </testsuite>
         <testsuite name="Auth Test Suite">
             <file>module/auth/test/ServiceTest.php</file>
             <file>module/auth/test/Service/SqlServiceTest.php</file>
             <file>module/auth/test/Service/ElasticServiceTest.php</file>
-            <file>module/auth/test/EventTest.php</file>
+            <file>module/auth/test/EventsTest.php</file>
             <file>module/auth/test/ValidatorTest.php</file>
         </testsuite>
         <testsuite name="History Test Suite">
@@ -27,14 +25,14 @@
             <file>module/history/test/ServiceTest.php</file>
             <file>module/history/test/Service/SqlServiceTest.php</file>
             <file>module/history/test/Service/ElasticServiceTest.php</file>
-            <file>module/history/test/EventTest.php</file>
+            <file>module/history/test/EventsTest.php</file>
         </testsuite>
         <testsuite name="Role Test Suite">
             <file>module/role/test/ValidatorTest.php</file>
             <file>module/role/test/ServiceTest.php</file>
             <file>module/role/test/Service/SqlServiceTest.php</file>
             <file>module/role/test/Service/ElasticServiceTest.php</file>
-            <file>module/role/test/EventTest.php</file>
+            <file>module/role/test/EventsTest.php</file>
         </testsuite>
     </testsuites>
 </phpunit>

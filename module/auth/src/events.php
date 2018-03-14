@@ -31,7 +31,7 @@ $cradle->on('auth-create', function ($request, $response) {
 
     $schema = SystemSchema::i('profile');
 
-    //check if user_email exist
+    //check if profile_email exist
     foreach ($schema->getFields() as $field) {
         if ($field['name'] === 'email') {
             $data['profile_email'] = $data['auth_slug'];

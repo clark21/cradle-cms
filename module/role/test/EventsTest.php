@@ -61,11 +61,16 @@ class Cradle_Module_Role_EventsTest extends TestCase
     public function testRoleCreate()
     {
         $this->request->setStage([
-            'role_name' => 'Guest'
+            'role_name' => 'Editor',
+            'role_permissions' => json_encode([
+                'path' => '/admin/auth/*',
+                'label' => 'Auth Access',
+                'method' => 'all'
+            ])
         ]);
 
         cradle()->trigger('role-create', $this->request, $this->response);
-        $this->assertEquals('Apple', $this->response->getResults('role_name'));
+        $this->assertEquals('Editor', $this->response->getResults('role_name'));
 
         self::$id = $this->response->getResults('role_id');
         $this->assertTrue(is_numeric(self::$id));
@@ -118,7 +123,7 @@ class Cradle_Module_Role_EventsTest extends TestCase
      */
     public function testRoleRestore()
     {
-        $this->request->setStage('role_id', 581);
+        $this->request->setStage('role_id', self::$id);
 
         cradle()->trigger('role-restore', $this->request, $this->response);
         $this->assertEquals(self::$id, $this->response->getResults('role_id'));
@@ -154,6 +159,7 @@ class Cradle_Module_Role_EventsTest extends TestCase
         $this->request->setStage([
             'role_id' => self::$id,
             'role_name' => 'Editor',
+            'role_permissions' => json_encode([])
         ]);
 
         cradle()->trigger('role-update', $this->request, $this->response);

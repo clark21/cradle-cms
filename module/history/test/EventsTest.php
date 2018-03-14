@@ -118,7 +118,7 @@ class Cradle_Module_History_EventsTest extends TestCase
      */
     public function testHistoryRestore()
     {
-        $this->request->setStage('history_id', 581);
+        $this->request->setStage('history_id', self::$id);
 
         cradle()->trigger('history-restore', $this->request, $this->response);
         $this->assertEquals(self::$id, $this->response->getResults('history_id'));

@@ -61,12 +61,16 @@ class Cradle_Module_Auth_EventsTest extends TestCase
     public function testAuthCreate()
     {
         $this->request->setStage([
-            'auth_slug' => 'john@doe.com',
-            'user_id' => 1,
+            'auth_slug'         => 'johnny@doe.com',
+            'auth_password'     => '123',
+            'auth_active'       => 1,
+            'confirm'           => '123',
+            'profile_name'      => 'Johnny Doe'
         ]);
 
         cradle()->trigger('auth-create', $this->request, $this->response);
-        $this->assertEquals('john@doe.com', $this->response->getResults('auth_slug'));
+
+        $this->assertEquals('johnny@doe.com', $this->response->getResults('auth_slug'));
         self::$id = $this->response->getResults('auth_id');
         $this->assertTrue(is_numeric(self::$id));
     }
@@ -118,7 +122,7 @@ class Cradle_Module_Auth_EventsTest extends TestCase
      */
     public function testAuthRestore()
     {
-        $this->request->setStage('auth_id', 581);
+        $this->request->setStage('auth_id', self::$id);
 
         cradle()->trigger('auth-restore', $this->request, $this->response);
         $this->assertEquals(self::$id, $this->response->getResults('auth_id'));
@@ -153,12 +157,12 @@ class Cradle_Module_Auth_EventsTest extends TestCase
     {
         $this->request->setStage([
             'auth_id' => self::$id,
-            'auth_slug' => 'john@doe.com',
+            'auth_slug' => 'johnny@doe.com',
             'user_id' => 1,
         ]);
 
         cradle()->trigger('auth-update', $this->request, $this->response);
-        $this->assertEquals('john@doe.com', $this->response->getResults('auth_slug'));
+        $this->assertEquals('johnny@doe.com', $this->response->getResults('auth_slug'));
         $this->assertEquals(self::$id, $this->response->getResults('auth_id'));
     }
 }
