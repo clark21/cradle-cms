@@ -13,6 +13,13 @@
     bootstrap="phpunit.php"
 >
     <testsuites>
+        <testsuite name="Schema Test Suite">
+            <file>module/system/test/schema/EventsTest.php</file>
+            <file>module/system/test/schema/ServiceTest.php</file>
+            <file>module/system/test/schema/Service/SqlServiceTest.php</file>
+            <file>module/system/test/schema/Service/ElasticServiceTest.php</file>
+            <file>module/system/test/schema/ValidatorTest.php</file>
+        </testsuite>
         <testsuite name="Auth Test Suite">
             <file>module/auth/test/ServiceTest.php</file>
             <file>module/auth/test/Service/SqlServiceTest.php</file>
