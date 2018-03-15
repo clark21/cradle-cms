@@ -11,6 +11,8 @@ use PHPUnit\Framework\TestCase;
 
 use Cradle\Module\System\Object\Validator;
 
+use Cradle\Module\System\Schema as SystemSchema;
+
 /**
  * Validator layer test
  *
@@ -18,15 +20,21 @@ use Cradle\Module\System\Object\Validator;
  * @package  Role
  * @author   John Doe <john@acme.com>
  */
-class Cradle_Module_Role_ValidatorTest extends TestCase
+class Cradle_Module_System_Object_ValidatorTest extends TestCase
 {
     /**
      * @covers Cradle\Module\System\Object\Validator::getCreateErrors
      */
     public function testGetCreateErrors()
     {
-        $actual = Validator::getCreateErrors([]);
-        $this->assertEquals('Role Name is required', $actual['role_name']);
+        $schema = SystemSchema::i('sample');
+
+        $actual = $schema
+            ->model()
+            ->validator()
+            ->getCreateErrors([]);
+
+        $this->assertEquals('Name is required', $actual['sample_name']);
     }
 
     /**
@@ -34,8 +42,13 @@ class Cradle_Module_Role_ValidatorTest extends TestCase
      */
     public function testGetUpdateErrors()
     {
-        $actual = Validator::getUpdateErrors([]);
+        $schema = SystemSchema::i('sample');
 
-        $this->assertEquals('Invalid ID', $actual['role_id']);
+        $actual = $schema
+            ->model()
+            ->validator()
+            ->getUpdateErrors([]);
+
+        $this->assertEquals('Invalid ID', $actual['sample_id']);
     }
 }

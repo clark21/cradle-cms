@@ -76,6 +76,12 @@ class Cradle_Module_System_Schema_EventsTest extends TestCase
                             'placeholder'   => 'name'
                         ]
                     ],
+                    'validation' => [
+                        [
+                            'method' => 'required',
+                            'message' => 'Name is required'
+                        ],
+                    ],
                     'list'      => [
                         'format'    => 'lower'
                     ],
@@ -83,6 +89,22 @@ class Cradle_Module_System_Schema_EventsTest extends TestCase
                     'default'       => '',
                     'searchable'    => 1,
                     'filterable'    => 1
+                ],
+                [
+                    'label'     => 'Active',
+                    'name'      => 'active',
+                    'field'     => [
+                        'type'          => 'active'
+                    ],
+                    'list'      => [
+                        'format'    => 'hide'
+                    ],
+                    'detail'        => [
+                        'format' => 'hide'
+                    ],
+                    'default'       => '',
+                    'filterable'    => 1,
+                    'sortable'      => 1
                 ]
             ],
             'suggestion' => ''
@@ -122,6 +144,12 @@ class Cradle_Module_System_Schema_EventsTest extends TestCase
                             'placeholder'   => 'name'
                         ]
                     ],
+                    'validation' => [
+                        [
+                            'method' => 'required',
+                            'message' => 'Name is required'
+                        ],
+                    ],
                     'list'      => [
                         'format'    => 'lower'
                     ],
@@ -129,6 +157,22 @@ class Cradle_Module_System_Schema_EventsTest extends TestCase
                     'default'       => '',
                     'searchable'    => 1,
                     'filterable'    => 1
+                ],
+                [
+                    'label'     => 'Active',
+                    'name'      => 'active',
+                    'field'     => [
+                        'type'          => 'active'
+                    ],
+                    'list'      => [
+                        'format'    => 'hide'
+                    ],
+                    'detail'        => [
+                        'format' => 'hide'
+                    ],
+                    'default'       => '',
+                    'filterable'    => 1,
+                    'sortable'      => 1
                 ]
             ],
             'suggestion' => ''
@@ -155,6 +199,12 @@ class Cradle_Module_System_Schema_EventsTest extends TestCase
                             'placeholder'   => 'name'
                         ]
                     ],
+                    'validation' => [
+                        [
+                            'method' => 'required',
+                            'message' => 'Name is required'
+                        ],
+                    ],
                     'list'      => [
                         'format'    => 'lower'
                     ],
@@ -179,9 +229,25 @@ class Cradle_Module_System_Schema_EventsTest extends TestCase
                     'searchable'    => 1,
                     'filterable'    => 1,
                     'sortable'      => 1
+                ],
+                [
+                    'label'     => 'Active',
+                    'name'      => 'active',
+                    'field'     => [
+                        'type'          => 'active'
+                    ],
+                    'list'      => [
+                        'format'    => 'hide'
+                    ],
+                    'detail'        => [
+                        'format' => 'hide'
+                    ],
+                    'default'       => '',
+                    'filterable'    => 1,
+                    'sortable'      => 1
                 ]
             ],
-            'suggestion' => ''
+            'suggestion' => 'aa'
         ];
 
         $this->request->setStage($data);
@@ -205,5 +271,39 @@ class Cradle_Module_System_Schema_EventsTest extends TestCase
         cradle()->trigger('system-schema-detail', $this->request, $this->response);
 
         $this->assertEquals('sample', $this->response->getResults('name'));
+    }
+
+    /**
+     * schema-create
+     *
+     * @covers Cradle\Module\System\Service\SqlService::remove
+     * @covers Cradle\Module\System\Service\SqlService::get
+     * @covers Cradle\Module\System\Utility\Service\AbstractElasticService::get
+     * @covers Cradle\Module\System\Utility\Service\AbstractRedisService::getDetail
+     */
+    public function testSchemaRemove()
+    {
+        $this->request->setStage('name', 'sample');
+
+        cradle()->trigger('system-schema-remove', $this->request, $this->response);
+
+        $this->assertTrue(empty($this->response->getResults()));
+    }
+
+    /**
+     * schema-create
+     *
+     * @covers Cradle\Module\System\Service\SqlService::restore
+     * @covers Cradle\Module\System\Service\SqlService::get
+     * @covers Cradle\Module\System\Utility\Service\AbstractElasticService::get
+     * @covers Cradle\Module\System\Utility\Service\AbstractRedisService::getDetail
+     */
+    public function testSchemaRestore()
+    {
+        $this->request->setStage('name', 'sample');
+
+        cradle()->trigger('system-schema-restore', $this->request, $this->response);
+
+        $this->assertTrue(empty($this->response->getResults()));
     }
 }

@@ -10,6 +10,7 @@
 use PHPUnit\Framework\TestCase;
 
 use Cradle\Module\System\Service;
+use Cradle\Module\System\Schema as SystemSchema;
 
 /**
  * SQL service test
@@ -27,7 +28,7 @@ class Cradle_Module_System_Schema_Service_SqlServiceTest extends TestCase
     protected $object;
 
     /**
-     * @covers Cradle\Module\Role\Service\SqlService::__construct
+     * @covers Cradle\Module\System\Service\SqlService::__construct
      */
     protected function setUp()
     {
@@ -39,65 +40,180 @@ class Cradle_Module_System_Schema_Service_SqlServiceTest extends TestCase
      */
     public function testCreate()
     {
-        $actual = $this->object->create([
-            'role_name' => 'Moderator',
-            'role_permissions' => json_encode([
-                'path' => '/admin/role/*',
-                'label' => 'Role Access',
-                'method' => 'all'
-            ])
-        ]);
+        $data = [
+            'singular'  => 'sample',
+            'plural'    => 'samples',
+            'name'      => 'sample',
+            'icon'      => 'fas fa-user',
+            'detail'    => 'sample detail',
+            'fields'    => [
+                [
+                    'label'     => 'name',
+                    'name'      => 'name',
+                    'field'     => [
+                        'type'          => 'text',
+                        'attributes'    => [
+                            'placeholder'   => 'name'
+                        ]
+                    ],
+                    'validation' => [
+                        [
+                            'method' => 'required',
+                            'message' => 'Name is required'
+                        ],
+                    ],
+                    'list'      => [
+                        'format'    => 'lower'
+                    ],
+                    'detail'        => 'none',
+                    'default'       => '',
+                    'searchable'    => 1,
+                    'filterable'    => 1
+                ],
+                [
+                    'label'     => 'Active',
+                    'name'      => 'active',
+                    'field'     => [
+                        'type'          => 'active'
+                    ],
+                    'list'      => [
+                        'format'    => 'hide'
+                    ],
+                    'detail'        => [
+                        'format' => 'hide'
+                    ],
+                    'default'       => '',
+                    'filterable'    => 1,
+                    'sortable'      => 1
+                ]
+            ],
+            'suggestion' => ''
+        ];
 
-        $id = $this->object->getResource()->getLastInsertedId();
+        $schema = SystemSchema::i($data);
+        $this->object->setSchema($schema);
+        $actual = $this->object->create($data);
 
-        $this->assertEquals($id, $actual['role_id']);
+        $query = 'DROP TABLE IF EXISTS `sample`;';
+
+        $this->assertArrayHasKey(0, $actual);
+        $this->assertArrayHasKey('query', $actual[0]);
+        $this->assertArrayHasKey('results', $actual[0]);
+        $this->assertEquals($query, $actual[0]['query']);
     }
 
     /**
-     * @covers Cradle\Module\Role\Service\SqlService::get
-     */
-    public function testGet()
-    {
-        $actual = $this->object->get(1);
-
-        $this->assertEquals(1, $actual['role_id']);
-    }
-
-    /**
-     * @covers Cradle\Module\Role\Service\SqlService::search
-     */
-    public function testSearch()
-    {
-        $actual = $this->object->search();
-
-        $this->assertArrayHasKey('rows', $actual);
-        $this->assertArrayHasKey('total', $actual);
-        $this->assertEquals(1, $actual['rows'][0]['role_id']);
-    }
-
-    /**
-     * @covers Cradle\Module\Role\Service\SqlService::update
+     * @covers Cradle\Module\System\Service\SqlService::update
      */
     public function testUpdate()
     {
-        $id = $this->object->getResource()->getLastInsertedId();
-        $actual = $this->object->update([
-            'role_id' => $id,
-            'role_name' => 'Apple',
-        ]);
+        $data = [
+            'singular'  => 'sample',
+            'plural'    => 'samples',
+            'name'      => 'sample',
+            'icon'      => 'fas fa-user',
+            'detail'    => 'sample detail',
+            'fields'    => [
+                [
+                    'label'     => 'name',
+                    'name'      => 'name',
+                    'field'     => [
+                        'type'          => 'text',
+                        'attributes'    => [
+                            'placeholder'   => 'name'
+                        ]
+                    ],
+                    'validation' => [
+                        [
+                            'method' => 'required',
+                            'message' => 'Name is required'
+                        ],
+                    ],
+                    'list'      => [
+                        'format'    => 'lower'
+                    ],
+                    'detail'        => 'none',
+                    'default'       => '',
+                    'searchable'    => 1,
+                    'filterable'    => 1
+                ],
+                [
+                    'label'     => 'like',
+                    'name'      => 'like',
+                    'field'     => [
+                        'type'          => 'number'
+                    ],
+                    'list'      => [
+                        'format'    => 'none'
+                    ],
+                    'detail'        => [
+                        'format' => 'none'
+                    ],
+                    'default'       => '',
+                    'searchable'    => 1,
+                    'filterable'    => 1,
+                    'sortable'      => 1
+                ],
+                [
+                    'label'     => 'Active',
+                    'name'      => 'active',
+                    'field'     => [
+                        'type'          => 'active'
+                    ],
+                    'list'      => [
+                        'format'    => 'hide'
+                    ],
+                    'detail'        => [
+                        'format' => 'hide'
+                    ],
+                    'default'       => '',
+                    'filterable'    => 1,
+                    'sortable'      => 1
+                ]
+            ],
+            'suggestion' => ''
+        ];
 
-        $this->assertEquals($id, $actual['role_id']);
+        $schema = SystemSchema::i('sample');
+        $this->object->setSchema($schema);
+        $actual = $this->object->update($data);
+
+        $this->assertArrayHasKey(0, $actual);
+        $this->assertArrayHasKey('query', $actual[0]);
+        $this->assertArrayHasKey('results', $actual[0]);
     }
 
     /**
-     * @covers Cradle\Module\Role\Service\SqlService::remove
+     * @covers Cradle\Module\System\Service\SqlService::remove
      */
     public function testRemove()
     {
-        $id = $this->object->getResource()->getLastInsertedId();
-        $actual = $this->object->remove($id);
+        $schema = SystemSchema::i('sample');
+        $this->object->setSchema($schema);
+        $actual = $this->object->remove('sample');
 
-        $this->assertTrue(!empty($actual));
-        $this->assertEquals($id, $actual['role_id']);
+        $query = 'RENAME TABLE `sample` TO `_sample`;';
+
+        $this->assertArrayHasKey(0, $actual);
+        $this->assertArrayHasKey('query', $actual[0]);
+        $this->assertArrayHasKey('results', $actual[0]);
+        $this->assertEquals($query, $actual[0]['query']);
+    }
+
+    /**
+     * @covers Cradle\Module\System\Service\SqlService::restore
+     */
+    public function testRestore()
+    {
+        $schema = SystemSchema::i('sample');
+        $this->object->setSchema($schema);
+        $actual = $this->object->restore('sample');
+
+        $query = 'RENAME TABLE `_sample` TO `sample`;';
+
+        $this->assertArrayHasKey(0, $actual);
+        $this->assertArrayHasKey('query', $actual[0]);
+        $this->assertArrayHasKey('results', $actual[0]);
+        $this->assertEquals($query, $actual[0]['query']);
     }
 }

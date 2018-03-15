@@ -265,7 +265,7 @@ class SqlService
         //please rely on SQL CASCADING ON DELETE
         $model = $this->resource->model();
         $model[$primary] = $id;
-        $model->remove($table);
+        return $model->remove($table);
     }
 
     /**

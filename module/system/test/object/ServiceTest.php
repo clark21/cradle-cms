@@ -11,9 +11,9 @@ use PHPUnit\Framework\TestCase;
 
 use Cradle\Module\System\Object\Service;
 
-use Cradle\Module\Role\Service\SqlService;
-use Cradle\Module\Role\Service\RedisService;
-use Cradle\Module\Role\Service\ElasticService;
+use Cradle\Module\System\Object\Service\SqlService;
+use Cradle\Module\System\Object\Service\RedisService;
+use Cradle\Module\System\Object\Service\ElasticService;
 use Cradle\Module\System\Utility\Service\NoopService;
 
 /**

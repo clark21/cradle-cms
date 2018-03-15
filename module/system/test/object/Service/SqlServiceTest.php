@@ -11,6 +11,8 @@ use PHPUnit\Framework\TestCase;
 
 use Cradle\Module\System\Object\Service;
 
+use Cradle\Module\System\Schema as SystemSchema;
+
 /**
  * SQL service test
  * Role Model Test
@@ -27,44 +29,42 @@ class Cradle_Module_System_Object_Service_SqlServiceTest extends TestCase
     protected $object;
 
     /**
-     * @covers Cradle\Module\Role\Service\SqlService::__construct
+     * @covers Cradle\Module\System\Object\Service\SqlService::__construct
      */
     protected function setUp()
     {
         $this->object = Service::get('sql');
+
+        $this->object->setSchema(SystemSchema::i('sample'));
     }
 
     /**
-     * @covers Cradle\Module\Role\Service\SqlService::create
+     * @covers Cradle\Module\System\Object\Service\SqlService::create
      */
     public function testCreate()
     {
         $actual = $this->object->create([
-            'role_name' => 'Moderator',
-            'role_permissions' => json_encode([
-                'path' => '/admin/role/*',
-                'label' => 'Role Access',
-                'method' => 'all'
-            ])
+            'sample_name' => 'Testdd',
+            'sample_active' => 1,
         ]);
 
         $id = $this->object->getResource()->getLastInsertedId();
 
-        $this->assertEquals($id, $actual['role_id']);
+        $this->assertEquals($id, $actual['sample_id']);
     }
 
     /**
-     * @covers Cradle\Module\Role\Service\SqlService::get
+     * @covers Cradle\Module\System\Object\Service\SqlService::get
      */
     public function testGet()
     {
-        $actual = $this->object->get(1);
+        $actual = $this->object->get('sample_id', 1);
 
-        $this->assertEquals(1, $actual['role_id']);
+        $this->assertEquals(1, $actual['sample_id']);
     }
 
     /**
-     * @covers Cradle\Module\Role\Service\SqlService::search
+     * @covers Cradle\Module\System\Object\Service\SqlService::search
      */
     public function testSearch()
     {
@@ -72,25 +72,25 @@ class Cradle_Module_System_Object_Service_SqlServiceTest extends TestCase
 
         $this->assertArrayHasKey('rows', $actual);
         $this->assertArrayHasKey('total', $actual);
-        $this->assertEquals(1, $actual['rows'][0]['role_id']);
+        $this->assertEquals(1, $actual['rows'][0]['sample_id']);
     }
 
     /**
-     * @covers Cradle\Module\Role\Service\SqlService::update
+     * @covers Cradle\Module\System\Object\Service\SqlService::update
      */
     public function testUpdate()
     {
         $id = $this->object->getResource()->getLastInsertedId();
         $actual = $this->object->update([
-            'role_id' => $id,
-            'role_name' => 'Apple',
+            'sample_id' => $id,
+            'sample_name' => 'Edited Name',
         ]);
 
-        $this->assertEquals($id, $actual['role_id']);
+        $this->assertEquals($id, $actual['sample_id']);
     }
 
     /**
-     * @covers Cradle\Module\Role\Service\SqlService::remove
+     * @covers Cradle\Module\System\Object\Service\SqlService::remove
      */
     public function testRemove()
     {
@@ -98,6 +98,6 @@ class Cradle_Module_System_Object_Service_SqlServiceTest extends TestCase
         $actual = $this->object->remove($id);
 
         $this->assertTrue(!empty($actual));
-        $this->assertEquals($id, $actual['role_id']);
+        $this->assertEquals($id, $actual['sample_id']);
     }
 }

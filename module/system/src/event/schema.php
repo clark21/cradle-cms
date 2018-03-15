@@ -168,7 +168,7 @@ $cradle->on('system-schema-remove', function ($request, $response) {
         rename($path, $new);
     }
 
-    $response->setError(false)->setResults($results);
+    $response->setError(false)->setResults([]);
 });
 
 /**
@@ -222,7 +222,7 @@ $cradle->on('system-schema-restore', function ($request, $response) {
         rename($path, $new);
     }
 
-    $response->setError(false)->setResults($results);
+    $response->setError(false)->setResults([]);
 });
 
 /**
@@ -334,6 +334,7 @@ $cradle->on('system-schema-update', function ($request, $response) {
     $table = $schema->getName();
     //this/these will be used a lot
     $systemSql = $schema->service('sql');
+
     //update table
     $systemSql->update($data);
 
