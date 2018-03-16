@@ -87,6 +87,12 @@ class Cradle_Module_System_Schema_Service_SqlServiceTest extends TestCase
                     'sortable'      => 1
                 ]
             ],
+            'relations' => [
+                [
+                    'many' => '0',
+                    'name' => 'profile',
+                ]
+            ],
             'suggestion' => ''
         ];
 
@@ -169,6 +175,12 @@ class Cradle_Module_System_Schema_Service_SqlServiceTest extends TestCase
                     'default'       => '',
                     'filterable'    => 1,
                     'sortable'      => 1
+                ]
+            ],
+            'relations' => [
+                [
+                    'many' => '0',
+                    'name' => 'profile',
                 ]
             ],
             'suggestion' => ''
